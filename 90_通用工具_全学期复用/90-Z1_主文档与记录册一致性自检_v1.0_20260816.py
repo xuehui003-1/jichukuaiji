@@ -1,14 +1,19 @@
 # -*- coding: utf-8 -*-
 """主文档 vs 记录册 一致性自检 —— 以后每做完一个项目都跑这个"""
-import re, sys, glob as _g
+import os, re, glob as _g
 from docx import Document
 
-BOOK = sorted(_g.glob('/home/user/会计学基础教学资源库/90_通用工具_全学期复用/90-A1_学生记录册*.docx'))[-1]
-_CN='一二三四五六七八九'
-MAIN={}
-for _i,_d in enumerate(sorted(_g.glob('/home/user/会计学基础教学资源库/0*_项目*'))):
-    _f=sorted(_g.glob(_d+'/0*主文档*.docx'))
-    if _f: MAIN[_CN[_i]]=_f[-1]
+_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+BOOK = sorted(_g.glob(_ROOT + '/90_通用工具_全学期复用/90-A1_学生记录册*.docx'))[-1]
+_CN = '一二三四五六七八九'
+MAIN = {}
+for _d in sorted(_g.glob(_ROOT + '/0*_项目*')):
+    _m = re.search(r'/0(\d)_项目', _d.replace('\\', '/'))
+    if not _m:
+        continue
+    _f = sorted(_g.glob(_d + '/0*主文档*.docx'))
+    if _f:
+        MAIN[_CN[int(_m.group(1)) - 1]] = _f[-1]
 
 def allp(doc):
     for p in doc.paragraphs: yield p
