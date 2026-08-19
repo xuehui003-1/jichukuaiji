@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>06-A1 错账侦探室</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:linear-gradient(165deg,#1a1030,#2d1b4e 60%,#1f1438);color:#fff;min-height:100vh;padding:12px}
+.wrap{max-width:1280px;margin:0 auto}
+header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px}
+h1{font-size:20px;color:#ffd54f}
+h1 small{display:block;font-size:12px;color:#b39ddb;font-weight:400;margin-top:3px}
+.pill{background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.2);border-radius:18px;padding:6px 14px;font-size:13px;font-weight:700}
+.pill b{color:#ffd54f;font-size:15px}
+.hud{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:14px;margin-bottom:12px}
+h3{font-size:14px;color:#ffd54f;margin-bottom:10px;padding-bottom:6px;border-bottom:1px dashed rgba(255,255,255,.16);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+h3 em{font-style:normal;font-size:11.5px;color:#9575cd;font-weight:400}
+button{padding:9px 18px;border:none;border-radius:20px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;background:#ffd54f;color:#3d2352;transition:.15s}
+button:hover{opacity:.87;transform:translateY(-1px)}
+button.o{background:rgba(255,255,255,.13);color:#fff;border:1px solid rgba(255,255,255,.25)}
+button.g{background:#66bb6a;color:#fff}
+button.sm{padding:6px 13px;font-size:12.5px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+
+.tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.tab{padding:10px 22px;border-radius:22px;background:rgba(255,255,255,.09);border:1.5px solid rgba(255,255,255,.16);cursor:pointer;font-size:14.5px;font-weight:700;transition:.15s}
+.tab:hover{border-color:#ffd54f}
+.tab.on{background:#ffd54f;color:#3d2352;border-color:#ffd54f}
+.pane{display:none}
+.pane.on{display:block}
+
+.inrow{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:6px}
+.fld{flex:1;min-width:150px}
+.fld label{display:block;font-size:12px;color:#b39ddb;margin-bottom:5px}
+.fld input{width:100%;background:rgba(0,0,0,.32);border:1.5px solid rgba(255,255,255,.15);color:#fff;padding:11px 12px;border-radius:9px;font-family:"Courier New",monospace;font-size:19px;text-align:right;font-weight:700}
+.fld input:focus{outline:none;border-color:#ffd54f;background:rgba(0,0,0,.5)}
+.diffbig{font-family:"Courier New",monospace;font-size:28px;font-weight:800;color:#ffd54f;text-align:center;padding:12px;background:rgba(0,0,0,.25);border-radius:11px;margin:10px 0}
+.diffbig span{font-size:14px;color:#b0bec5;font-weight:400;display:block;margin-top:3px;font-family:inherit}
+
+.res{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-top:6px}
+.rc{background:rgba(255,255,255,.055);border:1.5px solid rgba(255,255,255,.13);border-radius:12px;padding:12px 14px;opacity:.4;transition:.2s}
+.rc.hit{opacity:1;border-color:#66bb6a;background:rgba(102,187,106,.14);box-shadow:0 0 0 1px rgba(102,187,106,.3)}
+.rc.hit.strong{border-color:#ffd54f;background:rgba(255,213,79,.16);box-shadow:0 0 14px rgba(255,213,79,.25)}
+.rc b{display:block;font-size:14.5px;color:#ffd54f;margin-bottom:5px}
+.rc p{font-size:12.5px;color:#cfd8dc;line-height:1.65}
+.rc .verdict2{margin-top:8px;font-size:13px;font-weight:700;color:#a5d6a7;border-top:1px dashed rgba(255,255,255,.16);padding-top:7px;line-height:1.6}
+.rc.miss .verdict2{color:#78909c;font-weight:400}
+
+.qbox{background:rgba(255,255,255,.055);border:1.5px solid rgba(255,255,255,.13);border-radius:13px;padding:16px 18px;margin-bottom:12px}
+.qnum{font-size:12px;color:#9575cd;margin-bottom:6px}
+.qtxt{font-size:17px;line-height:1.7;margin-bottom:14px}
+.qtxt b{color:#ffd54f}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:9px}
+.opt{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);border-radius:11px;padding:12px 14px;cursor:pointer;font-size:14px;line-height:1.55;transition:.15s;text-align:left}
+.opt:hover{border-color:#ffd54f;background:rgba(255,213,79,.1)}
+.opt.right{border-color:#66bb6a;background:rgba(102,187,106,.2)}
+.opt.wrong{border-color:#ef5350;background:rgba(239,83,80,.18)}
+.opt small{display:block;color:#b0bec5;font-size:11.5px;margin-top:3px}
+.fb{margin-top:12px;padding:12px 14px;border-radius:10px;font-size:13.5px;line-height:1.75;display:none}
+.fb.show{display:block}
+.fb.ok{background:rgba(102,187,106,.16);border-left:4px solid #66bb6a}
+.fb.no{background:rgba(255,167,38,.14);border-left:4px solid #ffa726}
+.fb b{color:#ffd54f}
+
+.tip2{font-size:12.5px;color:#b39ddb;line-height:1.75;margin-top:10px;border-top:1px dashed rgba(255,255,255,.14);padding-top:9px}
+.tip2 b{color:#ffd54f}
+
+.modal{position:fixed;inset:0;background:rgba(15,8,28,.93);display:none;align-items:center;justify-content:center;z-index:99;padding:18px}
+.modal.show{display:flex}
+.mbox{background:#fff;color:#2c2135;border-radius:15px;max-width:800px;width:100%;max-height:88vh;overflow-y:auto;padding:26px 30px}
+.mbox h2{color:#7b1fa2;font-size:20px;margin-bottom:8px}
+.mbox h4{color:#c2185b;font-size:14.5px;margin:15px 0 6px;padding-left:9px;border-left:4px solid #7b1fa2}
+.mbox p,.mbox li,.mbox td{font-size:13.5px;line-height:1.8}
+.mbox ol,.mbox ul{padding-left:22px}
+.mbox table{width:100%;border-collapse:collapse;margin:8px 0}
+.mbox th,.mbox td{border:1px solid #e0d5e8;padding:6px 9px;text-align:left}
+.mbox th{background:#f3e5f5;color:#7b1fa2;font-size:12.5px}
+.mbox .q{background:#fff8e1;border-left:4px solid #ffa726;padding:9px 12px;border-radius:0 8px 8px 0;margin:8px 0}
+.mclose{width:100%;padding:11px;border-radius:10px;background:#7b1fa2;color:#fff;font-size:15px;margin-top:15px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>错账侦探室<small>06-A1 v1.0 · 找错 ＋ 改错 · 配套《06-00 项目六主文档》知识点5、知识点8</small></h1>
+  <div class="hud">
+    <div class="pill">答对 <b id="hScore">0</b> / <b id="hTotal">0</b></div>
+    <button class="o sm" onclick="showHelp()">❓ 怎么用</button>
+  </div>
+</header>
+
+<div class="tabs">
+  <div class="tab on" id="tab1" onclick="go(1)">🔍 找错模式（知识点5）</div>
+  <div class="tab" id="tab2" onclick="go(2)">✏️ 改错模式（知识点8）</div>
+</div>
+
+<!-- ========== 找错模式 ========== -->
+<div class="pane on" id="pane1">
+<div class="card">
+  <h3>输入借贷两边的合计数　<em>差额会告诉你该用哪种方法找</em>
+    <div class="btns">
+      <button class="o sm" onclick="fill(98000,98900)">例：差900</button>
+      <button class="o sm" onclick="fill(50400,50000)">例：差400</button>
+      <button class="o sm" onclick="fill(120270,120000)">例：差270</button>
+      <button class="o sm" onclick="fill(80000.35,80000)">例：差几角</button>
+    </div>
+  </h3>
+  <div class="inrow">
+    <div class="fld"><label>借方合计</label><input id="dr" type="number" step="0.01" oninput="calc()" placeholder="0"></div>
+    <div class="fld"><label>贷方合计</label><input id="cr" type="number" step="0.01" oninput="calc()" placeholder="0"></div>
+  </div>
+  <div class="diffbig" id="diff">差额 0<span>先填两边的合计数</span></div>
+
+  <div class="res">
+    <div class="rc" id="m1"><b>① 差数法</b><p>差多少，就直接去账上找有没有这个数漏记了一边。</p><div class="verdict2">—</div></div>
+    <div class="rc" id="m2"><b>② 尾数法</b><p>只差几角几分的，只用检查小数部分，整数不用看。</p><div class="verdict2">—</div></div>
+    <div class="rc" id="m3"><b>③ 除 2 法</b><p>差额能被 2 整除，多半是有一笔记反了方向。</p><div class="verdict2">—</div></div>
+    <div class="rc" id="m4"><b>④ 除 9 法</b><p>差额能被 9 整除，多半是数字写大了、写小了或者颠倒了。</p><div class="verdict2">—</div></div>
+  </div>
+  <div class="tip2">
+  <b>课堂用法（知识点5，约5分钟）：</b>投影出来，让学生轮流报一个差额，先猜「该用哪种方法」，再按回车看程序怎么说。
+  ★ 一定要先让他们猜，猜完再算——直接看答案，这就只是个计算器。
+  </div>
+</div>
+</div>
+
+<!-- ========== 改错模式 ========== -->
+<div class="pane" id="pane2">
+<div class="card">
+  <h3>这个错，该用哪种方法改？　<em>共 8 题，答完自动出结果</em>
+    <div class="btns"><button class="o sm" onclick="resetQ()">↺ 重新开始</button></div>
+  </h3>
+  <div id="qarea"></div>
+</div>
+</div>
+
+</div>
+
+<div class="modal" id="intro"><div class="mbox">
+  <h2>这个工具是干什么的</h2>
+  <p style="font-size:15px;line-height:1.9;margin-bottom:4px">
+  一句话：<b>让学生自己判断该用哪种方法，而不是背三种方法的名字。</b></p>
+  <div class="q" style="font-size:14px">
+  「划线更正、红字更正、补充登记」这三个名字，学生背一遍就能背下来。<br><br>
+  但考试问的从来不是名字，问的是<b>「这种情况该用哪个」</b>。
+  这个工具只干一件事：把「情况」摆出来，让他选，选错了当场告诉他为什么。</div>
+
+  <h4>两个模式，对应两节课</h4>
+  <table>
+    <tr><th>模式</th><th>什么时候用</th><th>玩多久</th></tr>
+    <tr><td><b>🔍 找错模式</b></td><td>知识点 5「差额会说话」讲完</td><td><b>5 分钟就关</b></td></tr>
+    <tr><td><b>✏️ 改错模式</b></td><td>知识点 8 三种改错法全讲完之后</td><td><b>8 分钟</b></td></tr>
+  </table>
+  <div class="q" style="font-size:13.5px">★ 这是工具，不是游戏课。到时间就关掉，别让它吃掉讲课时间。</div>
+
+  <h4>找错模式怎么用</h4>
+  <ol>
+    <li>投影出来，让一个学生报一个借方合计、一个贷方合计</li>
+    <li><b>先别按回车</b>——问全班「这个差额该用哪种方法找？」</li>
+    <li>等有人说出方法，再让学生输入，看程序怎么判</li>
+    <li>猜对的当场 5 分（按《90-C5》，一题封顶 5 分）</li>
+  </ol>
+
+  <h4>改错模式怎么用</h4>
+  <ol>
+    <li>8 道题，每题四个选项，点一下就判对错</li>
+    <li>答错会直接告诉他<b>「你选的那个方法用在什么情况」</b>，而不是只说「错了」</li>
+    <li>用 90-B2 抽人上来点，全班一起看</li>
+    <li>八题全对的，当场 5 分</li>
+  </ol>
+
+  <button class="mclose" onclick="hideIntro()">知道了，开始用</button>
+</div></div>
+
+<div class="modal" id="help"><div class="mbox">
+  <h2>怎么用</h2>
+
+  <h4>找错模式：四种方法的判断口径</h4>
+  <table>
+    <tr><th>条件</th><th>提示</th></tr>
+    <tr><td>差额不为 0</td><td>差数法永远可用：直接找有没有这个数漏了一边</td></tr>
+    <tr><td>差额有小数（几角几分）</td><td>尾数法：只查小数部分</td></tr>
+    <tr><td>差额能被 2 整除</td><td>除2法：可能有一笔「差额÷2」记反了方向</td></tr>
+    <tr><td>差额能被 9 整除</td><td>除9法：可能把某个数写大了 10 倍或写小了 10 倍</td></tr>
+  </table>
+  <div class="q">差额同时能被 2 和 9 整除是常事（比如 180），这时候两个都会亮。
+  ★ 这正好是个好问题：「两个都可能，先查哪个？」——先查除2，因为方向记反比写错位数常见。</div>
+
+  <h4>改错模式：三种方法的分界线</h4>
+  <table>
+    <tr><th>情况</th><th>方法</th><th>写几笔</th></tr>
+    <tr><td>结账前，凭证是对的，只是抄错了字或数</td><td>划线更正法</td><td>不写分录，划线+改+签章</td></tr>
+    <tr><td>科目错了 / 借贷方向错了</td><td>红字更正法</td><td>三笔（红冲一笔，蓝字重记一笔）</td></tr>
+    <tr><td>科目对，金额记多了</td><td>红字更正法</td><td>两笔（只红冲差额）</td></tr>
+    <tr><td>科目对，金额记少了</td><td>补充登记法</td><td>两笔（蓝字补差额）</td></tr>
+  </table>
+
+  <h4>配套材料</h4>
+  <ul>
+    <li>《06-00 项目六主文档》图 9 —— 四种找错法漏斗图</li>
+    <li>《06-00 项目六主文档》图 14 —— 三种改错法决策树（建议印成 A5 小卡）</li>
+    <li>《06-00 项目六主文档》图 19 —— 连线题，跟改错模式是同一批题</li>
+    <li>《90-B2 随机点名与课堂计分器》—— 抽人上来点</li>
+  </ul>
+  <button class="mclose" onclick="hideHelp()">明白了</button>
+</div></div>
+
+<script>
+/* ============ 模式切换 ============ */
+function go(n){
+  document.getElementById('tab1').classList.toggle('on',n===1);
+  document.getElementById('tab2').classList.toggle('on',n===2);
+  document.getElementById('pane1').classList.toggle('on',n===1);
+  document.getElementById('pane2').classList.toggle('on',n===2);
+}
+
+/* ============ 找错模式 ============ */
+function fill(a,b){document.getElementById('dr').value=a;document.getElementById('cr').value=b;calc();}
+function fmt(x){return (Math.round(x*100)/100).toLocaleString('zh-CN',{minimumFractionDigits:(Math.abs(x*100%100)>0.4?2:0),maximumFractionDigits:2});}
+
+function calc(){
+  const dr=parseFloat(document.getElementById('dr').value)||0;
+  const cr=parseFloat(document.getElementById('cr').value)||0;
+  const raw=dr-cr, d=Math.abs(raw);
+  const box=document.getElementById('diff');
+  const cents=Math.round(d*100);
+
+  if(!dr&&!cr){box.innerHTML='差额 0<span>先填两边的合计数</span>';setAll('—',false,false);return;}
+  if(cents===0){
+    box.innerHTML='借贷相等 ✓<span>试算平衡通过，账面上暂时没有查出错</span>';
+    setAll('借贷已经相等，这四种方法都用不上',false,false);
+    return;
+  }
+  box.innerHTML='差额 '+fmt(d)+'<span>'+(raw>0?'借方比贷方多':'贷方比借方多')+' '+fmt(d)+' 元</span>';
+
+  // ① 差数法：永远适用
+  set('m1',true,false,'去账上找有没有一笔 <b>'+fmt(d)+'</b> 元只记了一边。'+(raw>0?'很可能是某笔贷方漏记了。':'很可能是某笔借方漏记了。'));
+
+  // ② 尾数法
+  const hasDec = cents%100!==0;
+  set('m2',hasDec,hasDec,hasDec
+    ? '差额带小数（'+fmt(d)+'），<b>只用检查小数部分</b>，整数部分不用一笔一笔看。'
+    : '差额是整数，尾数法用不上。');
+
+  // ③ 除2法
+  const by2 = cents%200===0;
+  set('m3',by2,false,by2
+    ? '差额 ÷ 2 = <b>'+fmt(d/2)+'</b>。去找有没有一笔 '+fmt(d/2)+' 元，本来该记'+(raw>0?'贷方，被记到了借方':'借方，被记到了贷方')+'。'
+    : '差额不能被 2 整除，方向记反的可能性小。');
+
+  // ④ 除9法
+  const by9 = cents%900===0;
+  let t9='差额不能被 9 整除，写大写小或颠倒的可能性小。';
+  if(by9){
+    const q=d/9;
+    t9='差额 ÷ 9 = <b>'+fmt(q)+'</b>。两种可能：<br>'+
+       '· 写大了：正确是 <b>'+fmt(q)+'</b>，写成了 '+fmt(q*10)+'<br>'+
+       '· 写小了：正确是 <b>'+fmt(q*10)+'</b>，写成了 '+fmt(q)+'<br>'+
+       '看差在哪一边：'+(raw>0?'借方多了，说明借方那个数写大了。':'借方少了，说明借方那个数写小了。');
+  }
+  set('m4',by9,by9,t9);
+}
+function set(id,hit,strong,txt){
+  const e=document.getElementById(id);
+  e.className='rc'+(hit?' hit':' miss')+(strong?' strong':'');
+  e.querySelector('.verdict2').innerHTML=txt;
+}
+function setAll(txt,a,b){['m1','m2','m3','m4'].forEach(i=>set(i,false,false,txt));}
+
+/* ============ 改错模式 ============ */
+const METHODS=[
+ {k:'A',t:'划线更正法',s:'红线划掉整个数，上方写正确的，签章'},
+ {k:'B',t:'红字更正法（写三笔）',s:'整笔红冲，再用蓝字重记一笔正确的'},
+ {k:'C',t:'红字更正法（写两笔）',s:'只用红字冲掉多记的那部分差额'},
+ {k:'D',t:'补充登记法',s:'用蓝字补上少记的那部分差额'}
+];
+const QS=[
+ {q:'结账以前，发现摘要栏里把「购入原材料」写成了「购入原村料」。凭证本身没错。',a:'A',
+  why:'凭证是对的，只是抄的时候写错了字，而且还没结账——这正是划线更正法的适用范围。'},
+ {q:'记账以后发现：这 2500 元是打广告花的，应该记<b>销售费用</b>，结果记成了<b>管理费用</b>。',a:'B',
+  why:'科目错了，说明凭证本身就错了。先用红字把原来那笔整笔冲掉，再用蓝字记一笔正确的，一共三笔。（教材例6-3）'},
+ {q:'实际归还欠款 <b>8 000</b> 元，凭证和账上都记成了 <b>80 000</b> 元。科目和方向都没错。',a:'C',
+  why:'科目对、方向对，只是金额记多了 72000。只要用红字把多出来的 72000 冲掉就行，不用重记。（教材例6-4）'},
+ {q:'收回欠款 <b>3 500</b> 元存入银行，凭证上金额误写成 <b>350</b> 元，并且已经记账了。',a:'D',
+  why:'科目对、方向对，只是金额记少了 3150。用蓝字补一笔 3150 就行，红笔都不用拿。（教材例6-5）'},
+ {q:'记账以后发现，一笔业务的<b>借贷方向记反了</b>：本来该借银行存款、贷应收账款，记成了反的。',a:'B',
+  why:'方向错和科目错是一类：原来那笔整个是错的，必须红字整笔冲掉，再蓝字重记一笔正确的。'},
+ {q:'结账以前，发现金额 <b>18 175</b> 抄成了 <b>18 715</b>。翻回凭证一看，凭证上写的是对的。',a:'A',
+  why:'凭证对、结账前、纯属抄错——划线更正法。★ 注意：要把「18 715」整个数字全划掉，不能只改中间那两位。（教材例6-2）'},
+ {q:'记账以后发现，应该记 <b>6 000</b> 的管理费用，记成了 <b>600</b>。科目和方向都对。',a:'D',
+  why:'记少了 5400，用蓝字补一笔 5400。凡是「科目对、方向对、金额小了」，一律补充登记。'},
+ {q:'记账以后发现，本该记入「原材料」的一笔 4 000 元，误记入了「库存商品」。',a:'B',
+  why:'又是科目错。红字把「库存商品」那笔整笔冲掉，再蓝字记一笔「原材料」，三笔。'}
+];
+let qi=0,score=0,answered=0;
+function renderQ(){
+  const area=document.getElementById('qarea');
+  if(qi>=QS.length){
+    area.innerHTML='<div class="qbox"><div class="qtxt">八题做完了：答对 <b>'+score+'</b> / '+QS.length+' 题。</div>'+
+      '<div class="fb ok show">'+(score===QS.length
+        ? '★ 全对。三种方法的分界线已经清楚了，当场给 5 分。'
+        : (score>=6 ? '★ 基本清楚了。错的那几题，回去对着《06-00》图14 那棵决策树再走一遍。'
+                    : '★ 还比较乱。建议把图11、图12、图13 三张连环画并排投影，再讲一遍「科目错整笔冲、金额多只冲差额、金额少蓝字补」。'))+
+      '</div><div style="margin-top:12px"><button onclick="resetQ()">↺ 再来一轮</button></div></div>';
+    return;
+  }
+  const Q=QS[qi];
+  area.innerHTML='<div class="qbox">'+
+    '<div class="qnum">第 '+(qi+1)+' / '+QS.length+' 题</div>'+
+    '<div class="qtxt">'+Q.q+'</div>'+
+    '<div class="opts">'+METHODS.map(m=>
+      '<button class="opt" id="o'+m.k+'" onclick="pick(\''+m.k+'\')">'+m.t+'<small>'+m.s+'</small></button>').join('')+
+    '</div><div class="fb" id="fb"></div></div>';
+  updHud();
+}
+function pick(k){
+  const Q=QS[qi];
+  if(document.getElementById('fb').classList.contains('show'))return;
+  const right=(k===Q.a);
+  document.getElementById('o'+Q.a).classList.add('right');
+  if(!right)document.getElementById('o'+k).classList.add('wrong');
+  const wrongM=METHODS.find(m=>m.k===k), rightM=METHODS.find(m=>m.k===Q.a);
+  const fb=document.getElementById('fb');
+  fb.className='fb show '+(right?'ok':'no');
+  fb.innerHTML=(right?'✓ 对了。':'✗ 不对。你选的是<b>'+wrongM.t+'</b>，正确答案是<b>'+rightM.t+'</b>。')+
+    '<br>'+Q.why+
+    '<div style="margin-top:10px"><button class="sm g" onclick="nextQ()">下一题 →</button></div>';
+  if(right)score++;
+  answered++;
+  updHud();
+}
+function nextQ(){qi++;renderQ();}
+function resetQ(){qi=0;score=0;answered=0;renderQ();}
+function updHud(){
+  document.getElementById('hScore').textContent=score;
+  document.getElementById('hTotal').textContent=answered;
+}
+
+/* ============ 弹窗 ============ */
+function showHelp(){document.getElementById('help').classList.add('show');}
+function hideHelp(){document.getElementById('help').classList.remove('show');}
+function hideIntro(){document.getElementById('intro').classList.remove('show');}
+window.addEventListener('load',()=>{
+  document.getElementById('intro').classList.add('show');
+  calc();renderQ();
+});
+</script>
+</body>
+</html>
