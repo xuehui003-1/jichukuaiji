@@ -103,13 +103,13 @@ input::placeholder{color:rgba(255,255,255,.5)}
     <option value="3">难度③ 完整分录　第6周起｜项目二~五</option>
   </select>
   <button onclick="start()">开始游戏</button>
-  <button class="g" onclick="exportCSV()">⬇ 导出成绩 CSV</button>
+  <button class="g" onclick="exportCSV()">⬇ 导出成绩表</button>
   <button class="o" onclick="M('m1')">❓ 怎么用</button>
   <button class="o" onclick="location.reload()">重置</button>
 </div>
 
 <div class="panel">
-  <h3>本节课成绩暂存（<span id="cnt2">0</span> 人次）　—— 下课前点「导出成绩 CSV」，直接贴进班级数据表</h3>
+  <h3>本节课成绩暂存（<span id="cnt2">0</span> 人次）　—— 下课前点「导出成绩表」，用 WPS/Excel 打开后贴进 90-C4「本周计算器」</h3>
   <div class="roster" id="roster"><span style="color:#9575cd;font-size:12.5px">还没有记录</span></div>
   <h3 style="margin-top:14px">错题地洞（本轮）</h3>
   <div class="wrongs" id="wr"><div style="background:none;border:none;color:#9575cd">暂无错题</div></div>
@@ -143,16 +143,16 @@ input::placeholder{color:rgba(255,255,255,.5)}
     <li>全班分 4～6 组，每题一组派代表上台，其余组员可以喊答案</li>
     <li><b>上台前先在输入框敲上选手姓名</b>，这样成绩才能导出到数据表</li>
     <li>连击 3 次触发双倍积分，气氛会炸——提前告诉学生有这个机制</li>
-    <li>下课前点「导出成绩 CSV」，一个表格就下载好了，<b>您一个字都不用录</b></li>
+    <li>下课前点「导出成绩表」，一个表格就下载好了，<b>您一个字都不用录</b></li>
   </ol>
   <div class="say">现在这一轮，每组派一个人上来。答对本组加分，连对三题双倍。答错不扣人只扣分，别怕，错了正好我讲。</div>
 
-  <h4>导出的 CSV 长什么样</h4>
+  <h4>导出的成绩表长什么样</h4>
   <p style="font-family:monospace;font-size:12.5px;background:#f5f0f8;padding:10px;border-radius:8px">
   日期,姓名,难度,得分,答对,答错,用时秒,错题<br>
   2026-09-08,王雨欣,要素档,142,11,1,86,"应付职工薪酬"
   </p>
-  <p>用 Excel 打开，整列复制到您的班级数据总表即可。错题列会自动汇总，直接对应下节课要重讲的内容。</p>
+  <p>下载下来是 .csv，用 WPS 或 Excel 双击打开，和普通表格没有区别（浏览器不好直接生成 xlsx）。整表贴进 90-C4「本周计算器」中间。游戏里的 142 分不会直接加进周分，计算器会折成 2 分或 5 分。错题列对应下节课要重讲的内容。</p>
 
   <h4>题库怎么改</h4>
   <p>源码里 <b>ELEM</b> 数组是要素档题库（40题），<b>QS</b> 数组是分录题库（16题）。照着格式加就行，加多少都不影响运行。</p>
@@ -292,7 +292,7 @@ function end(){
   $('ovs').style.color=score>=100?'#ffd54f':'#fff';
   $('ovp').innerHTML=`${pname}　用时 ${sec} 秒　答对 ${right} / 错 ${bad}<br>`+
     (bad?'错题已存入下方错题地洞，建议当堂讲评。':'全对！可以进下一难度了。')+
-    `<br><span style="color:#9575cd;font-size:13px">成绩已暂存，下课前记得点「导出成绩 CSV」</span>`;
+    `<br><span style="color:#9575cd;font-size:13px">成绩已暂存，下课前记得点「导出成绩表」</span>`;
   M('over');
 }
 function renderRoster(){
