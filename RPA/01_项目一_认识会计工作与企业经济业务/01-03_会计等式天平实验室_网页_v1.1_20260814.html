@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>01-A1 会计等式天平实验室 v1.1</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:linear-gradient(160deg,#fff5fa,#fdeef5 40%,#f7f2ff);color:#3a2c35;min-height:100vh;padding:16px}
+.wrap{max-width:1400px;margin:0 auto}
+header{text-align:center;margin-bottom:12px;position:relative}
+h1{font-size:26px;color:#c2185b;letter-spacing:1px}
+h1 small{display:block;font-size:13px;color:#8d6e7d;font-weight:400;margin-top:5px;letter-spacing:0}
+.help-btn{position:absolute;right:0;top:4px;background:#7b1fa2;color:#fff;border:none;border-radius:20px;padding:8px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.layout{display:grid;grid-template-columns:1fr 330px;gap:14px}
+@media(max-width:1050px){.layout{grid-template-columns:1fr}}
+.card{background:#fff;border-radius:15px;padding:16px;box-shadow:0 3px 16px rgba(194,24,91,.09);border:1px solid #f7d9e6}
+.card+.card{margin-top:13px}
+h3{font-size:15px;color:#c2185b;margin-bottom:10px;padding-bottom:6px;border-bottom:2px dashed #f7d9e6}
+.eqline{text-align:center;font-size:25px;font-weight:700;margin-bottom:6px}
+.eqline .a{color:#e91e63}.eqline .l{color:#f57c00}.eqline .o{color:#3f51b5}
+/* 天平 */
+.balance{position:relative;height:300px}
+.pivot{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:0;height:0;border-left:32px solid transparent;border-right:32px solid transparent;border-bottom:88px solid #b0879b}
+.beam{position:absolute;left:50%;bottom:88px;width:74%;height:11px;background:linear-gradient(90deg,#e91e63,#9c27b0);border-radius:6px;transform:translateX(-50%);transition:transform .55s cubic-bezier(.34,1.4,.5,1)}
+.pan{position:absolute;bottom:108px;width:36%;text-align:center;transition:bottom .55s cubic-bezier(.34,1.4,.5,1)}
+.pan.left{left:3%}.pan.right{right:3%}
+.stack{display:flex;flex-direction:column-reverse;align-items:center;min-height:132px;justify-content:flex-start}
+.blk{width:92%;border-radius:7px;color:#fff;font-size:12.5px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:3px;box-shadow:0 2px 5px rgba(0,0,0,.15);transition:height .5s ease;white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,.35);min-height:22px}
+.blk.asset{background:linear-gradient(135deg,#f06292,#d81b60)}
+.blk.liab{background:linear-gradient(135deg,#ffb74d,#ef6c00)}
+.blk.eq{background:linear-gradient(135deg,#7986cb,#303f9f)}
+.pan .lbl{font-size:14px;color:#7d6270;margin-bottom:5px;font-weight:700}
+.rope{height:30px;width:2px;background:#b0879b;margin:0 auto}
+.tot{font-size:21px;font-weight:800}
+.status{text-align:center;margin-top:6px;font-size:17px;font-weight:700;padding:8px;border-radius:9px;background:#e8f5e9;color:#2e7d32}
+/* 明细表 —— 解决"看不清"的核心：色块外另设文字清单 */
+.detail{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+@media(max-width:700px){.detail{grid-template-columns:1fr}}
+.dt{border:1.5px solid #f2c6da;border-radius:10px;overflow:hidden}
+.dt .hd{padding:7px 11px;font-size:13.5px;font-weight:800;color:#fff}
+.dt.l .hd{background:#d81b60}.dt.r .hd{background:#303f9f}
+.dt table{width:100%;border-collapse:collapse;font-size:13px}
+.dt td{padding:5px 11px;border-bottom:1px solid #fbeaf1;color:#3a2c35}
+.dt td.v{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.dt tr.new td{background:#fff3c4;animation:fade 1.6s forwards}
+@keyframes fade{to{background:#fff}}
+.dt tr.sum td{background:#fce4ec;font-weight:800;border-top:2px solid #f2c6da}
+.dt.r tr.sum td{background:#e8eaf6}
+.dt .tagl{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px}
+/* 业务卡 */
+.biz{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-height:340px;overflow-y:auto;padding-right:4px}
+@media(max-width:700px){.biz{grid-template-columns:1fr}}
+.bz{background:#fff;border:1.5px solid #f2c6da;border-radius:10px;padding:8px 10px;cursor:pointer;font-size:13px;line-height:1.5;transition:.15s;text-align:left;font-family:inherit;color:#3a2c35}
+.bz:hover{border-color:#e91e63;background:#fff0f6;transform:translateY(-2px)}
+.bz.used{opacity:.45;border-style:dashed}
+.bz b{color:#c2185b;display:block;font-size:11.5px;margin-bottom:2px}
+.btns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+button.act{flex:1;min-width:110px;padding:9px;border:none;border-radius:9px;background:#e91e63;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+button.act.g{background:#7b1fa2}button.act.gray{background:#b0879b}
+button.act:hover{opacity:.87}
+.log{max-height:190px;overflow-y:auto;font-size:12.5px;line-height:1.65}
+.log div{padding:6px 9px;border-left:3px solid #e91e63;background:#fff6fa;margin-bottom:5px;border-radius:0 6px 6px 0;color:#5c4a55}
+.log .t{color:#7b1fa2;font-weight:700}
+.types{font-size:12.5px}
+.types div{display:flex;justify-content:space-between;padding:4px 7px;border-radius:5px;color:#5c4a55}
+.types div.hit{background:#fce4ec;font-weight:700;color:#c2185b}
+/* 弹窗 */
+.modal{position:fixed;inset:0;background:rgba(58,44,53,.72);display:none;align-items:center;justify-content:center;z-index:99;padding:20px}
+.modal.show{display:flex}
+.mbox{background:#fff;border-radius:16px;max-width:760px;width:100%;max-height:88vh;overflow-y:auto;padding:28px 32px}
+.mbox h2{color:#c2185b;font-size:22px;margin-bottom:6px}
+.mbox h4{color:#7b1fa2;font-size:15px;margin:16px 0 7px;padding-left:9px;border-left:4px solid #e91e63}
+.mbox p,.mbox li{font-size:14px;line-height:1.85;color:#4a3a44}
+.mbox ol,.mbox ul{padding-left:22px}
+.mbox .step{background:#fff6fa;border-radius:10px;padding:11px 15px;margin-bottom:8px;font-size:14px;line-height:1.8}
+.mbox .step b{color:#c2185b}
+.mbox .say{background:#e8f5e9;border-left:4px solid #43a047;padding:10px 14px;border-radius:0 8px 8px 0;font-size:14px;line-height:1.8;margin:8px 0;color:#2e5730}
+.mbox .say::before{content:"🗣 您这样说：";display:block;font-weight:700;color:#2e7d32;margin-bottom:3px;font-size:12.5px}
+.mclose{margin-top:18px;width:100%;padding:11px;border:none;border-radius:10px;background:#e91e63;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>会计等式天平实验室
+    <small>《会计学基础》项目一 任务2 ｜ 资产 ＝ 负债 ＋ 所有者权益 ｜ 九种业务类型　<b style="color:#c2185b">01-A1 v1.1</b></small>
+  </h1>
+  <button class="help-btn" onclick="M('m1')">❓ 怎么玩 / 课堂脚本</button>
+</header>
+
+<div class="layout">
+  <div>
+    <div class="card">
+      <div class="eqline"><span class="a">资产</span> ＝ <span class="l">负债</span> ＋ <span class="o">所有者权益</span></div>
+      <div class="balance">
+        <div class="beam" id="beam"></div>
+        <div class="pivot"></div>
+        <div class="pan left" id="panL">
+          <div class="lbl" style="color:#d81b60">资产</div>
+          <div class="stack" id="stkL"></div>
+          <div class="rope"></div>
+          <div class="tot" style="color:#d81b60" id="totL">0</div>
+        </div>
+        <div class="pan right" id="panR">
+          <div class="lbl" style="color:#303f9f">负债 ＋ 所有者权益</div>
+          <div class="stack" id="stkR"></div>
+          <div class="rope"></div>
+          <div class="tot" style="color:#303f9f" id="totR">0</div>
+        </div>
+      </div>
+      <div class="status" id="status">天平平衡 —— 等式成立</div>
+
+      <!-- 明细清单：色块看不清就看这里 -->
+      <div class="detail">
+        <div class="dt l"><div class="hd">资产明细</div><table id="tbL"></table></div>
+        <div class="dt r"><div class="hd">负债 ＋ 所有者权益明细</div><table id="tbR"></table></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>第一步：点一张业务卡，看天平怎么变</h3>
+      <div class="biz" id="biz"></div>
+      <div class="btns">
+        <button class="act g" onclick="M('m2')">🎯 挑战：让天平倒下</button>
+        <button class="act" onclick="M('m1')">📖 课堂脚本</button>
+        <button class="act gray" onclick="reset()">↺ 重置实验</button>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="card">
+      <h3>九种业务类型 · 命中统计</h3>
+      <div class="types" id="types"></div>
+      <div style="font-size:12px;color:#8d6e7d;margin-top:9px;line-height:1.7;border-top:1px dashed #f7d9e6;padding-top:9px">
+        目标：让学生把九种全部点亮。点亮过程中他们自己会发现——<b style="color:#c2185b">每一种都不破坏平衡</b>。
+      </div>
+    </div>
+    <div class="card">
+      <h3>业务流水</h3>
+      <div class="log" id="log"><div style="border-color:#ccc;background:#fafafa;color:#999">还没有业务。点左边的卡片开始。</div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 玩法说明 -->
+<div class="modal" id="m1"><div class="mbox">
+  <h2>怎么玩 · 课堂脚本</h2>
+  <p style="color:#8d6e7d">用于：项目一 任务2「会计等式与九种业务类型」　建议时长：18～22 分钟　设备：一台电脑 + 投影</p>
+
+  <h4>这个东西是干什么的</h4>
+  <p>教材上"资产＝负债＋所有者权益，任何业务都不破坏恒等关系"这句话，学生背得下来但不信。这个实验把等式变成一架天平——不管点哪笔业务，<b>天平永远不倒</b>。让学生亲手点、亲眼看，结论由他们自己说出来。</p>
+
+  <h4>操作方法（很简单，就三件事）</h4>
+  <div class="step"><b>① 点业务卡</b>　点下面任意一张卡片，代表企业发生了这笔经济业务。天平上的色块会立刻增减，明细表会高亮变动的项目。</div>
+  <div class="step"><b>② 看两个地方</b>　天平的<b>倾斜角度</b>（永远不倾斜）和下方<b>明细表的合计数</b>（左右永远相等）。色块只是示意，具体数字看明细表。</div>
+  <div class="step"><b>③ 看右侧类型统计</b>　每点一笔，右侧会自动标出它属于教材九种类型的哪一种。目标是把九种全点亮。</div>
+
+  <h4>课堂流程（照着念就行）</h4>
+  <div class="step"><b>0～3 分钟｜不讲课，先玩</b><br>叫一个学生上台，让他随便点 5 笔业务，全班看屏幕。您什么都不解释。</div>
+  <div class="say">这是一家刚成立的公司。这位同学现在是老板，他点什么，公司就发生什么业务。大家盯着这个天平看，看出什么名堂来了没有？</div>
+
+  <div class="step"><b>3～8 分钟｜抛出挑战</b><br>点"挑战：让天平倒下"按钮，把问题交给学生。</div>
+  <div class="say">现在换个玩法。谁能找到一笔业务，让这个天平<b>倒下去</b>？谁能做到，这节课剩下的时间归他支配。来，一个一个上来试。</div>
+  <p style="color:#8d6e7d;font-size:13px">学生会疯狂尝试各种组合。这 5 分钟是整节课注意力最集中的时刻，因为他们在<b>试图证明老师是错的</b>。让他们试，让他们失败。</p>
+
+  <div class="step"><b>8～14 分钟｜收网，讲原理</b><br>等三四个学生都失败后，再问。</div>
+  <div class="say">为什么倒不了？谁来说说，你刚才试的时候发现了什么规律？
+  </div>
+  <p style="color:#8d6e7d;font-size:13px">引导学生说出两句话：<b>要么等式同一边一增一减，要么两边同增同减。</b>这两句就是九种类型的全部本质。这时候再翻开课本，学生看到的不是要背的结论，而是自己刚才发现的规律。</p>
+
+  <div class="step"><b>14～20 分钟｜集齐九种</b><br>分小组比赛，看哪组先把右侧九种类型全部点亮，报出每一种对应哪笔业务。</div>
+
+  <h4>常见状况怎么办</h4>
+  <ul>
+    <li><b>学生说"我点的这笔明明只影响了一个项目"</b>——很好，让他上来演示。他会发现明细表里其实动了两行，这正是复式记账的引子，可以直接接到项目二。</li>
+    <li><b>没有投影/机房被占</b>——把业务卡打印成纸质卡片，黑板上画天平，学生上台贴磁贴。效果打八折但仍然成立。</li>
+    <li><b>时间不够</b>——砍掉"集齐九种"，保留前两段。挑战环节绝对不能砍，那是整节课的钩子。</li>
+  </ul>
+  <button class="mclose" onclick="X('m1')">明白了，开始上课</button>
+</div></div>
+
+<!-- 挑战说明 -->
+<div class="modal" id="m2"><div class="mbox">
+  <h2>🎯 挑战任务：让天平倒下</h2>
+  <div class="say" style="font-size:15px">同学们，现在我给你们一个任务。<br><br>请你们找出<b>任意一笔经济业务</b>，让屏幕上这架天平失去平衡。<br><br>可以用卡片上的任何一笔，也可以自己编一笔告诉我，我来输。谁做到了，我请全班喝奶茶。</div>
+  <h4>提示（学生卡住时再给）</h4>
+  <p>想一想：一笔业务发生时，它<b>至少会影响两个项目</b>。而这两个项目的变动，永远只有下面两种情况——</p>
+  <ul>
+    <li>等式<b>同一边</b>：一个增、一个减（比如现金变成设备）</li>
+    <li>等式<b>两边</b>：同时增、或同时减（比如借钱：钱多了，债也多了）</li>
+  </ul>
+  <p>所以……祝你好运 🙂</p>
+  <h4>给老师的话</h4>
+  <p style="color:#8d6e7d;font-size:13.5px">这个挑战的意义不在于难倒学生，而在于让他们<b>穷尽尝试后自己承认"确实倒不了"</b>。人只相信自己验证过的结论。这 5 分钟省下您后面 20 分钟的反复强调。</p>
+  <button class="mclose" onclick="X('m2')">关闭</button>
+</div></div>
+
+<script>
+const TYPES=["①资产项目此增彼减","②资产与所有者权益同时增加","③资产与负债同时增加","④资产与负债同时减少","⑤资产与所有者权益同时减少","⑥负债增加、所有者权益减少","⑦负债减少、所有者权益增加","⑧负债项目此增彼减","⑨所有者权益项目此增彼减"];
+const BIZ=[
+ {n:"投资人投入货币资金 500 000 元",a:[["银行存款",500000]],o:[["实收资本",500000]],t:1},
+ {n:"从银行提取现金 20 000 元",a:[["库存现金",20000],["银行存款",-20000]],t:0},
+ {n:"向银行借入短期借款 300 000 元",a:[["银行存款",300000]],l:[["短期借款",300000]],t:2},
+ {n:"用银行存款归还短期借款 100 000 元",a:[["银行存款",-100000]],l:[["短期借款",-100000]],t:3},
+ {n:"赊购原材料 50 000 元，尚未付款",a:[["原材料",50000]],l:[["应付账款",50000]],t:2},
+ {n:"用银行存款支付应付账款 50 000 元",a:[["银行存款",-50000]],l:[["应付账款",-50000]],t:3},
+ {n:"购入设备 200 000 元，以存款支付",a:[["固定资产",200000],["银行存款",-200000]],t:0},
+ {n:"投资人以设备 150 000 元投资入股",a:[["固定资产",150000]],o:[["实收资本",150000]],t:1},
+ {n:"用银行存款分配利润 30 000 元",a:[["银行存款",-30000]],o:[["利润分配",-30000]],t:4},
+ {n:"宣告应付投资者利润 30 000 元未付",l:[["应付利润",30000]],o:[["利润分配",-30000]],t:5},
+ {n:"应付账款 40 000 元转为投资人资本",l:[["应付账款",-40000]],o:[["实收资本",40000]],t:6},
+ {n:"短期借款 80 000 元转为应付账款",l:[["短期借款",-80000],["应付账款",80000]],t:7},
+ {n:"用资本公积 60 000 元转增实收资本",o:[["资本公积",-60000],["实收资本",60000]],t:8},
+ {n:"车间领用原材料 30 000 元投入生产",a:[["原材料",-30000],["生产成本",30000]],t:0},
+ {n:"收回应收账款 45 000 元存入银行",a:[["应收账款",-45000],["银行存款",45000]],t:0},
+ {n:"提取盈余公积 25 000 元",o:[["未分配利润",-25000],["盈余公积",25000]],t:8}
+];
+let A={},L={},O={},hits=new Array(9).fill(0),cnt=0,changed=new Set();
+const $=i=>document.getElementById(i), fmt=n=>n.toLocaleString('zh-CN');
+const M=i=>$(i).classList.add('show'), X=i=>$(i).classList.remove('show');
+
+function rows(obj,cls,tag){
+  const e=Object.entries(obj).filter(x=>x[1]!==0);
+  if(!e.length)return {html:'<tr><td style="color:#bbb;font-size:12.5px">尚无项目</td><td class="v" style="color:#bbb">0</td></tr>',tot:0};
+  const tot=e.reduce((s,x)=>s+x[1],0);
+  return {html:e.map(([k,v])=>`<tr class="${changed.has(k)?'new':''}"><td><span class="tagl" style="background:${tag}"></span>${k}</td><td class="v">${fmt(v)}</td></tr>`).join(''),tot};
+}
+function render(){
+  const sa=Object.entries(A).filter(x=>x[1]!==0),sl=Object.entries(L).filter(x=>x[1]!==0),so=Object.entries(O).filter(x=>x[1]!==0);
+  const ta=sa.reduce((s,x)=>s+x[1],0),tl=sl.reduce((s,x)=>s+x[1],0),to=so.reduce((s,x)=>s+x[1],0);
+  const max=Math.max(ta,tl+to,1),H=128;
+  const bar=(arr,c)=>arr.map(([k,v])=>{const h=Math.max(22,v/max*H);
+    return `<div class="blk ${c}" style="height:${h}px" title="${k} ${fmt(v)}">${h>=26?k:''}</div>`}).join('');
+  $('stkL').innerHTML=bar(sa,'asset')||'<div style="color:#ccc;font-size:12px">空</div>';
+  $('stkR').innerHTML=(bar(sl,'liab')+bar(so,'eq'))||'<div style="color:#ccc;font-size:12px">空</div>';
+  $('totL').textContent=fmt(ta);$('totR').textContent=fmt(tl+to);
+  const rl=rows(A,'l','#d81b60');
+  $('tbL').innerHTML=rl.html+`<tr class="sum"><td>资产合计</td><td class="v">${fmt(ta)}</td></tr>`;
+  const el=Object.entries(L).filter(x=>x[1]!==0),eo=Object.entries(O).filter(x=>x[1]!==0);
+  const rr=(el.map(([k,v])=>`<tr class="${changed.has(k)?'new':''}"><td><span class="tagl" style="background:#ef6c00"></span>${k}</td><td class="v">${fmt(v)}</td></tr>`).join('')
+    +eo.map(([k,v])=>`<tr class="${changed.has(k)?'new':''}"><td><span class="tagl" style="background:#303f9f"></span>${k}</td><td class="v">${fmt(v)}</td></tr>`).join(''))
+    ||'<tr><td style="color:#bbb;font-size:12.5px">尚无项目</td><td class="v" style="color:#bbb">0</td></tr>';
+  $('tbR').innerHTML=rr+`<tr class="sum"><td>负债 ＋ 所有者权益合计</td><td class="v">${fmt(tl+to)}</td></tr>`;
+  const diff=ta-(tl+to);
+  const ang=Math.max(-9,Math.min(9,diff/Math.max(max,1)*40));
+  $('beam').style.transform=`translateX(-50%) rotate(${-ang}deg)`;
+  $('panL').style.bottom=(108-ang*4)+'px';$('panR').style.bottom=(108+ang*4)+'px';
+  const st=$('status');
+  if(diff===0){st.textContent=`✓ 天平平衡　${fmt(ta)} ＝ ${fmt(tl)} ＋ ${fmt(to)}`;st.style.background='#e8f5e9';st.style.color='#2e7d32'}
+  else{st.textContent=`⚠ 失衡，差额 ${fmt(diff)}`;st.style.background='#ffebee';st.style.color='#c62828'}
+  $('types').innerHTML=TYPES.map((t,i)=>`<div class="${hits[i]?'hit':''}"><span>${t}</span><span>${hits[i]}</span></div>`).join('');
+}
+function apply(b,i){
+  cnt++;changed=new Set();
+  (b.a||[]).forEach(([k,v])=>{A[k]=(A[k]||0)+v;changed.add(k)});
+  (b.l||[]).forEach(([k,v])=>{L[k]=(L[k]||0)+v;changed.add(k)});
+  (b.o||[]).forEach(([k,v])=>{O[k]=(O[k]||0)+v;changed.add(k)});
+  hits[b.t]++;
+  document.querySelectorAll('.bz')[i].classList.add('used');
+  const lg=$('log');if(cnt===1)lg.innerHTML='';
+  const det=[...(b.a||[]),...(b.l||[]),...(b.o||[])].map(([k,v])=>`${k} ${v>0?'+':'−'}${fmt(Math.abs(v))}`).join('　');
+  lg.insertAdjacentHTML('afterbegin',`<div><span class="t">第${cnt}笔</span> ${b.n}<br><span style="color:#8d6e7d">${det}</span><br><span style="color:#7b1fa2">${TYPES[b.t]}</span></div>`);
+  render();
+}
+function reset(){A={};L={};O={};hits=new Array(9).fill(0);cnt=0;changed=new Set();
+  document.querySelectorAll('.bz').forEach(b=>b.classList.remove('used'));
+  $('log').innerHTML='<div style="border-color:#ccc;background:#fafafa;color:#999">还没有业务。点左边的卡片开始。</div>';render();}
+$('biz').innerHTML=BIZ.map((b,i)=>`<button class="bz" onclick="apply(BIZ[${i}],${i})"><b>业务 ${i+1}　${TYPES[b.t].slice(0,1)}</b>${b.n}</button>`).join('');
+document.querySelectorAll('.modal').forEach(m=>m.onclick=e=>{if(e.target===m)m.classList.remove('show')});
+render();
+</script>
+</body>
+</html>

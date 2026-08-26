@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>02-A1 资金流水管道模型</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:linear-gradient(165deg,#0d2137,#123a52 55%,#0e2b3d);color:#fff;min-height:100vh;padding:12px}
+.wrap{max-width:1400px;margin:0 auto}
+header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px}
+h1{font-size:20px;color:#4dd0e1}
+h1 small{display:block;font-size:12px;color:#80cbc4;font-weight:400;margin-top:3px}
+.hud{display:flex;gap:8px;flex-wrap:wrap}
+.pill{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:6px 14px;font-size:13px;font-weight:700}
+.pill b{color:#ffd54f;font-size:15px}
+.card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.11);border-radius:14px;padding:14px;margin-bottom:12px}
+h3{font-size:14px;color:#4dd0e1;margin-bottom:10px;padding-bottom:6px;border-bottom:1px dashed rgba(255,255,255,.16);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+h3 em{font-style:normal;font-size:11.5px;color:#80cbc4;font-weight:400}
+button{padding:9px 18px;border:none;border-radius:20px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;background:#4dd0e1;color:#06323d;transition:.15s}
+button:hover{opacity:.87;transform:translateY(-1px)}
+button.o{background:rgba(255,255,255,.13);color:#fff;border:1px solid rgba(255,255,255,.25)}
+button.g{background:#66bb6a;color:#fff}
+button.y{background:#ffd54f;color:#3d3000}
+button:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+
+/* 业务选择 */
+.biz{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:8px}
+.bz{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.14);border-radius:11px;padding:10px 12px;cursor:pointer;font-size:13px;line-height:1.5;transition:.15s}
+.bz:hover{border-color:#4dd0e1;background:rgba(77,208,225,.13)}
+.bz.on{border-color:#ffd54f;background:rgba(255,213,79,.16)}
+.bz b{color:#ffd54f;display:block;font-size:13.5px;margin-bottom:3px}
+.bz span{color:#b0bec5;font-size:12px}
+
+/* 水池区 */
+.pools{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:900px){.pools{grid-template-columns:1fr}}
+.prow{margin-bottom:6px}
+.rowlab{font-size:12px;color:#80cbc4;margin:6px 0 8px;padding-left:4px;border-left:3px solid #4dd0e1}
+.pool{background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.14);border-radius:12px;padding:10px 8px 8px;position:relative;transition:.25s}
+.pool.hit{border-color:#ffd54f;box-shadow:0 0 18px rgba(255,213,79,.3)}
+.pname{text-align:center;font-size:14px;font-weight:800;margin-bottom:2px}
+.psub{text-align:center;font-size:10.5px;color:#90a4ae;margin-bottom:8px;min-height:14px}
+.tank{position:relative;height:96px;background:rgba(0,0,0,.3);border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,.1)}
+.water{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(180deg,#4fc3f7,#0277bd);transition:height .7s cubic-bezier(.4,0,.2,1);display:flex;align-items:flex-start;justify-content:center;padding-top:3px}
+.water.up{background:linear-gradient(180deg,#81c784,#2e7d32)}
+.water.down{background:linear-gradient(180deg,#ffb74d,#e65100)}
+.amt{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:17px;font-weight:900;text-shadow:0 2px 6px rgba(0,0,0,.7);z-index:2}
+.pipes{display:flex;justify-content:space-between;margin-top:5px;font-size:10.5px}
+.pipe{padding:3px 7px;border-radius:6px;font-weight:700;opacity:.35;transition:.25s}
+.pipe.L{background:rgba(102,187,106,.42);color:#c8e6c9}
+.pipe.R{background:rgba(255,167,38,.42);color:#ffe0b2}
+.pipe.act{opacity:1;transform:scale(1.12)}
+.flow{position:absolute;top:38%;font-size:19px;opacity:0;z-index:3}
+.flow.L{left:-13px}
+.flow.R{right:-13px}
+@keyframes fin{0%{opacity:0;transform:translateX(-14px)}40%{opacity:1}100%{opacity:0;transform:translateX(10px)}}
+@keyframes fout{0%{opacity:0;transform:translateX(-10px)}40%{opacity:1}100%{opacity:0;transform:translateX(14px)}}
+.flow.goL{animation:fin 1s ease}
+.flow.goR{animation:fout 1s ease}
+
+/* 分录区 */
+.entry{background:rgba(0,0,0,.28);border-radius:11px;padding:13px 15px;font-size:15px;line-height:2;min-height:82px;font-family:"Courier New",monospace}
+.entry .dr{color:#81c784;font-weight:700}
+.entry .cr{color:#ffb74d;font-weight:700;padding-left:2em}
+.entry .ph{color:#607d8b;font-size:13px;font-family:inherit}
+.bal{margin-top:9px;padding:8px 12px;border-radius:9px;font-size:13.5px;font-weight:700;text-align:center}
+.bal.ok{background:rgba(102,187,106,.2);color:#a5d6a7;border:1px solid rgba(102,187,106,.4)}
+.bal.no{background:rgba(239,83,80,.2);color:#ef9a9a;border:1px solid rgba(239,83,80,.4)}
+
+/* 提问模式 */
+.quiz{background:rgba(255,213,79,.1);border:1.5px solid rgba(255,213,79,.35);border-radius:11px;padding:13px 15px;margin-bottom:10px}
+.quiz h4{color:#ffd54f;font-size:14px;margin-bottom:7px}
+.quiz p{font-size:13.5px;line-height:1.7;color:#e0e0e0}
+.opts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.opt{padding:8px 15px;border-radius:9px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);cursor:pointer;font-size:13.5px;font-weight:700;transition:.15s}
+.opt:hover{border-color:#ffd54f}
+.opt.right{background:rgba(102,187,106,.3);border-color:#66bb6a}
+.opt.wrong{background:rgba(239,83,80,.3);border-color:#ef5350}
+.fb{margin-top:9px;font-size:13px;line-height:1.7;padding:9px 12px;border-radius:8px;display:none}
+.fb.show{display:block}
+.fb.ok{background:rgba(102,187,106,.16);color:#c8e6c9}
+.fb.no{background:rgba(239,83,80,.16);color:#ffcdd2}
+
+.tip{font-size:12.5px;color:#90a4ae;line-height:1.75;margin-top:10px;border-top:1px dashed rgba(255,255,255,.13);padding-top:9px}
+.tip b{color:#ffd54f}
+.modal{position:fixed;inset:0;background:rgba(5,20,30,.93);display:none;align-items:center;justify-content:center;z-index:99;padding:18px}
+.modal.show{display:flex}
+.mbox{background:#fff;color:#22333d;border-radius:15px;max-width:760px;width:100%;max-height:88vh;overflow-y:auto;padding:26px 30px}
+.mbox h2{color:#00838f;font-size:20px;margin-bottom:8px}
+.mbox h4{color:#c2185b;font-size:14.5px;margin:15px 0 6px;padding-left:9px;border-left:4px solid #00838f}
+.mbox p,.mbox li,.mbox td{font-size:13.5px;line-height:1.8}
+.mbox ol,.mbox ul{padding-left:22px}
+.mbox table{width:100%;border-collapse:collapse;margin:8px 0}
+.mbox th,.mbox td{border:1px solid #cfd8dc;padding:6px 9px;text-align:left}
+.mbox th{background:#e0f7fa;color:#00838f;font-size:12.5px}
+.mbox .q{background:#fff8e1;border-left:4px solid #ffa726;padding:9px 12px;border-radius:0 8px 8px 0;margin:8px 0}
+.mclose{width:100%;padding:11px;border-radius:10px;background:#00838f;color:#fff;font-size:15px;margin-top:15px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>资金流水管道模型<small>02-A1 v1.0 · 六个水池，左边进＝借，右边出＝贷 · 配套《02-00 项目二主文档》图10</small></h1>
+  <div class="hud">
+    <div class="pill">已做 <b id="hDone">0</b></div>
+    <div class="pill">答对 <b id="hRight">0</b></div>
+    <button class="o" onclick="showHelp()" style="padding:6px 14px;font-size:13px">❓ 怎么用</button>
+  </div>
+</header>
+
+<div class="card">
+  <h3>第一步：选一笔业务　<em>点一下，看水怎么流</em>
+    <div class="btns">
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer">
+        <input type="checkbox" id="quizMode" onchange="reset()" style="width:16px;height:16px"> 先问后演（课堂模式）
+      </label>
+    </div>
+  </h3>
+  <div class="biz" id="bizList"></div>
+</div>
+
+<div class="quiz" id="quizBox" style="display:none">
+  <h4 id="qTitle">先想一想</h4>
+  <p id="qText"></p>
+  <div class="opts" id="qOpts"></div>
+  <div class="fb" id="qFb"></div>
+</div>
+
+<div class="card">
+  <h3>第二步：看水怎么流　<em>绿色＝水流进来＝记借方（左）　橙色＝水流出去＝记贷方（右）</em>
+    <div class="btns">
+      <button class="y" onclick="replay()" id="btnReplay" disabled>▶ 再放一次</button>
+      <button class="o" onclick="clearAll()">清空水池</button>
+    </div>
+  </h3>
+
+  <div class="prow">
+    <div class="rowlab">这三个回答「你有什么」——静态的照片</div>
+    <div class="pools" id="rowA"></div>
+  </div>
+  <div class="prow">
+    <div class="rowlab">这三个回答「你发生了什么」——动态的录像</div>
+    <div class="pools" id="rowB"></div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>第三步：写成分录　<em>这就是你以后要写的东西</em></h3>
+  <div class="entry" id="entry"><span class="ph">上面选一笔业务，这里自动生成分录</span></div>
+  <div id="balBox"></div>
+  <div class="tip" id="explain"></div>
+</div>
+</div>
+
+
+<div class="modal" id="intro"><div class="mbox">
+  <h2>这个工具是干什么的</h2>
+  <p style="font-size:15px;line-height:1.9;margin-bottom:4px">
+  一句话：<b>把「借」和「贷」变成看得见的水流。</b></p>
+  <div class="q" style="font-size:14px">
+  学生学不会借贷记账法，几乎都卡在同一个地方——「借」在日常话里是欠钱，
+  可买台机器也记借方，怎么都想不通。<br><br>
+  这个工具不解释「借」为什么叫借。它只让学生看见：
+  <b>水从左边管子进池子，那就叫「借」；从右边管子出去，那就叫「贷」。</b>
+  就这么简单，没有别的含义。</div>
+
+  <h4>三步就会用</h4>
+  <table>
+    <tr><th>第几步</th><th>做什么</th><th>看什么</th></tr>
+    <tr><td><b>1</b></td><td>上面「练习题」区，点任意一笔业务</td><td>选中的那条会变黄</td></tr>
+    <tr><td><b>2</b></td><td>看中间六个水池</td><td>哪个池子亮了、水从哪边流、涨了还是降了</td></tr>
+    <tr><td><b>3</b></td><td>看最下面</td><td>自动写好的分录，以及借贷平不平</td></tr>
+  </table>
+
+  <h4>颜色只表示两件事</h4>
+  <table>
+    <tr><th>看到什么颜色</th><th>什么意思</th><th>会计上叫什么</th></tr>
+    <tr><td><span style="display:inline-block;width:38px;height:14px;background:linear-gradient(90deg,#81c784,#2e7d32);border-radius:3px;vertical-align:middle"></span>　绿色</td>
+        <td>水<b>流进</b>池子，这个池子的数变大</td><td><b>借</b>（记在左边）</td></tr>
+    <tr><td><span style="display:inline-block;width:38px;height:14px;background:linear-gradient(90deg,#ffb74d,#e65100);border-radius:3px;vertical-align:middle"></span>　橙色</td>
+        <td>水<b>流出</b>池子，这个池子的数变小</td><td><b>贷</b>（记在右边）</td></tr>
+  </table>
+  <p style="font-size:13px;color:#666">（v1.0 里出水柱曾误用红色，和右管的橙色标签对不上，已改成统一的橙色。）</p>
+
+  <h4>上课怎么用（推荐）</h4>
+  <ol>
+    <li>先<b>什么都不点</b>，让学生看六个空池子，讲清「左进右出」</li>
+    <li>把顶上的 <b>「先问后演（课堂模式）」</b> 勾上</li>
+    <li>再点业务，程序会<b>先出一道选择题</b>，学生答完才放水流动画</li>
+    <li>配合 90-B2 点名器抽人回答，答对当场加分</li>
+  </ol>
+
+  <button class="mclose" onclick="hideIntro()">知道了，开始用</button>
+</div></div>
+
+<div class="modal" id="help"><div class="mbox">
+  <h2>怎么用 · 三种用法</h2>
+
+  <h4>用法一：讲「借贷是什么」（第6周开场，10分钟）</h4>
+  <ol>
+    <li>投影出来，先<b>不点任何业务</b>。让学生看六个空池子</li>
+    <li>说：「每个池子两根管子。左边绿的是进水，右边橙的是出水。」</li>
+    <li>说：「左边那根，会计上叫『借』。右边那根，叫『贷』。<b>没有别的意思。</b>」</li>
+    <li>随便点一笔业务，让他们看水流。流完了问：「刚才哪根管子亮了？」</li>
+  </ol>
+  <div class="q"><b>关键：别解释「借」为什么叫借。</b>就说它是个记号，等于「左边」。学生纠结字面意思，是因为老师总想解释它——越解释越乱。</div>
+
+  <h4>用法二：课堂提问（推荐，把「先问后演」打开）</h4>
+  <p>勾上顶部的<b>「先问后演（课堂模式）」</b>，再点业务，程序会<b>先问</b>「哪个池子的水变多了」「记借方还是贷方」，学生答完才放动画。</p>
+  <p>配合 90-B2 点名器：抽一个人答，答对了当场加分。答错也没关系——动画一放，他自己就看明白了。</p>
+
+  <h4>用法三：学生自己练（课后）</h4>
+  <p>把这个文件发到班级群，学生双击就能开。十二笔业务全点一遍，借贷方向基本就有感觉了。</p>
+
+  <h4>为什么用水池不用别的比喻</h4>
+  <table>
+    <tr><th>要解决的问题</th><th>水池怎么解决</th></tr>
+    <tr><td>「借」字反直觉</td><td>不解释字义，只看管子在左边还是右边</td></tr>
+    <tr><td>为什么一笔业务要动两个科目</td><td>水不会凭空出现——从一个池流到另一个池</td></tr>
+    <tr><td>为什么借贷必相等</td><td>流出多少就流入多少，水量守恒</td></tr>
+    <tr><td>资产增记借、负债增记贷，方向老记反</td><td>不背方向，只问「钱的来路在右边，去处在左边」</td></tr>
+  </table>
+
+  <h4>配套材料</h4>
+  <ul>
+    <li>《02-00 项目二主文档》第6周 知识点① —— 图10 六个水池，就是这个模型的静态版</li>
+    <li>《90-B1 借贷打地鼠》—— 练熟之后用它提速</li>
+    <li>《01-02 学生记录册》项目二第15-17题 —— 和这里的业务一一对应</li>
+  </ul>
+  <button class="mclose" onclick="hideHelp()">明白了</button>
+</div></div>
+
+<script>
+const POOLS=[
+ {k:'zc',n:'资产',s:'现金、设备、原料',row:'A'},
+ {k:'fz',n:'负债',s:'欠银行、欠供货商',row:'A'},
+ {k:'qy',n:'所有者权益',s:'老板自己投的',row:'A'},
+ {k:'sr',n:'收入',s:'卖东西收到的',row:'B'},
+ {k:'fy',n:'费用',s:'花出去的',row:'B'},
+ {k:'lr',n:'利润',s:'收入减费用',row:'B'},
+];
+// dir: 'L'=借=左进  'R'=贷=右出
+const BIZ=[
+ {t:'老板投入20万开店',d:'钱进了公司账户',
+  legs:[{p:'zc',sub:'银行存款',dir:'L',amt:200000},{p:'qy',sub:'实收资本',dir:'R',amt:200000}],
+  why:'钱进了资产池，记左边（借）。但这钱是老板的，来路记在所有者权益池右边（贷）。<b>钱的来路永远在右边。</b>',
+  q:'老板往公司账户打了20万。资产池的水是多了还是少了？',
+  opts:['多了，记借方','少了，记贷方'],ans:0,
+  qfb:'对。钱进了池子＝水变多＝走左边那根管＝记借方。'},
+
+ {t:'买奶茶机 8万',d:'从账上直接划走',
+  legs:[{p:'zc',sub:'固定资产',dir:'L',amt:80000},{p:'zc',sub:'银行存款',dir:'R',amt:80000}],
+  why:'机器多了8万（资产池进），存款少了8万（资产池出）。<b>两笔都在资产池，一进一出，总量没变</b>——这就是项目一学的「同一边，一增一减」。',
+  q:'花8万买机器。这笔业务动了几个池子？',
+  opts:['一个池子，进出各一次','两个不同的池子'],ans:0,
+  qfb:'对。机器和存款都属于资产，是同一个池子的一进一出。'},
+
+ {t:'向银行借款 10万',d:'钱到账，但要还',
+  legs:[{p:'zc',sub:'银行存款',dir:'L',amt:100000},{p:'fz',sub:'短期借款',dir:'R',amt:100000}],
+  why:'存款多10万（进，借）。这钱哪来的？银行借的，负债池也多10万，<b>记在右边（贷）</b>。负债增加为什么记右边？因为它是钱的来路。',
+  q:'跟银行借10万。负债变多了，记在哪一边？',
+  opts:['左边（借）','右边（贷）'],ans:1,
+  qfb:'对。负债是「钱从哪来的」，来路一律记右边。这条最容易记反，多练几遍。'},
+
+ {t:'赊购原料 3万',d:'货到了，钱下月付',
+  legs:[{p:'zc',sub:'原材料',dir:'L',amt:30000},{p:'fz',sub:'应付账款',dir:'R',amt:30000}],
+  why:'原料进来了（资产池进，借）。一分钱没掏，欠着供货商（负债池右边，贷）。<b>这就是商业信用</b>——不花钱也能拿到货，但账上要记着。',
+  q:'一分钱没掏就把货拉回来了。这笔要不要记账？',
+  opts:['不用，没花钱','要记，欠着也是账'],ans:1,
+  qfb:'对。货已经进来了（资产增加），债也欠上了（负债增加）。钱没动，但账动了。'},
+
+ {t:'归还供货商 1万',d:'从账上付出去',
+  legs:[{p:'fz',sub:'应付账款',dir:'L',amt:10000},{p:'zc',sub:'银行存款',dir:'R',amt:10000}],
+  why:'欠的债少了1万——<b>负债减少记左边（借）</b>，正好和增加时相反。存款少1万（出，贷）。',
+  q:'还钱给供货商。负债减少了，记哪边？',
+  opts:['左边（借）','右边（贷）'],ans:0,
+  qfb:'对。增加记右边，减少就记左边。方向永远相反。'},
+
+ {t:'卖奶茶收现 5000',d:'当场收到钱',
+  legs:[{p:'zc',sub:'库存现金',dir:'L',amt:5000},{p:'sr',sub:'主营业务收入',dir:'R',amt:5000}],
+  why:'现金进来（借）。这钱哪来的？卖东西赚的，<b>收入池记右边（贷）</b>。收入也是「钱的来路」，所以和负债、权益一样都在右边。',
+  q:'卖奶茶收到5000现金。收入记在哪一边？',
+  opts:['左边（借）','右边（贷）'],ans:1,
+  qfb:'对。收入＝钱的来路＝右边。记住这条，后面项目五就顺了。'},
+
+ {t:'赊销给公司 2000',d:'货送了，钱月底结',
+  legs:[{p:'zc',sub:'应收账款',dir:'L',amt:2000},{p:'sr',sub:'主营业务收入',dir:'R',amt:2000}],
+  why:'钱没收到，但货送出去了。<b>按权责发生制，这就算这个月的收入</b>。对方欠我们的钱，是一项资产（应收账款），记左边。',
+  q:'货送了，钱一分没收。算不算这个月的收入？',
+  opts:['不算，钱没到手','算，货已经送了'],ans:1,
+  qfb:'对。这就是上节课讲的权责发生制——看货送没送，不看钱收没收。'},
+
+ {t:'付本月电费 800',d:'当场付现',
+  legs:[{p:'fy',sub:'销售费用',dir:'L',amt:800},{p:'zc',sub:'银行存款',dir:'R',amt:800}],
+  why:'费用池的水多了800（进，借）。存款少800（出，贷）。<b>费用增加记左边</b>——和收入正好相反，因为费用是钱的「去处」。',
+  q:'付了800电费。费用变多了，记在哪一边？',
+  opts:['左边（借）','右边（贷）'],ans:0,
+  qfb:'对。费用是钱的去处，去处记左边。收入是来路，来路记右边。'},
+
+ {t:'发工资 2400',d:'月底发放',
+  legs:[{p:'fy',sub:'管理费用',dir:'L',amt:2400},{p:'zc',sub:'银行存款',dir:'R',amt:2400}],
+  why:'和电费一样：费用增加（借），存款减少（贷）。<b>所有「花出去的钱」都是这个套路。</b>',
+  q:'发工资2400。和上一笔电费，套路一样吗？',
+  opts:['一样','不一样'],ans:0,
+  qfb:'对。只要是花钱，就是「费用增加记借、存款减少记贷」。'},
+
+ {t:'收回客户欠款 2000',d:'之前赊销的钱到账了',
+  legs:[{p:'zc',sub:'银行存款',dir:'L',amt:2000},{p:'zc',sub:'应收账款',dir:'R',amt:2000}],
+  why:'存款多2000（进），应收账款少2000（出）。<b>两笔都在资产池</b>——收回欠款不产生新收入，因为收入在赊销那天就已经记过了。',
+  q:'收回之前赊销的2000。这笔要不要再记一次收入？',
+  opts:['要，钱到手了','不要，赊销时已经记过'],ans:1,
+  qfb:'对。这是最容易错的一笔。收入只记一次，就在货送出去那天。'},
+
+ {t:'老板拿走 5000 自用',d:'不是公司的开销',
+  legs:[{p:'qy',sub:'利润分配',dir:'L',amt:5000},{p:'zc',sub:'银行存款',dir:'R',amt:5000}],
+  why:'存款少5000（出，贷）。但这<b>不是费用</b>——不是公司经营花的，是老板把自己的钱拿走了，所有者权益减少（记左边）。这就是第4周讲的会计主体。',
+  q:'老板从店里拿5000给自己买鞋。这算店的费用吗？',
+  opts:['算，钱从店里出的','不算，是老板拿走自己的钱'],ans:1,
+  qfb:'对。店是店，老板是老板。这是第4周讲的会计主体，别搞混了。'},
+
+ {t:'结转本月利润',d:'收入减费用',
+  legs:[{p:'sr',sub:'主营业务收入',dir:'L',amt:7000},{p:'fy',sub:'费用合计',dir:'R',amt:3200},{p:'lr',sub:'本年利润',dir:'R',amt:3800}],
+  why:'月底把收入池和费用池清空，差额倒进利润池。收入7000 − 费用3200 = 利润3800。<b>这笔有三条腿，但借方合计仍然等于贷方合计。</b>',
+  q:'收入7000，费用3200。利润多少？',
+  opts:['3800','10200'],ans:0,
+  qfb:'对。7000减3200等于3800。这就是利润池里的水。'},
+];
+
+let cur=null, done=0, right=0, answered=false;
+const $=i=>document.getElementById(i);
+const state={};
+POOLS.forEach(p=>state[p.k]={v:0});
+
+function buildPools(){
+  ['A','B'].forEach(row=>{
+    $(row==='A'?'rowA':'rowB').innerHTML=POOLS.filter(p=>p.row===row).map(p=>`
+      <div class="pool" id="pool-${p.k}">
+        <div class="pname">${p.n}</div>
+        <div class="psub">${p.s}</div>
+        <div class="tank">
+          <div class="water" id="w-${p.k}" style="height:0%"></div>
+          <div class="amt" id="a-${p.k}"></div>
+          <div class="flow L" id="fl-${p.k}">💧</div>
+          <div class="flow R" id="fr-${p.k}">💧</div>
+        </div>
+        <div class="pipes">
+          <span class="pipe L" id="pl-${p.k}">← 借·进</span>
+          <span class="pipe R" id="pr-${p.k}">贷·出 →</span>
+        </div>
+      </div>`).join('');
+  });
+}
+function buildBiz(){
+  $('bizList').innerHTML=BIZ.map((b,i)=>
+    `<div class="bz" id="bz-${i}" onclick="pick(${i})"><b>${i+1}. ${b.t}</b><span>${b.d}</span></div>`).join('');
+}
+function clearAll(){
+  POOLS.forEach(p=>{state[p.k].v=0;
+    $('w-'+p.k).style.height='0%'; $('a-'+p.k).textContent='';
+    $('pool-'+p.k).classList.remove('hit');
+    $('pl-'+p.k).classList.remove('act'); $('pr-'+p.k).classList.remove('act');
+  });
+  $('entry').innerHTML='<span class="ph">上面选一笔业务，这里自动生成分录</span>';
+  $('balBox').innerHTML=''; $('explain').innerHTML='';
+  document.querySelectorAll('.bz').forEach(e=>e.classList.remove('on'));
+  cur=null; $('btnReplay').disabled=true;
+  $('quizBox').style.display='none';
+}
+function reset(){ clearAll(); }
+
+function pick(i){
+  cur=i; answered=false;
+  document.querySelectorAll('.bz').forEach(e=>e.classList.remove('on'));
+  $('bz-'+i).classList.add('on');
+  $('btnReplay').disabled=false;
+  if($('quizMode').checked){ showQuiz(i); }
+  else { $('quizBox').style.display='none'; run(i); }
+}
+function showQuiz(i){
+  const b=BIZ[i];
+  $('quizBox').style.display='block';
+  $('qTitle').textContent='先想一想（别急着看动画）';
+  $('qText').textContent=b.q;
+  $('qOpts').innerHTML=b.opts.map((o,k)=>
+    `<div class="opt" id="opt-${k}" onclick="answer(${i},${k})">${o}</div>`).join('');
+  $('qFb').className='fb'; $('qFb').innerHTML='';
+  // 清空水池但不清业务选择
+  POOLS.forEach(p=>{state[p.k].v=0;$('w-'+p.k).style.height='0%';$('a-'+p.k).textContent='';
+    $('pool-'+p.k).classList.remove('hit');
+    $('pl-'+p.k).classList.remove('act');$('pr-'+p.k).classList.remove('act');});
+  $('entry').innerHTML='<span class="ph">答完上面那题，分录才出来</span>';
+  $('balBox').innerHTML=''; $('explain').innerHTML='';
+}
+function answer(i,k){
+  if(answered)return; answered=true;
+  const b=BIZ[i], ok=(k===b.ans);
+  $('opt-'+k).classList.add(ok?'right':'wrong');
+  if(!ok) $('opt-'+b.ans).classList.add('right');
+  const fb=$('qFb');
+  fb.className='fb show '+(ok?'ok':'no');
+  fb.innerHTML=(ok?'✓ ':'✗ 正确答案是「'+b.opts[b.ans]+'」。')+b.qfb;
+  done++; if(ok)right++;
+  $('hDone').textContent=done; $('hRight').textContent=right;
+  setTimeout(()=>run(i),900);
+}
+function run(i){
+  const b=BIZ[i];
+  POOLS.forEach(p=>{$('pool-'+p.k).classList.remove('hit');
+    $('pl-'+p.k).classList.remove('act');$('pr-'+p.k).classList.remove('act');});
+  b.legs.forEach((leg,n)=>{
+    setTimeout(()=>{
+      const k=leg.p, isL=(leg.dir==='L');
+      $('pool-'+k).classList.add('hit');
+      $(isL?'pl-'+k:'pr-'+k).classList.add('act');
+      const f=$(isL?'fl-'+k:'fr-'+k);
+      f.classList.remove('goL','goR'); void f.offsetWidth;
+      f.classList.add(isL?'goL':'goR');
+      state[k].v += isL? leg.amt : -leg.amt;
+      const w=$('w-'+k);
+      const pct=Math.min(92,Math.max(6,Math.abs(state[k].v)/2500));
+      w.style.height=pct+'%';
+      w.className='water '+(isL?'up':'down');
+      $('a-'+k).textContent=fmt(Math.abs(state[k].v));
+    },n*750);
+  });
+  setTimeout(()=>showEntry(i),b.legs.length*750+250);
+  if(!$('quizMode').checked){ done++; $('hDone').textContent=done; }
+}
+function fmt(n){ return n>=10000? (n/10000)+'万' : n.toLocaleString(); }
+function showEntry(i){
+  const b=BIZ[i];
+  const dr=b.legs.filter(l=>l.dir==='L'), cr=b.legs.filter(l=>l.dir==='R');
+  let h='';
+  dr.forEach(l=>h+=`<div class="dr">借：${l.sub}　${l.amt.toLocaleString()}</div>`);
+  cr.forEach(l=>h+=`<div class="cr">贷：${l.sub}　${l.amt.toLocaleString()}</div>`);
+  $('entry').innerHTML=h;
+  const sd=dr.reduce((a,l)=>a+l.amt,0), sc=cr.reduce((a,l)=>a+l.amt,0);
+  $('balBox').innerHTML=`<div class="bal ${sd===sc?'ok':'no'}">借方合计 ${sd.toLocaleString()}　${sd===sc?'=':'≠'}　贷方合计 ${sc.toLocaleString()}　${sd===sc?'✓ 平了':'✗ 不平'}</div>`;
+  $('explain').innerHTML='<b>为什么这样记：</b>'+b.why;
+}
+function replay(){ if(cur!==null){
+  POOLS.forEach(p=>{state[p.k].v=0;$('w-'+p.k).style.height='0%';$('a-'+p.k).textContent='';});
+  run(cur);
+}}
+function showHelp(){$('help').classList.add('show')}
+function hideHelp(){$('help').classList.remove('show')}
+$('help').onclick=e=>{if(e.target===$('help'))hideHelp()};
+function hideIntro(){$('intro').classList.remove('show')}
+$('intro').onclick=e=>{if(e.target===$('intro'))hideIntro()};
+buildPools(); buildBiz();
+$('intro').classList.add('show');
+</script>
+</body>
+</html>
