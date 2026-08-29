@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>上课打开这一页　v1.19</title>
+<title>上课打开这一页　v1.20</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:#05070d;color:#eef4ff;
@@ -208,7 +208,7 @@ body.focus .rail, body.focus .rail-tab, body.focus .top{opacity:0;pointer-events
 <div class="ui">
   <div class="top">
     <div class="brand">上场</div>
-    <span class="ver">v1.19　抽完弹出 · 去连线</span>
+    <span class="ver">v1.20　导入会换成表里的人</span>
   </div>
   <div class="stage">
     <div class="ring-wrap">
@@ -322,10 +322,10 @@ function applyUse(){
 const TIANPING = "../01_项目一_认识会计工作与企业经济业务/01-03_小新的天平_能不能弄歪_网页_v4.0_20260829.html";
 function goTianping(name){
   localStorage.setItem("draw-handoff", JSON.stringify({name, ts: Date.now(), use:"上场·天平"}));
-  const back = "../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.19_20260829.html?use=tianping";
+  const back = "../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.20_20260829.html?use=tianping";
   location.href = TIANPING + "?name=" + encodeURIComponent(name) + "&back=" + encodeURIComponent(back);
 }
-const LIANXIAN = "../01_项目一_认识会计工作与企业经济业务/01-00_项目一_上课投影_网页版_v1.9_20260829.html#78";
+const LIANXIAN = "../01_项目一_认识会计工作与企业经济业务/01-00_项目一_上课投影_网页版_v1.10_20260829.html#78";
 function goLianxian(name){
   localStorage.setItem("draw-handoff", JSON.stringify({name, ts: Date.now(), use:"上场·连线"}));
   location.href = LIANXIAN;
@@ -492,37 +492,64 @@ function rowsToSurvey(rows){
   }
   return {names, survey};
 }
+function headerHasName(rows){
+  const h=(rows && rows[0] || []).join(" ");
+  return h.includes("姓名") || h.toLowerCase().includes("name");
+}
 function applySheets(sheets){
-  if(sheets["名单"]) {
+  const keys=Object.keys(sheets||{});
+  let used=false;
+  if(sheets["名单"] && headerHasName(sheets["名单"])){
     const r=rowsToSurvey(sheets["名单"]);
-    if(r.names.length) $("people").value=r.names.join("\n");
+    if(r.names.length){ $("people").value=r.names.join("\n"); used=true; }
   }
-  if(sheets["点单"]) {
+  if(sheets["点单"] && headerHasName(sheets["点单"])){
     const r=rowsToSurvey(sheets["点单"]);
-    if(r.survey.length) localStorage.setItem("draw-survey", JSON.stringify(r.survey));
-    if(r.names.length && !lines($("people")).length) $("people").value=r.names.join("\n");
+    if(r.survey.length){ localStorage.setItem("draw-survey", JSON.stringify(r.survey)); used=true; }
+    if(r.names.length){ $("people").value=r.names.join("\n"); used=true; }
   }
-  if(sheets["分数明细"]) {
+  if(sheets["分数明细"] && sheets["分数明细"].length>1){
     const rows=sheets["分数明细"];
     const h=rows[0]||[];
     const idx=k=> h.findIndex(x=>String(x).includes(k));
     const log=[];
     for(let i=1;i<rows.length;i++){
       const c=rows[i];
-      const name=String(c[idx("姓名")]||c[2]||"").trim();
+      const name=String(c[idx("姓名")>=0?idx("姓名"):2]||"").trim();
       if(!name) continue;
-      log.push({day:String(c[idx("日期")]||c[0]||""), t:String(c[idx("时间")]||c[1]||""), name, use:String(c[idx("场合")]||c[3]||""), pts:Number(c[idx("分数")]||c[4]||0)});
+      log.push({day:String(c[idx("日期")>=0?idx("日期"):0]||""), t:String(c[idx("时间")>=0?idx("时间"):1]||""), name, use:String(c[idx("场合")>=0?idx("场合"):3]||""), pts:Number(c[idx("分数")>=0?idx("分数"):4]||0)});
     }
-    if(log.length){ scoreLog=log; saveScores(); }
+    scoreLog=log; saveScores(); used=true;
+  } else if(sheets["成绩汇总"] && sheets["成绩汇总"].length>1){
+    const rows=sheets["成绩汇总"];
+    const h=rows[0]||[];
+    const ni=h.findIndex(x=>String(x).includes("姓名"));
+    const pi=h.findIndex(x=>String(x).includes("累计")||String(x).includes("今天"));
+    const log=[];
+    for(let i=1;i<rows.length;i++){
+      const name=String(rows[i][ni>=0?ni:0]||"").trim();
+      if(!name) continue;
+      log.push({day:todayStr(), t:"", name, use:"导入", pts:Number(rows[i][pi>=0?pi:1]||0)});
+    }
+    if(log.length){ scoreLog=log; saveScores(); used=true; }
+    if(ni>=0){
+      const names=rows.slice(1).map(r=>String(r[ni]||"").trim()).filter(Boolean);
+      if(names.length){ $("people").value=names.join("\n"); used=true; }
+    }
   }
-  const first=sheets[Object.keys(sheets)[0]];
-  if(!lines($("people")).length && first){
-    const r=rowsToSurvey(first);
-    applyPeople(r.names, r.survey); return;
+  if(!used){
+    for(const k of keys){
+      if(!headerHasName(sheets[k])) continue;
+      const r=rowsToSurvey(sheets[k]);
+      if(r.names.length){ applyPeople(r.names, r.survey); return; }
+    }
+    alert("表里没有「姓名」列，名单没换。");
+    return;
   }
   localStorage.setItem("draw-people", $("people").value);
   count(); renderList(); renderScores(); paintIdle();
-  alert("表格已导入。");
+  const n=lines($("people")).length;
+  alert("已换成表里的 "+n+" 人："+lines($("people")).slice(0,8).join("、")+(n>8?"…":""));
 }
 function parseCsvText(text){
   text=String(text||"").replace(/^\ufeff/,"");

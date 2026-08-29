@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>项目一　上课投影（网页投影版）v1.9</title>
+<title>项目一　上课投影（网页投影版）v1.10</title>
 <style>
 :root{
   --orange:#bf360c; --green:#2e7d32; --ink:#22170f;
@@ -112,7 +112,7 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
   <button type="button" id="menuBtn">目录</button>
   <button type="button" id="fontBig" class="on">大字体</button>
   <button type="button" id="fontSmall">小字体</button>
-  <h1>项目一　认识会计工作 <small>上课投影网页版 v1.9　2026-08-29</small></h1>
+  <h1>项目一　认识会计工作 <small>上课投影网页版 v1.10　2026-08-29</small></h1>
   <div class="hint">← → 翻页　点图或点字可放大</div>
 </header>
 <div class="layout">
@@ -140,7 +140,7 @@ const KIND = {
   homework:"课后任务", teacher:"老师看", game:"打地鼠",
   thumbs:"四张图", text:"讲义", spare:"备用", drag:"拖一拖"
 };
-const DRAW = "../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.19_20260829.html";
+const DRAW = "../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.20_20260829.html";
 function drawHref(use){
   const here = location.href.split("#")[0] + "#" + SLIDES[i].n;
   return DRAW + "?use=" + encodeURIComponent(use) + "&back=" + encodeURIComponent(here);
@@ -249,12 +249,20 @@ function bindLink(){
     if(tick){ clearInterval(tick); tick=null; }
     const n=items.length, ok=pairs.length;
     const pts = ok===n ? 5 : ok>=Math.ceil(n*0.6) ? 2 : 0;
-    $("dragMsg").textContent = (timeout?"时间到。":"") + (ok===n ? "全对了。" : ("对了 "+ok+" / "+n+" 条。"));
     if(who) saveLianScore(who, pts, ok, n);
-    if(timeout){
-      const cut=$("lianCut");
-      if(cut){ cut.classList.add("on"); setTimeout(()=>cut.classList.remove("on"), 1200); }
-    }
+    const cut=$("lianCut");
+    if(timeout && cut){ cut.classList.add("on"); setTimeout(()=>cut.classList.remove("on"), 900); }
+    const draw="../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.20_20260829.html?use=lianxian";
+    $("dragMsg").innerHTML = (timeout?"时间到。":"连完了。")
+      + "对了 "+ok+" / "+n+" 条。"
+      + "这次 <b style=\"color:#bf360c\">"+pts+" 分</b>"+(who?"，已记到 "+who+"。":"。")
+      + "<div style=\"margin-top:12px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap\">"
+      + "<a class=\"go-draw\" style=\"margin:0;display:inline-block;padding:10px 18px\" href=\""+draw+"\">换人再抽</a>"
+      + "<button type=\"button\" class=\"go-draw\" id=\"lianRetry\" style=\"margin:0;display:inline-block;padding:10px 18px;border:0\">重做</button>"
+      + "</div>"
+      + "<div style=\"margin-top:8px;font-size:14px;color:#6d4c41\">全对 5 分，对六成以上 2 分，否则 0 分。不要翻下一页。</div>";
+    const rb=$("lianRetry");
+    if(rb) rb.onclick=e=>{ e.preventDefault(); e.stopPropagation(); location.hash="78"; location.reload(); };
   }
   startBtn.onclick=e=>{
     e.preventDefault(); e.stopPropagation();
