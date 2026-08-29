@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>上课打开这一页　v1.16</title>
+<title>上课打开这一页　v1.17</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:#05070d;color:#eef4ff;
@@ -156,6 +156,9 @@ body.focus .rail, body.focus .rail-tab, body.focus .top{opacity:0;pointer-events
   <label class="gold wide">课前：导入备份
     <input id="importBak" type="file" accept="application/json,.json" hidden>
   </label>
+  <label class="ghost wide">课前：导入点单表（CSV）
+    <input id="importCsv" type="file" accept=".csv,text/csv" hidden>
+  </label>
   <button class="gold wide" type="button" id="exportBak">课后：导出备份</button>
   <button class="ghost wide" type="button" id="exportXls">课后：导出成绩表</button>
   <button class="ghost wide" type="button" id="btnList">名单 / 组名</button>
@@ -172,6 +175,7 @@ body.focus .rail, body.focus .rail-tab, body.focus .top{opacity:0;pointer-events
   <div class="uses" id="uses">
     <button type="button" data-u="book" class="on">举册子</button>
     <button type="button" data-u="tianping">天平</button>
+    <button type="button" data-u="lianxian">连线</button>
     <button type="button" data-u="mole">打地鼠</button>
     <button type="button" data-u="dub">配音</button>
     <button type="button" data-u="nitpick">找茬</button>
@@ -206,16 +210,17 @@ body.focus .rail, body.focus .rail-tab, body.focus .top{opacity:0;pointer-events
   <div class="score-list" id="scoreList"></div>
   <button class="ghost wide" type="button" id="clearScore">清空今日分</button>
   <div class="score-note">
-    <b>课前：</b>换了电脑才导入。同一台电脑打开就还在。<br>
-    <b>课后：</b>一定要点「导出备份」。复制这个网页到优盘，分数不会跟着走。<br>
-    成绩表只有一张：姓名、今天、累计。Excel / WPS 能打开。平时不用再打开 90-C4。
+    <b>数据在哪：</b>这台电脑浏览器里（JSON）。同一台电脑打开还在。<br>
+    <b>课前：</b>换电脑先导入备份。飞象老师导出的文字表另存为 CSV，点「导入点单表」，姓名会进名单。<br>
+    <b>课后：</b>「导出备份」是完整 JSON，换电脑必带。「导出成绩表」是一张 xls：姓名、今天、累计。<br>
+    评选看累计：每个项目结束看一次，大约一个月也可以再看。不是两周一次。平时不用打开 90-C4。
   </div>
 </aside>
 
 <div class="ui">
   <div class="top">
     <div class="brand">上场</div>
-    <span class="ver">v1.16　六个环节，各一个按钮</span>
+    <span class="ver">v1.17　连线抽人 · 可导入点单表</span>
   </div>
   <div class="stage">
     <div class="ring-wrap">
@@ -273,6 +278,12 @@ const USES = {
     say: "上场玩天平", sub: "抽完去天平。15 秒内选一种变化。",
     s2: "2 分", s5: "5 分", s0: "0 分"
   },
+  lianxian: {
+    label: "连线", suggest: "draw1",
+    tip: "抽一个人。抽完点「去连线」，到课件上连科目和六个词。",
+    say: "上场连线", sub: "抽完去课件连线。",
+    s2: "2 分", s5: "5 分", s0: "0 分"
+  },
   mole: {
     label: "打地鼠", suggest: "draw1",
     tip: "讲完六个要素之后打开「90-B1 打地鼠」。抽一个人上场。",
@@ -323,8 +334,13 @@ function applyUse(){
 const TIANPING = "../01_项目一_认识会计工作与企业经济业务/01-03_小新的天平_能不能弄歪_网页_v4.0_20260829.html";
 function goTianping(name){
   localStorage.setItem("draw-handoff", JSON.stringify({name, ts: Date.now(), use:"上场·天平"}));
-  const back = "../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.16_20260829.html?use=play&play=" + encodeURIComponent("天平");
+  const back = "../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.17_20260829.html?use=tianping";
   location.href = TIANPING + "?name=" + encodeURIComponent(name) + "&back=" + encodeURIComponent(back);
+}
+const LIANXIAN = "../01_项目一_认识会计工作与企业经济业务/01-00_项目一_上课投影_网页版_v1.7_20260829.html#78";
+function goLianxian(name){
+  localStorage.setItem("draw-handoff", JSON.stringify({name, ts: Date.now(), use:"上场·连线"}));
+  location.href = LIANXIAN;
 }
 try{ hist=JSON.parse(localStorage.getItem("draw-hist")||"[]"); if(!Array.isArray(hist)) hist=[]; }catch(e){ hist=[]; }
 let scoreLog=[];
@@ -408,6 +424,7 @@ function exportBak(){
     v:12,
     people: localStorage.getItem("draw-people")||"",
     groups: localStorage.getItem("draw-groups")||"",
+    survey: JSON.parse(localStorage.getItem("draw-survey")||"[]"),
     hist, scoreLog
   };
   const a=document.createElement("a");
@@ -424,6 +441,7 @@ function importBak(file){
       if(data.groups!=null){ $("groups").value=data.groups; localStorage.setItem("draw-groups", data.groups); }
       if(Array.isArray(data.hist)){ hist=data.hist; localStorage.setItem("draw-hist", JSON.stringify(hist)); }
       if(Array.isArray(data.scoreLog)){ scoreLog=data.scoreLog; saveScores(); }
+      if(Array.isArray(data.survey)){ localStorage.setItem("draw-survey", JSON.stringify(data.survey)); }
       count(); renderList(); renderHist(); renderScores(); paintIdle();
       alert("备份已导入。名单和分数都在。");
     }catch(e){ alert("这个文件不是备份。"); }
@@ -479,6 +497,45 @@ $("clearHist").onclick = ()=>{
 $("exportBak").onclick = exportBak;
 $("exportXls").onclick = exportXls;
 $("importBak").onchange = e=>{ const f=e.target.files && e.target.files[0]; if(f) importBak(f); e.target.value=""; };
+function splitCsvLine(line){
+  const out=[]; let cur="", q=false;
+  for(let i=0;i<line.length;i++){
+    const c=line[i];
+    if(c==='"'){ if(q && line[i+1]==='"'){ cur+='"'; i++; } else q=!q; }
+    else if((c===','||c==='\t') && !q){ out.push(cur); cur=""; }
+    else cur+=c;
+  }
+  out.push(cur); return out.map(s=>s.trim());
+}
+function importCsv(file){
+  const reader=new FileReader();
+  reader.onload=()=>{
+    let text=String(reader.result||"").replace(/^\ufeff/,"");
+    const lines=text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+    if(!lines.length){ alert("这个表是空的。"); return; }
+    const header=splitCsvLine(lines[0]);
+    let ni=header.findIndex(h=>h.includes("姓名")||h.toLowerCase()==="name");
+    if(ni<0) ni=0;
+    const names=[], rows=[];
+    for(let i=1;i<lines.length;i++){
+      const cols=splitCsvLine(lines[i]);
+      const name=(cols[ni]||"").trim();
+      if(!name) continue;
+      names.push(name);
+      const rec={}; header.forEach((h,j)=>{ if(h) rec[h]=cols[j]||""; });
+      rows.push(rec);
+    }
+    if(!names.length){ alert("没有读到姓名。请确认第一行有「姓名」列。"); return; }
+    $("people").value=names.join("\n");
+    localStorage.setItem("draw-people", $("people").value);
+    localStorage.setItem("draw-survey", JSON.stringify(rows));
+    count(); renderList(); renderScores(); paintIdle();
+    alert("已导入 "+names.length+" 人。名单已进抽人盘。其他填写保存在这台电脑里，导出备份时会一起带走。");
+  };
+  reader.readAsText(file,"utf-8");
+}
+$("importCsv").onchange = e=>{ const f=e.target.files && e.target.files[0]; if(f) importCsv(f); e.target.value=""; };
+
 $("clearScore").onclick = ()=>{
   const day=todayStr();
   const n=scoreLog.filter(x=>x.day===day).length;
@@ -904,15 +961,17 @@ function reveal(names, k){
       <div class="nm">${n}</div>
     </div>`).join("");
   const toTp = useId==="tianping" && names.length===1;
-  const pads = toTp ? "" : names.map(n=>`
+  const toLx = useId==="lianxian" && names.length===1;
+  const pads = (toTp||toLx) ? "" : names.map(n=>`
     <div class="score-line" data-name="${n}">
       <em>${n}</em>
       <button class="b2" type="button" data-p="2">${u.s2||"2 分"}</button>
       <button class="b5" type="button" data-p="5">${u.s5||"5 分"}</button>
       <button class="b0" type="button" data-p="0">${u.s0||"0 分"}</button>
     </div>`).join("");
-  const go = toTp ? `<div class="score-pad"><button class="gold" type="button" id="goTp" style="font-size:22px;padding:14px 28px;border-radius:14px">去天平</button></div>` : "";
-  const sub = toTp ? "点「去天平」。分在天平做完后自动记。" : (useSub()+"　点空白处关掉。一题最多 5 分，先点 2 再点 5 是改成 5，不是 7。");
+  const go = toTp ? `<div class="score-pad"><button class="gold" type="button" id="goTp" style="font-size:22px;padding:14px 28px;border-radius:14px">去天平</button></div>`
+    : toLx ? `<div class="score-pad"><button class="gold" type="button" id="goLx" style="font-size:22px;padding:14px 28px;border-radius:14px">去连线</button></div>` : "";
+  const sub = toTp ? "点「去天平」。分在天平做完后自动记。" : toLx ? "点「去连线」。分在连完后自动记。" : (useSub()+"　点空白处关掉。一题最多 5 分，先点 2 再点 5 是改成 5，不是 7。");
   $("card").innerHTML = `<div class="tag">${tag}</div><div class="say">${useSay(names)}</div><div class="trio">${cells}</div>
     ${go}<div class="score-pad">${pads}</div>
     <div class="sub">${sub}</div>`;
@@ -920,6 +979,10 @@ function reveal(names, k){
   if(toTp){
     const b=$("goTp");
     if(b) b.onclick=e=>{ e.stopPropagation(); goTianping(names[0]); };
+  }
+  if(toLx){
+    const b=$("goLx");
+    if(b) b.onclick=e=>{ e.stopPropagation(); goLianxian(names[0]); };
   }
 }
 $("card").onclick = e=>{
