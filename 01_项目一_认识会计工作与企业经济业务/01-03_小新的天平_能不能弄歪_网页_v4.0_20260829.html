@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>小新的天平 v4.0</title>
+<style>
+:root{--orange:#bf360c;--green:#2e7d32;--brown:#3e2723;--ink:#2a1f18;--line:#eadcc8;--red:#c62828}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#f3ebe1;color:var(--ink);font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif}
+body{min-height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.top{background:var(--brown);color:#fff;padding:8px 14px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.top h1{font-size:18px}
+.top a{margin-left:auto;color:#ffcc80;font-weight:700;text-decoration:none;font-size:14px}
+.wrap{flex:1;min-height:0;overflow:auto;padding:12px 16px;max-width:1280px;width:100%;margin:0 auto}
+.dock{flex-shrink:0;background:var(--green);color:#fff;font-size:20px;font-weight:800;padding:10px 16px;line-height:1.35}
+.screen{display:none}.screen.on{display:block}
+.hero{text-align:center;padding:18px 0 8px}
+.hero h2{font-size:clamp(28px,5vw,48px);color:var(--brown);line-height:1.25;margin-bottom:8px}
+.hero .sub{font-size:20px;color:#6d4c41}
+.qa{display:grid;gap:8px;margin:12px auto;max-width:880px}
+.qa div{background:#fffdf8;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:20px;line-height:1.5}
+.qa b{color:var(--orange)}
+.btn{border:0;background:var(--orange);color:#fff;font:inherit;font-weight:800;font-size:20px;padding:12px 22px;border-radius:12px;cursor:pointer}
+.btn.ghost{background:#efebe9;color:var(--brown)}
+.btn.go{font-size:28px;padding:16px 36px}
+.center{text-align:center;margin-top:16px}
+.who{font-size:clamp(40px,7vw,72px);font-weight:900;color:var(--orange);text-align:center;padding:8px;line-height:1.15}
+.scale{background:#fffdf8;border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:10px}
+.eq{text-align:center;font-size:22px;font-weight:800;margin-bottom:6px}
+.eq .a{color:#2e7d32}.eq .l{color:#ef6c00}.eq .e{color:#1565c0}
+.pans{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pan{border-radius:12px;padding:8px;text-align:center;min-height:88px}
+.pan.left{background:#e8f5e9}.pan.right{background:#e3f2fd}
+.pan .lbl{font-size:18px;font-weight:800}
+.chip{display:inline-block;margin:3px;padding:4px 8px;border-radius:8px;color:#fff;font-size:16px;font-weight:700}
+.chip.a{background:#2e7d32}.chip.l{background:#ef6c00}.chip.e{background:#1565c0}
+.tot{font-size:28px;font-weight:900}
+.status{text-align:center;font-size:22px;font-weight:800;padding:6px;border-radius:10px;margin-top:6px}
+.status.ok{background:#e8f5e9;color:#1b5e20}
+.status.bad{background:#ffebee;color:#b71c1c}
+.hud{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}
+.hud .name{font-size:clamp(22px,4vw,36px);font-weight:900;color:var(--brown)}
+.timer{width:128px;height:128px;border-radius:50%;border:10px solid var(--orange);display:flex;align-items:center;justify-content:center;font-size:56px;font-weight:900;background:#fff;flex-shrink:0;box-shadow:0 0 0 6px #fff3e0,0 8px 24px rgba(191,54,12,.35)}
+.timer.low{border-color:var(--red);color:var(--red);background:#ffebee;animation:pulse .45s infinite}
+@keyframes pulse{50%{transform:scale(1.06)}}
+.timebar{height:14px;background:#eadcc8;border-radius:999px;overflow:hidden;margin:4px 0 10px}
+.timebar i{display:block;height:100%;width:100%;background:var(--orange);transform-origin:left center}
+.timebar.low i{background:var(--red)}
+.cmd{background:#fff3e0;border-left:8px solid var(--orange);border-radius:0 12px 12px 0;padding:14px 16px;font-size:clamp(22px,3.4vw,32px);font-weight:800;line-height:1.35;margin:8px 0}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.choices button{font-size:22px;font-weight:800;padding:18px 10px;border-radius:12px;border:3px solid #d7c4b0;background:#fff;cursor:pointer;color:var(--brown);font-family:inherit}
+.choices button:hover{border-color:var(--orange)}
+.choices button.right{background:#e8f5e9;border-color:#2e7d32;color:#1b5e20}
+.choices button.wrong{background:#ffebee;border-color:#c62828;color:#b71c1c}
+.choices button:disabled{cursor:default}
+.flash{text-align:center;font-size:40px;font-weight:900;padding:8px;min-height:56px}
+.flash.ok{color:#1b5e20}.flash.bad{color:#b71c1c}
+.score{font-size:28px;font-weight:900;text-align:center;line-height:1.5}
+.cut{position:fixed;inset:0;background:rgba(28,8,6,.9);color:#fff;display:none;align-items:center;justify-content:center;z-index:50;text-align:center;padding:24px}
+.cut.on{display:flex}
+.cut b{font-size:clamp(40px,8vw,84px);font-weight:900;letter-spacing:.08em}
+table{width:100%;border-collapse:collapse;font-size:18px;margin:12px auto;max-width:720px}
+th,td{border-bottom:1px solid #eadcc8;padding:10px;text-align:left}
+th{color:#6d4c41}
+.rowbtns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>小新的天平</h1>
+  <a id="backCourse" href="01-00_项目一_上课投影_网页版_v1.5_20260829.html#52">回课件</a>
+</header>
+<div class="wrap">
+  <section class="screen on" id="s0">
+    <div class="hero">
+      <div class="who" id="readyName">还没抽人</div>
+      <h2 id="readyTitle">上场玩天平</h2>
+    </div>
+    <div class="qa" id="readyQa"></div>
+    <div class="center" id="readyBtns"></div>
+  </section>
+
+  <section class="screen" id="s1">
+    <div class="hud">
+      <div class="name" id="playName"></div>
+      <div id="qno" style="font-size:22px;font-weight:800"></div>
+      <div class="timer" id="timer">15</div>
+    </div>
+    <div class="timebar" id="timebarWrap"><i id="timebar"></i></div>
+    <div class="scale">
+      <div class="eq"><span class="a">有的</span> ＝ <span class="l">欠的</span> ＋ <span class="e">真正属于自己的</span></div>
+      <div class="pans">
+        <div class="pan left"><div class="lbl">有的</div><div id="chipsA"></div><div class="tot" id="totA">0</div></div>
+        <div class="pan right"><div class="lbl">欠的 ＋ 自己的</div><div id="chipsR"></div><div class="tot" id="totR">0</div></div>
+      </div>
+      <div class="status ok" id="status">先看店里现在的账，再看下面发生了什么。</div>
+    </div>
+    <div class="cmd" id="cmd"></div>
+    <div class="flash" id="flash"></div>
+    <div class="choices" id="choices"></div>
+  </section>
+
+  <section class="screen" id="s3">
+    <div class="hero"><h2 id="endTitle">本轮结束</h2></div>
+    <div class="score" id="endScore"></div>
+    <div class="rowbtns">
+      <button class="btn go" type="button" id="more">继续抽人</button>
+      <button class="btn ghost" type="button" id="retry">重做</button>
+      <button class="btn ghost" type="button" id="see">看分数</button>
+    </div>
+  </section>
+
+  <section class="screen" id="s4">
+    <div class="hero"><h2>今天的分</h2><div class="sub">举册子和天平记在同一张表里</div></div>
+    <table>
+      <thead><tr><th>姓名</th><th>场合</th><th>这次</th><th>今天合计</th><th>累计</th></tr></thead>
+      <tbody id="board"></tbody>
+    </table>
+    <div class="rowbtns">
+      <button class="btn go" type="button" id="more2">继续抽人</button>
+      <button class="btn ghost" type="button" id="backEnd">返回</button>
+    </div>
+  </section>
+</div>
+<div class="dock" id="now">现在你：等抽人。</div>
+<div class="cut" id="cut"><b>时间到，换下一题</b></div>
+
+<script>
+const TYPES = [
+  {id:'up', label:'两边一起加'},
+  {id:'down', label:'两边一起减'},
+  {id:'left', label:'只有左边：一个加、一个减'},
+  {id:'right', label:'只有右边：一个加、一个减'}
+];
+const BANK = [
+  {type:'up', start:{a:{现金:0},l:{},e:{本钱:0}}, say:'老板把 20 万现金投进店里。', tx:{a:{现金:20},l:{},e:{本钱:20}}, why:'有的多了 20 万，自己的也多了 20 万。两边一起加。'},
+  {type:'up', start:{a:{现金:20},l:{},e:{本钱:20}}, say:'向银行借 5 万，钱已经到账。', tx:{a:{现金:5},l:{欠银行:5},e:{}}, why:'有的多了 5 万，欠的也多了 5 万。两边一起加。'},
+  {type:'up', start:{a:{现金:10,珍珠:3},l:{欠银行:3},e:{本钱:10}}, say:'风间入股 10 万现金。', tx:{a:{现金:10},l:{},e:{本钱:10}}, why:'有的多了 10 万，自己的也多了 10 万。两边一起加。'},
+  {type:'up', start:{a:{现金:8},l:{},e:{本钱:8}}, say:'赊来 3 万珍珠：货到了，钱还没付。', tx:{a:{珍珠:3},l:{欠供应商:3},e:{}}, why:'有的多了珍珠，欠的也多了。两边一起加。'},
+  {type:'down', start:{a:{现金:15},l:{欠银行:5},e:{本钱:10}}, say:'用现金把这 5 万借款还掉。', tx:{a:{现金:-5},l:{欠银行:-5},e:{}}, why:'有的少了 5 万，欠的也少了 5 万。两边一起减。'},
+  {type:'down', start:{a:{现金:12,珍珠:3},l:{欠供应商:3},e:{本钱:12}}, say:'用现金付清欠供应商的 3 万。', tx:{a:{现金:-3},l:{欠供应商:-3},e:{}}, why:'有的少了 3 万，欠的也少了 3 万。两边一起减。'},
+  {type:'down', start:{a:{现金:20},l:{},e:{本钱:20}}, say:'老板从店里拿走 2 万现金，算抽走本钱。', tx:{a:{现金:-2},l:{},e:{本钱:-2}}, why:'有的少了，自己的也少了。两边一起减。'},
+  {type:'down', start:{a:{现金:9},l:{欠银行:4},e:{本钱:5}}, say:'再还银行 4 万，现金付清。', tx:{a:{现金:-4},l:{欠银行:-4},e:{}}, why:'两边一起减 4 万。'},
+  {type:'left', start:{a:{现金:20},l:{},e:{本钱:20}}, say:'花 8 万现金，买进一台奶茶机。', tx:{a:{现金:-8,奶茶机:8},l:{},e:{}}, why:'左边现金少、奶茶机多。有的总数没变。'},
+  {type:'left', start:{a:{现金:15},l:{欠银行:5},e:{本钱:10}}, say:'花 3 万现金买珍珠，钱当场付清。', tx:{a:{现金:-3,珍珠:3},l:{},e:{}}, why:'左边现金换珍珠。有的总数没变。'},
+  {type:'left', start:{a:{现金:10,奶茶机:8},l:{},e:{本钱:18}}, say:'又花 1.2 万现金买一台小冰箱。', tx:{a:{现金:-1.2,冰箱:1.2},l:{},e:{}}, why:'左边一个加、一个减。'},
+  {type:'left', start:{a:{现金:6,旧机器:2},l:{},e:{本钱:8}}, say:'把旧机器卖掉，收回现金 2 万。', tx:{a:{现金:2,旧机器:-2},l:{},e:{}}, why:'左边机器少了、现金多了。总数没变。'},
+  {type:'right', start:{a:{现金:20},l:{欠供应商:3},e:{本钱:17}}, say:'供应商说这 3 万不用还了，算入股。', tx:{a:{},l:{欠供应商:-3},e:{本钱:3}}, why:'欠的少了，自己的多了。只动右边。'},
+  {type:'right', start:{a:{现金:15},l:{欠风间:2},e:{本钱:13}}, say:'欠风间的 2 万，改口算他入股。', tx:{a:{},l:{欠风间:-2},e:{本钱:2}}, why:'欠的变成自己的。只动右边。'},
+  {type:'right', start:{a:{现金:18},l:{},e:{本钱:18}}, say:'老板该拿的 1 万先不拿走，改成店里欠他。', tx:{a:{},l:{欠老板:1},e:{本钱:-1}}, why:'自己的少了，欠的多了。只动右边。'},
+  {type:'right', start:{a:{现金:12},l:{欠银行:4},e:{本钱:8}}, say:'银行同意：这 4 万借款改成投资入股。', tx:{a:{},l:{欠银行:-4},e:{本钱:4}}, why:'欠银行变成老板本钱。只动右边。'}
+];
+
+const DRAW = "../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.15_20260829.html?use=play&play="+encodeURIComponent("天平");
+const $ = id => document.getElementById(id);
+const qs = new URLSearchParams(location.search);
+const backDraw = qs.get("back") || DRAW;
+const fmt = n => { const x=Math.round(n*10)/10; return Number.isInteger(x)?String(x):x.toFixed(1); };
+function tot(o){return Object.values(o).reduce((s,v)=>s+v,0)}
+function add(dst, src){Object.entries(src||{}).forEach(([k,v])=>{dst[k]=(dst[k]||0)+v})}
+function clone(o){return JSON.parse(JSON.stringify(o))}
+function chips(obj, cls){
+  return Object.entries(obj).filter(([,v])=>v!==0).map(([k,v])=>`<span class="chip ${cls}">${k} ${v>0?'+':''}${fmt(v)}万</span>`).join('') || '<span style="color:#bbb">空</span>';
+}
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  $(id).classList.add('on');
+}
+function ptsOf(ok, n){ if(ok===n) return 5; if(ok>=2) return 2; return 0; }
+function todayStr(){
+  const d=new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function loadLog(){
+  try{ const x=JSON.parse(localStorage.getItem("draw-score-log")||"[]"); return Array.isArray(x)?x:[]; }catch(e){ return []; }
+}
+function saveLog(log){ localStorage.setItem("draw-score-log", JSON.stringify(log)); }
+
+function readPlayer(){
+  const qn=qs.get("name"); if(qn) return qn.trim();
+  try{
+    const h=JSON.parse(localStorage.getItem("draw-handoff")||"{}");
+    if(h && h.name && Date.now()-(h.ts||0)<1000*60*30) return h.name;
+  }catch(e){}
+  return "";
+}
+
+let player=readPlayer(), sec=15, roundId=Date.now();
+let deck=[], q=0, ok=0, locked=false, tLeft=0, tick=null, barTimer=null;
+let A={},L={},E={};
+
+function goDraw(){ location.href = backDraw; }
+
+function gate(){
+  if(!player){
+    $("readyName").textContent="还没抽人";
+    $("readyTitle").textContent="先抽人，再玩天平";
+    $("readyQa").innerHTML = `<div><b>做什么：</b>回抽人页，抽一个人上场。</div>
+      <div><b>怎么做：</b>点下面的按钮。</div>`;
+    $("readyBtns").innerHTML = `<button class="btn go" type="button" id="toDraw">去抽人</button>`;
+    $("toDraw").onclick = goDraw;
+    $("now").textContent="现在你：先抽人。";
+    return;
+  }
+  $("readyName").textContent=player;
+  $("readyTitle").textContent="上场玩天平";
+  $("readyQa").innerHTML = `<div><b>做什么：</b>看这一笔，选天平怎么变。</div>
+    <div><b>怎么做：</b>15 秒内点一个牌子。一共 4 题。</div>
+    <div><b>怎么满分：</b>4 题全对。</div>`;
+  $("readyBtns").innerHTML = `<button class="btn go" type="button" id="start">开始</button>`;
+  $("start").onclick = startRound;
+  $("now").textContent="现在你："+player+"，点开始。";
+}
+
+function pickDeck(){
+  const by={up:[],down:[],left:[],right:[]};
+  BANK.forEach(x=>by[x.type].push(x));
+  const one=k=>by[k][Math.floor(Math.random()*by[k].length)];
+  return ["up","down","left","right"].map(one).sort(()=>Math.random()-0.5);
+}
+function drawState(objA,objL,objE){
+  A=objA; L=objL; E=objE;
+  const ta=tot(A), tl=tot(L), te=tot(E);
+  $("chipsA").innerHTML=chips(A,"a");
+  $("chipsR").innerHTML=chips(L,"l")+chips(E,"e");
+  $("totA").textContent=fmt(ta)+"万";
+  $("totR").textContent=fmt(tl+te)+"万";
+  const st=$("status");
+  st.className="status ok";
+  st.textContent=`现在平的。${fmt(ta)}万 ＝ ${fmt(tl)}万 ＋ ${fmt(te)}万`;
+}
+function renderChoices(){
+  $("choices").innerHTML = TYPES.map(t=>`<button type="button" data-id="${t.id}">${t.label}</button>`).join("");
+}
+function stopTick(){
+  if(tick){ clearInterval(tick); tick=null; }
+  if(barTimer){ cancelAnimationFrame(barTimer); barTimer=null; }
+}
+function startTick(){
+  stopTick();
+  tLeft=sec;
+  const el=$("timer"), bar=$("timebar"), wrap=$("timebarWrap");
+  el.textContent=tLeft; el.className="timer"; wrap.classList.remove("low");
+  const t0=performance.now(), dur=sec*1000;
+  function barFrame(now){
+    const p=Math.min(1,(now-t0)/dur);
+    bar.style.transform="scaleX("+(1-p)+")";
+    if(p<1 && tick) barTimer=requestAnimationFrame(barFrame);
+  }
+  bar.style.transform="scaleX(1)";
+  barTimer=requestAnimationFrame(barFrame);
+  tick=setInterval(()=>{
+    tLeft--;
+    el.textContent=Math.max(0,tLeft);
+    if(tLeft<=5){ el.classList.add("low"); wrap.classList.add("low"); }
+    if(tLeft<=0){ stopTick(); answer(null, true); }
+  },1000);
+}
+function ask(){
+  locked=false;
+  $("flash").textContent="";
+  $("cut").classList.remove("on");
+  const item=deck[q];
+  $("playName").textContent=player;
+  $("qno").textContent=`第 ${q+1} / ${deck.length} 题`;
+  drawState(clone(item.start.a), clone(item.start.l), clone(item.start.e));
+  $("cmd").textContent="发生："+item.say;
+  $("now").textContent="现在你："+player+"，倒计时结束前点一个牌子。";
+  renderChoices();
+  startTick();
+}
+function nextQ(reason){
+  q++;
+  if(q>=deck.length){ finish(); return; }
+  if(reason==="timeout"){
+    $("cut").classList.add("on");
+    setTimeout(()=>{ $("cut").classList.remove("on"); ask(); }, 1100);
+  }else{
+    setTimeout(ask, 1600);
+  }
+}
+function answer(picked, timeout){
+  if(locked) return;
+  locked=true; stopTick();
+  const item=deck[q];
+  const correct=item.type;
+  [...$("choices").children].forEach(b=>{
+    b.disabled=true;
+    if(b.dataset.id===correct) b.classList.add("right");
+    if(picked && b.dataset.id===picked && picked!==correct) b.classList.add("wrong");
+  });
+  const na=clone(item.start.a), nl=clone(item.start.l), ne=clone(item.start.e);
+  add(na,item.tx.a); add(nl,item.tx.l); add(ne,item.tx.e);
+  drawState(na,nl,ne);
+  $("status").className="status ok";
+  $("status").textContent=item.why;
+  const good=picked===correct;
+  if(good){ ok++; $("flash").className="flash ok"; $("flash").textContent="对了"; }
+  else { $("flash").className="flash bad"; $("flash").textContent=timeout?"时间到":"错了"; }
+  $("now").textContent = good ? "现在你：对了。看一眼天平，还是平的。" : "现在你：看绿灯那个牌子。";
+  nextQ(timeout?"timeout":"ans");
+}
+function startRound(){
+  roundId=Date.now();
+  deck=pickDeck(); q=0; ok=0;
+  show("s1"); ask();
+}
+function finish(){
+  const n=deck.length, pts=ptsOf(ok,n);
+  const log=loadLog();
+  const tm=new Date().toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  log.push({day:todayStr(), t:tm, name:player, pts, use:"上场·天平", round:roundId, ok, n});
+  saveLog(log);
+  show("s3");
+  $("endTitle").textContent=player+"　本轮结束";
+  $("endScore").innerHTML = ok===n
+    ? `4 题全对。满分。`
+    : `4 题对了 <span style="color:var(--orange)">${ok}</span> 题。<br>满分要 4 题全对。`;
+  $("now").textContent="现在你：继续抽人，或看今天的分。想再来可以重做。";
+}
+function renderBoard(){
+  const log=loadLog();
+  const day=todayStr();
+  const today=log.filter(x=>x.day===day);
+  const totAll={};
+  log.forEach(x=>{ totAll[x.name]=(totAll[x.name]||0)+Number(x.pts||0); });
+  const todaySum={};
+  today.forEach(x=>{ todaySum[x.name]=(todaySum[x.name]||0)+Number(x.pts||0); });
+  const rows=today.slice().reverse();
+  $("board").innerHTML = rows.length ? rows.map(r=>`<tr>
+    <td>${r.name}</td><td>${r.use||""}</td><td>${r.pts}</td>
+    <td>${todaySum[r.name]||0}</td><td>${totAll[r.name]||0}</td>
+  </tr>`).join("") : `<tr><td colspan="5">今天还没有分。</td></tr>`;
+}
+
+$("more").onclick=$("more2").onclick=goDraw;
+$("retry").onclick=()=>{
+  const log=loadLog().filter(x=>x.round!==roundId);
+  saveLog(log);
+  startRound();
+};
+$("see").onclick=()=>{ renderBoard(); show("s4"); $("now").textContent="现在你：看完可以继续抽人。"; };
+$("backEnd").onclick=()=>show("s3");
+$("choices").onclick=e=>{
+  const b=e.target.closest("button"); if(!b||locked) return;
+  answer(b.dataset.id, false);
+};
+
+gate();
+</script>
+</body>
+</html>

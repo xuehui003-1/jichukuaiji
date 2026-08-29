@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>项目一　上课投影（网页投影版）v1.4</title>
+<title>项目一　上课投影（网页投影版）v1.5</title>
 <style>
 :root{
   --orange:#bf360c; --green:#2e7d32; --ink:#22170f;
@@ -96,7 +96,7 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
   <button type="button" id="menuBtn">目录</button>
   <button type="button" id="fontBig" class="on">大字体</button>
   <button type="button" id="fontSmall">小字体</button>
-  <h1>项目一　认识会计工作 <small>上课投影网页版 v1.4　2026-08-29</small></h1>
+  <h1>项目一　认识会计工作 <small>上课投影网页版 v1.5　2026-08-29</small></h1>
   <div class="hint">← → 翻页　点图或点字可放大</div>
 </header>
 <div class="layout">
@@ -124,7 +124,7 @@ const KIND = {
   homework:"课后任务", teacher:"老师看", game:"打地鼠",
   thumbs:"四张图", text:"讲义", spare:"备用", drag:"拖一拖"
 };
-const DRAW = "../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.14_20260829.html";
+const DRAW = "../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.15_20260829.html";
 function drawHref(use, play){
   const here = location.href.split("#")[0] + "#" + SLIDES[i].n;
   let u = DRAW + "?use=" + encodeURIComponent(use) + "&back=" + encodeURIComponent(here);
@@ -243,7 +243,7 @@ function render(){
   const nPic = (s.pics||[]).length;
   const grid = nPic>=3 ? "many" : "one";
   const imgs = (s.pics||[]).map(p=>`<img src="${esc(p.src)}" alt="">`).join("");
-  const lab = s.lab ? `<a class="lab" href="01-03_小新的天平_能不能弄歪_网页_v3.0_20260828.html">打开天平</a>` : "";
+  const lab = "";
   const d = drawBtn(s);
   const go = d ? `<a class="go-draw" href="${esc(d.href)}">${esc(d.label)}</a>` : "";
   $("card").innerHTML = `

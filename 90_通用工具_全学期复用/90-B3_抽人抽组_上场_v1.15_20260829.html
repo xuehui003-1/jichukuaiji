@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>上课打开这一页　v1.14</title>
+<title>上课打开这一页　v1.15</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:#05070d;color:#eef4ff;
@@ -219,7 +219,7 @@ body.focus .rail, body.focus .rail-tab, body.focus .top{opacity:0;pointer-events
 <div class="ui">
   <div class="top">
     <div class="brand">上场</div>
-    <span class="ver">v1.14　音效在收起旁边 · 课件能跳过来</span>
+    <span class="ver">v1.15　抽完天平自动带人 · 只亮当前按钮</span>
   </div>
   <div class="stage">
     <div class="ring-wrap">
@@ -328,7 +328,7 @@ function useSub(){
   return USES[useId].sub || "";
 }
 function playTip(){
-  if(playKind==="天平") return "项目一讲会计等式时打开「01-03_小新的天平_能不能弄歪_网页_v3.0」。抽一个人上场。做完回来点 5 / 2 / 0。";
+  if(playKind==="天平") return "抽一个人。抽完点「去天平」，名字会带过去。4 题全对才满分，分自动记进同一张表。";
   if(playKind==="打地鼠") return "讲完六个要素之后打开「90-B1 打地鼠」。抽一个人上场。游戏分再大，回来只点 0 / 2 / 5。";
   if(playKind==="配音") return "项目一最后「下课前看这一页」才布置，不当场录。项目四看完连环画那一页才配音。想抽人念再用。一般不当场记分。";
   return "先点天平、打地鼠或配音，再抽一个人。";
@@ -338,12 +338,19 @@ function applyUse(){
   const tip = useId==="play" ? playTip() : (u.tip||"");
   $("useTip").textContent = tip;
   $("useTip").style.display = tip ? "block" : "none";
+  [...$("uses").children].forEach(x=>x.classList.toggle("on", x.dataset.u===useId));
   $("playSub").classList.toggle("on", useId==="play");
   if(useId==="play"){
     [...$("playSub").children].forEach(x=>x.classList.toggle("on", (x.dataset.s||"")===playKind));
   }
   ["draw1","drawG","draw3"].forEach(id => $(id).classList.remove("suggest"));
   if(u.suggest) $(u.suggest).classList.add("suggest");
+}
+const TIANPING = "../01_项目一_认识会计工作与企业经济业务/01-03_小新的天平_能不能弄歪_网页_v4.0_20260829.html";
+function goTianping(name){
+  localStorage.setItem("draw-handoff", JSON.stringify({name, ts: Date.now(), use:"上场·天平"}));
+  const back = "../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.15_20260829.html?use=play&play=" + encodeURIComponent("天平");
+  location.href = TIANPING + "?name=" + encodeURIComponent(name) + "&back=" + encodeURIComponent(back);
 }
 try{ hist=JSON.parse(localStorage.getItem("draw-hist")||"[]"); if(!Array.isArray(hist)) hist=[]; }catch(e){ hist=[]; }
 let scoreLog=[];
@@ -910,6 +917,7 @@ async function spin(list, k){
     $("hintLine").textContent="抽三个人会转三次。指针停在谁就是谁。";
     if(got.length) addHist(got, k);
     reveal(got, got.length);
+    paintIdle();
   }finally{
     busy=false; spinning=false;
     document.body.classList.remove("focus");
@@ -926,17 +934,24 @@ function reveal(names, k){
       ${photos[n]?`<img src="${photos[n]}" alt="">`:`<div class="face"></div>`}
       <div class="nm">${n}</div>
     </div>`).join("");
-  const pads = names.map(n=>`
+  const toTp = useId==="play" && playKind==="天平" && names.length===1;
+  const pads = toTp ? "" : names.map(n=>`
     <div class="score-line" data-name="${n}">
       <em>${n}</em>
       <button class="b2" type="button" data-p="2">${u.s2||"2 分"}</button>
       <button class="b5" type="button" data-p="5">${u.s5||"5 分"}</button>
       <button class="b0" type="button" data-p="0">${u.s0||"0 分"}</button>
     </div>`).join("");
+  const go = toTp ? `<div class="score-pad"><button class="gold" type="button" id="goTp" style="font-size:22px;padding:14px 28px;border-radius:14px">去天平</button></div>` : "";
+  const sub = toTp ? "点「去天平」。分在天平做完后自动记。" : (useSub()+"　点空白处关掉。一题最多 5 分，先点 2 再点 5 是改成 5，不是 7。");
   $("card").innerHTML = `<div class="tag">${tag}</div><div class="say">${useSay(names)}</div><div class="trio">${cells}</div>
-    <div class="score-pad">${pads}</div>
-    <div class="sub">${useSub()}　点空白处关掉。一题最多 5 分，先点 2 再点 5 是改成 5，不是 7。</div>`;
+    ${go}<div class="score-pad">${pads}</div>
+    <div class="sub">${sub}</div>`;
   $("result").classList.add("on");
+  if(toTp){
+    const b=$("goTp");
+    if(b) b.onclick=e=>{ e.stopPropagation(); goTianping(names[0]); };
+  }
 }
 $("card").onclick = e=>{
   const b=e.target.closest("button[data-p]"); if(!b) return;
