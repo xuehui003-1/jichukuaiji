@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>上场　抽人抽组 v1.12</title>
+<title>上课打开这一页　v1.13</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:#05070d;color:#eef4ff;
@@ -130,6 +130,9 @@ body.focus .rail, body.focus .rail-tab, body.focus .top{opacity:0;pointer-events
 .score-list{font-size:12px;line-height:1.45;max-height:160px;overflow:auto;background:#0b1220;border:1px solid #2a3754;border-radius:10px;padding:4px}
 .score-list div{display:flex;gap:6px;align-items:center;padding:5px 6px;border-bottom:1px solid #2a3754}
 .score-list b{color:#ffe9a8;margin-left:auto}
+.now{font-size:14px;line-height:1.55;color:#fff8d6;background:#3a1d08;border:1px solid #e0b13a;border-radius:10px;padding:10px}
+.gold.wide{display:block;width:100%;text-align:center;border-radius:10px;padding:10px 12px}
+.score-list .mini{color:#8ea0c3;font-size:11px;font-weight:700}
 .boom{position:fixed;inset:0;z-index:25;pointer-events:none}
 </style>
 </head>
@@ -141,9 +144,15 @@ body.focus .rail, body.focus .rail-tab, body.focus .top{opacity:0;pointer-events
 <button class="rail-tab" type="button" id="railTab">操 作</button>
 <aside class="rail" id="rail">
   <div class="rail-head">
-    <b>操作</b>
+    <b>上课打开这一页</b>
     <button class="ghost" type="button" id="railShut">收起</button>
   </div>
+  <div class="now" id="nowBox">同一台电脑不用导入。下课前导出备份。</div>
+  <label class="gold wide">课前：导入备份
+    <input id="importBak" type="file" accept="application/json,.json" hidden>
+  </label>
+  <button class="gold wide" type="button" id="exportBak">课后：导出备份</button>
+  <button class="ghost wide" type="button" id="exportXls">课后：导出成绩表</button>
   <button class="ghost wide" type="button" id="btnList">名单 / 组名</button>
   <button class="ghost wide" type="button" id="btnMute">音效开</button>
 
@@ -192,29 +201,21 @@ body.focus .rail, body.focus .rail-tab, body.focus .top{opacity:0;pointer-events
     <button class="ghost" type="button" id="clearHist">清空抽取</button>
   </div>
 
-  <h3>记分（这台电脑自动保存）</h3>
-  <div class="hist-sum">今天合计 <b id="scoreN">0</b> 分</div>
+  <h3>记分</h3>
+  <div class="hist-sum">今天 <b id="scoreN">0</b> 分</div>
   <div class="score-list" id="scoreList"></div>
-  <div class="hist-btns">
-    <button class="gold" type="button" id="exportWeek">导出本节汇总</button>
-    <button class="ghost" type="button" id="exportBak">导出备份</button>
-  </div>
-  <div class="hist-btns">
-    <label class="ghost wide" style="text-align:center;border-radius:10px;padding:8px 8px;font-size:12px">导入备份
-      <input id="importBak" type="file" accept="application/json,.json" hidden>
-    </label>
-    <button class="ghost" type="button" id="clearScore">清空今日分</button>
-  </div>
+  <button class="ghost wide" type="button" id="clearScore">清空今日分</button>
   <div class="score-note">
-    同一台电脑，下节课打开还在。<b>复制这个网页到优盘，分数不会跟着走</b>，下课请点「导出备份」。<br>
-    「导出本节汇总」是 CSV，贴进 90-C4「本周计算器」右边 S 列（姓名 / 组号 / 本节合计）。
+    <b>课前：</b>换了电脑才导入。同一台电脑打开就还在。<br>
+    <b>课后：</b>一定要点「导出备份」。复制这个网页到优盘，分数不会跟着走。<br>
+    成绩表只有一张：姓名、今天、累计。Excel / WPS 能打开。平时不用再打开 90-C4。
   </div>
 </aside>
 
 <div class="ui">
   <div class="top">
     <div class="brand">上场</div>
-    <span class="ver">v1.12　抽完可记分，自动保存在这台电脑</span>
+    <span class="ver">v1.13　课前导入 · 课后导出 · 不用记表格</span>
   </div>
   <div class="stage">
     <div class="ring-wrap">
@@ -349,13 +350,31 @@ function todayByName(){
   scoreLog.filter(x=>x.day===day).forEach(x=>{ m[x.name]=(m[x.name]||0)+Number(x.pts||0); });
   return m;
 }
+function totalByName(){
+  const m={};
+  scoreLog.forEach(x=>{ m[x.name]=(m[x.name]||0)+Number(x.pts||0); });
+  return m;
+}
+function nowText(){
+  const n=lines($("people")).length;
+  if(!n) return "先点「课前：导入备份」，或打开「名单 / 组名」贴名单并保存。";
+  const today=todayByName();
+  const k=Object.keys(today).length;
+  return "同一台电脑不用导入。学生写完册子 → 举册子。下课前点「课后：导出备份」。今天已给 "+k+" 人记过分。";
+}
 function renderScores(){
-  const m=todayByName();
-  const names=Object.keys(m).sort((a,b)=>m[b]-m[a]);
-  const total=names.reduce((s,n)=>s+m[n],0);
-  $("scoreN").textContent=String(total);
-  if(!names.length){ $("scoreList").innerHTML='<div style="color:#8ea0c3">抽完后在弹窗上点 2 / 5 / 0，会出现在这里。</div>'; return; }
-  $("scoreList").innerHTML = names.map(n=>`<div><span>${n}</span><b>${m[n]}</b></div>`).join("");
+  const today=todayByName();
+  const tot=totalByName();
+  const people=lines($("people"));
+  const names=[...new Set([...people, ...Object.keys(tot)])];
+  names.sort((a,b)=>(tot[b]||0)-(tot[a]||0));
+  const daySum=people.reduce((s,n)=>s+(today[n]||0),0);
+  $("scoreN").textContent=String(daySum);
+  if($("nowBox")) $("nowBox").textContent=nowText();
+  if(!names.length){ $("scoreList").innerHTML='<div style="color:#8ea0c3">抽完后在弹窗上点 2 / 5 / 0。</div>'; return; }
+  $("scoreList").innerHTML = '<div><span>姓名</span><span class="mini">今天</span><b>累计</b></div>' + names.map(n=>
+    `<div><span>${n}</span><span class="mini">${today[n]||0}</span><b>${tot[n]||0}</b></div>`
+  ).join("");
 }
 function giveScore(name, pts, btn){
   const day=todayStr();
@@ -374,19 +393,24 @@ function giveScore(name, pts, btn){
     btn.classList.add("on");
   }
 }
-function exportWeek(){
-  const m=todayByName();
-  const people=new Set(lines($("people")));
-  const rows=[["姓名","组号","本节合计"]];
-  Object.keys(m).sort().forEach(n=>{
-    if(people.size && !people.has(n)) return; // 组名不进 90-C4
-    rows.push([n,"",String(m[n])]);
-  });
-  if(rows.length===1){ alert("今天还没有记到个人的分。组的分不会进这一张，要记个人请抽人后点分。"); return; }
-  const csv="\ufeff"+rows.map(r=>r.join(",")).join("\n");
+function xesc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function xrow(cols){
+  return "<Row>"+cols.map(c=>'<Cell><Data ss:Type="String">'+xesc(c)+"</Data></Cell>").join("")+"</Row>";
+}
+function exportXls(){
+  const people=lines($("people"));
+  const today=todayByName();
+  const tot=totalByName();
+  const names=people.length?people:[...new Set(Object.keys(tot))];
+  const body = [xrow(["姓名","今天","累计"])].concat(
+    names.map(n=>xrow([n, String(today[n]||0), String(tot[n]||0)]))
+  ).join("");
+  const xml = '<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?>' +
+    '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">' +
+    '<Worksheet ss:Name="成绩"><Table>'+body+"</Table></Worksheet></Workbook>";
   const a=document.createElement("a");
-  a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
-  a.download="本节汇总_"+todayStr()+".csv";
+  a.href=URL.createObjectURL(new Blob(["\ufeff"+xml],{type:"application/vnd.ms-excel"}));
+  a.download="课堂成绩_"+todayStr()+".xls";
   a.click();
 }
 function exportBak(){
@@ -462,8 +486,8 @@ $("clearHist").onclick = ()=>{
   localStorage.setItem("draw-hist","[]");
   renderHist();
 };
-$("exportWeek").onclick = exportWeek;
 $("exportBak").onclick = exportBak;
+$("exportXls").onclick = exportXls;
 $("importBak").onchange = e=>{ const f=e.target.files && e.target.files[0]; if(f) importBak(f); e.target.value=""; };
 $("clearScore").onclick = ()=>{
   const day=todayStr();
@@ -561,7 +585,7 @@ $("plist").onchange = async e=>{
 };
 $("saveP").onclick = ()=>{
   localStorage.setItem("draw-people", $("people").value);
-  count(); renderList(); paintIdle();
+  count(); renderList(); renderScores(); paintIdle();
 };
 $("saveG").onclick = ()=>{
   localStorage.setItem("draw-groups", $("groups").value);
