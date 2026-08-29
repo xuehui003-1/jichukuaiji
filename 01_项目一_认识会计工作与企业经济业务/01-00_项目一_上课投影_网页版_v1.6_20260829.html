@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>项目一　上课投影（网页投影版）v1.5</title>
+<title>项目一　上课投影（网页投影版）v1.6</title>
 <style>
 :root{
   --orange:#bf360c; --green:#2e7d32; --ink:#22170f;
@@ -60,6 +60,15 @@ body.wide .side{display:none}
 .bin.bad{border-color:#c62828;background:#ffebee}
 .bin .in{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
 .drag-msg{text-align:center;font-weight:800;color:#2e7d32;font-size:1.1rem;min-height:1.4em;margin-top:8px}
+.link-board{position:relative;margin:8px 18px 16px;min-height:420px}
+.link-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.link-cols{position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;gap:18px;min-height:420px}
+.link-col{display:flex;flex-direction:column;gap:10px;justify-content:space-between}
+.link-item{border:3px solid #d7c4b0;background:#fff;border-radius:14px;padding:12px 10px;font-weight:800;font-size:clamp(16px,2.2vw,22px);text-align:center;cursor:pointer;color:#3e2723}
+.link-item.on{border-color:#bf360c;background:#fff3e0;box-shadow:0 0 0 3px #ffcc80}
+.link-item.lock{border-color:#2e7d32;background:#e8f5e9;color:#1b5e20;cursor:default}
+.link-item.bad{border-color:#c62828;background:#ffebee}
+.link-col.right .link-item{background:#faf6f0}
 .ghost-chip{position:fixed;z-index:40;pointer-events:none;background:#bf360c;color:#fff;padding:10px 16px;border-radius:999px;font-weight:800;box-shadow:0 8px 18px rgba(0,0,0,.25)}
 .head{padding:12px 22px 4px}
 .head h2{font-size:var(--title);line-height:1.25;color:var(--brown);cursor:zoom-in}
@@ -96,7 +105,7 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
   <button type="button" id="menuBtn">目录</button>
   <button type="button" id="fontBig" class="on">大字体</button>
   <button type="button" id="fontSmall">小字体</button>
-  <h1>项目一　认识会计工作 <small>上课投影网页版 v1.5　2026-08-29</small></h1>
+  <h1>项目一　认识会计工作 <small>上课投影网页版 v1.6　2026-08-29</small></h1>
   <div class="hint">← → 翻页　点图或点字可放大</div>
 </header>
 <div class="layout">
@@ -124,17 +133,15 @@ const KIND = {
   homework:"课后任务", teacher:"老师看", game:"打地鼠",
   thumbs:"四张图", text:"讲义", spare:"备用", drag:"拖一拖"
 };
-const DRAW = "../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.15_20260829.html";
-function drawHref(use, play){
+const DRAW = "../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.16_20260829.html";
+function drawHref(use){
   const here = location.href.split("#")[0] + "#" + SLIDES[i].n;
-  let u = DRAW + "?use=" + encodeURIComponent(use) + "&back=" + encodeURIComponent(here);
-  if(play) u += "&play=" + encodeURIComponent(play);
-  return u;
+  return DRAW + "?use=" + encodeURIComponent(use) + "&back=" + encodeURIComponent(here);
 }
 function drawBtn(s){
   if(s.kind==="pause" || s.n===44) return {href:drawHref("book"), label:"抽三个人看册子"};
-  if(s.kind==="game") return {href:drawHref("play","打地鼠"), label:"抽一个人上场"};
-  if(s.lab) return {href:drawHref("play","天平"), label:"抽一个人上场玩天平"};
+  if(s.kind==="game") return {href:drawHref("mole"), label:"抽一个人上场"};
+  if(s.lab) return {href:drawHref("tianping"), label:"抽一个人上场玩天平"};
   return null;
 }
 const SIX = [
@@ -178,69 +185,63 @@ function renderNav(){
     return `<button class="nav-item ${idx===i?"on":""}" data-i="${idx}"><span class="k">${s.n}</span>${esc(short)}</button>`;
   }).join("");
 }
-function dragHtml(s){
+function linkHtml(s){
   if(s.n!==78) return "";
-  const chips = SIX.map((c,idx)=>`<button type="button" class="chip" draggable="true" data-i="${idx}">${esc(c.t)}</button>`).join("");
-  const bins = BINS.map(b=>`<div class="bin" data-bin="${esc(b)}"><h4>${esc(b)}</h4><div class="in"></div></div>`).join("");
-  return `<div class="drag-board" id="dragBoard">
-    <div class="chips" id="chipPool">${chips}</div>
-    <div class="bins">${bins}</div>
-    <div class="drag-msg" id="dragMsg">把词拖进对的框。放错会弹回来。</div>
+  const left = SIX.map((c,idx)=>`<button type="button" class="link-item" data-side="L" data-i="${idx}">${esc(c.t)}</button>`).join("");
+  const right = BINS.map(b=>`<button type="button" class="link-item" data-side="R" data-bin="${esc(b)}">${esc(b)}</button>`).join("");
+  return `<div class="link-board" id="linkBoard">
+    <svg class="link-svg" id="linkSvg"></svg>
+    <div class="link-cols">
+      <div class="link-col" id="linkL">${left}</div>
+      <div class="link-col" id="linkR">${right}</div>
+    </div>
+    <div class="drag-msg" id="dragMsg">左边点一个词，再点右边对的框。连对会留下绿线。</div>
   </div>`;
 }
-function bindDrag(){
-  const board=$("dragBoard"); if(!board) return;
-  const pool=$("chipPool");
-  let hold=null, ghost=null;
-  function placed(){
-    return [...board.querySelectorAll(".chip.lock")].length;
+function bindLink(){
+  const board=$("linkBoard"); if(!board) return;
+  const svg=$("linkSvg");
+  let pick=null, pairs=[];
+  function pt(el){
+    const br=board.getBoundingClientRect(), r=el.getBoundingClientRect();
+    return {x: r.left-br.left + r.width/2, y: r.top-br.top + r.height/2};
+  }
+  function paint(){
+    const br=board.getBoundingClientRect();
+    svg.setAttribute("viewBox", "0 0 "+br.width+" "+br.height);
+    svg.innerHTML = pairs.map(p=>{
+      const a=pt(p.L), b=pt(p.R);
+      return `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="#2e7d32" stroke-width="5" stroke-linecap="round"/>`;
+    }).join("");
   }
   function say(){
-    const n=placed();
-    $("dragMsg").textContent = n===SIX.length ? "六个都对了。" : "把词拖进对的框。放错会弹回来。";
+    $("dragMsg").textContent = pairs.length===SIX.length ? "六条都连对了。" : "左边点一个词，再点右边对的框。连对会留下绿线。";
   }
-  function dropOn(bin, chip){
-    if(!chip || chip.classList.contains("lock")) return;
-    const item=SIX[+chip.dataset.i];
-    if(item.a===bin.dataset.bin){
-      chip.classList.add("lock");
-      bin.classList.remove("bad"); bin.classList.add("ok");
-      bin.querySelector(".in").appendChild(chip);
-      say();
-    }else{
-      bin.classList.add("bad");
-      setTimeout(()=>bin.classList.remove("bad"), 450);
-      pool.appendChild(chip);
+  board.addEventListener("click", e=>{
+    const it=e.target.closest(".link-item"); if(!it) return;
+    e.stopPropagation();
+    if(it.classList.contains("lock")) return;
+    if(it.dataset.side==="L"){
+      board.querySelectorAll('[data-side="L"]').forEach(x=>x.classList.remove("on"));
+      it.classList.add("on"); pick=it; return;
     }
-  }
-  board.addEventListener("pointerdown", e=>{
-    const chip=e.target.closest(".chip"); if(!chip || chip.classList.contains("lock")) return;
-    e.preventDefault();
-    hold=chip; chip.classList.add("hold");
-    ghost=document.createElement("div"); ghost.className="ghost-chip"; ghost.textContent=chip.textContent;
-    document.body.appendChild(ghost);
-    ghost.style.left=(e.clientX-40)+"px"; ghost.style.top=(e.clientY-18)+"px";
-    chip.setPointerCapture(e.pointerId);
+    if(!pick) return;
+    const item=SIX[+pick.dataset.i];
+    if(item.a===it.dataset.bin){
+      pick.classList.add("lock"); it.classList.add("lock");
+      pick.classList.remove("on");
+      pairs.push({L:pick, R:it});
+      pick=null; paint(); say();
+    }else{
+      it.classList.add("bad");
+      setTimeout(()=>it.classList.remove("bad"), 400);
+    }
   });
-  board.addEventListener("pointermove", e=>{
-    if(!ghost) return;
-    ghost.style.left=(e.clientX-40)+"px"; ghost.style.top=(e.clientY-18)+"px";
-  });
-  function end(e){
-    if(!hold) return;
-    const el=document.elementFromPoint(e.clientX, e.clientY);
-    const bin=el && el.closest(".bin");
-    hold.classList.remove("hold");
-    if(bin) dropOn(bin, hold);
-    if(ghost) ghost.remove();
-    hold=null; ghost=null;
-  }
-  board.addEventListener("pointerup", end);
-  board.addEventListener("pointercancel", end);
+  addEventListener("resize", paint);
 }
 function render(){
   const s = SLIDES[i];
-  const nPic = (s.pics||[]).length;
+  const nPic = s.n===78 ? 0 : (s.pics||[]).length;
   const grid = nPic>=3 ? "many" : "one";
   const imgs = (s.pics||[]).map(p=>`<img src="${esc(p.src)}" alt="">`).join("");
   const lab = "";
@@ -253,12 +254,12 @@ function render(){
     </div>
     <div class="body">${bodyHtml(s.body||[])}</div>
     ${nPic?`<div class="pics ${grid}">${imgs}</div><div class="pic-hint">点图片可放大到全屏</div>`:""}
-    ${dragHtml(s)}
+    ${linkHtml(s)}
     ${lab}
     ${go}
   `;
-  bindDrag();
-  const nowTxt = s.n===78 ? "现在你：把下面的词拖进对的框。拖完就停。" : s.now;
+  bindLink();
+  const nowTxt = s.n===78 ? "现在你：左边点一个词，再点右边对的框。连完就停。" : s.now;
   $("nowbar").innerHTML = nowTxt ? mark(nowTxt) : "";
   $("nowbar").style.display = nowTxt ? "block" : "none";
   $("pg").textContent = (i+1) + " / " + SLIDES.length;
@@ -287,6 +288,7 @@ document.addEventListener("keydown", e=>{
   if(e.key==="Escape") $("lb").classList.remove("show");
 });
 $("card").addEventListener("click", e=>{
+  if(e.target.closest(".link-board,.go-draw")) return;
   if(e.target.tagName==="IMG"){
     $("lb").innerHTML = `<img src="${e.target.src}" alt="">`;
     $("lb").classList.add("show");

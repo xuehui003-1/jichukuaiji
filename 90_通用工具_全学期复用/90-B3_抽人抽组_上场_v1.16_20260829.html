@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>上课打开这一页　v1.15</title>
+<title>上课打开这一页　v1.16</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:#05070d;color:#eef4ff;
@@ -168,18 +168,14 @@ body.focus .rail, body.focus .rail-tab, body.focus .top{opacity:0;pointer-events
     实训：抽一组举凭证，看一眼继续写 → <b>看凭证</b>
   </div>
 
-  <h3>上场做什么</h3>
+  <h3>上场做什么（点一个）</h3>
   <div class="uses" id="uses">
     <button type="button" data-u="book" class="on">举册子</button>
-    <button type="button" data-u="play">上场</button>
+    <button type="button" data-u="tianping">天平</button>
+    <button type="button" data-u="mole">打地鼠</button>
+    <button type="button" data-u="dub">配音</button>
     <button type="button" data-u="nitpick">找茬</button>
     <button type="button" data-u="voucher">看凭证</button>
-  </div>
-  <div class="play-sub" id="playSub">
-    <button type="button" data-s="" class="on">上场</button>
-    <button type="button" data-s="天平">天平</button>
-    <button type="button" data-s="打地鼠">打地鼠</button>
-    <button type="button" data-s="配音">配音</button>
   </div>
   <div class="use-tip" id="useTip"></div>
 
@@ -219,7 +215,7 @@ body.focus .rail, body.focus .rail-tab, body.focus .top{opacity:0;pointer-events
 <div class="ui">
   <div class="top">
     <div class="brand">上场</div>
-    <span class="ver">v1.15　抽完天平自动带人 · 只亮当前按钮</span>
+    <span class="ver">v1.16　六个环节，各一个按钮</span>
   </div>
   <div class="stage">
     <div class="ring-wrap">
@@ -267,89 +263,67 @@ let items=[], rot=0, spinning=false, busy=false, muted=false, groupsMode=false, 
 let hist=[];
 const USES = {
   book: {
-    label: "举册子",
-    suggest: "draw3",
-    tip: "",
-    say: "这三位，册子举起来",
-    sub: "写了就行。不用站起来，不用开口。",
+    label: "举册子", suggest: "draw3", tip: "",
+    say: "这三位，册子举起来", sub: "写了就行。不用站起来，不用开口。",
     s2: "写了 2", s5: "写好 5", s0: "空白 0"
   },
-  play: {
-    label: "上场",
-    suggest: "draw1",
-    tip: "先点天平、打地鼠或配音，再抽一个人。做完回来点 5 / 2 / 0。",
+  tianping: {
+    label: "天平", suggest: "draw1",
+    tip: "抽一个人。抽完点「去天平」，名字会带过去。4 题全对才满分。",
+    say: "上场玩天平", sub: "抽完去天平。15 秒内选一种变化。",
+    s2: "2 分", s5: "5 分", s0: "0 分"
+  },
+  mole: {
+    label: "打地鼠", suggest: "draw1",
+    tip: "讲完六个要素之后打开「90-B1 打地鼠」。抽一个人上场。",
+    say: "上场打地鼠", sub: "按屏幕上的科目打。",
+    s2: "2 分", s5: "5 分", s0: "0 分"
+  },
+  dub: {
+    label: "配音", suggest: "draw1",
+    tip: "项目一最后「下课前看这一页」才布置。项目四看完连环画那一页才配音。一般不当场记分。",
+    say: "上场配音", sub: "看图，配上这一段。",
     s2: "2 分", s5: "5 分", s0: "0 分"
   },
   nitpick: {
-    label: "找茬",
-    suggest: "draw3",
-    tip: "项目四填完凭证：先让全班和同桌交换，自己填的自己不审。然后再抽三个人抽查，看审核栏有没有留下痕迹。",
+    label: "找茬", suggest: "draw3",
+    tip: "项目四填完凭证：先让全班和同桌交换，自己填的自己不审。然后再抽三个人抽查。",
     say: "全班先和同桌交换。抽到的，把交换后的凭证举起来",
     sub: "自己填的自己不审。红笔改，蓝黑笔填。",
     s2: "有改痕迹 2", s5: "改得好 5", s0: "没审 0"
   },
   voucher: {
-    label: "看凭证",
-    suggest: "drawG",
-    tip: "实训课抽一个组。把写好的通用记账凭证举起来。你看一眼：是不是通用凭证、有没有明显错。有字就过，明显错说一句改哪。不收上来。放下继续写。",
+    label: "看凭证", suggest: "drawG",
+    tip: "实训课抽一个组。把写好的通用记账凭证举起来。看一眼放下，继续写。",
     say: "这组，把写好的通用记账凭证举起来",
     sub: "看一眼就放下，继续写。不收上来。",
     s2: "过了 2", s5: "写得好 5", s0: "要改 0"
   }
 };
 let useId = "book";
-let playKind = "";
-function useLabel(){
-  if(useId==="play" && playKind) return "上场·"+playKind;
-  return USES[useId].label;
-}
+function useLabel(){ return USES[useId].label; }
 function useSay(){
-  if(useId==="play"){
-    if(playKind==="天平") return "上场玩天平";
-    if(playKind==="打地鼠") return "上场打地鼠";
-    if(playKind==="配音") return "上场配音";
-    return "上场";
-  }
   const n = (arguments[0]||[]).length;
   if(useId==="book"){
     const who = n===1?"这一位": n===2?"这两位": n===3?"这三位":"这几位";
     return who+"，册子举起来";
   }
-  if(useId==="voucher") return "这组，把写好的通用记账凭证举起来";
   return USES[useId].say;
 }
-function useSub(){
-  if(useId==="play"){
-    if(playKind==="天平") return "打开天平页。15 秒内选一种变化。做完回来点分。";
-    if(playKind==="打地鼠") return "打开打地鼠。做完回来只点 0 / 2 / 5。";
-    if(playKind==="配音") return "看图配上这一段。一般不当场记分。";
-    return "按老师正在投的那一页做。";
-  }
-  return USES[useId].sub || "";
-}
-function playTip(){
-  if(playKind==="天平") return "抽一个人。抽完点「去天平」，名字会带过去。4 题全对才满分，分自动记进同一张表。";
-  if(playKind==="打地鼠") return "讲完六个要素之后打开「90-B1 打地鼠」。抽一个人上场。游戏分再大，回来只点 0 / 2 / 5。";
-  if(playKind==="配音") return "项目一最后「下课前看这一页」才布置，不当场录。项目四看完连环画那一页才配音。想抽人念再用。一般不当场记分。";
-  return "先点天平、打地鼠或配音，再抽一个人。";
-}
+function useSub(){ return USES[useId].sub || ""; }
 function applyUse(){
   const u = USES[useId];
-  const tip = useId==="play" ? playTip() : (u.tip||"");
+  const tip = u.tip || "";
   $("useTip").textContent = tip;
   $("useTip").style.display = tip ? "block" : "none";
   [...$("uses").children].forEach(x=>x.classList.toggle("on", x.dataset.u===useId));
-  $("playSub").classList.toggle("on", useId==="play");
-  if(useId==="play"){
-    [...$("playSub").children].forEach(x=>x.classList.toggle("on", (x.dataset.s||"")===playKind));
-  }
   ["draw1","drawG","draw3"].forEach(id => $(id).classList.remove("suggest"));
   if(u.suggest) $(u.suggest).classList.add("suggest");
 }
 const TIANPING = "../01_项目一_认识会计工作与企业经济业务/01-03_小新的天平_能不能弄歪_网页_v4.0_20260829.html";
 function goTianping(name){
   localStorage.setItem("draw-handoff", JSON.stringify({name, ts: Date.now(), use:"上场·天平"}));
-  const back = "../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.15_20260829.html?use=play&play=" + encodeURIComponent("天平");
+  const back = "../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.16_20260829.html?use=play&play=" + encodeURIComponent("天平");
   location.href = TIANPING + "?name=" + encodeURIComponent(name) + "&back=" + encodeURIComponent(back);
 }
 try{ hist=JSON.parse(localStorage.getItem("draw-hist")||"[]"); if(!Array.isArray(hist)) hist=[]; }catch(e){ hist=[]; }
@@ -532,12 +506,7 @@ $("uses").onclick = e=>{
   [...$("uses").children].forEach(x=>x.classList.toggle("on", x===b));
   applyUse();
 };
-$("playSub").onclick = e=>{
-  const b=e.target.closest("button"); if(!b) return;
-  playKind=b.dataset.s || "";
-  [...$("playSub").children].forEach(x=>x.classList.toggle("on", x===b));
-  applyUse();
-};
+
 
 function dbp(){
   return new Promise((res,rej)=>{
@@ -934,7 +903,7 @@ function reveal(names, k){
       ${photos[n]?`<img src="${photos[n]}" alt="">`:`<div class="face"></div>`}
       <div class="nm">${n}</div>
     </div>`).join("");
-  const toTp = useId==="play" && playKind==="天平" && names.length===1;
+  const toTp = useId==="tianping" && names.length===1;
   const pads = toTp ? "" : names.map(n=>`
     <div class="score-line" data-name="${n}">
       <em>${n}</em>
@@ -971,8 +940,11 @@ $("btnMute").onclick = ()=>{
 
 (async function init(){
   const qs=new URLSearchParams(location.search);
-  if(["book","play","nitpick","voucher"].includes(qs.get("use"))) useId=qs.get("use");
-  if(qs.get("play")) playKind=qs.get("play");
+  let u=qs.get("use");
+  if(u==="play" && qs.get("play")==="天平") u="tianping";
+  if(u==="play" && qs.get("play")==="打地鼠") u="mole";
+  if(u==="play" && qs.get("play")==="配音") u="dub";
+  if(u && USES[u]) useId=u;
   const back=qs.get("back");
   if(back){
     const a=$("backTo");
