@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>上课打开这一页　v1.18</title>
+<title>上课打开这一页　v1.19</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:#05070d;color:#eef4ff;
@@ -54,7 +54,7 @@ body.rail-shut .rail-tab{display:block}
 .rail h3:first-of-type{border-top:0;padding-top:0;margin-top:2px}
 .rail .uses,.rail .actions{display:flex;flex-direction:column;align-items:stretch;gap:8px}
 .rail .uses{flex-direction:row;flex-wrap:wrap}
-.rail .uses button{flex:1 1 42%;padding:8px 6px;font-size:13px;background:#1a2744;color:#c9d6f0;border-radius:10px}
+.rail .uses button{flex:1 1 30%;padding:7px 4px;font-size:12px;background:#1a2744;color:#c9d6f0;border-radius:10px}
 .rail .uses button.on{background:#ff1744;color:#fff}
 .map{font-size:12px;line-height:1.55;color:#c9d6f0;background:#0b1220;border:1px dashed #3d4d72;border-radius:10px;padding:8px 10px}
 .map b{color:#ffd36a}
@@ -159,13 +159,6 @@ body.focus .rail, body.focus .rail-tab, body.focus .top{opacity:0;pointer-events
   <button class="gold wide" type="button" id="exportTable">导出表格</button>
   <button class="ghost wide" type="button" id="btnList">名单 / 组名</button>
 
-  <h3>接到这门课</h3>
-  <div class="map">
-    刚让学生在册子上写完 → <b>举册子</b><br>
-    天平 / 打地鼠 / 配音 → <b>上场</b><br>
-    项目四：全班先同桌交换，再抽查 → <b>找茬</b><br>
-    实训：抽一组举凭证，看一眼继续写 → <b>看凭证</b>
-  </div>
 
   <h3>上场做什么（点一个）</h3>
   <div class="uses" id="uses">
@@ -215,7 +208,7 @@ body.focus .rail, body.focus .rail-tab, body.focus .top{opacity:0;pointer-events
 <div class="ui">
   <div class="top">
     <div class="brand">上场</div>
-    <span class="ver">v1.18　导入导出都是表格</span>
+    <span class="ver">v1.19　抽完弹出 · 去连线</span>
   </div>
   <div class="stage">
     <div class="ring-wrap">
@@ -329,15 +322,59 @@ function applyUse(){
 const TIANPING = "../01_项目一_认识会计工作与企业经济业务/01-03_小新的天平_能不能弄歪_网页_v4.0_20260829.html";
 function goTianping(name){
   localStorage.setItem("draw-handoff", JSON.stringify({name, ts: Date.now(), use:"上场·天平"}));
-  const back = "../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.18_20260829.html?use=tianping";
+  const back = "../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.19_20260829.html?use=tianping";
   location.href = TIANPING + "?name=" + encodeURIComponent(name) + "&back=" + encodeURIComponent(back);
 }
-const LIANXIAN = "../01_项目一_认识会计工作与企业经济业务/01-00_项目一_上课投影_网页版_v1.8_20260829.html#78";
+const LIANXIAN = "../01_项目一_认识会计工作与企业经济业务/01-00_项目一_上课投影_网页版_v1.9_20260829.html#78";
 function goLianxian(name){
   localStorage.setItem("draw-handoff", JSON.stringify({name, ts: Date.now(), use:"上场·连线"}));
   location.href = LIANXIAN;
 }
 try{ hist=JSON.parse(localStorage.getItem("draw-hist")||"[]"); if(!Array.isArray(hist)) hist=[]; }catch(e){ hist=[]; }
+function renderHist(){
+  if(!$("histN")) return;
+  $("histN").textContent = String(hist.length);
+  const rows=[...hist].reverse().map((h,i)=>{
+    const n=hist.length-i;
+    return `<tr><td>${n}</td><td>${h.t||""}<br><span style="color:#8ea0c3">${h.use||""}</span></td><td>${h.kind||""}</td><td class="who">${(h.names||[]).join("、")}</td></tr>`;
+  }).join("");
+  $("histBody").innerHTML = rows || `<tr><td colspan="4" style="color:#8ea0c3">还没有抽取。</td></tr>`;
+}
+function addHist(names, k){
+  const now=new Date();
+  const tm=now.toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  const kind = groupsMode ? "抽一组" : (k>1 ? "抽三人" : "抽一人");
+  hist.push({t:tm, kind, use: useLabel(), names: names.slice()});
+  localStorage.setItem("draw-hist", JSON.stringify(hist));
+  renderHist();
+}
+function splitCsvLine(line){
+  const out=[]; let cur="", q=false;
+  for(let i=0;i<line.length;i++){
+    const c=line[i];
+    if(c==='"'){ if(q && line[i+1]==='"'){ cur+='"'; i++; } else q=!q; }
+    else if((c===','||c==='\t') && !q){ out.push(cur); cur=""; }
+    else cur+=c;
+  }
+  out.push(cur); return out.map(s=>s.trim());
+}
+function importBak(file){
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const data=JSON.parse(reader.result);
+      if(data.people!=null){ $("people").value=data.people; localStorage.setItem("draw-people", data.people); }
+      if(data.groups!=null){ $("groups").value=data.groups; localStorage.setItem("draw-groups", data.groups); }
+      if(Array.isArray(data.hist)){ hist=data.hist; localStorage.setItem("draw-hist", JSON.stringify(hist)); }
+      if(Array.isArray(data.scoreLog)){ scoreLog=data.scoreLog; saveScores(); }
+      if(Array.isArray(data.survey)){ localStorage.setItem("draw-survey", JSON.stringify(data.survey)); }
+      count(); renderList(); renderHist(); renderScores(); paintIdle();
+      alert("已导入。");
+    }catch(e){ alert("这个文件不是备份。"); }
+  };
+  reader.readAsText(file);
+}
+
 let scoreLog=[];
 try{ scoreLog=JSON.parse(localStorage.getItem("draw-score-log")||"[]"); if(!Array.isArray(scoreLog)) scoreLog=[]; }catch(e){ scoreLog=[]; }
 let roundId=0, roundScore={};
@@ -492,23 +529,26 @@ function parseCsvText(text){
   const lines=text.split(/\r?\n/).filter(s=>s.trim());
   return lines.map(splitCsvLine);
 }
+function elName(el){ return String(el.localName||el.nodeName||"").replace(/^.*:/,""); }
+function kids(el, name){ return [...(el.getElementsByTagName("*")||[])].filter(x=>elName(x)===name && x.parentNode && (name!=="Row" || elName(x.parentNode)==="Table" || elName(x.parentNode)==="Worksheet" || true)); }
 function parseSpreadsheetML(text){
-  const doc=new DOMParser().parseFromString(text, "text/xml");
+  const doc=new DOMParser().parseFromString(text.replace(/^\uFEFF/,""), "text/xml");
   const sheets={};
-  const wss=doc.getElementsByTagName("Worksheet");
-  for(const ws of wss){
-    const name=ws.getAttribute("ss:Name")||ws.getAttribute("Name")||"表";
+  const all=[...doc.getElementsByTagName("*")];
+  const wss=all.filter(x=>elName(x)==="Worksheet");
+  wss.forEach((ws,i)=>{
+    const name=ws.getAttribute("ss:Name")||ws.getAttribute("Name")||("表"+(i+1));
     const rows=[];
-    for(const row of ws.getElementsByTagName("Row")){
+    all.filter(x=>elName(x)==="Row" && ws.contains(x)).forEach(row=>{
       const cells=[];
-      for(const cell of row.getElementsByTagName("Cell")){
-        const d=cell.getElementsByTagName("Data")[0];
+      all.filter(x=>elName(x)==="Cell" && row.contains(x) && x.parentNode===row).forEach(cell=>{
+        const d=[...cell.getElementsByTagName("*")].find(x=>elName(x)==="Data");
         cells.push(d? (d.textContent||"") : "");
-      }
+      });
       if(cells.some(x=>x)) rows.push(cells);
-    }
+    });
     sheets[name]=rows;
-  }
+  });
   return sheets;
 }
 function u32(u8,p){ return u8[p]|(u8[p+1]<<8)|(u8[p+2]<<16)|(u8[p+3]<<24); }
@@ -601,9 +641,9 @@ async function importTableFile(file){
   }
   const buf=await file.arrayBuffer();
   const u8=new Uint8Array(buf);
-  const head=new TextDecoder("utf-8",{fatal:false}).decode(u8.slice(0,80));
-  if(head.includes("Workbook") || head.includes("ss:Name")){
-    applySheets(parseSpreadsheetML(new TextDecoder("utf-8").decode(u8)));
+  const text=new TextDecoder("utf-8").decode(u8);
+  if(text.includes("Worksheet") || text.includes("ss:Name") || text.includes("<Workbook")){
+    applySheets(parseSpreadsheetML(text));
     return;
   }
   if(u8[0]===0x50 && u8[1]===0x4b){
@@ -1044,6 +1084,8 @@ function reveal(names, k){
     </div>`).join("");
   const toTp = useId==="tianping" && names.length===1;
   const toLx = useId==="lianxian" && names.length===1;
+  if(toTp) localStorage.setItem("draw-handoff", JSON.stringify({name:names[0], ts: Date.now(), use:"上场·天平"}));
+  if(toLx) localStorage.setItem("draw-handoff", JSON.stringify({name:names[0], ts: Date.now(), use:"上场·连线"}));
   const pads = (toTp||toLx) ? "" : names.map(n=>`
     <div class="score-line" data-name="${n}">
       <em>${n}</em>
@@ -1101,11 +1143,11 @@ $("btnMute").onclick = ()=>{
   count();
   await loadPhotos();
   count();
-  renderList();
-  renderHist();
-  renderScores();
-  setRail(true);
   applyUse();
+  try{ renderList(); }catch(e){ console.error(e); }
+  try{ renderHist(); }catch(e){ console.error(e); }
+  try{ renderScores(); }catch(e){ console.error(e); }
+  setRail(true);
   paintIdle();
 })();
 </script>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>项目一　上课投影（网页投影版）v1.8</title>
+<title>项目一　上课投影（网页投影版）v1.9</title>
 <style>
 :root{
   --orange:#bf360c; --green:#2e7d32; --ink:#22170f;
@@ -112,7 +112,7 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
   <button type="button" id="menuBtn">目录</button>
   <button type="button" id="fontBig" class="on">大字体</button>
   <button type="button" id="fontSmall">小字体</button>
-  <h1>项目一　认识会计工作 <small>上课投影网页版 v1.8　2026-08-29</small></h1>
+  <h1>项目一　认识会计工作 <small>上课投影网页版 v1.9　2026-08-29</small></h1>
   <div class="hint">← → 翻页　点图或点字可放大</div>
 </header>
 <div class="layout">
@@ -140,7 +140,7 @@ const KIND = {
   homework:"课后任务", teacher:"老师看", game:"打地鼠",
   thumbs:"四张图", text:"讲义", spare:"备用", drag:"拖一拖"
 };
-const DRAW = "../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.18_20260829.html";
+const DRAW = "../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.19_20260829.html";
 function drawHref(use){
   const here = location.href.split("#")[0] + "#" + SLIDES[i].n;
   return DRAW + "?use=" + encodeURIComponent(use) + "&back=" + encodeURIComponent(here);
@@ -222,7 +222,7 @@ function linkHtml(s){
     <div class="lian-hud"><div class="lian-timer" id="lianTimer">45</div></div>
     <div style="text-align:center"><button type="button" class="go-draw" id="lianStart" style="margin:8px auto;display:inline-block">开始</button></div>
     <div id="lianPlay" style="display:none"></div>
-    <div class="drag-msg" id="dragMsg">点开始。45 秒内连完。</div>
+    <div class="drag-msg" id="dragMsg">抽到的人点「开始」。45 秒内连完。连完自动记分。</div>
     <div class="lian-cut" id="lianCut">时间到</div>
   </div>`;
 }
@@ -318,7 +318,7 @@ function render(){
     ${go}
   `;
   bindLink();
-  const nowTxt = s.n===78 ? "现在你：抽到的人点开始，45 秒内连线。" : s.now;
+  const nowTxt = s.n===78 ? "现在你：抽到的人点「开始」，45 秒内连线。" : s.now;
   $("nowbar").innerHTML = nowTxt ? mark(nowTxt) : "";
   $("nowbar").style.display = nowTxt ? "block" : "none";
   $("pg").textContent = (i+1) + " / " + SLIDES.length;
