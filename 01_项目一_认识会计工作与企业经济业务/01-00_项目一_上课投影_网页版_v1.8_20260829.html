@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>项目一　上课投影（网页投影版）v1.7</title>
+<title>项目一　上课投影（网页投影版）v1.8</title>
 <style>
 :root{
   --orange:#bf360c; --green:#2e7d32; --ink:#22170f;
@@ -62,6 +62,12 @@ body.wide .side{display:none}
 .drag-msg{text-align:center;font-weight:800;color:#2e7d32;font-size:1.1rem;min-height:1.4em;margin-top:8px}
 .link-board{position:relative;margin:6px 12px 12px}
 .link-who{text-align:center;font-weight:900;color:#bf360c;font-size:1.3rem;margin:4px 0 8px}
+.lian-hud{display:flex;justify-content:center;align-items:center;gap:12px;margin:6px 0}
+.lian-timer{width:96px;height:96px;border-radius:50%;border:8px solid #bf360c;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;background:#fff}
+.lian-timer.low{border-color:#c62828;color:#c62828;background:#ffebee;animation:pulse .45s infinite}
+@keyframes pulse{50%{transform:scale(1.06)}}
+.lian-cut{position:fixed;inset:0;background:rgba(28,8,6,.9);color:#fff;display:none;align-items:center;justify-content:center;z-index:40;font-size:clamp(32px,6vw,64px);font-weight:900;text-align:center}
+.lian-cut.on{display:flex}
 .link-grid{display:grid;grid-template-columns:minmax(120px,22%) 1fr minmax(120px,22%);gap:8px;align-items:stretch;min-height:300px}
 .link-svg{width:100%;height:100%;min-height:300px}
 .link-col{display:flex;flex-direction:column;gap:6px;justify-content:center}
@@ -106,7 +112,7 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
   <button type="button" id="menuBtn">目录</button>
   <button type="button" id="fontBig" class="on">大字体</button>
   <button type="button" id="fontSmall">小字体</button>
-  <h1>项目一　认识会计工作 <small>上课投影网页版 v1.7　2026-08-29</small></h1>
+  <h1>项目一　认识会计工作 <small>上课投影网页版 v1.8　2026-08-29</small></h1>
   <div class="hint">← → 翻页　点图或点字可放大</div>
 </header>
 <div class="layout">
@@ -134,7 +140,7 @@ const KIND = {
   homework:"课后任务", teacher:"老师看", game:"打地鼠",
   thumbs:"四张图", text:"讲义", spare:"备用", drag:"拖一拖"
 };
-const DRAW = "../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.17_20260829.html";
+const DRAW = "../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.18_20260829.html";
 function drawHref(use){
   const here = location.href.split("#")[0] + "#" + SLIDES[i].n;
   return DRAW + "?use=" + encodeURIComponent(use) + "&back=" + encodeURIComponent(here);
@@ -210,45 +216,65 @@ function renderNav(){
 function linkHtml(s){
   if(s.n!==78) return "";
   const who=currentPlayer();
-  const pick=shuffle(POOL).slice(0,8);
-  window._lianItems=pick;
-  const left=shuffle(pick).map((c,idx)=>`<button type="button" class="link-item" data-side="L" data-i="${idx}" data-t="${esc(c.t)}">${esc(c.t)}</button>`).join("");
-  const right=shuffle(BINS).map(b=>`<button type="button" class="link-item" data-side="R" data-bin="${esc(b)}">${esc(b)}</button>`).join("");
-  const whoLine=who?`<div class="link-who">${esc(who)}　上场连线</div>`:`<div class="link-who">先抽人，再连线</div>`;
-  return `<div class="link-board" id="linkBoard">${whoLine}
-    <div class="link-grid">
-      <div class="link-col" id="linkL">${left}</div>
-      <svg class="link-svg" id="linkSvg"></svg>
-      <div class="link-col" id="linkR">${right}</div>
-    </div>
-    <div class="drag-msg" id="dragMsg">左边点一个科目，再点右边的词。每次左右顺序都会打乱。</div>
+  if(!who) return `<div class="link-board"><div class="link-who">先抽人，再连线</div></div>`;
+  return `<div class="link-board" id="linkBoard">
+    <div class="link-who">${esc(who)}　上场连线</div>
+    <div class="lian-hud"><div class="lian-timer" id="lianTimer">45</div></div>
+    <div style="text-align:center"><button type="button" class="go-draw" id="lianStart" style="margin:8px auto;display:inline-block">开始</button></div>
+    <div id="lianPlay" style="display:none"></div>
+    <div class="drag-msg" id="dragMsg">点开始。45 秒内连完。</div>
+    <div class="lian-cut" id="lianCut">时间到</div>
   </div>`;
 }
 function bindLink(){
   const board=$("linkBoard"); if(!board) return;
-  const svg=$("linkSvg");
-  const items=window._lianItems||[];
-  let pick=null, pairs=[], done=false;
+  const startBtn=$("lianStart"); if(!startBtn) return;
   const who=currentPlayer();
-  function pt(el){
+  let pick=null, pairs=[], done=false, items=[], tick=null;
+  function pt(el, svg){
     const br=svg.getBoundingClientRect(), r=el.getBoundingClientRect();
     return {x: r.left-br.left + (el.dataset.side==="L"?r.width:0), y: r.top-br.top + r.height/2};
   }
   function paint(){
+    const svg=$("linkSvg"); if(!svg) return;
     const br=svg.getBoundingClientRect();
     svg.setAttribute("viewBox", "0 0 "+Math.max(1,br.width)+" "+Math.max(1,br.height));
     svg.innerHTML = pairs.map(p=>{
-      const a=pt(p.L), b=pt(p.R);
+      const a=pt(p.L, svg), b=pt(p.R, svg);
       return `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="#2e7d32" stroke-width="4" stroke-linecap="round"/>`;
     }).join("");
   }
-  function finish(){
+  function finish(timeout){
     if(done) return; done=true;
+    if(tick){ clearInterval(tick); tick=null; }
     const n=items.length, ok=pairs.length;
     const pts = ok===n ? 5 : ok>=Math.ceil(n*0.6) ? 2 : 0;
-    $("dragMsg").textContent = ok===n ? "全对了。" : ("对了 "+ok+" / "+n+" 条。");
+    $("dragMsg").textContent = (timeout?"时间到。":"") + (ok===n ? "全对了。" : ("对了 "+ok+" / "+n+" 条。"));
     if(who) saveLianScore(who, pts, ok, n);
+    if(timeout){
+      const cut=$("lianCut");
+      if(cut){ cut.classList.add("on"); setTimeout(()=>cut.classList.remove("on"), 1200); }
+    }
   }
+  startBtn.onclick=e=>{
+    e.preventDefault(); e.stopPropagation();
+    items=shuffle(POOL).slice(0,8);
+    const left=shuffle(items).map(c=>`<button type="button" class="link-item" data-side="L" data-t="${esc(c.t)}">${esc(c.t)}</button>`).join("");
+    const right=shuffle(BINS).map(b=>`<button type="button" class="link-item" data-side="R" data-bin="${esc(b)}">${esc(b)}</button>`).join("");
+    $("lianPlay").style.display="block";
+    $("lianPlay").innerHTML=`<div class="link-grid"><div class="link-col">${left}</div><svg class="link-svg" id="linkSvg"></svg><div class="link-col">${right}</div></div>`;
+    startBtn.style.display="none";
+    $("dragMsg").textContent="左边点一个科目，再点右边的词。";
+    let leftSec=45;
+    const timer=$("lianTimer");
+    timer.textContent=leftSec; timer.className="lian-timer";
+    tick=setInterval(()=>{
+      leftSec--;
+      timer.textContent=Math.max(0,leftSec);
+      if(leftSec<=8) timer.classList.add("low");
+      if(leftSec<=0) finish(true);
+    },1000);
+  };
   board.addEventListener("click", e=>{
     const it=e.target.closest(".link-item"); if(!it||done) return;
     e.stopPropagation();
@@ -264,7 +290,7 @@ function bindLink(){
       pick.classList.remove("on");
       pairs.push({L:pick, R:it});
       pick=null; paint();
-      if(pairs.length===items.length) finish();
+      if(pairs.length===items.length) finish(false);
     }else{
       it.classList.add("bad");
       setTimeout(()=>it.classList.remove("bad"), 400);
@@ -278,7 +304,7 @@ function render(){
   const grid = nPic>=3 ? "many" : "one";
   const imgs = (s.pics||[]).map(p=>`<img src="${esc(p.src)}" alt="">`).join("");
   const lab = "";
-  const d = drawBtn(s);
+  const d = (s.n===78 && currentPlayer()) ? null : drawBtn(s);
   const go = d ? `<a class="go-draw" href="${esc(d.href)}">${esc(d.label)}</a>` : "";
   $("card").innerHTML = `
     <div class="head">
@@ -292,7 +318,7 @@ function render(){
     ${go}
   `;
   bindLink();
-  const nowTxt = s.n===78 ? "现在你：抽到的人连线。左边点科目，再点右边的词。" : s.now;
+  const nowTxt = s.n===78 ? "现在你：抽到的人点开始，45 秒内连线。" : s.now;
   $("nowbar").innerHTML = nowTxt ? mark(nowTxt) : "";
   $("nowbar").style.display = nowTxt ? "block" : "none";
   $("pg").textContent = (i+1) + " / " + SLIDES.length;

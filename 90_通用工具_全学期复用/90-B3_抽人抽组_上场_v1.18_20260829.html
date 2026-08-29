@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>上课打开这一页　v1.17</title>
+<title>上课打开这一页　v1.18</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:#05070d;color:#eef4ff;
@@ -152,15 +152,11 @@ body.focus .rail, body.focus .rail-tab, body.focus .top{opacity:0;pointer-events
     </span>
   </div>
   <a class="gold wide" id="backTo" style="display:none;text-decoration:none">回课件</a>
-  <div class="now" id="nowBox">同一台电脑不用导入。下课前导出备份。</div>
-  <label class="gold wide">课前：导入备份
-    <input id="importBak" type="file" accept="application/json,.json" hidden>
+  <div class="now" id="nowBox">同一台电脑不用导入。下课前导出表格。</div>
+  <label class="gold wide">导入表格（飞象xlsx / 本页xls / csv）
+    <input id="importTable" type="file" accept=".xlsx,.xls,.csv,.json,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv,application/json" hidden>
   </label>
-  <label class="ghost wide">课前：导入点单表（CSV）
-    <input id="importCsv" type="file" accept=".csv,text/csv" hidden>
-  </label>
-  <button class="gold wide" type="button" id="exportBak">课后：导出备份</button>
-  <button class="ghost wide" type="button" id="exportXls">课后：导出成绩表</button>
+  <button class="gold wide" type="button" id="exportTable">导出表格</button>
   <button class="ghost wide" type="button" id="btnList">名单 / 组名</button>
 
   <h3>接到这门课</h3>
@@ -210,17 +206,16 @@ body.focus .rail, body.focus .rail-tab, body.focus .top{opacity:0;pointer-events
   <div class="score-list" id="scoreList"></div>
   <button class="ghost wide" type="button" id="clearScore">清空今日分</button>
   <div class="score-note">
-    <b>数据在哪：</b>这台电脑浏览器里（JSON）。同一台电脑打开还在。<br>
-    <b>课前：</b>换电脑先导入备份。飞象老师导出的文字表另存为 CSV，点「导入点单表」，姓名会进名单。<br>
-    <b>课后：</b>「导出备份」是完整 JSON，换电脑必带。「导出成绩表」是一张 xls：姓名、今天、累计。<br>
-    评选看累计：每个项目结束看一次，大约一个月也可以再看。不是两周一次。平时不用打开 90-C4。
+    你只用表格。导入：飞象老师导出的 xlsx，或本页导出的 xls。导出：一张 Excel（成绩、明细、点单、名单）。<br>
+    同一台电脑打开还在，不用每次导入。换电脑：把导出的表格再导入。<br>
+    评选看累计：每个项目结束看一次，大约一个月也可以再看。
   </div>
 </aside>
 
 <div class="ui">
   <div class="top">
     <div class="brand">上场</div>
-    <span class="ver">v1.17　连线抽人 · 可导入点单表</span>
+    <span class="ver">v1.18　导入导出都是表格</span>
   </div>
   <div class="stage">
     <div class="ring-wrap">
@@ -334,10 +329,10 @@ function applyUse(){
 const TIANPING = "../01_项目一_认识会计工作与企业经济业务/01-03_小新的天平_能不能弄歪_网页_v4.0_20260829.html";
 function goTianping(name){
   localStorage.setItem("draw-handoff", JSON.stringify({name, ts: Date.now(), use:"上场·天平"}));
-  const back = "../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.17_20260829.html?use=tianping";
+  const back = "../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.18_20260829.html?use=tianping";
   location.href = TIANPING + "?name=" + encodeURIComponent(name) + "&back=" + encodeURIComponent(back);
 }
-const LIANXIAN = "../01_项目一_认识会计工作与企业经济业务/01-00_项目一_上课投影_网页版_v1.7_20260829.html#78";
+const LIANXIAN = "../01_项目一_认识会计工作与企业经济业务/01-00_项目一_上课投影_网页版_v1.8_20260829.html#78";
 function goLianxian(name){
   localStorage.setItem("draw-handoff", JSON.stringify({name, ts: Date.now(), use:"上场·连线"}));
   location.href = LIANXIAN;
@@ -363,10 +358,10 @@ function totalByName(){
 }
 function nowText(){
   const n=lines($("people")).length;
-  if(!n) return "先点「课前：导入备份」，或打开「名单 / 组名」贴名单并保存。";
+  if(!n) return "先点「导入表格」，或打开「名单 / 组名」贴名单并保存。";
   const today=todayByName();
   const k=Object.keys(today).length;
-  return "同一台电脑不用导入。学生写完册子 → 举册子。下课前点「课后：导出备份」。今天已给 "+k+" 人记过分。";
+  return "同一台电脑不用导入。下课前点「导出表格」。今天已给 "+k+" 人记过分。";
 }
 function renderScores(){
   const today=todayByName();
@@ -403,139 +398,226 @@ function xesc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").re
 function xrow(cols){
   return "<Row>"+cols.map(c=>'<Cell><Data ss:Type="String">'+xesc(c)+"</Data></Cell>").join("")+"</Row>";
 }
-function exportXls(){
+function sheetXml(name, rows){
+  return "<Worksheet ss:Name=\""+xesc(name)+"\"><Table>"+rows.map(xrow).join("")+"</Table></Worksheet>";
+}
+function exportTable(){
   const people=lines($("people"));
   const today=todayByName();
   const tot=totalByName();
-  const names=people.length?people:[...new Set(Object.keys(tot))];
-  const body = [xrow(["姓名","今天","累计"])].concat(
-    names.map(n=>xrow([n, String(today[n]||0), String(tot[n]||0)]))
-  ).join("");
-  const xml = '<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?>' +
-    '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">' +
-    '<Worksheet ss:Name="成绩"><Table>'+body+"</Table></Worksheet></Workbook>";
+  const names=people.length?people:[...new Set([...people, ...Object.keys(tot)])];
+  const sum=[["姓名","今天","累计"]].concat(names.map(n=>[n, String(today[n]||0), String(tot[n]||0)]));
+  const det=[["日期","时间","姓名","场合","分数"]];
+  scoreLog.forEach(r=> det.push([r.day||"", r.t||"", r.name||"", r.use||"", String(r.pts||0)]));
+  let survey=[];
+  try{ survey=JSON.parse(localStorage.getItem("draw-survey")||"[]"); if(!Array.isArray(survey)) survey=[]; }catch(e){ survey=[]; }
+  const keys=[];
+  survey.forEach(row=> Object.keys(row||{}).forEach(k=>{ if(k && !keys.includes(k)) keys.push(k); }));
+  if(!keys.includes("姓名")) keys.unshift("姓名");
+  const dia=[keys];
+  survey.forEach(row=> dia.push(keys.map(k=> String((row&&row[k])||""))));
+  if(dia.length===1) names.forEach(n=> dia.push(keys.map(k=> k.includes("姓名")?n:"")));
+  const ming=[["姓名"]].concat(names.map(n=>[n]));
+  const xml='<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?>'
+    +'<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'
+    +sheetXml("成绩汇总", sum)+sheetXml("分数明细", det)+sheetXml("点单", dia)+sheetXml("名单", ming)
+    +"</Workbook>";
   const a=document.createElement("a");
   a.href=URL.createObjectURL(new Blob(["\ufeff"+xml],{type:"application/vnd.ms-excel"}));
-  a.download="课堂成绩_"+todayStr()+".xls";
+  a.download="课堂数据_"+todayStr()+".xls";
   a.click();
 }
-function exportBak(){
-  const data={
-    v:12,
-    people: localStorage.getItem("draw-people")||"",
-    groups: localStorage.getItem("draw-groups")||"",
-    survey: JSON.parse(localStorage.getItem("draw-survey")||"[]"),
-    hist, scoreLog
-  };
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));
-  a.download="抽人记分备份_"+todayStr()+".json";
-  a.click();
+function applyPeople(names, surveyRows){
+  const uniq=[];
+  names.forEach(n=>{ n=String(n||"").trim(); if(n && !uniq.includes(n)) uniq.push(n); });
+  if(!uniq.length){ alert("表里没有读到姓名。请确认有「姓名」列。"); return; }
+  $("people").value=uniq.join("\n");
+  localStorage.setItem("draw-people", $("people").value);
+  if(surveyRows && surveyRows.length) localStorage.setItem("draw-survey", JSON.stringify(surveyRows));
+  count(); renderList(); renderScores(); paintIdle();
+  alert("已导入 "+uniq.length+" 人。");
 }
-function importBak(file){
-  const reader=new FileReader();
-  reader.onload=()=>{
-    try{
-      const data=JSON.parse(reader.result);
-      if(data.people!=null){ $("people").value=data.people; localStorage.setItem("draw-people", data.people); }
-      if(data.groups!=null){ $("groups").value=data.groups; localStorage.setItem("draw-groups", data.groups); }
-      if(Array.isArray(data.hist)){ hist=data.hist; localStorage.setItem("draw-hist", JSON.stringify(hist)); }
-      if(Array.isArray(data.scoreLog)){ scoreLog=data.scoreLog; saveScores(); }
-      if(Array.isArray(data.survey)){ localStorage.setItem("draw-survey", JSON.stringify(data.survey)); }
-      count(); renderList(); renderHist(); renderScores(); paintIdle();
-      alert("备份已导入。名单和分数都在。");
-    }catch(e){ alert("这个文件不是备份。"); }
-  };
-  reader.readAsText(file);
-}
-
-function setRail(open){
-  $("rail").classList.toggle("shut", !open);
-  document.body.classList.toggle("rail-shut", !open);
-}
-$("railShut").onclick = ()=> setRail(false);
-$("railTab").onclick = ()=> setRail(true);
-
-function histText(){
-  if(!hist.length) return "本堂还没有抽取。";
-  const lines=hist.map((h,i)=> (i+1)+". "+(h.t||"")+"　"+h.kind+"·"+h.use+"　"+(h.names||[]).join("、"));
-  return "本堂抽取记录 共 "+hist.length+" 次\n"+lines.join("\n");
-}
-function renderHist(){
-  $("histN").textContent = String(hist.length);
-  const rows=[...hist].reverse().map((h,i)=>{
-    const n=hist.length-i;
-    return `<tr>
-      <td>${n}</td>
-      <td>${h.t||""}<br><span style="color:#8ea0c3">${h.use||""}</span></td>
-      <td>${h.kind||""}</td>
-      <td class="who">${(h.names||[]).join("、")}</td>
-    </tr>`;
-  }).join("");
-  $("histBody").innerHTML = rows || `<tr><td colspan="4" style="color:#8ea0c3">还没有抽取。抽完后会出现在这里。</td></tr>`;
-}
-function addHist(names, k){
-  const now=new Date();
-  const t=now.toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
-  const kind = groupsMode ? "抽一组" : (k>1 ? "抽三人" : "抽一人");
-  hist.push({t, kind, use: useLabel(), names: names.slice()});
-  localStorage.setItem("draw-hist", JSON.stringify(hist));
-  renderHist();
-}
-$("copyHist").onclick = async ()=>{
-  const text=histText();
-  try{ await navigator.clipboard.writeText(text); $("copyHist").textContent="已复制"; setTimeout(()=>$("copyHist").textContent="复制记录",1200); }
-  catch(e){ prompt("复制下面的记录", text); }
-};
-$("clearHist").onclick = ()=>{
-  if(!hist.length) return;
-  if(!confirm("清空本堂这 "+hist.length+" 条抽取记录？分数不会被删。")) return;
-  hist=[];
-  localStorage.setItem("draw-hist","[]");
-  renderHist();
-};
-$("exportBak").onclick = exportBak;
-$("exportXls").onclick = exportXls;
-$("importBak").onchange = e=>{ const f=e.target.files && e.target.files[0]; if(f) importBak(f); e.target.value=""; };
-function splitCsvLine(line){
-  const out=[]; let cur="", q=false;
-  for(let i=0;i<line.length;i++){
-    const c=line[i];
-    if(c==='"'){ if(q && line[i+1]==='"'){ cur+='"'; i++; } else q=!q; }
-    else if((c===','||c==='\t') && !q){ out.push(cur); cur=""; }
-    else cur+=c;
+function rowsToSurvey(rows){
+  if(!rows || !rows.length) return {names:[], survey:[]};
+  const header=rows[0].map(h=>String(h||"").trim());
+  let ni=header.findIndex(h=>h.includes("姓名")||h.toLowerCase()==="name");
+  if(ni<0) ni=0;
+  const names=[], survey=[];
+  for(let i=1;i<rows.length;i++){
+    const cols=rows[i]||[];
+    const name=String(cols[ni]||"").trim();
+    if(!name) continue;
+    names.push(name);
+    const rec={};
+    header.forEach((h,j)=>{ if(h) rec[h]=String(cols[j]||""); });
+    if(!rec["姓名"]) rec["姓名"]=name;
+    survey.push(rec);
   }
-  out.push(cur); return out.map(s=>s.trim());
+  return {names, survey};
 }
-function importCsv(file){
-  const reader=new FileReader();
-  reader.onload=()=>{
-    let text=String(reader.result||"").replace(/^\ufeff/,"");
-    const lines=text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-    if(!lines.length){ alert("这个表是空的。"); return; }
-    const header=splitCsvLine(lines[0]);
-    let ni=header.findIndex(h=>h.includes("姓名")||h.toLowerCase()==="name");
-    if(ni<0) ni=0;
-    const names=[], rows=[];
-    for(let i=1;i<lines.length;i++){
-      const cols=splitCsvLine(lines[i]);
-      const name=(cols[ni]||"").trim();
+function applySheets(sheets){
+  if(sheets["名单"]) {
+    const r=rowsToSurvey(sheets["名单"]);
+    if(r.names.length) $("people").value=r.names.join("\n");
+  }
+  if(sheets["点单"]) {
+    const r=rowsToSurvey(sheets["点单"]);
+    if(r.survey.length) localStorage.setItem("draw-survey", JSON.stringify(r.survey));
+    if(r.names.length && !lines($("people")).length) $("people").value=r.names.join("\n");
+  }
+  if(sheets["分数明细"]) {
+    const rows=sheets["分数明细"];
+    const h=rows[0]||[];
+    const idx=k=> h.findIndex(x=>String(x).includes(k));
+    const log=[];
+    for(let i=1;i<rows.length;i++){
+      const c=rows[i];
+      const name=String(c[idx("姓名")]||c[2]||"").trim();
       if(!name) continue;
-      names.push(name);
-      const rec={}; header.forEach((h,j)=>{ if(h) rec[h]=cols[j]||""; });
-      rows.push(rec);
+      log.push({day:String(c[idx("日期")]||c[0]||""), t:String(c[idx("时间")]||c[1]||""), name, use:String(c[idx("场合")]||c[3]||""), pts:Number(c[idx("分数")]||c[4]||0)});
     }
-    if(!names.length){ alert("没有读到姓名。请确认第一行有「姓名」列。"); return; }
-    $("people").value=names.join("\n");
-    localStorage.setItem("draw-people", $("people").value);
-    localStorage.setItem("draw-survey", JSON.stringify(rows));
-    count(); renderList(); renderScores(); paintIdle();
-    alert("已导入 "+names.length+" 人。名单已进抽人盘。其他填写保存在这台电脑里，导出备份时会一起带走。");
-  };
-  reader.readAsText(file,"utf-8");
+    if(log.length){ scoreLog=log; saveScores(); }
+  }
+  const first=sheets[Object.keys(sheets)[0]];
+  if(!lines($("people")).length && first){
+    const r=rowsToSurvey(first);
+    applyPeople(r.names, r.survey); return;
+  }
+  localStorage.setItem("draw-people", $("people").value);
+  count(); renderList(); renderScores(); paintIdle();
+  alert("表格已导入。");
 }
-$("importCsv").onchange = e=>{ const f=e.target.files && e.target.files[0]; if(f) importCsv(f); e.target.value=""; };
+function parseCsvText(text){
+  text=String(text||"").replace(/^\ufeff/,"");
+  const lines=text.split(/\r?\n/).filter(s=>s.trim());
+  return lines.map(splitCsvLine);
+}
+function parseSpreadsheetML(text){
+  const doc=new DOMParser().parseFromString(text, "text/xml");
+  const sheets={};
+  const wss=doc.getElementsByTagName("Worksheet");
+  for(const ws of wss){
+    const name=ws.getAttribute("ss:Name")||ws.getAttribute("Name")||"表";
+    const rows=[];
+    for(const row of ws.getElementsByTagName("Row")){
+      const cells=[];
+      for(const cell of row.getElementsByTagName("Cell")){
+        const d=cell.getElementsByTagName("Data")[0];
+        cells.push(d? (d.textContent||"") : "");
+      }
+      if(cells.some(x=>x)) rows.push(cells);
+    }
+    sheets[name]=rows;
+  }
+  return sheets;
+}
+function u32(u8,p){ return u8[p]|(u8[p+1]<<8)|(u8[p+2]<<16)|(u8[p+3]<<24); }
+function u16(u8,p){ return u8[p]|(u8[p+1]<<8); }
+async function inflateRaw(bytes){
+  const ds=new DecompressionStream("deflate-raw");
+  const w=ds.writable.getWriter();
+  await w.write(bytes); await w.close();
+  return new Uint8Array(await new Response(ds.readable).arrayBuffer());
+}
+async function unzip(buf){
+  const u8=new Uint8Array(buf), files={}, dec=new TextDecoder("utf-8");
+  let p=0;
+  while(p+30<u8.length){
+    if(u8[p]!==0x50||u8[p+1]!==0x4b) break;
+    if(u8[p+2]===1 && u8[p+3]===2) break;
+    if(u8[p+2]!==3 || u8[p+3]!==4){ p++; continue; }
+    const method=u16(u8,p+8), flags=u16(u8,p+6);
+    let comp=u32(u8,p+18), nlen=u16(u8,p+26), elen=u16(u8,p+28);
+    const name=dec.decode(u8.slice(p+30,p+30+nlen));
+    let q=p+30+nlen+elen, data=u8.slice(q,q+comp);
+    if(flags&8){ /* data descriptor: skip unusual xlsx */ }
+    if(method===0) files[name]=data;
+    else if(method===8) files[name]=await inflateRaw(data);
+    p=q+comp;
+  }
+  return files;
+}
+function xmlText(u8){ return new TextDecoder("utf-8").decode(u8); }
+function parseSharedStrings(xml){
+  const doc=new DOMParser().parseFromString(xml,"text/xml");
+  const out=[];
+  for(const si of doc.getElementsByTagName("si")){
+    out.push([...si.getElementsByTagName("t")].map(x=>x.textContent||"").join(""));
+  }
+  return out;
+}
+function colIndex(ref){
+  const m=String(ref||"").match(/^[A-Z]+/i); if(!m) return 0;
+  let n=0; for(const ch of m[0].toUpperCase()) n=n*26+(ch.charCodeAt(0)-64);
+  return n-1;
+}
+function parseSheetXml(xml, strings){
+  const doc=new DOMParser().parseFromString(xml,"text/xml");
+  const rows=[];
+  for(const row of doc.getElementsByTagName("row")){
+    const cells=[];
+    for(const c of row.getElementsByTagName("c")){
+      const ref=c.getAttribute("r")||"";
+      const idx=colIndex(ref);
+      while(cells.length<idx) cells.push("");
+      const t=c.getAttribute("t");
+      const v=c.getElementsByTagName("v")[0];
+      const isEl=c.getElementsByTagName("is")[0];
+      let val="";
+      if(t==="s" && v) val=strings[parseInt(v.textContent,10)]||"";
+      else if(t==="inlineStr" && isEl) val=[...isEl.getElementsByTagName("t")].map(x=>x.textContent||"").join("");
+      else if(v) val=v.textContent||"";
+      cells.push(val);
+    }
+    if(cells.some(x=>x)) rows.push(cells);
+  }
+  return rows;
+}
+async function parseXlsx(buf){
+  const files=await unzip(buf);
+  let strings=[];
+  const ss=files["xl/sharedStrings.xml"];
+  if(ss) strings=parseSharedStrings(xmlText(ss));
+  const sheets={};
+  const keys=Object.keys(files).filter(k=>k.startsWith("xl/worksheets/sheet") && k.endsWith(".xml")).sort();
+  keys.forEach((k,i)=>{
+    sheets["表"+(i+1)]=parseSheetXml(xmlText(files[k]), strings);
+  });
+  if(files["xl/workbook.xml"]){
+    const wb=xmlText(files["xl/workbook.xml"]);
+    const names=[...wb.matchAll(/name="([^"]+)"/g)].map(m=>m[1]);
+    names.forEach((n,i)=>{ const k="表"+(i+1); if(sheets[k]) { sheets[n]=sheets[k]; }});
+  }
+  return sheets;
+}
+async function importTableFile(file){
+  const name=(file.name||"").toLowerCase();
+  if(name.endsWith(".json")){ importBak(file); return; }
+  if(name.endsWith(".csv") || file.type==="text/csv"){
+    const text=await file.text();
+    const r=rowsToSurvey(parseCsvText(text));
+    applyPeople(r.names, r.survey);
+    return;
+  }
+  const buf=await file.arrayBuffer();
+  const u8=new Uint8Array(buf);
+  const head=new TextDecoder("utf-8",{fatal:false}).decode(u8.slice(0,80));
+  if(head.includes("Workbook") || head.includes("ss:Name")){
+    applySheets(parseSpreadsheetML(new TextDecoder("utf-8").decode(u8)));
+    return;
+  }
+  if(u8[0]===0x50 && u8[1]===0x4b){
+    const sheets=await parseXlsx(buf);
+    applySheets(sheets);
+    return;
+  }
+  const r=rowsToSurvey(parseCsvText(new TextDecoder("utf-8").decode(u8)));
+  applyPeople(r.names, r.survey);
+}
 
+
+$("exportTable").onclick = exportTable;
+$("importTable").onchange = e=>{ const f=e.target.files && e.target.files[0]; if(f) importTableFile(f).catch(err=>{ console.error(err); alert("这个表格读不出来。请用飞象老师导出的 xlsx，或本页导出的 xls。"); }); e.target.value=""; };
 $("clearScore").onclick = ()=>{
   const day=todayStr();
   const n=scoreLog.filter(x=>x.day===day).length;
