@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>上课打开这一页　v1.23</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#05070d;color:#eef4ff;
+  font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;}
+#bg{position:fixed;inset:0;z-index:0}
+.ui{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;
+  margin-left:var(--rail,300px);transition:margin-left .35s ease}
+body.rail-shut{--rail:0px}
+.top{display:flex;align-items:center;gap:10px;padding:10px 16px;z-index:5;min-height:48px}
+.brand{font-size:16px;letter-spacing:.45em;color:#ffd36a;font-weight:900}
+.ver{margin-left:auto;font-size:12px;color:#8ea0c3}
+.top button,.panel button,.rail button{
+  border:0;cursor:pointer;font:inherit;font-weight:800;border-radius:999px}
+.ghost{background:rgba(255,255,255,.1);color:#eef4ff;padding:8px 14px}
+.gold{background:linear-gradient(180deg,#ffe9a8,#e0b13a);color:#2a1c00;padding:8px 16px}
+.stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:0;padding:8px}
+.ring-wrap{position:relative;width:min(640px,calc(100vw - var(--rail,300px) - 32px),78vh);
+  height:min(640px,calc(100vw - var(--rail,300px) - 32px),78vh);
+  filter:drop-shadow(0 28px 24px rgba(0,0,0,.65))}
+#wheel{width:100%;height:100%;display:block}
+.needle{position:absolute;left:50%;top:50%;width:46px;height:30%;
+  transform:translate(-50%,-100%);transform-origin:50% 100%;z-index:4;pointer-events:none;
+  background:linear-gradient(90deg,#7f0000 0%,#ff3b3b 38%,#ffe4e4 50%,#ff1744 62%,#7f0000 100%);
+  clip-path:polygon(50% 0, 92% 88%, 70% 100%, 30% 100%, 8% 88%);
+  filter:drop-shadow(0 0 3px #fff) drop-shadow(0 4px 6px #000)}
+.hub{position:absolute;left:50%;top:50%;width:24%;height:24%;transform:translate(-50%,-50%);
+  border-radius:50%;z-index:5;display:flex;align-items:center;justify-content:center;text-align:center;
+  background:radial-gradient(circle at 32% 28%,#ff8a9a,#ff1744 40%,#8b0000);
+  border:6px solid #fff;box-shadow:0 0 0 5px #ff1744, inset 0 8px 10px rgba(255,255,255,.25)}
+.hub b{font-size:clamp(16px,2.3vw,24px);color:#fff;letter-spacing:.12em;line-height:1.2;text-shadow:0 2px 0 #7a0000}
+.hint{text-align:center;color:#8ea0c3;font-size:13px;padding:10px 16px 0}
+
+.rail-tab{position:fixed;left:0;top:42%;z-index:8;writing-mode:vertical-rl;letter-spacing:.18em;
+  background:#ff1744;color:#fff;border:0;border-radius:0 12px 12px 0;padding:18px 10px;font-weight:800;cursor:pointer;
+  display:none;box-shadow:4px 0 16px rgba(0,0,0,.4)}
+body.rail-shut .rail-tab{display:block}
+.rail{position:fixed;left:0;top:0;bottom:0;width:300px;z-index:7;
+  background:linear-gradient(180deg,#141c2e 0%,#0a101c 100%);
+  border-right:2px solid #ffd36a;padding:12px 12px 16px;overflow:auto;
+  transform:translateX(0);transition:transform .35s ease;
+  display:flex;flex-direction:column;gap:8px}
+.rail.shut{transform:translateX(-105%)}
+.rail-head{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.rail-head b{color:#ffd36a;letter-spacing:.28em;font-size:15px}
+.rail-head .ghost{padding:6px 10px;font-size:12px;border-radius:8px}
+.rail-head .head-btns{margin-left:auto;display:flex;gap:6px;align-items:center}
+.rail h3{color:#ffd36a;font-size:12px;letter-spacing:.22em;margin:8px 0 6px;border-top:1px solid #2a3754;padding-top:10px}
+.rail h3:first-of-type{border-top:0;padding-top:0;margin-top:2px}
+.rail .uses,.rail .actions{display:flex;flex-direction:column;align-items:stretch;gap:8px}
+.rail .uses{flex-direction:row;flex-wrap:wrap}
+.rail .uses button{flex:1 1 30%;padding:7px 4px;font-size:12px;background:#1a2744;color:#c9d6f0;border-radius:10px}
+.rail .uses button.on{background:#ff1744;color:#fff}
+.map{font-size:12px;line-height:1.55;color:#c9d6f0;background:#0b1220;border:1px dashed #3d4d72;border-radius:10px;padding:8px 10px}
+.map b{color:#ffd36a}
+.use-tip{font-size:13px;line-height:1.55;color:#ffe9a8;background:#1a2744;border-radius:10px;padding:8px 10px}
+.play-sub{display:none;flex-wrap:wrap;gap:6px;margin-top:6px}
+.play-sub.on{display:flex}
+.play-sub button{flex:1 1 40%;padding:6px 6px;font-size:12px;background:#1a2744;color:#c9d6f0;border-radius:8px}
+.play-sub button.on{background:#e0b13a;color:#2a1c00}
+.actions button.suggest{box-shadow:0 0 0 3px #ff1744}
+.rail .actions button{width:100%;border-radius:12px;font-size:17px;padding:12px 12px}
+.rail .ghost.wide{width:100%;border-radius:10px;padding:9px 12px}
+.hist-sum{font-size:14px;color:#eef4ff;background:#1a2744;border:1px solid #3d4d72;border-radius:10px;padding:8px 10px}
+.hist-sum b{color:#ffd36a;font-size:22px}
+.hist{font-size:12px;line-height:1.45;flex:0 1 22vh;min-height:80px;max-height:22vh;overflow:auto;
+  background:#0b1220;border:1px solid #2a3754;border-radius:10px;padding:4px}
+.hist table{width:100%;border-collapse:collapse}
+.hist th,.hist td{border-bottom:1px solid #2a3754;padding:7px 5px;text-align:left;vertical-align:top}
+.hist th{color:#8ea0c3;font-weight:700;position:sticky;top:0;background:#0b1220}
+.hist td.who{color:#ffe9a8;font-weight:800;font-size:13px}
+.hist-btns{display:flex;gap:8px}
+.hist-btns button{flex:1;border-radius:10px;padding:8px 8px;font-size:12px}
+body.focus .rail, body.focus .rail-tab, body.focus .top{opacity:0;pointer-events:none;transition:opacity .25s}
+
+.dim{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:20;display:none}
+.dim.on{display:block}
+.panel{position:fixed;top:0;right:0;bottom:0;width:min(440px,94vw);z-index:21;
+  background:#10182a;border-left:1px solid #3d4d72;padding:16px 16px 24px;overflow:auto;
+  transform:translateX(100%);transition:transform .4s ease}
+.panel.on{transform:translateX(0)}
+.panel h2{color:#ffd36a;font-size:17px;margin:6px 0 8px}
+.panel textarea{width:100%;min-height:90px;background:#0b1220;color:#eef4ff;border:1px solid #3d4d72;
+  border-radius:10px;padding:10px;font:inherit;font-size:15px}
+.panel .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0 10px}
+.rule{font-size:13px;line-height:1.7;color:#c9d6f0;background:#0b1220;border:1px dashed #3d4d72;border-radius:10px;padding:10px;margin:8px 0}
+.rule b{color:#ffd36a}
+.log{font-size:13px;line-height:1.6;color:#9effc1;min-height:1.6em;margin:4px 0 10px;white-space:pre-wrap}
+.plist{display:grid;gap:8px;margin:8px 0 16px}
+.prow{display:flex;align-items:center;gap:8px;background:#0b1220;border:1px solid #2a3754;border-radius:10px;padding:6px}
+.prow img,.face{width:44px;height:44px;border-radius:50%;object-fit:cover;background:#1c2740;border:2px solid #ffd36a}
+.prow span{flex:1;font-weight:700}
+.prow label{font-size:12px;background:#243152;padding:6px 8px;border-radius:999px;cursor:pointer}
+.result{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 50% 40%,rgba(80,40,0,.45),rgba(0,0,0,.78))}
+.result.on{display:flex}
+.card{text-align:center;padding:36px 40px 28px;border-radius:28px;min-width:min(560px,92vw);
+  background:linear-gradient(180deg,#2a210f 0%,#120e08 55%,#0a0806 100%);
+  border:1px solid #f6d36b;box-shadow:0 0 0 8px rgba(246,211,107,.12), 0 30px 80px rgba(0,0,0,.6);
+  animation:slam .6s cubic-bezier(.16,1.2,.3,1)}
+@keyframes slam{0%{transform:scale(.25) rotate(-8deg);opacity:0;filter:blur(12px)}
+  55%{transform:scale(1.08) rotate(2deg)}
+  100%{transform:none;opacity:1;filter:none}}
+.flashbang{position:fixed;inset:0;z-index:29;pointer-events:none;background:#fff;opacity:0}
+.flashbang.on{animation:bang .45s ease-out}
+@keyframes bang{0%{opacity:.85}100%{opacity:0}}
+.card .tag{letter-spacing:.55em;color:#f6d36b;font-weight:800;font-size:14px;margin-bottom:12px}
+.card .say{font-size:clamp(26px,3.6vw,40px);font-weight:900;color:#fff8d6;line-height:1.25;margin:6px 0 16px;
+  text-shadow:0 2px 0 #7a5a10}
+.trio{display:flex;gap:28px;justify-content:center;flex-wrap:wrap}
+.one{width:min(280px,78vw);display:flex;flex-direction:column;align-items:center;gap:14px}
+.one img,.one .face{width:168px;height:168px;border-radius:50%;object-fit:cover;background:#1c2740;
+  border:5px solid #f6d36b;box-shadow:0 0 28px rgba(246,211,107,.45)}
+.nm{font-size:42px;font-weight:900;color:#fff8d6;line-height:1.15;text-align:center;
+  text-shadow:0 2px 0 #7a5a10, 0 0 24px rgba(246,211,107,.5)}
+.card .sub{margin-top:12px;color:#9a8b63;font-size:13px;letter-spacing:.12em}
+.score-pad{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.score-line{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+.score-line em{font-style:normal;font-weight:800;color:#fff8d6;min-width:4.5em;text-align:right}
+.score-line button{padding:8px 12px;border-radius:10px;font-size:14px}
+.score-line button.on{box-shadow:0 0 0 3px #ffe9a8}
+.b2{background:#4db6ac;color:#04322d}
+.b5{background:#ffb300;color:#4a2e00}
+.b0{background:#3a4458;color:#eef4ff}
+.score-note{font-size:12px;color:#8ea0c3;line-height:1.5;background:#0b1220;border:1px dashed #3d4d72;border-radius:10px;padding:8px 10px}
+.score-list{font-size:12px;line-height:1.45;flex:1 1 auto;min-height:220px;max-height:42vh;overflow:auto;background:#0b1220;border:1px solid #2a3754;border-radius:10px;padding:4px}
+.score-list div{display:flex;gap:6px;align-items:center;padding:5px 6px;border-bottom:1px solid #2a3754}
+.score-list b{color:#ffe9a8;margin-left:auto}
+.now{font-size:14px;line-height:1.55;color:#fff8d6;background:#3a1d08;border:1px solid #e0b13a;border-radius:10px;padding:10px}
+.gold.wide{display:block;width:100%;text-align:center;border-radius:10px;padding:10px 12px}
+.score-list .mini{color:#8ea0c3;font-size:11px;font-weight:700}
+.score-list input.mini-in{width:52px;background:#0b1220;color:#ffe9a8;border:1px solid #e0b13a;border-radius:6px;padding:2px 4px;font:inherit;font-weight:800}
+#importLog{display:none;font-size:12px;line-height:1.4;color:#fff8d6;background:#3a1d08;border:1px solid #ff1744;border-radius:10px;padding:6px 8px;white-space:pre-wrap;max-height:4.8em;overflow:auto}
+#importLog.on{display:block}
+input[type=file].pick{display:block;width:100%;margin-top:6px;font-size:12px;color:#2a1c00}
+.boom{position:fixed;inset:0;z-index:25;pointer-events:none}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<canvas class="boom" id="boom"></canvas>
+<div class="flashbang" id="flashbang"></div>
+
+<button class="rail-tab" type="button" id="railTab">操 作</button>
+<aside class="rail" id="rail">
+  <div class="rail-head">
+    <b>上课打开这一页</b>
+    <span class="head-btns">
+      <button class="ghost" type="button" id="btnMute">音效开</button>
+      <button class="ghost" type="button" id="railShut">收起</button>
+    </span>
+  </div>
+  <a class="gold wide" id="backTo" style="display:none;text-decoration:none">回课件</a>
+  <div class="now" id="nowBox">同一台电脑不用导入。下课前导出表格。</div>
+  <div id="importLog"></div>
+  <label class="gold wide">导入表格
+    <input id="importTable" class="pick" type="file" accept=".xlsx,.xls,.csv,.json,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv,application/json">
+  </label>
+  <button class="gold wide" type="button" id="exportTable">导出表格</button>
+  <button class="ghost wide" type="button" id="btnList">名单 / 组名</button>
+
+
+  <h3>上场做什么（点一个）</h3>
+  <div class="uses" id="uses">
+    <button type="button" data-u="book" class="on">举册子</button>
+    <button type="button" data-u="tianping">天平</button>
+    <button type="button" data-u="lianxian">连线</button>
+    <button type="button" data-u="mole">打地鼠</button>
+    <button type="button" data-u="dub">配音</button>
+    <button type="button" data-u="nitpick">找茬</button>
+    <button type="button" data-u="voucher">看凭证</button>
+  </div>
+  <div class="use-tip" id="useTip"></div>
+
+  <h3>开始抽</h3>
+  <div class="actions">
+    <button class="gold" type="button" id="draw1">抽一个人</button>
+    <button class="gold" type="button" id="drawG">抽一个组</button>
+    <button class="ghost" type="button" id="draw3">抽三个人</button>
+  </div>
+
+  <h3>本堂记录</h3>
+  <div class="hist-sum">一共抽了 <b id="histN">0</b> 次</div>
+  <div class="hist">
+    <table>
+      <thead>
+        <tr><th style="width:28px">#</th><th>时间</th><th>怎么抽</th><th>抽到谁</th></tr>
+      </thead>
+      <tbody id="histBody"></tbody>
+    </table>
+  </div>
+  <div class="hist-btns">
+    <button class="ghost" type="button" id="copyHist">复制记录</button>
+    <button class="ghost" type="button" id="clearHist">清空抽取</button>
+  </div>
+
+  <h3>记分</h3>
+  <div class="hist-sum">今天 <b id="scoreN">0</b> 分</div>
+  <div class="score-list" id="scoreList"></div>
+  <button class="ghost wide" type="button" id="clearScore">清空今日分</button>
+</aside>
+
+<div class="ui">
+  <div class="top">
+    <div class="brand">上场</div>
+    <span class="ver">v1.23</span>
+  </div>
+  <div class="stage">
+    <div class="ring-wrap">
+      <canvas id="wheel" width="800" height="800"></canvas>
+      <div class="needle"></div>
+      <div class="hub"><b id="hubTxt">开始</b></div>
+    </div>
+    <div class="hint" id="hintLine">抽三个人会转三次。指针停在谁就是谁。</div>
+  </div>
+</div>
+
+<div class="dim" id="dim"></div>
+<aside class="panel" id="panel">
+  <h2>人名单　一行一个</h2>
+  <textarea id="people" placeholder="张三&#10;李四&#10;王五"></textarea>
+  <div class="row">
+    <button class="gold" type="button" id="saveP">保存人名单</button>
+    <label class="ghost" style="display:inline-block">批量配卡通图
+      <input id="bulk" type="file" accept="image/png,image/jpeg,image/jpg,image/webp" multiple hidden>
+    </label>
+    <span id="pCount" style="color:#8ea0c3;font-size:13px"></span>
+  </div>
+  <div class="rule">
+    <b>批量配图规则（任选一种）：</b><br>
+    ① 文件名里带上姓名：张三.png、01-张三.jpg<br>
+    ② 一次选的张数＝名单人数，按名单从上到下顺序配。
+  </div>
+  <div class="log" id="bulkLog"></div>
+  <div class="plist" id="plist"></div>
+  <h2>组名单　一行一个</h2>
+  <textarea id="groups" placeholder="资金组&#10;采购组&#10;销售组&#10;费用组&#10;生产组"></textarea>
+  <div class="row">
+    <button class="gold" type="button" id="saveG">保存组名单</button>
+    <span id="gCount" style="color:#8ea0c3;font-size:13px"></span>
+  </div>
+  <button class="ghost" type="button" id="closeP">收起</button>
+</aside>
+<div class="result" id="result">
+  <div class="card" id="card"></div>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const COLS = ["#1a365d","#9b2c2c","#276749","#553c9a","#2b6cb0","#975a16","#234e52","#97266d"];
+let items=[], rot=0, spinning=false, busy=false, muted=false, groupsMode=false, photos={}, imgObj={};
+let hist=[];
+const USES = {
+  book: {
+    label: "举册子", suggest: "draw3", tip: "",
+    say: "这三位，册子举起来", sub: "写了就行。不用站起来，不用开口。",
+    s2: "写了 2", s5: "写好 5", s0: "空白 0"
+  },
+  tianping: {
+    label: "天平", suggest: "draw1",
+    tip: "抽一个人。抽完点「去天平」，名字会带过去。4 题全对才满分。",
+    say: "上场玩天平", sub: "抽完去天平。15 秒内选一种变化。",
+    s2: "2 分", s5: "5 分", s0: "0 分"
+  },
+  lianxian: {
+    label: "连线", suggest: "draw1",
+    tip: "抽一个人。抽完点「去连线」，到课件上连科目和六个词。",
+    say: "上场连线", sub: "抽完去课件连线。",
+    s2: "2 分", s5: "5 分", s0: "0 分"
+  },
+  mole: {
+    label: "打地鼠", suggest: "draw1",
+    tip: "讲完六个要素之后打开「90-B1 打地鼠」。抽一个人上场。",
+    say: "上场打地鼠", sub: "按屏幕上的科目打。",
+    s2: "2 分", s5: "5 分", s0: "0 分"
+  },
+  dub: {
+    label: "配音", suggest: "draw1",
+    tip: "项目一最后「下课前看这一页」才布置。项目四看完连环画那一页才配音。一般不当场记分。",
+    say: "上场配音", sub: "看图，配上这一段。",
+    s2: "2 分", s5: "5 分", s0: "0 分"
+  },
+  nitpick: {
+    label: "找茬", suggest: "draw3",
+    tip: "项目四填完凭证：先让全班和同桌交换，自己填的自己不审。然后再抽三个人抽查。",
+    say: "全班先和同桌交换。抽到的，把交换后的凭证举起来",
+    sub: "自己填的自己不审。红笔改，蓝黑笔填。",
+    s2: "有改痕迹 2", s5: "改得好 5", s0: "没审 0"
+  },
+  voucher: {
+    label: "看凭证", suggest: "drawG",
+    tip: "实训课抽一个组。把写好的通用记账凭证举起来。看一眼放下，继续写。",
+    say: "这组，把写好的通用记账凭证举起来",
+    sub: "看一眼就放下，继续写。不收上来。",
+    s2: "过了 2", s5: "写得好 5", s0: "要改 0"
+  }
+};
+let useId = "book";
+function useLabel(){ return USES[useId].label; }
+function useSay(){
+  const n = (arguments[0]||[]).length;
+  if(useId==="book"){
+    const who = n===1?"这一位": n===2?"这两位": n===3?"这三位":"这几位";
+    return who+"，册子举起来";
+  }
+  return USES[useId].say;
+}
+function useSub(){ return USES[useId].sub || ""; }
+function applyUse(){
+  const u = USES[useId];
+  const tip = u.tip || "";
+  $("useTip").textContent = tip;
+  $("useTip").style.display = tip ? "block" : "none";
+  [...$("uses").children].forEach(x=>x.classList.toggle("on", x.dataset.u===useId));
+  ["draw1","drawG","draw3"].forEach(id => $(id).classList.remove("suggest"));
+  if(u.suggest) $(u.suggest).classList.add("suggest");
+}
+const TIANPING = "../01_项目一_认识会计工作与企业经济业务/01-03_小新的天平_能不能弄歪_网页_v4.3_20260829.html";
+function goTianping(name){
+  localStorage.setItem("draw-handoff", JSON.stringify({name, ts: Date.now(), use:"上场·天平"}));
+  const back = "../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.23_20260829.html?use=tianping";
+  location.href = TIANPING + "?name=" + encodeURIComponent(name) + "&back=" + encodeURIComponent(back);
+}
+const LIANXIAN = "../01_项目一_认识会计工作与企业经济业务/01-00_项目一_上课投影_网页版_v1.13_20260829.html#78";
+function goLianxian(name){
+  localStorage.setItem("draw-handoff", JSON.stringify({name, ts: Date.now(), use:"上场·连线"}));
+  location.href = LIANXIAN;
+}
+try{ hist=JSON.parse(localStorage.getItem("draw-hist")||"[]"); if(!Array.isArray(hist)) hist=[]; }catch(e){ hist=[]; }
+function renderHist(){
+  if(!$("histN")) return;
+  $("histN").textContent = String(hist.length);
+  const rows=[...hist].reverse().map((h,i)=>{
+    const n=hist.length-i;
+    return `<tr><td>${n}</td><td>${h.t||""}<br><span style="color:#8ea0c3">${h.use||""}</span></td><td>${h.kind||""}</td><td class="who">${(h.names||[]).join("、")}</td></tr>`;
+  }).join("");
+  $("histBody").innerHTML = rows || `<tr><td colspan="4" style="color:#8ea0c3">还没有抽取。</td></tr>`;
+}
+function addHist(names, k){
+  const now=new Date();
+  const tm=now.toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  const kind = groupsMode ? "抽一组" : (k>1 ? "抽三人" : "抽一人");
+  hist.push({t:tm, kind, use: useLabel(), names: names.slice()});
+  localStorage.setItem("draw-hist", JSON.stringify(hist));
+  renderHist();
+}
+function splitCsvLine(line){
+  const out=[]; let cur="", q=false;
+  for(let i=0;i<line.length;i++){
+    const c=line[i];
+    if(c==='"'){ if(q && line[i+1]==='"'){ cur+='"'; i++; } else q=!q; }
+    else if((c===','||c==='\t') && !q){ out.push(cur); cur=""; }
+    else cur+=c;
+  }
+  out.push(cur); return out.map(s=>s.trim());
+}
+function importBak(file){
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const data=JSON.parse(reader.result);
+      if(data.people!=null){ $("people").value=data.people; localStorage.setItem("draw-people", data.people); }
+      if(data.groups!=null){ $("groups").value=data.groups; localStorage.setItem("draw-groups", data.groups); }
+      if(Array.isArray(data.hist)){ hist=data.hist; localStorage.setItem("draw-hist", JSON.stringify(hist)); }
+      if(Array.isArray(data.scoreLog)){ scoreLog=data.scoreLog; saveScores(); }
+      if(Array.isArray(data.survey)){ localStorage.setItem("draw-survey", JSON.stringify(data.survey)); }
+      count(); renderList(); renderHist(); renderScores(); paintIdle();
+      alert("已导入。");
+    }catch(e){ alert("这个文件不是备份。"); }
+  };
+  reader.readAsText(file);
+}
+
+let scoreLog=[];
+try{ scoreLog=JSON.parse(localStorage.getItem("draw-score-log")||"[]"); if(!Array.isArray(scoreLog)) scoreLog=[]; }catch(e){ scoreLog=[]; }
+let roundId=0, roundScore={};
+function todayStr(){
+  const d=new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function saveScores(){ localStorage.setItem("draw-score-log", JSON.stringify(scoreLog)); }
+function todayByName(){
+  const day=todayStr(), m={};
+  scoreLog.filter(x=>x.day===day).forEach(x=>{ m[x.name]=(m[x.name]||0)+Number(x.pts||0); });
+  return m;
+}
+function totalByName(){
+  const m={};
+  scoreLog.forEach(x=>{ m[x.name]=(m[x.name]||0)+Number(x.pts||0); });
+  return m;
+}
+function nowText(){
+  const n=lines($("people")).length;
+  if(!n) return "先点「导入表格」，或打开「名单 / 组名」贴名单并保存。";
+  const today=todayByName();
+  const k=Object.keys(today).length;
+  return "同一台电脑不用导入。下课前点「导出表格」。今天已给 "+k+" 人记过分。";
+}
+function renderScores(){
+  const today=todayByName();
+  const tot=totalByName();
+  const people=lines($("people"));
+  const names=[...new Set([...people, ...Object.keys(tot)])];
+  names.sort((a,b)=>(tot[b]||0)-(tot[a]||0));
+  const daySum=people.reduce((s,n)=>s+(today[n]||0),0);
+  $("scoreN").textContent=String(daySum);
+  if($("nowBox")) $("nowBox").textContent=nowText();
+  if(!names.length){ $("scoreList").innerHTML='<div style="color:#8ea0c3">抽完后在弹窗上点 2 / 5 / 0。</div>'; return; }
+  $("scoreList").innerHTML = '<div><span>姓名</span><span class="mini">今天</span><b>累计</b></div>' + names.map(n=>
+    `<div><span>${n}</span><input class="mini-in" type="number" data-name="${n}" value="${today[n]||0}"><b>${tot[n]||0}</b></div>`
+  ).join("");
+}
+function giveScore(name, pts, btn){
+  const day=todayStr();
+  const tm=new Date().toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  let found=-1;
+  for(let i=scoreLog.length-1;i>=0;i--){
+    if(scoreLog[i].round===roundId && scoreLog[i].name===name){ found=i; break; }
+  }
+  if(found>=0){ scoreLog[found].pts=pts; scoreLog[found].t=tm; }
+  else scoreLog.push({day,t:tm,name,pts,use:useLabel(),round:roundId});
+  roundScore[name]=pts;
+  saveScores();
+  renderScores();
+  if(btn && btn.parentElement){
+    [...btn.parentElement.querySelectorAll("button")].forEach(x=>x.classList.remove("on"));
+    btn.classList.add("on");
+  }
+}
+function sayImport(msg, quiet){
+  const el=$("importLog");
+  if(el){ el.textContent=msg; el.classList.add("on"); }
+  if(!quiet){ try{ alert(msg); }catch(e){} }
+}
+function setTodayScore(name, pts){
+  name=String(name||"").trim();
+  pts=Number(pts);
+  if(!name || !Number.isFinite(pts)) return;
+  const day=todayStr();
+  scoreLog=scoreLog.filter(x=>!(x.name===name && x.day===day));
+  scoreLog.push({day, t:new Date().toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit",second:"2-digit"}), name, pts, use:"改分"});
+  saveScores(); renderScores();
+  sayImport(name+" 的今天改成 "+pts+" 分。再点「导出表格」就是新数。", true);
+}
+function setRail(on){
+  document.body.classList.toggle("rail-shut", !on);
+  const rail=$("rail");
+  if(rail) rail.classList.toggle("shut", !on);
+}
+function xesc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;"); }
+function xmlT(s){ return xesc(String(s??"")).replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g,""); }
+function colLetter(n){
+  let s=""; n=n+1;
+  while(n>0){ const r=(n-1)%26; s=String.fromCharCode(65+r)+s; n=Math.floor((n-1)/26); }
+  return s;
+}
+const CRC_TABLE=(()=>{ const t=new Uint32Array(256); for(let n=0;n<256;n++){ let c=n; for(let k=0;k<8;k++) c=(c&1)?(0xedb88320^(c>>>1)):(c>>>1); t[n]=c; } return t; })();
+function crc32(u8){ let c=0xffffffff; for(let i=0;i<u8.length;i++) c=CRC_TABLE[(c^u8[i])&255]^(c>>>8); return (c^0xffffffff)>>>0; }
+function zipStore(files){
+  const enc=new TextEncoder();
+  const chunks=[], central=[];
+  let offset=0;
+  const d=new Date();
+  const time=(d.getHours()<<11)|(d.getMinutes()<<5)|Math.floor(d.getSeconds()/2);
+  const date=((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate();
+  Object.keys(files).forEach(name=>{
+    const nameU=enc.encode(name);
+    const raw=files[name];
+    const data=typeof raw==="string"?enc.encode(raw):raw;
+    const crc=crc32(data);
+    const local=new Uint8Array(30+nameU.length);
+    const v=new DataView(local.buffer);
+    v.setUint32(0,0x04034b50,true);
+    v.setUint16(4,20,true);
+    v.setUint16(8,0,true);
+    v.setUint16(10,time,true);
+    v.setUint16(12,date,true);
+    v.setUint32(14,crc,true);
+    v.setUint32(18,data.length,true);
+    v.setUint32(22,data.length,true);
+    v.setUint16(26,nameU.length,true);
+    local.set(nameU,30);
+    chunks.push(local, data);
+    const cen=new Uint8Array(46+nameU.length);
+    const cv=new DataView(cen.buffer);
+    cv.setUint32(0,0x02014b50,true);
+    cv.setUint16(4,20,true);
+    cv.setUint16(6,20,true);
+    cv.setUint16(12,time,true);
+    cv.setUint16(14,date,true);
+    cv.setUint32(16,crc,true);
+    cv.setUint32(20,data.length,true);
+    cv.setUint32(24,data.length,true);
+    cv.setUint16(28,nameU.length,true);
+    cv.setUint32(42,offset,true);
+    cen.set(nameU,46);
+    central.push(cen);
+    offset+=local.length+data.length;
+  });
+  const cenSize=central.reduce((s,x)=>s+x.length,0);
+  const end=new Uint8Array(22);
+  const ev=new DataView(end.buffer);
+  ev.setUint32(0,0x06054b50,true);
+  ev.setUint16(8,central.length,true);
+  ev.setUint16(10,central.length,true);
+  ev.setUint32(12,cenSize,true);
+  ev.setUint32(16,offset,true);
+  return new Blob([...chunks, ...central, end], {type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+}
+function sheetXmlOOXML(rows){
+  const body=rows.map((row,ri)=>{
+    const r=ri+1;
+    const cells=(row||[]).map((val,ci)=>{
+      const ref=colLetter(ci)+r;
+      const s=String(val??"");
+      if(s!=="" && /^-?\d+(\.\d+)?$/.test(s.trim())){
+        return `<c r="${ref}"><v>${s.trim()}</v></c>`;
+      }
+      return `<c r="${ref}" t="inlineStr"><is><t>${xmlT(s)}</t></is></c>`;
+    }).join("");
+    return `<row r="${r}">${cells}</row>`;
+  }).join("");
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>`
+    +`<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>${body}</sheetData></worksheet>`;
+}
+function buildXlsx(sheetMap){
+  const names=Object.keys(sheetMap);
+  const types=[
+    `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>`,
+    `<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">`,
+    `<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>`,
+    `<Default Extension="xml" ContentType="application/xml"/>`,
+    `<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>`
+  ];
+  names.forEach((_,i)=> types.push(`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`));
+  types.push(`</Types>`);
+  const rels=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>`
+    +`<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">`
+    +`<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>`
+    +`</Relationships>`;
+  const wbSheets=names.map((n,i)=>`<sheet name="${xmlT(n)}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join("");
+  const workbook=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>`
+    +`<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">`
+    +`<sheets>${wbSheets}</sheets></workbook>`;
+  const wbRels=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>`
+    +`<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">`
+    +names.map((_,i)=>`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join("")
+    +`</Relationships>`;
+  const files={
+    "[Content_Types].xml": types.join(""),
+    "_rels/.rels": rels,
+    "xl/workbook.xml": workbook,
+    "xl/_rels/workbook.xml.rels": wbRels
+  };
+  names.forEach((n,i)=>{ files["xl/worksheets/sheet"+(i+1)+".xml"]=sheetXmlOOXML(sheetMap[n]); });
+  return zipStore(files);
+}
+function exportTable(){
+  const people=lines($("people"));
+  const today=todayByName();
+  const tot=totalByName();
+  const names=people.length?people:[...new Set([...people, ...Object.keys(tot)])];
+  const sum=[["姓名","今天","累计"]].concat(names.map(n=>[n, String(today[n]||0), String(tot[n]||0)]));
+  const histRows=[["序号","时间","怎么抽","抽到谁","场合"]];
+  hist.forEach((h,i)=> histRows.push([String(i+1), h.t||"", h.kind||"", (h.names||[]).join("、"), h.use||""]));
+  const det=[["日期","时间","姓名","场合","分数"]];
+  scoreLog.forEach(r=> det.push([r.day||"", r.t||"", r.name||"", r.use||"", String(r.pts||0)]));
+  let survey=[];
+  try{ survey=JSON.parse(localStorage.getItem("draw-survey")||"[]"); if(!Array.isArray(survey)) survey=[]; }catch(e){ survey=[]; }
+  const keys=[];
+  survey.forEach(row=> Object.keys(row||{}).forEach(k=>{ if(k && !keys.includes(k)) keys.push(k); }));
+  if(!keys.includes("姓名")) keys.unshift("姓名");
+  const dia=[keys];
+  survey.forEach(row=> dia.push(keys.map(k=> String((row&&row[k])||""))));
+  if(dia.length===1) names.forEach(n=> dia.push(keys.map(k=> k.includes("姓名")?n:"")));
+  const ming=[["姓名"]].concat(names.map(n=>[n]));
+  const blob=buildXlsx({"记分":sum, "抽取记录":histRows, "分数明细":det, "点单":dia, "名单":ming});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="课堂数据_"+todayStr()+".xlsx";
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+  sayImport("已下载课堂数据_"+todayStr()+".xlsx。改第一张「记分」的数字，保存后再导入；也可以直接改本页「今天」。");
+}
+function applyPeople(names, surveyRows){
+  const uniq=[];
+  names.forEach(n=>{ n=String(n||"").trim(); if(n && !uniq.includes(n)) uniq.push(n); });
+  if(!uniq.length){ sayImport("表里没有读到姓名。请确认有「姓名」列。"); return; }
+  $("people").value=uniq.join("\n");
+  localStorage.setItem("draw-people", $("people").value);
+  if(surveyRows && surveyRows.length) localStorage.setItem("draw-survey", JSON.stringify(surveyRows));
+  count(); renderList(); renderScores(); paintIdle();
+  sayImport("已换成表里的 "+uniq.length+" 人。这张表没有记分，分数没动。");
+}
+function rowsToSurvey(rows){
+  if(!rows || !rows.length) return {names:[], survey:[]};
+  const header=rows[0].map(h=>String(h||"").trim());
+  let ni=header.findIndex(h=>h.includes("姓名")||h.toLowerCase()==="name");
+  if(ni<0) ni=0;
+  const names=[], survey=[];
+  for(let i=1;i<rows.length;i++){
+    const cols=rows[i]||[];
+    const name=String(cols[ni]||"").trim();
+    if(!name) continue;
+    names.push(name);
+    const rec={};
+    header.forEach((h,j)=>{ if(h) rec[h]=String(cols[j]||""); });
+    if(!rec["姓名"]) rec["姓名"]=name;
+    survey.push(rec);
+  }
+  return {names, survey};
+}
+function headerHasName(rows){
+  const h=(rows && rows[0] || []).join(" ");
+  return h.includes("姓名") || h.toLowerCase().includes("name");
+}
+function colIndexOf(header, keys){
+  const h=(header||[]).map(x=>String(x||"").trim());
+  for(const k of keys){
+    const i=h.findIndex(x=>x.includes(k));
+    if(i>=0) return i;
+  }
+  return -1;
+}
+function cell(row, i){
+  if(i<0) return "";
+  return String((row||[])[i]??"").trim();
+}
+function toDay(v){
+  const s=String(v??"").trim();
+  if(!s) return "";
+  const m=s.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})/);
+  if(m) return m[1]+"-"+String(+m[2]).padStart(2,"0")+"-"+String(+m[3]).padStart(2,"0");
+  if(/^\d+(\.\d+)?$/.test(s)){
+    const n=Number(s);
+    if(n>20000 && n<80000){
+      const utc=new Date(Math.round((n-25569)*86400*1000));
+      return utc.getUTCFullYear()+"-"+String(utc.getUTCMonth()+1).padStart(2,"0")+"-"+String(utc.getUTCDate()).padStart(2,"0");
+    }
+  }
+  return s;
+}
+function num(v){
+  const n=Number(String(v??"").replace(/,/g,"").trim());
+  return Number.isFinite(n)?n:0;
+}
+function parseScoreDet(rows){
+  if(!rows || rows.length<2) return [];
+  const h=rows[0]||[];
+  const di=colIndexOf(h,["日期"]);
+  const ti=colIndexOf(h,["时间"]);
+  const ni=colIndexOf(h,["姓名"]);
+  const ui=colIndexOf(h,["场合"]);
+  const pi=colIndexOf(h,["分数","分"]);
+  const log=[];
+  for(let i=1;i<rows.length;i++){
+    const name=cell(rows[i], ni>=0?ni:2);
+    if(!name) continue;
+    log.push({
+      day: toDay(cell(rows[i], di>=0?di:0)),
+      t: cell(rows[i], ti>=0?ti:1),
+      name,
+      use: cell(rows[i], ui>=0?ui:3),
+      pts: num(cell(rows[i], pi>=0?pi:4))
+    });
+  }
+  return log;
+}
+function parseScoreSum(rows){
+  if(!rows || rows.length<2) return [];
+  const h=rows[0]||[];
+  const ni=colIndexOf(h,["姓名"]);
+  const ti=colIndexOf(h,["今天"]);
+  const pi=colIndexOf(h,["累计"]);
+  const out=[];
+  for(let i=1;i<rows.length;i++){
+    const name=cell(rows[i], ni>=0?ni:0);
+    if(!name) continue;
+    out.push({name, today:num(cell(rows[i], ti>=0?ti:1)), total:num(cell(rows[i], pi>=0?pi:(ti>=0?ti+1:2)))});
+  }
+  return out;
+}
+function parseHistRows(rows){
+  if(!rows || rows.length<2) return [];
+  const h=rows[0]||[];
+  const ti=colIndexOf(h,["时间"]);
+  const ki=colIndexOf(h,["怎么抽"]);
+  const ni=colIndexOf(h,["抽到谁"]);
+  const ui=colIndexOf(h,["场合"]);
+  const out=[];
+  for(let i=1;i<rows.length;i++){
+    const names=cell(rows[i], ni>=0?ni:3).split(/[、,，]/).map(s=>s.trim()).filter(Boolean);
+    if(!names.length) continue;
+    out.push({t:cell(rows[i], ti>=0?ti:1), kind:cell(rows[i], ki>=0?ki:2), use:cell(rows[i], ui>=0?ui:4), names});
+  }
+  return out;
+}
+function totalsFromLog(log){
+  const today={}, total={};
+  const day=todayStr();
+  (log||[]).forEach(x=>{
+    total[x.name]=(total[x.name]||0)+Number(x.pts||0);
+    if(x.day===day) today[x.name]=(today[x.name]||0)+Number(x.pts||0);
+  });
+  return {today, total};
+}
+function rebuildFromSum(sum){
+  const day=todayStr();
+  const log=[];
+  sum.forEach(r=>{
+    const rest=r.total-r.today;
+    if(rest) log.push({day:"以前", t:"", name:r.name, use:"表格·累计差额", pts:rest});
+    log.push({day, t:"", name:r.name, use:"表格·今天", pts:r.today});
+  });
+  return log;
+}
+function sumEqualsLog(sum, log){
+  const t=totalsFromLog(log);
+  if(!sum.length) return true;
+  return sum.every(r=> (t.today[r.name]||0)===r.today && (t.total[r.name]||0)===r.total);
+}
+function headerJoin(rows){ return ((rows&&rows[0])||[]).map(x=>String(x||"")).join("|"); }
+function applySheets(sheets){
+  const beforeHist=hist.length;
+  const beforeToday=Number(($("scoreN")&&$("scoreN").textContent)||0);
+  const items=[];
+  const seen=new Set();
+  Object.keys(sheets||{}).forEach(name=>{
+    const rows=sheets[name];
+    if(!rows || seen.has(rows)) return;
+    seen.add(rows);
+    items.push({name:String(name||"").trim(), rows, h:headerJoin(rows)});
+  });
+  let peopleRows=null, surveyRows=null, sumRows=null, detRows=null, histRows=null;
+  items.forEach(it=>{
+    if(it.name==="抽取记录" || (it.h.includes("怎么抽") && it.h.includes("抽到谁"))) histRows=it.rows;
+    else if(it.name==="分数明细" || (it.h.includes("场合") && it.h.includes("分数") && (it.h.includes("日期")||it.h.includes("时间")))) detRows=it.rows;
+    else if(it.name==="记分" || it.name==="成绩汇总" || (it.h.includes("今天") && it.h.includes("累计"))) sumRows=it.rows;
+    else if(it.name==="点单" || it.name==="文字列") surveyRows=it.rows;
+    else if(it.name==="名单") peopleRows=it.rows;
+    else if(headerHasName(it.rows) && !surveyRows) surveyRows=it.rows;
+  });
+  let peopleChanged=false, scoreChanged=false, histChanged=false;
+  if(peopleRows && headerHasName(peopleRows)){
+    const r=rowsToSurvey(peopleRows);
+    if(r.names.length){ $("people").value=r.names.join("\n"); peopleChanged=true; }
+  }
+  if(surveyRows && headerHasName(surveyRows)){
+    const r=rowsToSurvey(surveyRows);
+    if(r.survey.length){ localStorage.setItem("draw-survey", JSON.stringify(r.survey)); peopleChanged=true; }
+    if(r.names.length){ $("people").value=r.names.join("\n"); peopleChanged=true; }
+  }
+  const det=parseScoreDet(detRows);
+  const sum=parseScoreSum(sumRows);
+  if(det.length || sum.length){
+    if(det.length && sum.length && sumEqualsLog(sum, det)) scoreLog=det;
+    else if(sum.length) scoreLog=rebuildFromSum(sum);
+    else scoreLog=det;
+    saveScores();
+    scoreChanged=true;
+  }
+  if(histRows && histRows.length>1){
+    hist=parseHistRows(histRows);
+    localStorage.setItem("draw-hist", JSON.stringify(hist));
+    histChanged=true;
+  }
+  if(!peopleChanged && sum.length){
+    $("people").value=sum.map(r=>r.name).join("\n");
+    peopleChanged=true;
+  }
+  if(!peopleChanged && !scoreChanged && !histChanged){
+    sayImport("没读到记分，也没读到姓名。文件是："+(window._importName||"")+"。请改第一张「记分」后保存再导入，或直接在本页改「今天」。");
+    return;
+  }
+  localStorage.setItem("draw-people", $("people").value);
+  count(); renderList(); renderHist(); renderScores(); paintIdle();
+  const n=lines($("people")).length;
+  const afterToday=Number(($("scoreN")&&$("scoreN").textContent)||0);
+  const bits=[];
+  if(peopleChanged) bits.push("名单 "+n+" 人："+lines($("people")).slice(0,8).join("、")+(n>8?"…":""));
+  if(histChanged) bits.push("抽取 "+beforeHist+" 次 → "+hist.length+" 次");
+  else bits.push("抽取仍是 "+hist.length+" 次（这张表没有抽取记录）");
+  if(scoreChanged) bits.push("今天分数 "+beforeToday+" → "+afterToday);
+  else bits.push("分数没动（这张表没有记分）");
+  sayImport("表格已经换到这一页。\n"+bits.join("\n"));
+}
+function parseCsvText(text){
+  text=String(text||"").replace(/^\ufeff/,"");
+  const lines=text.split(/\r?\n/).filter(s=>s.trim());
+  return lines.map(splitCsvLine);
+}
+function elName(el){ return String(el.localName||el.nodeName||"").replace(/^.*:/,""); }
+function ssAttr(el, local){
+  if(!el) return "";
+  return el.getAttribute(local)
+    || el.getAttribute("ss:"+local)
+    || el.getAttributeNS("urn:schemas-microsoft-com:office:spreadsheet", local)
+    || el.getAttributeNS("urn:schemas-microsoft-com:office:excel", local)
+    || "";
+}
+function parseSpreadsheetML(text){
+  const doc=new DOMParser().parseFromString(text.replace(/^\uFEFF/,""), "text/xml");
+  const sheets={};
+  const all=[...doc.getElementsByTagName("*")];
+  const wss=all.filter(x=>elName(x)==="Worksheet");
+  wss.forEach((ws,i)=>{
+    const name=ssAttr(ws,"Name")||("表"+(i+1));
+    const rows=[];
+    all.filter(x=>elName(x)==="Row" && ws.contains(x)).forEach(row=>{
+      const cells=[];
+      let col=0;
+      [...row.childNodes].forEach(cell=>{
+        if(elName(cell)!=="Cell") return;
+        const idx=Number(ssAttr(cell,"Index")||0);
+        if(idx) col=idx-1;
+        while(cells.length<col) cells.push("");
+        const d=[...cell.getElementsByTagName("*")].find(x=>elName(x)==="Data");
+        cells[col]=d?(d.textContent||""):"";
+        col++;
+      });
+      if(cells.some(x=>x)) rows.push(cells);
+    });
+    sheets[name]=rows;
+  });
+  return sheets;
+}
+function u32(u8,p){ return (u8[p]|(u8[p+1]<<8)|(u8[p+2]<<16)|(u8[p+3]<<24))>>>0; }
+function u16(u8,p){ return u8[p]|(u8[p+1]<<8); }
+function withTimeout(p, ms, label){
+  let t;
+  const to=new Promise((_,rej)=>{ t=setTimeout(()=>rej(new Error(label||"timeout")), ms); });
+  return Promise.race([p, to]).finally(()=>clearTimeout(t));
+}
+async function inflateRaw(bytes){
+  if(typeof DecompressionStream!=="function") throw new Error("no-inflate");
+  const head=new TextDecoder("utf-8").decode(bytes.slice(0, Math.min(40, bytes.length)));
+  if(head.includes("<?xml") || head.includes("<worksheet") || head.includes("<Types")) return bytes;
+  async function one(fmt){
+    const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream(fmt));
+    return new Uint8Array(await new Response(stream).arrayBuffer());
+  }
+  try{ return await withTimeout(one("deflate-raw"), 1200, "inflate-raw"); }
+  catch(e){ return await withTimeout(one("deflate"), 1200, "inflate"); }
+}
+function findEOCD(u8){
+  const min=Math.max(0, u8.length-22-65535);
+  for(let i=u8.length-22;i>=min;i--){
+    if(u8[i]===0x50 && u8[i+1]===0x4b && u8[i+2]===5 && u8[i+3]===6) return i;
+  }
+  return -1;
+}
+async function unzip(buf){
+  const u8=new Uint8Array(buf), files={}, dec=new TextDecoder("utf-8");
+  async function put(name, method, data){
+    try{
+      if(method===0) files[name]=data;
+      else if(method===8) files[name]=await inflateRaw(data);
+    }catch(e){ console.error("unzip", name, e); }
+  }
+  const eocd=findEOCD(u8);
+  if(eocd>=0){
+    let p=u32(u8, eocd+16);
+    const n=Math.min(u16(u8, eocd+10), 80);
+    for(let i=0;i<n && p+46<=u8.length;i++){
+      if(!(u8[p]===0x50 && u8[p+1]===0x4b && u8[p+2]===1 && u8[p+3]===2)) break;
+      const method=u16(u8,p+10), comp=u32(u8,p+20);
+      const nlen=u16(u8,p+28), elen=u16(u8,p+30), clen=u16(u8,p+32);
+      const localOff=u32(u8,p+42);
+      const name=dec.decode(u8.slice(p+46,p+46+nlen));
+      if(localOff>=u8.length || localOff===0xffffffff || nlen>1024){ p += 46+nlen+elen+clen; continue; }
+      const lnlen=u16(u8, localOff+26), lelen=u16(u8, localOff+28);
+      const start=localOff+30+lnlen+lelen;
+      const size=Math.min(comp>>>0, Math.max(0, u8.length-start));
+      const data=u8.slice(start, start+size);
+      await put(name, method, data);
+      p += 46+nlen+elen+clen;
+    }
+    return files;
+  }
+  let p=0;
+  while(p+30<u8.length){
+    if(u8[p]!==0x50||u8[p+1]!==0x4b) break;
+    if(u8[p+2]===1 && u8[p+3]===2) break;
+    if(u8[p+2]!==3 || u8[p+3]!==4){ p++; continue; }
+    const method=u16(u8,p+8), flags=u16(u8,p+6);
+    let comp=u32(u8,p+18), nlen=u16(u8,p+26), elen=u16(u8,p+28);
+    const name=dec.decode(u8.slice(p+30,p+30+nlen));
+    let q=p+30+nlen+elen, data;
+    if(flags&8 && (comp===0 || comp===0xffffffff)){
+      let r=q, found=-1;
+      while(r+16<u8.length){
+        if(u8[r]===0x50 && u8[r+1]===0x4b && u8[r+2]===7 && u8[r+3]===8){ found=r; break; }
+        if(u8[r]===0x50 && u8[r+1]===0x4b && (u8[r+2]===3||u8[r+2]===1) && u8[r+3]===4) break;
+        r++;
+      }
+      if(found<0) break;
+      data=u8.slice(q, found);
+      p=found+16;
+    }else{
+      data=u8.slice(q,q+comp);
+      p=q+comp;
+    }
+    await put(name, method, data);
+  }
+  return files;
+}
+function xmlText(u8){ return new TextDecoder("utf-8").decode(u8); }
+function tags(root, local){
+  return [...(root.getElementsByTagName("*")||[])].filter(x=>elName(x)===local);
+}
+function parseSharedStrings(xml){
+  const doc=new DOMParser().parseFromString(xml,"text/xml");
+  const out=[];
+  tags(doc,"si").forEach(si=>{
+    let s="";
+    for(const n of si.childNodes){
+      const nm=elName(n);
+      if(nm==="t") s+=n.textContent||"";
+      else if(nm==="r") tags(n,"t").forEach(tt=> s+=tt.textContent||"");
+    }
+    out.push(s);
+  });
+  return out;
+}
+function colIndex(ref){
+  const m=String(ref||"").match(/^[A-Z]+/i); if(!m) return 0;
+  let n=0; for(const ch of m[0].toUpperCase()) n=n*26+(ch.charCodeAt(0)-64);
+  return n-1;
+}
+function parseSheetXml(xml, strings){
+  const doc=new DOMParser().parseFromString(xml,"text/xml");
+  const rows=[];
+  tags(doc,"row").forEach(row=>{
+    const cells=[];
+    tags(row,"c").forEach(c=>{
+      if(elName(c.parentNode)!=="row") return;
+      const ref=c.getAttribute("r")||"";
+      const idx=ref?colIndex(ref):cells.length;
+      while(cells.length<=idx) cells.push("");
+      const t=c.getAttribute("t");
+      const v=tags(c,"v")[0];
+      const isEl=tags(c,"is")[0];
+      let val="";
+      if(t==="s" && v) val=strings[parseInt(v.textContent,10)]||"";
+      else if(t==="inlineStr" || t==="str"){
+        if(isEl) val=tags(isEl,"t").map(x=>x.textContent||"").join("");
+        else if(v) val=v.textContent||"";
+        else val=c.textContent||"";
+      }
+      else if(v) val=v.textContent||"";
+      cells[idx]=val;
+    });
+    if(cells.some(x=>x)) rows.push(cells);
+  });
+  return rows;
+}
+function parseRels(xml){
+  const map={};
+  if(!xml) return map;
+  const doc=new DOMParser().parseFromString(xml,"text/xml");
+  tags(doc,"Relationship").forEach(r=>{
+    const id=r.getAttribute("Id")||"";
+    map[id]=r.getAttribute("Target")||"";
+  });
+  return map;
+}
+function parseHtmlTables(text){
+  const doc=new DOMParser().parseFromString(text,"text/html");
+  const sheets={};
+  [...doc.querySelectorAll("table")].forEach((tb,i)=>{
+    const rows=[...tb.rows].map(tr=>[...tr.cells].map(td=>(td.textContent||"").trim()));
+    if(rows.some(r=>r.some(Boolean))) sheets["表"+(i+1)]=rows;
+  });
+  return sheets;
+}
+async function parseXlsx(buf){
+  const files=await unzip(buf);
+  let strings=[];
+  const ss=files["xl/sharedStrings.xml"];
+  if(ss) strings=parseSharedStrings(xmlText(ss));
+  const rels=parseRels(files["xl/_rels/workbook.xml.rels"]?xmlText(files["xl/_rels/workbook.xml.rels"]):"");
+  const sheets={};
+  const wbxml=files["xl/workbook.xml"]?xmlText(files["xl/workbook.xml"]):"";
+  const named=[];
+  const re=/<sheet\b[^>]*\bname="([^"]+)"[^>]*>/g;
+  let m;
+  while((m=re.exec(wbxml))){
+    const tag=m[0];
+    const name=m[1];
+    const rid=(tag.match(/r:id="([^"]+)"/)||tag.match(/\bid="([^"]+)"/)||[])[1]||"";
+    named.push({name, rid});
+  }
+  named.forEach((sh,i)=>{
+    let target=rels[sh.rid]||("worksheets/sheet"+(i+1)+".xml");
+    target=target.replace(/^\/+/,"");
+    if(!target.startsWith("xl/")) target="xl/"+target.replace(/^\.\//,"");
+    const data=files[target]||files[target.replace(/\\/g,"/")];
+    if(data) sheets[sh.name]=parseSheetXml(xmlText(data), strings);
+  });
+  if(!Object.keys(sheets).length){
+    const keys=Object.keys(files).filter(k=>/xl\/worksheets\/sheet\d+\.xml$/i.test(k)).sort((a,b)=>{
+      const na=parseInt((a.match(/(\d+)\.xml$/)||[0,0])[1],10);
+      const nb=parseInt((b.match(/(\d+)\.xml$/)||[0,0])[1],10);
+      return na-nb;
+    });
+    keys.forEach((k,i)=>{ sheets["表"+(i+1)]=parseSheetXml(xmlText(files[k]), strings); });
+  }
+  sheets._files=Object.keys(files);
+  return sheets;
+}
+function sheetSummary(sheets){
+  return Object.keys(sheets||{}).filter(k=>k!=="_files").map(k=>{
+    const rows=sheets[k]||[];
+    return k+" "+rows.length+"行 "+headerJoin(rows);
+  }).join("；");
+}
+async function importTableFile(file){
+  window._importName=(file&&file.name)||"";
+  sayImport("正在读 "+window._importName+" …", true);
+  return withTimeout((async()=>{
+  const name=(file.name||"").toLowerCase();
+  if(name.endsWith(".json")){ importBak(file); return; }
+  if(name.endsWith(".csv") || file.type==="text/csv"){
+    const text=await file.text();
+    const r=rowsToSurvey(parseCsvText(text));
+    applyPeople(r.names, r.survey);
+    return;
+  }
+  const buf=await file.arrayBuffer();
+  const u8=new Uint8Array(buf);
+  if(u8[0]===0x50 && u8[1]===0x4b){
+    const sheets=await parseXlsx(buf);
+    const keys=Object.keys(sheets).filter(k=>k!=="_files");
+    if(!keys.length){
+      sayImport("这个 xlsx 里没有读到表。文件："+window._importName+"。请用本页「导出表格」得到的 xlsx，改完保存再导入。");
+      return;
+    }
+    applySheets(sheets);
+    const box=$("importLog");
+    if(box) box.textContent=(box.textContent||"")+"\n读到："+sheetSummary(sheets);
+    return;
+  }
+  if(u8[0]===0xD0 && u8[1]===0xCF && u8[2]===0x11 && u8[3]===0xE0){
+    sayImport("这个是旧版 xls，读不了。请用本页「导出表格」得到的 xlsx。也可以直接改本页「今天」那一格。");
+    return;
+  }
+  const text=new TextDecoder("utf-8").decode(u8);
+  if(text.includes("Worksheet") || text.includes("ss:Name") || text.includes("<Workbook")){
+    applySheets(parseSpreadsheetML(text));
+    return;
+  }
+  if(/<table/i.test(text)){
+    applySheets(parseHtmlTables(text));
+    return;
+  }
+  const r=rowsToSurvey(parseCsvText(text));
+  applyPeople(r.names, r.survey);
+  })(), 8000, "read-timeout");
+}
+
+$("exportTable").onclick = exportTable;
+function runImport(f){
+  if(!f) return;
+  importTableFile(f).catch(err=>{
+    console.error(err);
+    const m=String(err&&err.message?err.message:err);
+    if(m.indexOf("timeout")>=0 || m.indexOf("read-timeout")>=0)
+      sayImport("这份表读了太久，已经停了。请直接改下面名单里「今天」的数字。");
+    else
+      sayImport("这份表读不出来。请直接改下面名单里「今天」的数字。");
+  });
+}
+$("importTable").onchange = e=>{ const f=e.target.files && e.target.files[0]; runImport(f); };
+if($("scoreList")) $("scoreList").addEventListener("change", e=>{
+  const inp=e.target.closest("input.mini-in"); if(!inp) return;
+  setTodayScore(inp.dataset.name, inp.value);
+});
+if($("scoreList")) $("scoreList").addEventListener("keydown", e=>{
+  if(e.key!=="Enter") return;
+  const inp=e.target.closest("input.mini-in"); if(!inp) return;
+  e.preventDefault();
+  setTodayScore(inp.dataset.name, inp.value);
+});
+if($("railShut")) $("railShut").onclick=()=>setRail(false);
+if($("railTab")) $("railTab").onclick=()=>setRail(true);
+if($("copyHist")) $("copyHist").onclick=()=>{
+  const text=hist.map((h,i)=>(i+1)+"\t"+(h.t||"")+"\t"+(h.kind||"")+"\t"+((h.names||[]).join("、"))).join("\n");
+  if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(()=>sayImport("抽取记录已复制。"),()=>sayImport(text));
+  else sayImport(text);
+};
+if($("clearHist")) $("clearHist").onclick=()=>{
+  if(!hist.length) return;
+  if(!confirm("清空抽取记录？分数还在。")) return;
+  hist=[]; localStorage.setItem("draw-hist","[]"); renderHist();
+};
+$("clearScore").onclick = ()=>{
+  const day=todayStr();
+  const n=scoreLog.filter(x=>x.day===day).length;
+  if(!n) return;
+  if(!confirm("清空今天这 "+n+" 条分数？抽取记录还在。")) return;
+  scoreLog=scoreLog.filter(x=>x.day!==day);
+  saveScores(); renderScores();
+};
+
+function lines(el){ return el.value.split(/\n+/).map(s=>s.trim()).filter(Boolean); }
+function photoCount(){ return lines($("people")).filter(n=>photos[n]).length; }
+function count(){
+  $("pCount").textContent = lines($("people")).length + " 人，配图 " + photoCount() + " 张";
+  $("gCount").textContent = lines($("groups")).length + " 组";
+}
+function openPanel(on){
+  $("panel").classList.toggle("on", on);
+  $("dim").classList.toggle("on", on);
+}
+$("btnList").onclick = ()=> openPanel(!$("panel").classList.contains("on"));
+$("closeP").onclick = $("dim").onclick = ()=> openPanel(false);
+$("uses").onclick = e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  useId=b.dataset.u;
+  [...$("uses").children].forEach(x=>x.classList.toggle("on", x===b));
+  applyUse();
+};
+
+
+function dbp(){
+  return new Promise((res,rej)=>{
+    const r=indexedDB.open("draw-avatars",1);
+    r.onupgradeneeded=()=>r.result.createObjectStore("img");
+    r.onsuccess=()=>res(r.result);
+    r.onerror=()=>rej(r.error);
+  });
+}
+function putPhoto(name, blob){
+  if(photos[name]) URL.revokeObjectURL(photos[name]);
+  photos[name]=URL.createObjectURL(blob);
+  delete imgObj[name];
+  return dbp().then(db=>new Promise(res=>{
+    const tx=db.transaction("img","readwrite");
+    tx.objectStore("img").put(blob, name);
+    tx.oncomplete=()=>res();
+    tx.onerror=()=>res();
+  })).catch(()=>{});
+}
+async function loadPhotos(){
+  try{
+    const db=await dbp();
+    const store=db.transaction("img").objectStore("img");
+    await new Promise(res=>{
+      const req=store.openCursor();
+      req.onsuccess=e=>{
+        const c=e.target.result;
+        if(!c){ res(); return; }
+        photos[c.key]=URL.createObjectURL(c.value);
+        c.continue();
+      };
+    });
+  }catch(e){}
+}
+function getImg(name){
+  const url=photos[name]; if(!url) return null;
+  if(imgObj[name] && imgObj[name]._url===url) return imgObj[name];
+  const im=new Image();
+  im._url=url;
+  im.onload=()=>{ if(!spinning) drawWheel(items, rot, -1); };
+  im.src=url;
+  imgObj[name]=im;
+  return im;
+}
+function renderList(){
+  const ps=lines($("people"));
+  $("plist").innerHTML = ps.map(n=>`
+    <div class="prow">
+      ${photos[n]?`<img src="${photos[n]}" alt="">`:`<div class="face"></div>`}
+      <span>${n}</span>
+      <label>选图<input type="file" accept="image/*" data-name="${n}" hidden></label>
+    </div>`).join("");
+}
+$("plist").onchange = async e=>{
+  const f=e.target.files && e.target.files[0];
+  const name=e.target.dataset.name;
+  if(!f||!name) return;
+  await putPhoto(name, f);
+  renderList(); count(); drawWheel(items.length?items:lines($("people")), rot, -1);
+};
+$("saveP").onclick = ()=>{
+  localStorage.setItem("draw-people", $("people").value);
+  count(); renderList(); renderScores(); paintIdle();
+};
+$("saveG").onclick = ()=>{
+  localStorage.setItem("draw-groups", $("groups").value);
+  count();
+};
+function norm(s){ return String(s).replace(/\s+/g,"").replace(/[_\-—–.．]/g,"").toLowerCase(); }
+function matchStem(stem, names){
+  const ns=norm(stem);
+  for(const name of names) if(norm(name)===ns) return name;
+  const sorted=[...names].sort((a,b)=>b.length-a.length);
+  for(const name of sorted){
+    const nn=norm(name);
+    if(nn && (ns.includes(nn) || nn.includes(ns))) return name;
+  }
+  return null;
+}
+$("bulk").onchange = async e=>{
+  const files=[...e.target.files];
+  const names=lines($("people"));
+  if(!names.length){ $("bulkLog").textContent="请先保存人名单，再批量选图。"; return; }
+  const leftoverFiles=[];
+  const taken=new Set();
+  const log=[];
+  for(const f of files){
+    const stem=f.name.replace(/\.[^.]+$/,"");
+    const hit=matchStem(stem, names);
+    if(hit && !taken.has(hit)){
+      await putPhoto(hit, f);
+      taken.add(hit);
+      log.push("✓ "+hit+" ← "+f.name);
+    }else leftoverFiles.push(f);
+  }
+  const leftoverNames=names.filter(n=>!taken.has(n));
+  const pair=Math.min(leftoverFiles.length, leftoverNames.length);
+  for(let i=0;i<pair;i++){
+    await putPhoto(leftoverNames[i], leftoverFiles[i]);
+    taken.add(leftoverNames[i]);
+    log.push("✓ "+leftoverNames[i]+" ← "+leftoverFiles[i].name+"（按名单顺序）");
+  }
+  const unused=leftoverFiles.slice(pair);
+  if(unused.length) log.push("未用上："+unused.map(f=>f.name).join("、"));
+  $("bulkLog").textContent = "配上 "+taken.size+" 张\n"+log.join("\n");
+  count(); renderList(); paintIdle();
+  e.target.value="";
+};
+
+const bg=$("bg"), btx=bg.getContext("2d");
+const boom=$("boom"), otx=boom.getContext("2d");
+let stars=[], sparks=[];
+function resize(){ bg.width=boom.width=innerWidth; bg.height=boom.height=innerHeight; }
+addEventListener("resize", resize); resize();
+for(let i=0;i<140;i++) stars.push({x:Math.random(),y:Math.random(),r:Math.random()*1.8+.2,s:Math.random()*.4+.08,a:Math.random()});
+(function loop(t){
+  btx.fillStyle="#05070d"; btx.fillRect(0,0,bg.width,bg.height);
+  const g=btx.createRadialGradient(bg.width/2,bg.height*.42,10,bg.width/2,bg.height*.42,bg.width*.7);
+  g.addColorStop(0,"#1a140c"); g.addColorStop(1,"#05070d");
+  btx.fillStyle=g; btx.fillRect(0,0,bg.width,bg.height);
+  stars.forEach(p=>{
+    btx.beginPath();
+    btx.fillStyle=`rgba(255,220,150,${.15+.75*(.5+.5*Math.sin(p.a+t/500))})`;
+    btx.arc(p.x*bg.width,p.y*bg.height,p.r,0,6.28); btx.fill();
+    p.a+=p.s*.02;
+  });
+  otx.clearRect(0,0,boom.width,boom.height);
+  sparks=sparks.filter(s=>s.life>0);
+  sparks.forEach(s=>{
+    s.life--; s.x+=s.vx; s.y+=s.vy; s.vy+=s.g||.06;
+    otx.fillStyle=s.c.replace("A", String(s.life/s.max));
+    if(s.w){ otx.fillRect(s.x,s.y,s.w,s.h); }
+    else { otx.beginPath(); otx.arc(s.x,s.y,s.r,0,6.28); otx.fill(); }
+  });
+  requestAnimationFrame(loop);
+})(0);
+function burst(){
+  const cx=innerWidth/2, cy=innerHeight/2;
+  const cols=["rgba(255,211,106,A)","rgba(255,255,255,A)","rgba(255,80,80,A)","rgba(255,160,40,A)"];
+  for(let i=0;i<70;i++){
+    const a=Math.random()*6.28, sp=3+Math.random()*8;
+    sparks.push({x:cx,y:cy,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-3,r:1.2+Math.random()*3,life:50,max:50,g:.05,c:cols[i%4]});
+  }
+  for(let i=0;i<50;i++){
+    sparks.push({x:cx,y:cy*.35,vx:(Math.random()-.5)*10,vy:2+Math.random()*6,w:6+Math.random()*8,h:10+Math.random()*12,life:70,max:70,g:.12,c:cols[i%4]});
+  }
+}
+
+let audio, noiseBuf;
+function ac(){
+  if(!audio) audio=new (window.AudioContext||window.webkitAudioContext)();
+  if(audio.state==="suspended") audio.resume();
+  return audio;
+}
+function noiseBuffer(){
+  const ctx=ac();
+  if(noiseBuf) return noiseBuf;
+  const n=Math.floor(ctx.sampleRate*0.03);
+  noiseBuf=ctx.createBuffer(1,n,ctx.sampleRate);
+  const d=noiseBuf.getChannelData(0);
+  for(let i=0;i<n;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/n,3);
+  return noiseBuf;
+}
+function tickSound(urgent){
+  if(muted) return;
+  try{
+    const ctx=ac(), src=ctx.createBufferSource();
+    src.buffer=noiseBuffer();
+    const bp=ctx.createBiquadFilter(); bp.type="bandpass";
+    bp.frequency.value = urgent ? 3200 : 1900; bp.Q.value = urgent ? 8 : 5;
+    const g=ctx.createGain(); g.gain.value = urgent ? 0.32 : 0.16;
+    src.connect(bp); bp.connect(g); g.connect(ctx.destination);
+    src.start();
+  }catch(e){}
+}
+let lastSiren=-1;
+function winSound(){
+  if(muted) return;
+  try{
+    const ctx=ac();
+    const t0=ctx.currentTime;
+    let pick=Math.floor(Math.random()*3);
+    if(pick===lastSiren) pick=(pick+1)%3;
+    lastSiren=pick;
+    if(pick===0){ // 110 双音
+      const hi=980, lo=760, cycles=7, step=0.13;
+      for(let i=0;i<cycles;i++){
+        const t=t0+i*step*2;
+        [hi, lo].forEach((freq,k)=>{
+          const o=ctx.createOscillator(), g=ctx.createGain(), fl=ctx.createBiquadFilter();
+          o.type="square"; o.frequency.value=freq;
+          fl.type="bandpass"; fl.frequency.value=freq; fl.Q.value=1.8;
+          const start=t+k*step;
+          g.gain.setValueAtTime(0.0001, start);
+          g.gain.exponentialRampToValueAtTime(0.18, start+0.015);
+          g.gain.setValueAtTime(0.15, start+step-0.025);
+          g.gain.exponentialRampToValueAtTime(0.0001, start+step);
+          o.connect(fl); fl.connect(g); g.connect(ctx.destination);
+          o.start(start); o.stop(start+step);
+        });
+      }
+    }else if(pick===1){ // 119 更快双音
+      const hi=1240, lo=880, cycles=9, step=0.09;
+      for(let i=0;i<cycles;i++){
+        const t=t0+i*step*2;
+        [hi, lo].forEach((freq,k)=>{
+          const o=ctx.createOscillator(), g=ctx.createGain();
+          o.type="square"; o.frequency.value=freq;
+          const start=t+k*step;
+          g.gain.setValueAtTime(0.0001, start);
+          g.gain.exponentialRampToValueAtTime(0.2, start+0.01);
+          g.gain.exponentialRampToValueAtTime(0.0001, start+step);
+          o.connect(g); g.connect(ctx.destination);
+          o.start(start); o.stop(start+step);
+        });
+      }
+    }else{ // 120 起伏啸叫
+      const o=ctx.createOscillator(), g=ctx.createGain();
+      o.type="sawtooth";
+      o.frequency.setValueAtTime(520, t0);
+      o.frequency.linearRampToValueAtTime(1480, t0+0.45);
+      o.frequency.linearRampToValueAtTime(620, t0+0.9);
+      o.frequency.linearRampToValueAtTime(1600, t0+1.35);
+      o.frequency.linearRampToValueAtTime(700, t0+1.8);
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(0.16, t0+0.05);
+      g.gain.setValueAtTime(0.14, t0+1.6);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0+1.85);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(t0); o.stop(t0+1.9);
+    }
+  }catch(e){}
+}
+
+const wc=$("wheel"), wtx=wc.getContext("2d");
+function drawWheel(list, angle, hi){
+  const n=Math.max(list.length,1);
+  const cx=400, cy=400, R=358, inner=102, rim=378;
+  wtx.clearRect(0,0,800,800);
+  wtx.save(); wtx.translate(cx,cy);
+
+  wtx.beginPath(); wtx.ellipse(8,18,rim,rim*0.96,0,0,6.28);
+  wtx.fillStyle="rgba(0,0,0,.45)"; wtx.fill();
+
+  const metal=wtx.createLinearGradient(-rim,-rim,rim,rim);
+  metal.addColorStop(0,"#fff1c2"); metal.addColorStop(.35,"#c9a227"); metal.addColorStop(.7,"#7a5a12"); metal.addColorStop(1,"#e8c96a");
+  wtx.beginPath(); wtx.arc(0,0,rim,0,6.28); wtx.fillStyle=metal; wtx.fill();
+  wtx.beginPath(); wtx.arc(0,0,R+6,0,6.28); wtx.fillStyle="#3a2a0a"; wtx.fill();
+
+  wtx.save(); wtx.rotate(angle);
+  const arc=Math.PI*2/n;
+  const fs=Math.max(11, Math.min(20, 360/n));
+  const pr=Math.max(22, Math.min(52, 980/n));
+  for(let i=0;i<n;i++){
+    wtx.beginPath(); wtx.moveTo(0,0);
+    wtx.arc(0,0,R,i*arc,(i+1)*arc); wtx.closePath();
+    wtx.fillStyle=COLS[i%COLS.length];
+    wtx.fill();
+    if(hi===i){ wtx.strokeStyle="#ffffff"; wtx.lineWidth=8; wtx.stroke(); }
+    wtx.beginPath(); wtx.moveTo(Math.cos(i*arc)*inner, Math.sin(i*arc)*inner);
+    wtx.lineTo(Math.cos(i*arc)*R, Math.sin(i*arc)*R);
+    wtx.strokeStyle="rgba(255,255,255,.7)"; wtx.lineWidth=3; wtx.stroke();
+
+    const label=list[i]||"";
+    wtx.save();
+    wtx.rotate(i*arc+arc/2);
+    const im=getImg(label);
+    let textX=R-16;
+    if(im && im.complete && im.naturalWidth){
+      const cxp=R-pr-12;
+      wtx.save();
+      wtx.beginPath(); wtx.arc(cxp,0,pr,0,6.28); wtx.clip();
+      wtx.drawImage(im, cxp-pr, -pr, pr*2, pr*2);
+      wtx.restore();
+      wtx.beginPath(); wtx.arc(cxp,0,pr,0,6.28);
+      wtx.strokeStyle="#fff"; wtx.lineWidth=3; wtx.stroke();
+      textX=cxp-pr-10;
+    }
+    wtx.fillStyle="#fff8e8";
+    wtx.font=`bold ${fs}px Microsoft YaHei, PingFang SC, sans-serif`;
+    wtx.textAlign="right"; wtx.textBaseline="middle";
+    wtx.shadowColor="rgba(0,0,0,.7)"; wtx.shadowBlur=3;
+    const text=label.length>6?label.slice(0,6)+"…":label;
+    wtx.fillText(text, textX, 0);
+    wtx.restore();
+  }
+  for(let i=0;i<n;i++){
+    const a=i*arc;
+    wtx.beginPath();
+    wtx.arc(Math.cos(a)*(R+4), Math.sin(a)*(R+4), 6, 0, 6.28);
+    wtx.fillStyle="#f3e6c0"; wtx.fill();
+    wtx.strokeStyle="#5c4308"; wtx.lineWidth=1.5; wtx.stroke();
+  }
+  wtx.restore();
+
+  const light=wtx.createLinearGradient(0,-R,0,R);
+  light.addColorStop(0,"rgba(255,255,255,.22)"); light.addColorStop(.45,"rgba(255,255,255,0)"); light.addColorStop(1,"rgba(0,0,0,.28)");
+  wtx.beginPath(); wtx.arc(0,0,R,0,6.28); wtx.fillStyle=light; wtx.fill();
+
+  wtx.beginPath(); wtx.arc(0,0,inner,0,6.28);
+  wtx.fillStyle="#0c1220"; wtx.fill();
+  wtx.strokeStyle="#f6d36b"; wtx.lineWidth=5; wtx.stroke();
+  wtx.restore();
+}
+function pointerIndex(list, angle){
+  const n=list.length; if(!n) return 0;
+  const arc=Math.PI*2/n;
+  let a=(-Math.PI/2 - angle)%(Math.PI*2);
+  if(a<0) a+=Math.PI*2;
+  return Math.floor(a/arc)%n;
+}
+function paintIdle(){
+  const list=lines($("people"));
+  items=list.length?list:["先贴名单"];
+  rot=0;
+  drawWheel(items, rot, -1);
+  $("hubTxt").textContent="开始";
+}
+
+function wait(ms){ return new Promise(r=>setTimeout(r,ms)); }
+function spinOnce(list){
+  return new Promise(resolve=>{
+    if(!list.length){ resolve(""); return; }
+    spinning=true;
+    $("result").classList.remove("on");
+    $("hubTxt").textContent="开始";
+    items=list.slice();
+    const n=items.length;
+    const extra=5+Math.floor(Math.random()*4);
+    const win=Math.floor(Math.random()*n);
+    const arc=Math.PI*2/n;
+    const final= -Math.PI/2 - (win+0.5)*arc - extra*Math.PI*2;
+    const start=rot, dist=final-start, dur=4400+Math.random()*700;
+    const t0=performance.now();
+    let nextClick=t0;
+    function frame(now){
+      const p=Math.min(1,(now-t0)/dur);
+      const e=1-Math.pow(1-p,5);
+      rot=start+dist*e;
+      const idx=pointerIndex(items,rot);
+      drawWheel(items,rot,idx);
+      const interval=210-p*170;
+      if(now>=nextClick){
+        tickSound(p>0.7);
+        nextClick=now+Math.max(38, interval);
+      }
+      if(p<1) requestAnimationFrame(frame);
+      else{
+        spinning=false;
+        burst(); winSound();
+        const fb=$("flashbang");
+        if(fb){ fb.classList.remove("on"); void fb.offsetWidth; fb.classList.add("on"); }
+        const name=items[win];
+        $("hubTxt").textContent = name.length>5 ? name.slice(0,5) : name;
+        resolve(name);
+      }
+    }
+    requestAnimationFrame(frame);
+  });
+}
+async function spin(list, k){
+  if(busy||spinning) return;
+  if(!list.length){ openPanel(true); return; }
+  busy=true;
+  document.body.classList.add("focus");
+  try{
+    const got=[];
+    for(let i=0;i<k;i++){
+      const remain=list.filter(n=>!got.includes(n));
+      if(!remain.length) break;
+      if(k>1) $("hintLine").textContent="第 "+(i+1)+" / "+k+" 次：指针停在谁就是谁";
+      const name=await spinOnce(remain);
+      if(name) got.push(name);
+      if(i<k-1) await wait(700);
+    }
+    $("hintLine").textContent="抽三个人会转三次。指针停在谁就是谁。";
+    if(got.length) addHist(got, k);
+    reveal(got, got.length);
+    paintIdle();
+  }finally{
+    busy=false; spinning=false;
+    document.body.classList.remove("focus");
+    setRail(true);
+  }
+}
+
+function reveal(names, k){
+  roundId += 1; roundScore={};
+  const tag = useLabel();
+  const u = USES[useId];
+  const cells = names.map(n=>`
+    <div class="one">
+      ${photos[n]?`<img src="${photos[n]}" alt="">`:`<div class="face"></div>`}
+      <div class="nm">${n}</div>
+    </div>`).join("");
+  const toTp = useId==="tianping" && names.length===1;
+  const toLx = useId==="lianxian" && names.length===1;
+  if(toTp) localStorage.setItem("draw-handoff", JSON.stringify({name:names[0], ts: Date.now(), use:"上场·天平"}));
+  if(toLx) localStorage.setItem("draw-handoff", JSON.stringify({name:names[0], ts: Date.now(), use:"上场·连线"}));
+  const pads = (toTp||toLx) ? "" : names.map(n=>`
+    <div class="score-line" data-name="${n}">
+      <em>${n}</em>
+      <button class="b2" type="button" data-p="2">${u.s2||"2 分"}</button>
+      <button class="b5" type="button" data-p="5">${u.s5||"5 分"}</button>
+      <button class="b0" type="button" data-p="0">${u.s0||"0 分"}</button>
+    </div>`).join("");
+  const go = toTp ? `<div class="score-pad"><button class="gold" type="button" id="goTp" style="font-size:22px;padding:14px 28px;border-radius:14px">去天平</button></div>`
+    : toLx ? `<div class="score-pad"><button class="gold" type="button" id="goLx" style="font-size:22px;padding:14px 28px;border-radius:14px">去连线</button></div>` : "";
+  const sub = toTp ? "点「去天平」。分在天平做完后自动记。" : toLx ? "点「去连线」。分在连完后自动记。" : (useSub()+"　点空白处关掉。一题最多 5 分，先点 2 再点 5 是改成 5，不是 7。");
+  $("card").innerHTML = `<div class="tag">${tag}</div><div class="say">${useSay(names)}</div><div class="trio">${cells}</div>
+    ${go}<div class="score-pad">${pads}</div>
+    <div class="sub">${sub}</div>`;
+  $("result").classList.add("on");
+  if(toTp){
+    const b=$("goTp");
+    if(b) b.onclick=e=>{ e.stopPropagation(); goTianping(names[0]); };
+  }
+  if(toLx){
+    const b=$("goLx");
+    if(b) b.onclick=e=>{ e.stopPropagation(); goLianxian(names[0]); };
+  }
+}
+$("card").onclick = e=>{
+  const b=e.target.closest("button[data-p]"); if(!b) return;
+  e.stopPropagation();
+  const line=b.closest(".score-line"); if(!line) return;
+  giveScore(line.dataset.name, Number(b.dataset.p), b);
+};
+$("result").onclick = e=>{ if(e.target.id==="result") $("result").classList.remove("on"); };
+$("draw1").onclick = ()=>{ groupsMode=false; spin(lines($("people")),1); };
+$("drawG").onclick = ()=>{ groupsMode=true; spin(lines($("groups")),1); };
+$("draw3").onclick = ()=>{ groupsMode=false; spin(lines($("people")),3); };
+$("btnMute").onclick = ()=>{
+  muted=!muted;
+  $("btnMute").textContent = muted?"音效关":"音效开";
+  if(!muted) ac();
+};
+
+(async function init(){
+  const qs=new URLSearchParams(location.search);
+  let u=qs.get("use");
+  if(u==="play" && qs.get("play")==="天平") u="tianping";
+  if(u==="play" && qs.get("play")==="打地鼠") u="mole";
+  if(u==="play" && qs.get("play")==="配音") u="dub";
+  if(u && USES[u]) useId=u;
+  const back=qs.get("back");
+  if(back){
+    const a=$("backTo");
+    a.href=back;
+    a.style.display="block";
+  }
+  $("people").value = localStorage.getItem("draw-people")||"";
+  $("groups").value = localStorage.getItem("draw-groups")||"资金组\n采购组\n销售组\n费用组\n生产组";
+  count();
+  await loadPhotos();
+  count();
+  applyUse();
+  try{ renderList(); }catch(e){ console.error(e); }
+  try{ renderHist(); }catch(e){ console.error(e); }
+  try{ renderScores(); }catch(e){ console.error(e); }
+  try{ setRail(true); }catch(e){ console.error(e); }
+  try{ paintIdle(); }catch(e){ console.error(e); }
+})();
+</script>
+</body>
+</html>
+</script>
+</body>
+</html>
