@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>六个水池　谁的家水从哪边涨</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#cfd8dc;color:#263238;font-family:"PingFang SC","Microsoft YaHei",sans-serif}
+body{display:flex;flex-direction:column;min-height:100vh}
+.top{background:#37474f;color:#fff;padding:8px 14px;font-weight:800;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.top small{opacity:.8;font-weight:600}
+.top a,.top button{font:inherit;font-weight:800;border:0;border-radius:10px;padding:7px 12px;cursor:pointer;text-decoration:none;color:#fff}
+.top a{background:#546e7a}
+.top .gold{background:#bf360c}
+.who{background:#fff3e0;color:#bf360c;padding:4px 10px;border-radius:999px}
+.wrap{flex:1;overflow:auto;padding:10px 14px 8px;max-width:1280px;width:100%;margin:0 auto}
+.now{background:#2e7d32;color:#fff;padding:10px 16px;font-size:20px;font-weight:800;line-height:1.35}
+.why{background:#fff8e1;border-top:4px solid #f9a825;padding:8px 16px;font-weight:700;color:#5d4037}
+.mirror{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}
+.mirror .box{background:#fff;border:4px solid #455a64;border-radius:16px;padding:12px;position:relative}
+.mirror h3{font-size:18px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.door{font-size:28px}
+.slide-row{margin:10px 0;background:#eceff1;border-radius:12px;padding:10px 12px}
+.slide-row label{font-weight:900;display:block;margin-bottom:6px}
+input[type=range]{width:100%;accent-color:#0277bd}
+.cap{font-weight:900;font-size:18px;text-align:center;min-height:1.4em;margin-top:8px}
+.cap.L{color:#1b5e20}.cap.R{color:#e65100}
+.pools{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.pool{text-align:center;background:#eceff1;border-radius:14px;padding:8px 6px 10px;border:3px solid transparent}
+.pool.homeL{border-color:#2e7d32}
+.pool.homeR{border-color:#ef6c00}
+.pname{font-weight:900;font-size:18px}
+.psub{font-size:12px;color:#607d8b;min-height:16px}
+.home-tag{display:inline-block;font-size:12px;font-weight:900;padding:2px 8px;border-radius:999px;margin:4px 0}
+.homeL .home-tag{background:#c8e6c9;color:#1b5e20}
+.homeR .home-tag{background:#ffe0b2;color:#e65100}
+.rack{display:flex;align-items:stretch;justify-content:center;gap:0;margin-top:4px}
+.pipe{width:34px;align-self:center;height:26px;position:relative;cursor:pointer;border-radius:4px 13px 13px 4px}
+.pipe.L{background:linear-gradient(#a5d6a7,#1b5e20);border:3px solid #1b5e20;border-radius:13px 4px 4px 13px;margin-right:-3px}
+.pipe.R{background:linear-gradient(#ffcc80,#e65100);border:3px solid #e65100;margin-left:-3px}
+.pipe::after{content:"";position:absolute;inset:5px 2px;border-radius:8px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.0) 0 6px,rgba(255,255,255,.4) 6px 10px)}
+.pipe.act{box-shadow:0 0 0 4px #fff,0 0 16px currentColor;animation:gush .45s linear infinite;z-index:2}
+.pipe.on{outline:4px solid #ffea00}
+@keyframes gush{50%{filter:brightness(1.35)}}
+.tank{width:118px;height:128px;background:linear-gradient(#b0bec5,#78909c);border:4px solid #37474f;border-radius:10px 10px 18px 18px;position:relative;overflow:hidden;box-shadow:inset 0 8px 0 rgba(255,255,255,.25), 5px 7px 0 #455a64}
+.tank .lid{position:absolute;left:10%;right:10%;top:6px;height:10px;background:#455a64;border-radius:6px;z-index:3}
+.water{position:absolute;bottom:0;left:0;right:0;height:0;transition:height .55s}
+.water.fromL{background:linear-gradient(90deg,#66bb6a,#0277bd)}
+.water.fromR{background:linear-gradient(270deg,#ffb74d,#0277bd)}
+.amt{position:absolute;inset:18px 0 0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;color:#fff;text-shadow:0 2px 0 #000;z-index:2}
+.house{position:absolute;top:-18px;font-size:22px;z-index:4}
+.house.L{left:-6px}.house.R{right:-6px}
+.labs{display:flex;justify-content:space-between;margin-top:4px;font-size:11px;font-weight:900}
+.labs span{padding:2px 6px;border-radius:8px}
+.labs .L{background:#c8e6c9;color:#1b5e20}
+.labs .R{background:#ffe0b2;color:#e65100}
+.biz{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin:10px 0}
+.bz{background:#fff;border:3px solid #90a4ae;border-radius:12px;padding:10px;cursor:pointer;font-weight:800}
+.bz.on{border-color:#f9a825;background:#fff8e1}
+.bz span{display:block;font-size:12px;color:#607d8b;font-weight:600;margin-top:4px}
+.entry{background:#263238;color:#c8e6c9;border-radius:12px;padding:12px;font-weight:800;min-height:64px}
+.entry .cr{color:#ffcc80;padding-left:2em}
+.bal{margin-top:8px;padding:10px;border-radius:10px;text-align:center;font-weight:900}
+.bal.ok{background:#c8e6c9;color:#1b5e20}
+.hud{display:flex;justify-content:center;align-items:center;gap:12px;margin:8px 0}
+.timer{width:88px;height:88px;border-radius:50%;border:8px solid #bf360c;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;background:#fff}
+.timer.low{border-color:#c62828;color:#c62828;background:#ffebee;animation:pulse .45s infinite}
+@keyframes pulse{50%{transform:scale(1.06)}}
+button.go{font:inherit;font-weight:800;border:0;border-radius:12px;padding:12px 22px;cursor:pointer;background:#bf360c;color:#fff;font-size:20px}
+button.o{background:#546e7a;color:#fff;font:inherit;font-weight:800;border:0;border-radius:10px;padding:8px 14px;cursor:pointer}
+.cut{position:fixed;inset:0;background:rgba(28,8,6,.9);color:#fff;display:none;align-items:center;justify-content:center;z-index:40;font-size:clamp(28px,5vw,56px);font-weight:900;text-align:center;padding:24px}
+.cut.on{display:flex}
+.gate{position:fixed;inset:0;background:rgba(20,12,8,.86);z-index:30;display:none;align-items:center;justify-content:center}
+.gate.on{display:flex}
+.gate .card{background:#fffdf8;border-radius:20px;padding:28px 32px;text-align:center;max-width:520px}
+.gate h2{color:#bf360c;font-size:28px;margin-bottom:10px}
+.qbox{background:#fff8e1;border:4px solid #f9a825;border-radius:12px;padding:12px;margin:8px 0;display:none}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-weight:800;margin:6px 0}
+.ico{width:22px;height:14px;border-radius:7px;display:inline-block;vertical-align:middle;margin-right:6px}
+@media(max-width:800px){.pools,.mirror{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="top">
+  六个水池　谁的家，水从哪边涨
+  <small>借永远在左，贷永远在右。涨不涨，看这池子的家在哪边。</small>
+  <span class="who" id="whoBar" hidden></span>
+  <span style="margin-left:auto"></span>
+  <a id="backDraw" href="../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.27_20260830.html?use=shuiguang">换人再抽</a>
+  <a id="backLecture" href="02-00_项目二_上课投影_网页版_v1.2_20260830.html#49">回课件</a>
+</div>
+<div class="now" id="now">现在你：先看下面两口缸。拖滑块，看水从哪边涨。</div>
+<div class="wrap">
+  <div class="legend">
+    <span><i class="ico" style="background:#2e7d32"></i>绿管子＝借＝左边</span>
+    <span><i class="ico" style="background:#ef6c00"></i>橙管子＝贷＝右边</span>
+    <span>🏠 家在哪边，水就从哪边涨</span>
+  </div>
+  <div class="slide-row">
+    <label>拖一拖：这笔发生了 <b id="amtLab">10</b> 万　
+      <label style="display:inline;font-weight:800"><input type="radio" name="dir" value="up" checked> 增加</label>
+      <label style="display:inline;font-weight:800"><input type="radio" name="dir" value="down"> 减少</label>
+    </label>
+    <input id="amt" type="range" min="0" max="20" value="10">
+    <div class="cap" id="cap">资产增加 → 家在左边 → 绿管子进水，水位涨。负债增加 → 家在右边 → 橙管子进水，水位涨。</div>
+  </div>
+  <div class="mirror">
+    <div class="box">
+      <h3><span class="door">🏠←</span> 资产　家在左边</h3>
+      <div id="demoZc"></div>
+      <p class="cap L" id="capZc"></p>
+    </div>
+    <div class="box">
+      <h3>负债　家在右边 <span class="door">→🏠</span></h3>
+      <div id="demoFz"></div>
+      <p class="cap R" id="capFz"></p>
+    </div>
+  </div>
+  <div class="qbox" id="qbox">
+    <div class="hud"><div class="timer" id="timer">45</div></div>
+    <h3 id="qTitle">点两根会动的管子</h3>
+    <p id="qText" style="font-weight:800;font-size:20px;margin:6px 0"></p>
+    <p id="qHint" style="color:#6d4c41;font-weight:700"></p>
+  </div>
+  <div class="biz" id="bizList"></div>
+  <div class="rowlab" style="font-weight:900;margin:8px 0 6px">六个池子。家在左边的：借着涨。家在右边的：贷着涨。</div>
+  <div class="pools" id="pools"></div>
+  <p style="margin:10px 0">
+    <button class="o" type="button" id="btnClear">把水放空</button>
+  </p>
+  <div class="entry" id="entry"><span>点一笔店里的事，或点「开始」上场答题。</span></div>
+  <div id="balBox"></div>
+</div>
+<div class="why">为什么：借和贷的位置永不换。换的是「谁涨」。资产、费用住左边，借着涨；负债、所有者权益、收入、利润住右边，贷着涨。</div>
+<div class="gate" id="gate"><div class="card">
+  <h2 id="gateWho">上场看水管</h2>
+  <p style="font-weight:700;margin:8px 0 16px">45 秒，4 笔。每笔点两根管子。全对 5 分，对六成 2 分。</p>
+  <button class="go" type="button" id="btnStart">开始</button>
+</div></div>
+<div class="cut" id="cut"></div>
+<script>
+const DRAW = "../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.27_20260830.html?use=shuiguang";
+const LECTURE = "02-00_项目二_上课投影_网页版_v1.2_20260830.html#49";
+const qs = new URLSearchParams(location.search);
+function currentPlayer(){
+  if(qs.get("name")) return qs.get("name");
+  try{
+    const h=JSON.parse(localStorage.getItem("draw-handoff")||"{}");
+    if(h && h.name && Date.now()-(h.ts||0)<1000*60*40) return h.name;
+  }catch(e){}
+  return "";
+}
+function lectureHref(){
+  try{
+    const h=JSON.parse(localStorage.getItem("draw-handoff")||"{}");
+    if(h && h.back) return h.back;
+  }catch(e){}
+  return LECTURE;
+}
+const who = currentPlayer();
+const $ = id => document.getElementById(id);
+if(qs.get("back")) $("backDraw").href = qs.get("back");
+$("backLecture").href = lectureHref();
+if(who){
+  $("whoBar").hidden=false;
+  $("whoBar").textContent = who+"　上场";
+}
+
+const POOLS=[
+ {k:"zc",n:"资产",s:"现金、设备、原料",home:"L"},
+ {k:"fz",n:"负债",s:"欠银行、欠供货商",home:"R"},
+ {k:"qy",n:"所有者权益",s:"老板自己投的",home:"R"},
+ {k:"sr",n:"收入",s:"卖东西收到的",home:"R"},
+ {k:"fy",n:"费用",s:"花出去的",home:"L"},
+ {k:"lr",n:"利润",s:"收入减费用",home:"R"}
+];
+const BIZ=[
+ {t:"老板投入 20 万开店", d:"钱进了公司账户",
+  hits:[["zc","L"],["qy","R"]],
+  legs:[{p:"zc",sub:"银行存款",side:"L",amt:200000},{p:"qy",sub:"实收资本",side:"R",amt:200000}],
+  say:"钱进资产＝家在左＝绿管子涨。这钱是老板的＝权益家在右＝橙管子涨。"},
+ {t:"买奶茶机 8 万", d:"从账上划走",
+  hits:[["zc","L"],["zc","R"]],
+  legs:[{p:"zc",sub:"固定资产",side:"L",amt:80000},{p:"zc",sub:"银行存款",side:"R",amt:80000}],
+  say:"机器多了（资产借着涨），存款少了（资产贷着降）。同一口缸，一进一出。"},
+ {t:"向银行借款 10 万", d:"钱到账，但要还",
+  hits:[["zc","L"],["fz","R"]],
+  legs:[{p:"zc",sub:"银行存款",side:"L",amt:100000},{p:"fz",sub:"短期借款",side:"R",amt:100000}],
+  say:"存款涨在左边。欠银行涨在右边——负债的家在右，贷着涨。"},
+ {t:"赊购原料 3 万", d:"货到了，钱下月付",
+  hits:[["zc","L"],["fz","R"]],
+  legs:[{p:"zc",sub:"原材料",side:"L",amt:30000},{p:"fz",sub:"应付账款",side:"R",amt:30000}],
+  say:"原料进来＝资产借着涨。欠供货商＝负债贷着涨。"},
+ {t:"归还供货商 1 万", d:"从账上付出去",
+  hits:[["fz","L"],["zc","R"]],
+  legs:[{p:"fz",sub:"应付账款",side:"L",amt:10000},{p:"zc",sub:"银行存款",side:"R",amt:10000}],
+  say:"债少了＝负债家在右，要从左边把水放掉（借着降）。存款少了＝资产贷着降。"},
+ {t:"卖奶茶收现 5000", d:"当场收到钱",
+  hits:[["zc","L"],["sr","R"]],
+  legs:[{p:"zc",sub:"库存现金",side:"L",amt:5000},{p:"sr",sub:"主营业务收入",side:"R",amt:5000}],
+  say:"现金涨在左边。收入的家在右边，贷着涨。"},
+ {t:"付本月电费 800", d:"当场付现",
+  hits:[["fy","L"],["zc","R"]],
+  legs:[{p:"fy",sub:"销售费用",side:"L",amt:800},{p:"zc",sub:"银行存款",side:"R",amt:800}],
+  say:"费用的家在左边，借着涨。存款少了，贷着降。"},
+ {t:"老板拿走 5000 自用", d:"不是店的开销",
+  hits:[["qy","L"],["zc","R"]],
+  legs:[{p:"qy",sub:"利润分配",side:"L",amt:5000},{p:"zc",sub:"银行存款",side:"R",amt:5000}],
+  say:"老板拿走自己的钱＝权益少了，要从左边放水（借着降）。"}
+];
+
+function tankHtml(id, home, showHouse){
+  const hL = home==="L" && showHouse ? `<div class="house L">🏠</div>` : "";
+  const hR = home==="R" && showHouse ? `<div class="house R">🏠</div>` : "";
+  return `<div class="rack">
+    <div class="pipe L" data-p="${id}" data-s="L" id="p-${id}-L"></div>
+    <div class="tank">${hL}${hR}<div class="lid"></div><div class="water from${home}" id="w-${id}"></div><div class="amt" id="a-${id}"></div></div>
+    <div class="pipe R" data-p="${id}" data-s="R" id="p-${id}-R"></div>
+  </div>
+  <div class="labs"><span class="L">${home==="L"?"借·涨":"借·降"}</span><span class="R">${home==="R"?"贷·涨":"贷·降"}</span></div>`;
+}
+function buildPools(){
+  $("pools").innerHTML = POOLS.map(p=>`
+    <div class="pool home${p.home}" id="pool-${p.k}">
+      <div class="pname">${p.n}</div>
+      <div class="psub">${p.s}</div>
+      <div class="home-tag">${p.home==="L"?"🏠 家在左　借着涨":"🏠 家在右　贷着涨"}</div>
+      ${tankHtml(p.k, p.home, true)}
+    </div>`).join("");
+  $("demoZc").innerHTML = tankHtml("dzc","L",true);
+  $("demoFz").innerHTML = tankHtml("dfz","R",true);
+}
+function buildBiz(){
+  $("bizList").innerHTML = BIZ.map((b,i)=>`<div class="bz" data-i="${i}"><b>${i+1}. ${b.t}</b><span>${b.d}</span></div>`).join("");
+}
+const level={};
+function setLevel(id, pct, from){
+  const w=$("w-"+id); if(!w) return;
+  w.style.height = Math.max(0, Math.min(90, pct))+"%";
+  w.className = "water from"+(from||"L");
+}
+function flashPipe(id, side, on){
+  const el=$("p-"+id+"-"+side);
+  if(el) el.classList.toggle("act", on);
+}
+function fmt(n){ return n>=10000? (n/10000)+"万" : n.toLocaleString(); }
+
+function updateDemo(){
+  const v = Number($("amt").value);
+  $("amtLab").textContent = v;
+  const up = document.querySelector("input[name=dir]:checked").value==="up";
+  $("cap").textContent = up
+    ? "同一笔「增加」：资产从左边灌进去，负债从右边灌进去。"
+    : "同一笔「减少」：资产从右边放走，负债从左边放走。";
+  ["dzc","dfz"].forEach(id=>{
+    flashPipe(id,"L",false); flashPipe(id,"R",false);
+  });
+  if(up){
+    setLevel("dzc", v*4.2, "L"); flashPipe("dzc","L", v>0);
+    $("a-dzc").textContent = v? v+"万":"";
+    $("capZc").textContent = "绿管子进　借着涨";
+    setLevel("dfz", v*4.2, "R"); flashPipe("dfz","R", v>0);
+    $("a-dfz").textContent = v? v+"万":"";
+    $("capFz").textContent = "橙管子进　贷着涨";
+  }else{
+    setLevel("dzc", Math.max(8, 80-v*3.5), "L"); flashPipe("dzc","R", v>0);
+    $("a-dzc").textContent = "降";
+    $("capZc").textContent = "橙管子出　贷着降";
+    setLevel("dfz", Math.max(8, 80-v*3.5), "R"); flashPipe("dfz","L", v>0);
+    $("a-dfz").textContent = "降";
+    $("capFz").textContent = "绿管子出　借着降";
+  }
+}
+$("amt").oninput = updateDemo;
+document.querySelectorAll("input[name=dir]").forEach(r=> r.onchange=updateDemo);
+
+function clearAll(){
+  POOLS.forEach(p=>{
+    setLevel(p.k,0,p.home); $("a-"+p.k).textContent="";
+    flashPipe(p.k,"L",false); flashPipe(p.k,"R",false);
+    $("p-"+p.k+"-L").classList.remove("on");
+    $("p-"+p.k+"-R").classList.remove("on");
+  });
+  $("entry").innerHTML="<span>点一笔店里的事，看两根管子。</span>";
+  $("balBox").innerHTML="";
+  document.querySelectorAll(".bz").forEach(e=>e.classList.remove("on"));
+}
+$("btnClear").onclick = clearAll;
+
+function runBiz(i){
+  const b=BIZ[i];
+  document.querySelectorAll(".bz").forEach(e=>e.classList.toggle("on", e.dataset.i==i));
+  POOLS.forEach(p=>{ flashPipe(p.k,"L",false); flashPipe(p.k,"R",false); setLevel(p.k,0,p.home); $("a-"+p.k).textContent=""; });
+  b.legs.forEach((leg,n)=>{
+    setTimeout(()=>{
+      const p=POOLS.find(x=>x.k===leg.p);
+      const rise = (leg.side===p.home);
+      flashPipe(leg.p, leg.side, true);
+      const cur = Number(($("a-"+leg.p).dataset.v||0));
+      const next = cur + (rise?leg.amt:-leg.amt);
+      $("a-"+leg.p).dataset.v = next;
+      $("a-"+leg.p).textContent = fmt(Math.abs(next));
+      setLevel(leg.p, Math.min(90, 12+Math.abs(next)/4000), p.home);
+    }, n*700);
+  });
+  setTimeout(()=>{
+    let h="";
+    b.legs.forEach(l=>{
+      h += l.side==="L" ? `<div>借：${l.sub}　${l.amt.toLocaleString()}</div>`
+                        : `<div class="cr">贷：${l.sub}　${l.amt.toLocaleString()}</div>`;
+    });
+    $("entry").innerHTML = h + `<div style="margin-top:8px;color:#fff">${b.say}</div>`;
+    const sd=b.legs.filter(l=>l.side==="L").reduce((a,l)=>a+l.amt,0);
+    const sc=b.legs.filter(l=>l.side==="R").reduce((a,l)=>a+l.amt,0);
+    $("balBox").innerHTML = `<div class="bal ok">借 ${sd.toLocaleString()} ＝ 贷 ${sc.toLocaleString()}　平了</div>`;
+    $("now").textContent = "现在你：能说出「谁的家，水从哪边涨」就点下一笔。";
+  }, b.legs.length*700+200);
+}
+$("bizList").onclick = e=>{
+  if(playing) return;
+  const b=e.target.closest(".bz"); if(!b) return;
+  runBiz(+b.dataset.i);
+};
+
+/* 上场答题：点两根管子 */
+let playing=false, qList=[], qIdx=0, pick=[], ok=0, tick=null, left=45, done=false;
+function shuffle(a){ const b=a.slice(); for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; }
+function keyOf(p,s){ return p+"|"+s; }
+function ask(){
+  pick=[];
+  document.querySelectorAll(".pipe").forEach(el=>el.classList.remove("on","act"));
+  const b=qList[qIdx];
+  $("qbox").style.display="block";
+  $("qTitle").textContent = "第 "+(qIdx+1)+" / "+qList.length+" 笔　点两根管子";
+  $("qText").textContent = b.t+"。"+b.d;
+  $("qHint").textContent = "先点一根借（绿），再点一根贷（橙）。家在哪边，涨就从哪边进。";
+  $("now").textContent = "现在你：点两根会动的管子。";
+  document.querySelectorAll(".bz").forEach(e=>e.classList.toggle("on", BIZ.indexOf(b)===+e.dataset.i));
+}
+function sameHits(a,b){
+  const A=a.map(x=>keyOf(x[0],x[1])).sort().join();
+  const B=b.map(x=>keyOf(x[0],x[1])).sort().join();
+  return A===B;
+}
+function todayStr(){
+  const d=new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function saveScore(pts, okN, n){
+  if(!who) return;
+  let log=[];
+  try{ log=JSON.parse(localStorage.getItem("draw-score-log")||"[]"); if(!Array.isArray(log)) log=[]; }catch(e){ log=[]; }
+  const tm=new Date().toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  log.push({day:todayStr(), t:tm, name:who, pts, use:"上场·水管", round:Date.now(), ok:okN, n});
+  localStorage.setItem("draw-score-log", JSON.stringify(log));
+}
+function finish(timeout){
+  if(done) return; done=true; playing=false;
+  if(tick){ clearInterval(tick); tick=null; }
+  const n=qList.length;
+  const pts = ok===n ? 5 : ok>=Math.ceil(n*0.6) ? 2 : 0;
+  if(who) saveScore(pts, ok, n);
+  const draw = qs.get("back") || DRAW;
+  $("cut").classList.add("on");
+  $("cut").innerHTML = (timeout?"时间到。<br>":"做完了。<br>")
+    + "对了 "+ok+" / "+n+" 笔。这次 <span style='color:#ffcc80'>"+pts+" 分</span>"
+    + (who?"，已记到 "+who+"。":"。")
+    + "<div style='margin-top:18px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap'>"
+    + "<a class='go' style='text-decoration:none' href='"+draw+"'>换人再抽</a>"
+    + "<button class='go' type='button' id='retry'>重做</button>"
+    + "</div><div style='margin-top:10px;font-size:16px'>全对 5 分，对六成以上 2 分，否则 0 分。不要翻课件下一页。</div>";
+  const rb=$("retry");
+  if(rb) rb.onclick=()=>{ location.href = location.pathname + location.search; };
+}
+function startQuiz(){
+  $("gate").classList.remove("on");
+  playing=true; done=false; ok=0; qIdx=0;
+  qList=shuffle(BIZ).slice(0,4);
+  left=45; $("timer").textContent=left; $("timer").className="timer";
+  ask();
+  tick=setInterval(()=>{
+    left--; $("timer").textContent=Math.max(0,left);
+    if(left<=8) $("timer").classList.add("low");
+    if(left<=0) finish(true);
+  },1000);
+}
+$("pools").addEventListener("click", e=>{
+  const pipe=e.target.closest(".pipe"); if(!pipe) return;
+  if(!playing || done) return;
+  const p=pipe.dataset.p, s=pipe.dataset.s;
+  if(p.startsWith("d")) return;
+  if(pick.find(x=>x[0]===p && x[1]===s)){
+    pick=pick.filter(x=>!(x[0]===p && x[1]===s));
+    pipe.classList.remove("on");
+    return;
+  }
+  if(pick.length>=2) return;
+  pick.push([p,s]); pipe.classList.add("on");
+  if(pick.length<2) return;
+  const b=qList[qIdx];
+  const good=sameHits(pick, b.hits);
+  if(good) ok++;
+  pick.forEach(x=> flashPipe(x[0], x[1], true));
+  $("qHint").textContent = good ? "对。"+b.say : "先看对的两根。"+b.say;
+  b.hits.forEach(h=> $("p-"+h[0]+"-"+h[1]).classList.add("act"));
+  setTimeout(()=>{
+    qIdx++;
+    if(qIdx>=qList.length) finish(false);
+    else ask();
+  }, 1100);
+});
+$("btnStart").onclick = startQuiz;
+
+buildPools(); buildBiz(); updateDemo();
+if(who){
+  $("gate").classList.add("on");
+  $("gateWho").textContent = who+"　上场看水管";
+  $("now").textContent = "现在你：抽到的人点「开始」。";
+}else{
+  $("now").textContent = "现在你：先拖滑块，看两口缸从哪边涨。再点一笔店里的事。";
+}
+</script>
+</body>
+</html>
