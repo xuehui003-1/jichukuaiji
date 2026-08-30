@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>试算表　哪一笔漏了</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:linear-gradient(165deg,#1a1030,#2d1b4e 60%,#1f1438);color:#fff;min-height:100vh;padding:12px}
+.wrap{max-width:1280px;margin:0 auto}
+header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px}
+h1{font-size:20px;color:#ffd54f}
+h1 small{display:block;font-size:12px;color:#b39ddb;font-weight:400;margin-top:3px}
+.pill{background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.2);border-radius:18px;padding:6px 14px;font-size:13px;font-weight:700}
+.pill b{color:#ffd54f;font-size:15px}
+.hud{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:14px;margin-bottom:12px}
+h3{font-size:14px;color:#ffd54f;margin-bottom:10px;padding-bottom:6px;border-bottom:1px dashed rgba(255,255,255,.16);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+h3 em{font-style:normal;font-size:11.5px;color:#9575cd;font-weight:400}
+button{padding:9px 18px;border:none;border-radius:20px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;background:#ffd54f;color:#3d2352;transition:.15s}
+button:hover{opacity:.87;transform:translateY(-1px)}
+button.o{background:rgba(255,255,255,.13);color:#fff;border:1px solid rgba(255,255,255,.25)}
+button.g{background:#66bb6a;color:#fff}
+button.r{background:#ef5350;color:#fff}
+button.sm{padding:6px 13px;font-size:12.5px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+
+table.grid{width:100%;border-collapse:collapse;font-size:13.5px}
+table.grid th{background:rgba(255,255,255,.1);color:#ffd54f;padding:8px 6px;font-size:12.5px;text-align:left;border:1px solid rgba(255,255,255,.14)}
+table.grid td{border:1px solid rgba(255,255,255,.12);padding:3px}
+table.grid input,table.grid select{width:100%;background:rgba(0,0,0,.28);border:1px solid transparent;color:#fff;padding:7px 8px;border-radius:6px;font-family:inherit;font-size:13.5px}
+table.grid input:focus,table.grid select:focus{outline:none;border-color:#ffd54f;background:rgba(0,0,0,.45)}
+table.grid input.num{text-align:right;font-family:"Courier New",monospace;font-size:14px}
+table.grid tr.bad input{border-color:#ef5350;background:rgba(239,83,80,.15)}
+table.grid tr.warn input{border-color:#ffa726;background:rgba(255,167,38,.12)}
+.del{background:rgba(239,83,80,.25);border:none;color:#ef9a9a;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:15px;font-weight:700}
+.del:hover{background:rgba(239,83,80,.45);color:#fff}
+tfoot td{background:rgba(255,255,255,.08);font-weight:800;font-size:15px;padding:10px 8px!important;font-family:"Courier New",monospace;text-align:right}
+tfoot td.lbl{text-align:left;font-family:inherit;color:#ffd54f}
+
+.verdict{margin-top:12px;padding:16px;border-radius:12px;text-align:center;font-size:20px;font-weight:900;transition:.25s}
+.verdict.ok{background:rgba(102,187,106,.22);color:#a5d6a7;border:2px solid rgba(102,187,106,.5)}
+.verdict.no{background:rgba(239,83,80,.22);color:#ef9a9a;border:2px solid rgba(239,83,80,.5)}
+.verdict.idle{background:rgba(255,255,255,.06);color:#9e9e9e;border:2px dashed rgba(255,255,255,.18);font-size:15px;font-weight:600}
+.verdict .sub{display:block;font-size:14px;font-weight:600;margin-top:7px;opacity:.9}
+
+.diag{margin-top:11px}
+.dg{background:rgba(255,167,38,.12);border-left:4px solid #ffa726;border-radius:0 9px 9px 0;padding:10px 13px;margin-bottom:7px;font-size:13.5px;line-height:1.75}
+.dg b{color:#ffcc80}
+.dg.err{background:rgba(239,83,80,.12);border-color:#ef5350}
+.dg.err b{color:#ef9a9a}
+.dg.tip{background:rgba(102,187,106,.12);border-color:#66bb6a}
+.dg.tip b{color:#a5d6a7}
+
+.cases{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.cs{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.14);border-radius:11px;padding:10px 12px;cursor:pointer;font-size:13px;line-height:1.5;transition:.15s}
+.cs:hover{border-color:#ffd54f;background:rgba(255,213,79,.13)}
+.cs b{color:#ffd54f;display:block;font-size:13.5px;margin-bottom:3px}
+.cs span{color:#b0bec5;font-size:12px}
+.tip2{font-size:12.5px;color:#b39ddb;line-height:1.75;margin-top:10px;border-top:1px dashed rgba(255,255,255,.14);padding-top:9px}
+.tip2 b{color:#ffd54f}
+
+.modal{position:fixed;inset:0;background:rgba(15,8,28,.93);display:none;align-items:center;justify-content:center;z-index:99;padding:18px}
+.modal.show{display:flex}
+.mbox{background:#fff;color:#2c2135;border-radius:15px;max-width:780px;width:100%;max-height:88vh;overflow-y:auto;padding:26px 30px}
+.mbox h2{color:#7b1fa2;font-size:20px;margin-bottom:8px}
+.mbox h4{color:#c2185b;font-size:14.5px;margin:15px 0 6px;padding-left:9px;border-left:4px solid #7b1fa2}
+.mbox p,.mbox li,.mbox td{font-size:13.5px;line-height:1.8}
+.mbox ol,.mbox ul{padding-left:22px}
+.mbox table{width:100%;border-collapse:collapse;margin:8px 0}
+.mbox th,.mbox td{border:1px solid #e0d5e8;padding:6px 9px;text-align:left}
+.mbox th{background:#f3e5f5;color:#7b1fa2;font-size:12.5px}
+.mbox .q{background:#fff8e1;border-left:4px solid #ffa726;padding:9px 12px;border-radius:0 8px 8px 0;margin:8px 0}
+.mclose{width:100%;padding:11px;border-radius:10px;background:#7b1fa2;color:#fff;font-size:15px;margin-top:15px}
+</style>
+</head>
+<body>
+<div class="now" style="background:#2e7d32;color:#fff;padding:10px 16px;font-size:18px;font-weight:800">现在你：点「练习3：漏了一条腿」。看差了多少。猜哪一笔漏了，再在表里补上。</div>
+<div class="wrap">
+<header>
+  <h1>试算表　哪一笔漏了<small>点一道题，看哪边多了。改数字，看到两边一样多。</small></h1>
+  <div class="hud">
+    <div class="pill">笔数 <b id="hRows">0</b></div>
+    <button class="o sm" onclick="showHelp()">❓ 怎么用</button>
+  </div>
+</header>
+
+<div class="card">
+  <h3>练习题　<em>点一下载入，其中几道是故意做错的，找出来</em></h3>
+  <div class="cases" id="cases"></div>
+</div>
+
+<div class="card">
+  <h3>试算平衡表　<em>直接改数字，下面实时算</em>
+    <div class="btns">
+      <button class="sm" onclick="addRow()">＋ 加一行</button>
+      <button class="o sm" onclick="clearAll()">清空</button>
+    </div>
+  </h3>
+  <table class="grid">
+    <thead><tr>
+      <th style="width:38%">会计科目</th>
+      <th style="width:26%">借方金额</th>
+      <th style="width:26%">贷方金额</th>
+      <th style="width:10%"></th>
+    </tr></thead>
+    <tbody id="rows"></tbody>
+    <tfoot>
+      <tr>
+        <td class="lbl">合计</td>
+        <td id="sumD">0</td>
+        <td id="sumC">0</td>
+        <td></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="verdict idle" id="verdict">填入数据后，这里自动判断平不平</div>
+  <div class="diag" id="diag"></div>
+</div>
+</div>
+
+
+<div class="modal" id="intro"><div class="mbox">
+  <h2>这个工具是干什么的</h2>
+  <p style="font-size:15px;line-height:1.9;margin-bottom:4px">
+  一句话：<b>让学生亲手把一张不平的表调平。</b></p>
+  <div class="q" style="font-size:14px">
+  「有借必有贷，借贷必相等」这句话，讲一百遍学生也只是背下来。<br><br>
+  但让他面对一张<b>差了 8 万</b>的表，自己找出漏了哪一笔，再亲手补上，
+  看着合计数变成相等的那一刻——这件事就变成他的经验了。</div>
+
+  <h4>三步就会用</h4>
+  <table>
+    <tr><th>第几步</th><th>做什么</th><th>看什么</th></tr>
+    <tr><td><b>1</b></td><td>上面「练习题」区，点一道题载入</td><td>表格自动填好数据</td></tr>
+    <tr><td><b>2</b></td><td>看表格最下面的合计行</td><td>借方合计、贷方合计，差多少</td></tr>
+    <tr><td><b>3</b></td><td>看合计下面的判断条和诊断提示</td><td>不平时会告诉你<b>可能错在哪</b></td></tr>
+  </table>
+  <p>表格里的数字<b>可以直接改</b>，改一个字合计就重算一次。加一行点「＋ 加一行」。</p>
+
+  <h4>它能自动认出四种错</h4>
+  <table>
+    <tr><th>症状</th><th>它会提示</th></tr>
+    <tr><td>差额正好等于某一行的金额</td><td>可能漏记了对方科目（少了一条腿）</td></tr>
+    <tr><td>差额正好是某一行的两倍</td><td>可能把借方写成了贷方</td></tr>
+    <tr><td>差额能被 9 整除</td><td>可能数字写颠倒了，比如 54 写成 45</td></tr>
+    <tr><td>同一行既填借方又填贷方</td><td>标红，一个科目只能记一边</td></tr>
+  </table>
+  <div class="q" style="font-size:13.5px"><b>「差额能被9整除＝数字颠倒」</b>是会计实务里的老经验。
+  学生看到程序自动认出这种错，会觉得挺神——这比您讲原理管用。</div>
+
+  <h4>上课怎么用（课件里「一张对不上的表」那一页）</h4>
+  <ol>
+    <li>投影出来，点 <b>「练习3：漏了一条腿」</b>（就是主文档图13那道题）</li>
+    <li>让学生看：借方 38 万，贷方 30 万，差 8 万</li>
+    <li>问「哪一笔记漏了？」给 30 秒，写在记录册上</li>
+    <li>用 90-B2 抽人回答，答对当场 5 分</li>
+    <li>当场在表里把缺的那行补上，让全班看着合计数变相等</li>
+  </ol>
+
+  <button class="mclose" onclick="hideIntro()">知道了，开始用</button>
+</div></div>
+
+<div class="modal" id="help"><div class="mbox">
+  <h2>怎么用</h2>
+
+  <h4>课堂用法（课件「一张对不上的表」）</h4>
+  <ol>
+    <li>投影出来，点<b>「练习3：漏了一条腿」</b></li>
+    <li>让学生看：借方38万，贷方30万，差8万</li>
+    <li>问：「哪一笔记漏了？」给30秒，写在册子上</li>
+    <li>用 90-B2 抽人回答，答对当场5分</li>
+    <li>然后在表里把缺的那行补上，学生看着合计数变相等——<b>那一刻的感觉，比讲十遍都强</b></li>
+  </ol>
+
+  <h4>它能自动查出四种错</h4>
+  <table>
+    <tr><th>错误类型</th><th>提示什么</th></tr>
+    <tr><td>借贷不等</td><td>差多少，并猜测可能的原因</td></tr>
+    <tr><td>差额是某一笔的两倍</td><td>提示「可能把借方写成贷方了」</td></tr>
+    <tr><td>差额能被9整除</td><td>提示「可能数字写颠倒了，比如把54写成45」</td></tr>
+    <tr><td>同一行既填借又填贷</td><td>标红，提示一个科目只能记一边</td></tr>
+  </table>
+  <div class="q"><b>差额能被9整除＝数字颠倒</b>，这是会计实务里的老经验。比如把 54 写成 45，差 9；把 720 写成 270，差 450，也能被9整除。学生看到程序自动认出这种错，会觉得很神。</div>
+
+  <h4>为什么要有这个工具</h4>
+  <p>「借贷必相等」这句话，讲一百遍学生也只是背下来。但让他自己填一张不平的表，然后<b>亲手把它调平</b>，这件事就变成他的经验了。</p>
+  <p>另外这也是<b>提前预告项目六</b>——项目六要学「更正错账」，到时候学生会想起这个工具。</p>
+
+  <h4>配套材料</h4>
+  <ul>
+    <li>《02-00 项目二主文档》第6周 图13 —— 就是这里的「练习3」</li>
+    <li>《02-A1 资金流水管道模型》—— 先用那个理解借贷，再用这个练平衡</li>
+  </ul>
+  <button class="mclose" onclick="hideHelp()">明白了</button>
+</div></div>
+
+<script>
+const CASES=[
+ {t:'练习1：正确的表', d:'开店头三笔，是平的',
+  rows:[['银行存款',300000,0],['固定资产',80000,0],['短期借款',0,100000],['实收资本',0,280000]]},
+ {t:'练习2：自己填', d:'空表，从头练',
+  rows:[['',0,0],['',0,0],['',0,0],['',0,0]]},
+ {t:'练习3：漏了一条腿', d:'★教材同款，差8万',
+  rows:[['银行存款',300000,0],['固定资产',80000,0],['短期借款',0,100000],['实收资本',0,200000]]},
+ {t:'练习4：方向记反了', d:'有一笔借贷写颠倒',
+  rows:[['库存现金',5000,0],['主营业务收入',7000,0],['销售费用',800,0],['银行存款',0,12800]]},
+ {t:'练习5：数字写颠倒', d:'差额能被9整除',
+  rows:[['原材料',30000,0],['应付账款',0,30000],['管理费用',2400,0],['银行存款',0,4200]]},
+ {t:'练习6：一个月全部', d:'十笔业务的汇总',
+  rows:[['库存现金',5000,0],['银行存款',203200,0],['应收账款',2000,0],['原材料',30000,0],
+        ['固定资产',80000,0],['应付账款',0,20000],['短期借款',0,100000],
+        ['实收资本',0,200000],['主营业务收入',0,7000],['销售费用',800,0],['管理费用',2400,0]]},
+];
+const $=i=>document.getElementById(i);
+let rows=[];
+
+function buildCases(){
+  $('cases').innerHTML=CASES.map((c,i)=>
+    `<div class="cs" onclick="loadCase(${i})"><b>${c.t}</b><span>${c.d}</span></div>`).join('');
+}
+function loadCase(i){ rows=CASES[i].rows.map(r=>[...r]); render(); }
+function clearAll(){ rows=[['',0,0],['',0,0],['',0,0]]; render(); }
+function addRow(){ rows.push(['',0,0]); render(); }
+function delRow(i){ rows.splice(i,1); if(!rows.length)rows=[['',0,0]]; render(); }
+function upd(i,f,v){
+  if(f===0) rows[i][0]=v;
+  else rows[i][f]=parseFloat(v.replace(/,/g,''))||0;
+  calc();
+}
+function render(){
+  $('rows').innerHTML=rows.map((r,i)=>`
+    <tr id="tr-${i}">
+      <td><input value="${r[0]}" placeholder="科目名称" oninput="upd(${i},0,this.value)"></td>
+      <td><input class="num" value="${r[1]||''}" placeholder="0" oninput="upd(${i},1,this.value)"></td>
+      <td><input class="num" value="${r[2]||''}" placeholder="0" oninput="upd(${i},2,this.value)"></td>
+      <td style="text-align:center"><button class="del" onclick="delRow(${i})">×</button></td>
+    </tr>`).join('');
+  calc();
+}
+function fmt(n){ return n.toLocaleString('zh-CN',{maximumFractionDigits:2}); }
+function calc(){
+  let sd=0, sc=0, filled=0;
+  rows.forEach((r,i)=>{
+    sd+=r[1]; sc+=r[2];
+    if(r[0]||r[1]||r[2]) filled++;
+    const tr=$('tr-'+i);
+    if(tr){ tr.className = (r[1]>0&&r[2]>0)?'bad':''; }
+  });
+  $('sumD').textContent=fmt(sd);
+  $('sumC').textContent=fmt(sc);
+  $('hRows').textContent=filled;
+  const v=$('verdict'), dg=$('diag');
+  if(!filled){ v.className='verdict idle'; v.textContent='填入数据后，这里自动判断平不平'; dg.innerHTML=''; return; }
+  const diff=Math.round((sd-sc)*100)/100;
+  if(diff===0){
+    v.className='verdict ok';
+    v.innerHTML='✓ 平了<span class="sub">借方合计 '+fmt(sd)+' ＝ 贷方合计 '+fmt(sc)+'</span>';
+    dg.innerHTML='<div class="dg tip"><b>平了不代表全对。</b>试算平衡查不出这几种错：整笔漏记、重复记两次、借贷方向整个记反、科目用错。这四种错，借贷照样相等。（项目六会专门讲怎么查）</div>';
+    return;
+  }
+  v.className='verdict no';
+  v.innerHTML='✗ 不平<span class="sub">借方 '+fmt(sd)+'　贷方 '+fmt(sc)+'　差 '+fmt(Math.abs(diff))+'</span>';
+  // 诊断
+  let out=[];
+  const ad=Math.abs(diff);
+  out.push('<div class="dg err"><b>差额 '+fmt(ad)+'</b>　'+(diff>0?'借方多了':'贷方多了')+'。先从这个数字找线索。</div>');
+  // 1. 是否等于某一行金额（漏了对应的一条腿）
+  let hit=null;
+  rows.forEach(r=>{
+    if(Math.abs(r[1]-ad)<0.01 && r[1]>0) hit=hit||{s:r[0],side:'借'};
+    if(Math.abs(r[2]-ad)<0.01 && r[2]>0) hit=hit||{s:r[0],side:'贷'};
+  });
+  if(hit){
+    out.push('<div class="dg"><b>可能漏了一条腿。</b>「'+(hit.s||'某个科目')+'」那笔金额正好等于差额——'
+      +'它的对方科目是不是没记？一笔业务至少两条腿，'+(diff>0?'现在缺的是贷方':'现在缺的是借方')+'。</div>');
+  }
+  // 2. 是否是某一行的两倍（方向记反）
+  let dbl=null;
+  rows.forEach(r=>{
+    const m=Math.max(r[1],r[2]);
+    if(m>0 && Math.abs(m*2-ad)<0.01) dbl=r[0];
+  });
+  if(dbl){
+    out.push('<div class="dg"><b>可能有一笔方向记反了。</b>差额正好是「'+(dbl||'某科目')+'」金额的两倍。'
+      +'把借方写成贷方（或反过来），差额就会正好是那笔金额的两倍。检查一下这个科目。</div>');
+  }
+  // 3. 能被9整除（数字颠倒）
+  if(ad>0 && ad%9===0){
+    out.push('<div class="dg"><b>差额能被 9 整除，很可能是数字写颠倒了。</b>'
+      +'比如把 54 写成 45（差9），把 720 写成 270（差450）。'
+      +'这是会计实务里的老经验，回头核对每个数字的位数。</div>');
+  }
+  // 4. 同行双填
+  const both=rows.filter(r=>r[1]>0&&r[2]>0);
+  if(both.length){
+    out.push('<div class="dg err"><b>有 '+both.length+' 行既填了借方又填了贷方（已标红）。</b>'
+      +'一个科目在一张试算表里只能出现在一边。如果它既有借又有贷，应该先轧差，只填净额那一边。</div>');
+  }
+  dg.innerHTML=out.join('');
+}
+function showHelp(){$('help').classList.add('show')}
+function hideHelp(){$('help').classList.remove('show')}
+$('help').onclick=e=>{if(e.target===$('help'))hideHelp()};
+function hideIntro(){$('intro').classList.remove('show')}
+$('intro').onclick=e=>{if(e.target===$('intro'))hideIntro()};
+buildCases(); loadCase(0);
+/* no auto intro */
+</script>
+</body>
+</html>
