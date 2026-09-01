@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>项目七　对账和结账　上课投影 v1.0</title>
+<style>
+
+:root{
+  --orange:#bf360c; --green:#2e7d32; --ink:#22170f;
+  --gold:#f9a825; --brown:#3e2723; --paper:#fffdf8; --line:#ead9c6;
+  --title:3rem; --body:2rem; --now:1.55rem;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#efe4d6;color:var(--ink);
+  font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;}
+body{display:flex;flex-direction:column;min-height:100vh;overflow:hidden}
+.top{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--brown);color:#fff;flex-shrink:0}
+.top h1{font-size:14px;font-weight:700}
+.top small{opacity:.75;font-size:11px;margin-left:6px}
+.top .hint{margin-left:auto;font-size:11px;opacity:.85}
+.top button{border:0;background:#efebe9;color:var(--brown);font:inherit;font-weight:800;padding:6px 10px;border-radius:8px;cursor:pointer}
+.top button.on{background:#ffcc80;color:var(--brown)}
+.layout{display:grid;grid-template-columns:148px 1fr;flex:1;min-height:0}
+body.wide .layout{grid-template-columns:1fr}
+body.wide .side{display:none}
+.side{background:#f7efe4;border-right:1px solid var(--line);overflow:auto;padding:6px 0}
+.side input{width:calc(100% - 12px);margin:4px 6px 6px;padding:5px 7px;border:1px solid #e6d5c3;border-radius:6px;font:inherit;font-size:11px}
+.nav-item{display:block;width:100%;text-align:left;padding:5px 8px;border:0;background:transparent;font:inherit;cursor:pointer;color:#5a4638;font-size:11px;line-height:1.25}
+.nav-item:hover{background:#f8e8d8}
+.nav-item.on{background:#bf360c;color:#fff}
+.nav-item .k{display:inline-block;min-width:22px;opacity:.7;font-variant-numeric:tabular-nums}
+.main{min-height:0;overflow-y:scroll;padding:8px 14px 8px;display:flex;justify-content:center;align-items:flex-start;scrollbar-gutter:stable}
+.main::-webkit-scrollbar{width:14px}
+.main::-webkit-scrollbar-track{background:#e8dccf;border-radius:8px}
+.main::-webkit-scrollbar-thumb{background:#bf360c;border-radius:8px}
+.card{width:min(1100px,100%);background:var(--paper);border-radius:14px;box-shadow:0 8px 28px rgba(62,39,35,.08);border:1px solid var(--line)}
+.badge{display:inline-block;font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px;margin-bottom:8px}
+.k-cover{background:#3e2723;color:#ffcc80}
+.k-pause{background:#fff3e0;color:#bf360c;border:1px solid #ffcc80}
+.k-pic{background:#e8f5e9;color:#2e7d32}
+.k-setup{background:#eceff1;color:#455a64}
+.k-homework{background:#fff8e1;color:#f57f17;border:1px solid #ffe082}
+.k-teacher{background:#efebe9;color:#5d4037}
+.k-game{background:#e3f2fd;color:#1565c0}
+.k-thumbs{background:#fce4ec;color:#ad1457}
+.k-text{background:#f5f5f5;color:#616161}
+.k-spare{background:#eeeeee;color:#757575}
+.k-drag{background:#e8f5e9;color:#1b5e20}
+.go-draw{display:block;margin:10px 22px 14px;background:#bf360c;color:#fff;text-align:center;text-decoration:none;font-size:1.25rem;font-weight:800;padding:14px 16px;border-radius:12px}
+.go-draw:hover{filter:brightness(1.08)}
+.drag-board{padding:4px 22px 16px}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 12px;min-height:52px}
+.chip{background:#bf360c;color:#fff;padding:10px 16px;border-radius:999px;font-weight:800;cursor:grab;user-select:none;font-size:clamp(16px,2.2vw,22px);touch-action:none}
+.chip.lock{background:#2e7d32;cursor:default}
+.chip.hold{opacity:.35}
+.bins{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bin{min-height:110px;border:2px dashed #c4a882;border-radius:14px;padding:8px;background:#faf6f0}
+.bin h4{font-size:clamp(16px,2vw,20px);margin:0 0 8px;color:#3e2723;text-align:center}
+.bin.ok{border-color:#2e7d32;background:#e8f5e9;border-style:solid}
+.bin.bad{border-color:#c62828;background:#ffebee}
+.bin .in{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.drag-msg{text-align:center;font-weight:800;color:#2e7d32;font-size:1.1rem;min-height:1.4em;margin-top:8px}
+.link-board{position:relative;margin:6px 12px 12px}
+.link-who{text-align:center;font-weight:900;color:#bf360c;font-size:1.3rem;margin:4px 0 8px}
+.lian-hud{display:flex;justify-content:center;align-items:center;gap:12px;margin:6px 0}
+.lian-timer{width:96px;height:96px;border-radius:50%;border:8px solid #bf360c;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;background:#fff}
+.lian-timer.low{border-color:#c62828;color:#c62828;background:#ffebee;animation:pulse .45s infinite}
+@keyframes pulse{50%{transform:scale(1.06)}}
+.lian-cut{position:fixed;inset:0;background:rgba(28,8,6,.9);color:#fff;display:none;align-items:center;justify-content:center;z-index:40;font-size:clamp(32px,6vw,64px);font-weight:900;text-align:center}
+.lian-cut.on{display:flex}
+.link-grid{display:grid;grid-template-columns:minmax(120px,22%) 1fr minmax(120px,22%);gap:8px;align-items:stretch;min-height:300px}
+.link-svg{width:100%;height:100%;min-height:300px}
+.link-col{display:flex;flex-direction:column;gap:6px;justify-content:center}
+.link-item{border:2px solid #d7c4b0;background:#fff;border-radius:10px;padding:6px 8px;font-weight:800;font-size:14px;text-align:center;cursor:pointer;color:#3e2723;line-height:1.25}
+.link-item.on{border-color:#bf360c;background:#fff3e0;box-shadow:0 0 0 3px #ffcc80}
+.link-item.lock{border-color:#2e7d32;background:#e8f5e9;color:#1b5e20;cursor:default}
+.link-item.tied{border-color:#ef6c00;background:#fff8e1}
+.link-item.bad{border-color:#c62828;background:#ffebee}
+.link-col.right .link-item{background:#faf6f0}
+.ghost-chip{position:fixed;z-index:40;pointer-events:none;background:#bf360c;color:#fff;padding:10px 16px;border-radius:999px;font-weight:800;box-shadow:0 8px 18px rgba(0,0,0,.25)}
+.head{padding:12px 22px 4px}
+.head h2{font-size:var(--title);line-height:1.25;color:var(--brown);cursor:zoom-in}
+.body{padding:6px 22px 10px;font-size:var(--body);line-height:1.45;font-weight:650}
+.body p{margin:0 0 10px;cursor:zoom-in}
+.body .why{background:#fff8e1;border-left:6px solid var(--gold);padding:12px 14px;border-radius:0 8px 8px 0}
+mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-weight:900}
+.pics{padding:0 22px 4px;display:grid;gap:8px}
+.pics.one{grid-template-columns:1fr}
+.pics.many{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.pics img{width:auto;max-width:100%;max-height:34vh;object-fit:contain;border-radius:10px;border:1px solid var(--line);background:#faf6f0;cursor:zoom-in;display:block;margin:0 auto}
+.pics.many img{max-height:18vh;width:100%}
+.pic-hint{text-align:center;font-size:13px;color:#8d6e63;padding:0 22px 8px}
+.lab{display:block;margin:8px 22px 12px;background:var(--orange);color:#fff;text-align:center;text-decoration:none;font-size:1.2rem;font-weight:800;padding:12px;border-radius:12px}
+.dock{flex-shrink:0}
+.now{background:var(--green);color:#fff;padding:8px 18px;font-size:var(--now);font-weight:800;line-height:1.35;cursor:zoom-in}
+.bar{display:flex;align-items:center;gap:8px;padding:4px 10px;background:#fff;border-top:1px solid var(--line)}
+.bar button{border:0;background:var(--orange);color:#fff;font:inherit;font-weight:700;padding:5px 12px;border-radius:8px;cursor:pointer;font-size:13px;line-height:1.2}
+.bar button.ghost{background:#efebe9;color:var(--brown)}
+.bar .pg{flex:1;text-align:center;font-variant-numeric:tabular-nums;font-weight:700;color:#6d5648;font-size:13px}
+.lb{position:fixed;inset:0;background:rgba(20,12,8,.9);display:none;align-items:center;justify-content:center;z-index:20;padding:24px}
+.lb.show{display:flex}
+.lb img{max-width:96vw;max-height:92vh;border-radius:8px}
+.zoom-text{color:#fff;font-size:clamp(36px,6.5vw,84px);font-weight:900;line-height:1.35;text-align:center;max-width:92vw;text-shadow:0 2px 0 #000}
+@media(max-width:860px){
+  .layout{grid-template-columns:1fr}
+  .side{display:none}
+  .side.open{display:block;position:fixed;inset:48px 0 100px 0;z-index:5;background:#fff8f0}
+}
+
+
+.ambient{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:radial-gradient(1200px 600px at 10% -10%,#ffcc80 0%,transparent 55%),radial-gradient(900px 500px at 110% 110%,#81c784 0%,transparent 50%),#ead7c0}
+.ambient .blob{position:absolute;border-radius:50%;filter:blur(28px);opacity:.7;animation:float 10s ease-in-out infinite}
+.ambient .b1{width:50vw;height:50vw;left:-12vw;top:-18vh;background:#ff6d00}
+.ambient .b2{width:44vw;height:44vw;right:-14vw;bottom:-12vh;background:#00c853;animation-delay:-4s}
+.ambient .b3{width:32vw;height:32vw;left:38vw;top:38vh;background:#ff1744;opacity:.45;animation-delay:-7s}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(8%,-10%) scale(1.18)}}
+.progress{position:fixed;top:0;left:0;right:0;height:10px;z-index:12;background:#3e2723}
+.progress i{display:block;height:100%;width:0;background:repeating-linear-gradient(90deg,#ff1744 0 18px,#ffea00 18px 36px);box-shadow:0 0 16px #ff1744;transition:width .8s cubic-bezier(.16,1,.3,1)}
+.page-flash{position:fixed;inset:0;z-index:11;pointer-events:none;background:#fff;opacity:0}
+.page-flash.go{animation:flash .55s ease}
+@keyframes flash{0%{opacity:.7}100%{opacity:0}}
+.layout,.dock,.top{position:relative;z-index:2}
+.card{overflow:visible;transform-origin:50% 50%;position:relative}
+.card.enter-next{animation:inNext 1.05s cubic-bezier(.16,1,.3,1) both}
+.card.enter-prev{animation:inPrev 1.05s cubic-bezier(.16,1,.3,1) both}
+@keyframes inNext{0%{opacity:0;transform:translateX(22vw) rotate(2.5deg) scale(.9)}60%{opacity:1}100%{opacity:1;transform:none}}
+@keyframes inPrev{0%{opacity:0;transform:translateX(-22vw) rotate(-2.5deg) scale(.9)}60%{opacity:1}100%{opacity:1;transform:none}}
+.card .head h2,.card .body p,.card .pics img,.card .go-draw,.card .why{
+  animation:rise .85s cubic-bezier(.16,1,.3,1) both;
+}
+.card .head h2{animation-delay:.08s}
+.card .body p{animation-delay:var(--d,.2s)}
+.card .pics img{animation-delay:.28s}
+.card .go-draw{animation-delay:.4s}
+@keyframes rise{from{opacity:0;transform:translateY(42px) scale(.96)}to{opacity:1;transform:none}}
+.card.kind-cover{background:linear-gradient(165deg,#fff3e0,#fffdf8 40%,#ffe0b2);box-shadow:0 20px 60px rgba(191,54,12,.22)}
+.card.kind-cover h2{letter-spacing:.06em;animation:coverSlam 1s cubic-bezier(.16,1,.3,1) both}
+@keyframes coverSlam{0%{opacity:0;transform:scale(.6) rotate(-6deg)}70%{transform:scale(1.06) rotate(1deg)}100%{opacity:1;transform:none}}
+.card.kind-cover .body p{font-size:1.08em}
+.card.kind-pause{background:#fff8e1;border:8px solid #ff1744!important;box-shadow:0 0 0 8px #fffde7, 0 0 40px #ff1744}
+.card.kind-pause::before{content:"";position:absolute;inset:-16px;border-radius:22px;border:8px solid #ff1744;animation:ring 1s ease-out infinite;pointer-events:none}
+.stamp{position:absolute;right:16px;top:16px;z-index:3;font-weight:900;font-size:26px;padding:8px 14px;border-radius:12px;transform:rotate(12deg);box-shadow:4px 4px 0 #3e2723;animation:stamp 1s cubic-bezier(.16,1,.3,1) both;pointer-events:none;letter-spacing:.08em}
+.stamp.st-cover{background:#3e2723;color:#ffcc80}
+.stamp.st-setup{background:#1565c0;color:#fff}
+.stamp.st-pic{background:#2e7d32;color:#fff}
+.stamp.st-pause{background:#ff1744;color:#fff;font-size:30px}
+.stamp.st-text{background:#5d4037;color:#ffe0b2}
+.stamp.st-game{background:#6a1b9a;color:#fff}
+.stamp.st-homework{background:#ef6c00;color:#fff}
+.stamp.st-thumbs{background:#ad1457;color:#fff}
+.stamp.st-spare{background:#607d8b;color:#fff}
+.stamp.st-drag{background:#1b5e20;color:#fff}
+.stamp.st-teacher{background:#4e342e;color:#fff}
+.comic{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:8px 22px 16px}
+.comic .panel{background:#fff;border:4px solid #22170f;border-radius:8px;min-height:140px;padding:10px;position:relative;animation:rise .7s both;animation-delay:var(--d,.2s);box-shadow:6px 6px 0 rgba(0,0,0,.12)}
+.comic .panel i{position:absolute;left:8px;top:6px;font-style:normal;font-weight:900;font-size:18px;color:#bf360c}
+.comic .panel p{margin:28px 4px 8px;font-size:clamp(15px,2vw,20px);font-weight:800;line-height:1.35}
+.comic .bubble{background:#fffde7;border:2px solid #3e2723;border-radius:18px;padding:8px 10px}
+@media(max-width:800px){.comic{grid-template-columns:1fr 1fr}}
+@keyframes ring{0%{transform:scale(.96);opacity:1}100%{transform:scale(1.08);opacity:0}}
+@keyframes stamp{0%{opacity:0;transform:scale(1.8) rotate(-20deg)}100%{opacity:1;transform:rotate(12deg)}}
+.card.kind-pause .badge{background:#ff1744;color:#fff;font-size:16px;padding:6px 14px;animation:pulse .7s ease-in-out infinite}
+.card.kind-pic .pics.one{overflow:hidden;border-radius:16px;margin:0 22px 8px;border:6px solid #3e2723;box-shadow:12px 12px 0 #bf360c}
+.card.kind-pic .pics.one img{max-height:42vh;animation:rise .8s both, ken 8s ease-in-out .8s infinite alternate;border:0}
+@keyframes ken{from{transform:scale(1)}to{transform:scale(1.12)}}
+.card.kind-setup .body p:last-child{background:#fff176;border-left:10px solid #ff1744;padding:12px 14px;border-radius:0 12px 12px 0;font-size:1.05em}
+.shine{position:relative;overflow:hidden}
+.shine::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.7) 50%,transparent 70%);transform:translateX(-130%);animation:shine 1.6s ease .3s 1}
+@keyframes shine{to{transform:translateX(130%)}}
+.now{animation:nowIn .7s cubic-bezier(.16,1,.3,1) both;box-shadow:0 -8px 24px rgba(46,125,50,.35)}
+@keyframes nowIn{from{transform:translateY(28px);opacity:0}to{transform:none;opacity:1}}
+.step{position:relative;padding-left:.15em}
+.go-draw{transition:transform .2s ease, filter .2s;box-shadow:0 8px 0 #7f0000}
+.go-draw:hover{transform:translateY(-3px) scale(1.04)}
+.go-draw .ic{display:inline-block;width:1.15em;height:1.15em;vertical-align:-.2em;margin-right:.35em}
+.lian-legend{text-align:center;font-weight:800;color:#5d4037;background:#fff8e1;border:3px dashed #bf360c;border-radius:12px;padding:10px;margin:8px 22px;font-size:1.05rem}
+.houses{display:flex;justify-content:space-around;gap:10px;margin:8px 16px 4px;flex-wrap:wrap}
+.houses .h{flex:1;min-width:180px;padding:10px 12px;border-radius:14px;text-align:center;font-weight:900;font-size:1.05rem}
+.houses .L{background:#c8e6c9;color:#1b5e20;border:3px solid #2e7d32}
+.houses .R{background:#ffe0b2;color:#e65100;border:3px solid #ef6c00}
+@media (prefers-reduced-motion: reduce){
+  .ambient .blob,.card,.card .head h2,.card .body p,.card .pics img,.card .go-draw,.now,.progress i,.page-flash,.card.kind-pause::before,.card.kind-pause::after{animation:none!important;transition:none!important}
+}
+
+
+/* ── 新卡片类型 ───────────────────────────── */
+.k-hands{background:#e1f5fe;color:#01579b}
+.k-warn{background:#ffebee;color:#b71c1c;border:1px solid #ef9a9a}
+.k-collect{background:#f3e5f5;color:#6a1b9a}
+.k-wall{background:#fff3e0;color:#e65100}
+.k-ledger{background:#e8eaf6;color:#283593}
+.k-shout{background:#fce4ec;color:#ad1457}
+.k-key{background:#3e2723;color:#ffcc80}
+.k-step{background:#e0f2f1;color:#00695c}
+.k-dispute{background:#fffde7;color:#f57f17;border:1px solid #ffe082}
+.k-drill{background:#e8f5e9;color:#1b5e20}
+.k-vote{background:#ede7f6;color:#4527a0}
+.k-recap{background:#fce4ec;color:#880e4f}
+.k-name{background:#3e2723;color:#ffcc80}
+.k-end{background:#3e2723;color:#ffcc80}
+.stamp.st-hands{background:#0277bd;color:#fff}
+.stamp.st-warn{background:#c62828;color:#fff}
+.stamp.st-collect{background:#6a1b9a;color:#fff}
+.stamp.st-wall{background:#e65100;color:#fff}
+.stamp.st-ledger{background:#283593;color:#fff}
+.stamp.st-shout{background:#ad1457;color:#fff}
+.stamp.st-key{background:#ffc400;color:#3e2723}
+.stamp.st-step{background:#00695c;color:#fff}
+.stamp.st-dispute{background:#f9a825;color:#3e2723}
+.stamp.st-drill{background:#2e7d32;color:#fff}
+.stamp.st-vote{background:#4527a0;color:#fff}
+.stamp.st-recap{background:#880e4f;color:#fff}
+.stamp.st-name{background:#ffc400;color:#3e2723}
+.stamp.st-end{background:#ffc400;color:#3e2723}
+
+/* 金句页：超大字独占一屏 */
+.card.kind-key,.card.kind-name,.card.kind-end{
+  background:linear-gradient(160deg,#2d1b12,#3e2723 55%,#4e342e);
+  border:0!important;box-shadow:0 24px 70px rgba(0,0,0,.45)}
+.card.kind-key .head h2,.card.kind-name .head h2,.card.kind-end .head h2{
+  color:#ffd54f;font-size:clamp(38px,7.2vw,104px);line-height:1.15;
+  text-align:center;letter-spacing:.02em;padding:18px 0 6px}
+.card.kind-key .body,.card.kind-name .body,.card.kind-end .body{text-align:center}
+.card.kind-key .body p,.card.kind-name .body p,.card.kind-end .body p{
+  color:#ffe0b2;font-size:clamp(17px,2.3vw,30px);font-weight:650}
+.card.kind-key .badge,.card.kind-name .badge,.card.kind-end .badge{margin-left:22px}
+
+/* 警告页 */
+.card.kind-warn{background:#fff5f5;border:6px solid #c62828!important}
+.card.kind-warn .head h2{color:#b71c1c;text-align:center;font-size:clamp(30px,5vw,62px)}
+.card.kind-warn .body p{text-align:center;font-size:clamp(20px,3vw,40px);font-weight:900;color:#c62828}
+
+/* 三次举手 */
+.hands{padding:6px 22px 18px;display:grid;gap:12px}
+.hand-item{border:3px solid #b3e5fc;background:#fff;border-radius:14px;padding:14px 18px;cursor:pointer;transition:.25s}
+.hand-item:hover{border-color:#0288d1}
+.hand-item .hq{font-size:clamp(19px,2.6vw,30px);font-weight:800;color:#01579b}
+.hand-item .hh{margin-top:8px;font-size:clamp(15px,1.9vw,21px);color:#0277bd;font-weight:700;
+  max-height:0;overflow:hidden;opacity:0;transition:.35s}
+.hand-item.on{border-color:#0288d1;background:#e1f5fe}
+.hand-item.on .hh{max-height:80px;opacity:1}
+.hand-item .num{display:inline-block;width:34px;height:34px;line-height:34px;text-align:center;
+  border-radius:50%;background:#0288d1;color:#fff;font-weight:900;margin-right:10px}
+
+/* 收集答案 */
+.collect{padding:6px 22px 16px}
+.collect .cin{display:flex;gap:8px;margin-bottom:10px}
+.collect input{flex:1;font:inherit;font-size:clamp(18px,2.4vw,26px);font-weight:800;
+  padding:10px 14px;border:3px solid #ce93d8;border-radius:12px}
+.collect button{border:0;background:#6a1b9a;color:#fff;font:inherit;font-weight:900;
+  font-size:clamp(16px,2vw,22px);padding:10px 22px;border-radius:12px;cursor:pointer}
+.collect .chips2{display:flex;flex-wrap:wrap;gap:10px;min-height:60px}
+.collect .c2{background:#6a1b9a;color:#fff;padding:10px 20px;border-radius:999px;
+  font-weight:900;font-size:clamp(18px,2.6vw,30px);animation:pop .35s cubic-bezier(.16,1,.3,1) both}
+@keyframes pop{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:none}}
+.collect .tip{margin-top:10px;color:#6a1b9a;font-weight:700;font-size:15px}
+
+/* 错误答案墙 */
+.wall{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;padding:10px 22px 18px}
+.wall span{background:#fff;border:4px solid #ff9800;color:#e65100;border-radius:16px;
+  padding:14px 30px;font-size:clamp(30px,5.5vw,68px);font-weight:900;
+  animation:pop .45s cubic-bezier(.16,1,.3,1) both}
+.wall span:nth-child(2){animation-delay:.09s}.wall span:nth-child(3){animation-delay:.18s}
+.wall span:nth-child(4){animation-delay:.27s}.wall span:nth-child(5){animation-delay:.36s}
+.wall span:nth-child(6){animation-delay:.45s}
+
+/* 逐笔账 */
+.ledger{padding:4px 22px 16px}
+.ledger table{width:100%;border-collapse:collapse;font-size:clamp(17px,2.3vw,28px)}
+.ledger td{padding:12px 14px;border-bottom:2px solid #e8eaf6}
+.ledger td:last-child{text-align:right;font-weight:900;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ledger tr{opacity:0;transform:translateX(-18px);transition:.4s}
+.ledger tr.on{opacity:1;transform:none}
+.ledger tr.sum{background:#1a237e;color:#fff}
+.ledger tr.sum td{border:0;font-size:clamp(20px,3vw,36px);font-weight:900;padding:16px 14px}
+.ledger .lbtn{margin-top:12px;display:flex;gap:10px;justify-content:center}
+.ledger .lbtn button{border:0;background:#283593;color:#fff;font:inherit;font-weight:900;
+  font-size:clamp(16px,2vw,22px);padding:12px 26px;border-radius:12px;cursor:pointer}
+
+/* 分步 */
+.card.kind-step .body p{font-size:clamp(19px,2.6vw,34px)}
+
+/* 加练 */
+.drill{padding:6px 22px 18px;text-align:center}
+.drill button{border:0;background:#2e7d32;color:#fff;font:inherit;font-weight:900;
+  font-size:clamp(18px,2.4vw,28px);padding:14px 34px;border-radius:14px;cursor:pointer}
+.drill .ans{margin-top:16px;font-size:clamp(28px,5vw,60px);font-weight:900;color:#1b5e20;
+  max-height:0;overflow:hidden;opacity:0;transition:.4s}
+.drill .ans.on{max-height:220px;opacity:1}
+.drill .ans small{display:block;font-size:clamp(15px,1.9vw,22px);color:#558b2f;margin-top:6px;font-weight:700}
+
+/* 投票 */
+.vote{padding:6px 22px 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.vote button{border:4px solid #b39ddb;background:#fff;color:#4527a0;font:inherit;font-weight:900;
+  font-size:clamp(19px,2.8vw,34px);padding:20px 12px;border-radius:16px;cursor:pointer;transition:.2s}
+.vote button:hover{border-color:#7e57c2;background:#ede7f6}
+.vote button.picked{border-color:#4527a0;background:#4527a0;color:#fff;transform:scale(1.04)}
+.vote-after{padding:0 22px 16px;font-size:clamp(17px,2.2vw,26px);font-weight:800;color:#4527a0;
+  max-height:0;overflow:hidden;opacity:0;transition:.4s}
+.vote-after.on{max-height:240px;opacity:1}
+
+/* 回看四题 */
+.recap{padding:2px 18px 8px;display:grid;gap:5px}
+.recap .r{border:3px solid #f8bbd0;background:#fff;border-radius:11px;padding:6px 14px;cursor:pointer;
+  display:flex;align-items:center;gap:14px;transition:.25s}
+.recap .r:hover{border-color:#ec407a}
+.recap .r b{font-size:clamp(18px,2.4vw,30px);color:#880e4f;white-space:nowrap}
+.recap .r span{font-size:clamp(16px,2.1vw,27px);color:#ad1457;font-weight:700;
+  max-height:0;overflow:hidden;opacity:0;transition:.35s}
+.recap .r.on{border-color:#ec407a;background:#fce4ec}
+.recap .r.on span{max-height:90px;opacity:1}
+
+/* ── 举手计数 ─────────────────────────── */
+.handbox{padding:6px 22px 18px}
+.handq{font-size:clamp(20px,2.8vw,34px);font-weight:900;color:#01579b;
+  background:#e1f5fe;border:3px solid #4fc3f7;border-radius:14px;padding:16px 20px;margin-bottom:14px}
+.counter{display:flex;align-items:center;justify-content:center;gap:18px;margin:14px 0}
+.counter button{border:0;width:64px;height:64px;border-radius:50%;font-size:34px;font-weight:900;
+  cursor:pointer;background:#0277bd;color:#fff;line-height:1}
+.counter button.minus{background:#90a4ae}
+.counter .num{font-size:clamp(52px,10vw,110px);font-weight:900;color:#01579b;
+  min-width:2.2em;text-align:center;font-variant-numeric:tabular-nums}
+.counter .unit{font-size:clamp(16px,2vw,24px);color:#0277bd;font-weight:800}
+.expect{text-align:center;color:#0288d1;font-weight:800;font-size:clamp(14px,1.8vw,20px);margin-bottom:12px}
+.probe{background:#fff8e1;border-left:6px solid #f9a825;border-radius:0 10px 10px 0;padding:14px 16px;margin-top:10px}
+.probe b{display:block;font-size:clamp(17px,2.3vw,27px);color:#e65100;margin-bottom:6px}
+.probe .pn{font-size:clamp(14px,1.8vw,20px);color:#8d6e63;font-weight:700;
+  max-height:0;overflow:hidden;opacity:0;transition:.35s}
+.probe.on .pn{max-height:120px;opacity:1;margin-top:6px}
+.probe .pbtn{border:0;background:#ef6c00;color:#fff;font:inherit;font-weight:800;
+  padding:8px 18px;border-radius:10px;cursor:pointer;font-size:14px;margin-top:8px}
+
+/* ── 三根柱子 ─────────────────────────── */
+.tally{padding:10px 22px 18px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:end;min-height:300px}
+.tbar{text-align:center}
+.tbar .bar{background:linear-gradient(180deg,#4fc3f7,#0277bd);border-radius:10px 10px 0 0;
+  transition:height .8s cubic-bezier(.16,1,.3,1);min-height:6px;position:relative}
+.tbar .bn{position:absolute;top:-40px;left:0;right:0;font-size:clamp(26px,4.5vw,54px);
+  font-weight:900;color:#01579b}
+.tbar .cap{margin-top:10px;font-size:clamp(14px,1.9vw,21px);font-weight:800;color:#3e2723;line-height:1.35}
+.tally-note{padding:0 22px 14px;font-size:clamp(15px,2vw,23px);font-weight:800;color:#bf360c;text-align:center}
+
+/* ── 规则四条 ─────────────────────────── */
+.rules{padding:6px 22px 18px;display:grid;gap:10px}
+.rules .r{display:flex;gap:14px;align-items:flex-start;background:#fff;border:3px solid #ffcc80;
+  border-radius:14px;padding:14px 18px}
+.rules .r i{flex:0 0 auto;width:38px;height:38px;border-radius:50%;background:#bf360c;color:#fff;
+  font-style:normal;font-weight:900;font-size:20px;display:flex;align-items:center;justify-content:center}
+.rules .r b{font-size:clamp(17px,2.3vw,28px);color:#3e2723;display:block}
+.rules .r span{font-size:clamp(14px,1.8vw,21px);color:#7a5c4a;font-weight:700}
+
+/* ── 故事流程图 ───────────────────────── */
+.story{padding:4px 18px 14px}
+.stage{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.actor{border:4px solid #d7c4b0;background:#fff;border-radius:16px;padding:14px 8px;text-align:center;
+  font-size:clamp(16px,2.3vw,28px);font-weight:900;color:#3e2723;transition:.35s;position:relative}
+.actor.act{border-color:#bf360c;background:#fff3e0;transform:translateY(-6px);
+  box-shadow:0 10px 24px rgba(191,54,12,.25)}
+.actor.gone{opacity:.3;filter:grayscale(1)}
+.flowline{text-align:center;font-size:clamp(17px,2.4vw,30px);font-weight:900;color:#bf360c;
+  min-height:2.4em;padding:8px;background:#fff8e1;border-radius:12px;margin-bottom:10px}
+.flowline .tok{display:inline-block;background:#2e7d32;color:#fff;border-radius:999px;
+  padding:4px 16px;margin:0 8px}
+.flowline .tok.fake{background:#c62828;text-decoration:line-through}
+.slist{display:grid;gap:6px;margin-bottom:10px}
+.slist .s{display:flex;gap:10px;align-items:center;font-size:clamp(14px,1.85vw,21px);
+  padding:8px 12px;border-radius:10px;background:#faf6f0;color:#8d6e63;font-weight:700;
+  opacity:.35;transition:.3s}
+.slist .s.on{opacity:1;background:#fff3e0;color:#3e2723}
+.slist .s i{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:#bf360c;color:#fff;
+  font-style:normal;font-weight:900;font-size:14px;display:flex;align-items:center;justify-content:center}
+.sbtn{display:flex;gap:10px;justify-content:center;margin-top:6px}
+.sbtn button{border:0;background:#bf360c;color:#fff;font:inherit;font-weight:900;
+  font-size:clamp(15px,2vw,22px);padding:12px 26px;border-radius:12px;cursor:pointer}
+.sbtn button.ghost{background:#efebe9;color:#5d4037}
+
+/* ── 两条路 ───────────────────────────── */
+.twopath{padding:6px 22px 18px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pathc{border:4px solid #b39ddb;background:#fff;border-radius:16px;padding:18px;text-align:center}
+.pathc h4{font-size:clamp(22px,3.4vw,40px);color:#4527a0;margin-bottom:12px}
+.pathc .g{font-size:clamp(26px,4.4vw,52px);font-weight:900;color:#2e7d32}
+.pathc .c{font-size:clamp(15px,2vw,23px);color:#5d4037;font-weight:800;margin-top:8px}
+.pathc .n{font-size:clamp(13px,1.7vw,19px);color:#c62828;font-weight:800;margin-top:10px;
+  background:#ffebee;border-radius:10px;padding:8px}
+
+/* ── 作业四格 ─────────────────────────── */
+.hw{padding:2px 18px 8px;display:grid;gap:6px}
+.hw .f{background:#fff;border:3px solid #a5d6a7;border-radius:11px;padding:6px 15px}
+.hw .f b{font-size:clamp(15px,1.95vw,22px);color:#1b5e20;display:block;margin-bottom:1px}
+.hw .f span{font-size:clamp(12px,1.55vw,18px);color:#558b2f;font-weight:700}
+.hw .chk{background:#e8f5e9;border-left:6px solid #2e7d32;border-radius:0 10px 10px 0;
+  padding:14px 16px;font-size:clamp(15px,2vw,23px);font-weight:800;color:#1b5e20}
+.hw .why{background:#fff8e1;border-left:6px solid #f9a825;border-radius:0 10px 10px 0;
+  padding:12px 16px;font-size:clamp(13px,1.7vw,19px);color:#8d6e63;font-weight:700;margin-top:4px}
+
+.k-guess{background:#fff3e0;color:#e65100}
+.k-seven{background:#e3f2fd;color:#0d47a1}
+.k-fillinv,.k-fillvou,.k-fillvou2{background:#e8f5e9;color:#1b5e20}
+.k-bigmoney{background:#fce4ec;color:#880e4f}
+.k-reveal{background:#f3e5f5;color:#4a148c}
+.k-match{background:#e0f7fa;color:#006064}
+.k-recap{background:#fce4ec;color:#880e4f}
+.k-key,.k-end{background:#3e2723;color:#ffcc80}
+.stamp.st-guess{background:#e65100;color:#fff}.stamp.st-seven{background:#0d47a1;color:#fff}
+.stamp.st-fillinv,.stamp.st-fillvou,.stamp.st-fillvou2{background:#1b5e20;color:#fff}
+.stamp.st-bigmoney{background:#880e4f;color:#fff}.stamp.st-reveal{background:#4a148c;color:#fff}
+.stamp.st-match{background:#006064;color:#fff}.stamp.st-recap{background:#880e4f;color:#fff}
+.stamp.st-key,.stamp.st-end{background:#ffc400;color:#3e2723}
+
+.card.kind-key,.card.kind-end{background:linear-gradient(160deg,#2d1b12,#3e2723 55%,#4e342e);
+  border:0!important;box-shadow:0 24px 70px rgba(0,0,0,.45)}
+.card.kind-key .head h2,.card.kind-end .head h2{color:#ffd54f;
+  font-size:clamp(34px,6.4vw,92px);line-height:1.18;text-align:center;padding:18px 0 6px}
+.card.kind-key .body,.card.kind-end .body{text-align:center}
+.card.kind-key .body p,.card.kind-end .body p{color:#ffe0b2;font-size:clamp(16px,2.2vw,29px);font-weight:650}
+
+/* 猜猜看 */
+.guess{padding:4px 22px 16px}
+.guess img{width:100%;max-height:36vh;object-fit:contain;border-radius:12px;border:1px solid #ead9c6;background:#faf6f0}
+.guess .gs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.guess .g{border:3px solid #ffcc80;background:#fff;border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;transition:.25s}
+.guess .g b{display:block;font-size:clamp(15px,2vw,22px);color:#e65100}
+.guess .g span{display:block;font-size:clamp(15px,2.1vw,25px);font-weight:900;color:#1b5e20;
+  max-height:0;overflow:hidden;opacity:0;transition:.3s;margin-top:6px}
+.guess .g.on{border-color:#2e7d32;background:#e8f5e9}
+.guess .g.on span{max-height:60px;opacity:1}
+.guess .gn{margin-top:10px;background:#fff8e1;border-left:6px solid #f9a825;border-radius:0 10px 10px 0;
+  padding:12px 14px;font-size:clamp(14px,1.85vw,21px);color:#8d6e63;font-weight:700}
+.gbtn{border:0;background:#e65100;color:#fff;font:inherit;font-weight:900;padding:10px 24px;
+  border-radius:12px;cursor:pointer;font-size:clamp(15px,2vw,21px);margin-top:10px}
+
+/* 七要素 */
+.seven{padding:6px 22px 16px;display:grid;gap:8px}
+.seven .s{display:flex;align-items:center;gap:12px;border:3px solid #bbdefb;background:#fff;
+  border-radius:12px;padding:12px 16px;cursor:pointer;transition:.25s}
+.seven .s b{flex:0 0 auto;min-width:8.5em;font-size:clamp(15px,2vw,24px);color:#0d47a1}
+.seven .s span{font-size:clamp(14px,1.85vw,21px);font-weight:800;
+  max-height:0;overflow:hidden;opacity:0;transition:.3s}
+.seven .s.on{border-color:#c62828;background:#ffebee}
+.seven .s.on span{max-height:60px;opacity:1;color:#c62828}
+.seven .s.on.half{border-color:#ef6c00;background:#fff3e0}
+.seven .s.on.half span{color:#e65100}
+.seven-sum{margin-top:10px;text-align:center;font-size:clamp(17px,2.4vw,30px);font-weight:900;color:#c62828;
+  max-height:0;overflow:hidden;opacity:0;transition:.4s}
+.seven-sum.on{max-height:80px;opacity:1}
+
+/* 填单表格 */
+.fillbox{padding:4px 18px 16px}
+.fillbox .biz{background:#e8f5e9;border-left:6px solid #2e7d32;border-radius:0 10px 10px 0;
+  padding:7px 16px;font-size:clamp(15px,2vw,23px);font-weight:800;color:#1b5e20;margin-bottom:12px}
+.ftab{width:100%;border-collapse:collapse;font-size:clamp(13px,1.5vw,18px)}
+.ftab th,.ftab td{border:2px solid #c8b8a6;padding:3px 8px}
+.ftab th{background:#efe4d6;color:#3e2723;font-weight:800;white-space:nowrap;width:9em}
+.ftab input,.ftab select{width:100%;font:inherit;font-size:inherit;font-weight:800;padding:4px 8px;
+  border:2px solid #d7c4b0;border-radius:8px;background:#fffdf8;color:#22170f}
+.ftab input.ok,.ftab select.ok{border-color:#2e7d32;background:#e8f5e9}
+.ftab input.no,.ftab select.no{border-color:#c62828;background:#ffebee}
+.ftab .hintline{font-size:.78em;color:#8d6e63;font-weight:700;margin-top:1px;display:none}
+.ftab .no ~ .hintline{display:block}
+.fbtn{display:flex;gap:10px;justify-content:center;margin-top:6px;flex-wrap:wrap}
+.fbtn button{border:0;background:#2e7d32;color:#fff;font:inherit;font-weight:900;
+  font-size:clamp(15px,2vw,22px);padding:12px 28px;border-radius:12px;cursor:pointer}
+.fbtn button.ghost{background:#efebe9;color:#5d4037}
+.fmsg{margin-top:12px;text-align:center;font-size:clamp(16px,2.3vw,28px);font-weight:900;min-height:1.5em}
+.fmsg.good{color:#1b5e20}.fmsg.bad{color:#c62828}
+.balance{margin-top:10px;text-align:center;font-size:clamp(15px,2vw,24px);font-weight:900;
+  padding:6px;border-radius:10px;background:#efe4d6;color:#5d4037}
+.balance.ok{background:#e8f5e9;color:#1b5e20}
+.balance.no{background:#ffebee;color:#c62828}
+
+/* 大写金额 */
+.bigm{padding:6px 22px 16px;display:grid;gap:10px}
+.bigm .b{border:3px solid #f8bbd0;background:#fff;border-radius:14px;padding:14px 18px}
+.bigm .b .sm{font-size:clamp(20px,3vw,38px);font-weight:900;color:#880e4f;font-variant-numeric:tabular-nums}
+.bigm .b .bg{font-size:clamp(17px,2.4vw,30px);font-weight:900;color:#1b5e20;margin-top:8px;
+  max-height:0;overflow:hidden;opacity:0;transition:.35s}
+.bigm .b.on .bg{max-height:80px;opacity:1}
+.bigm .b button{border:0;background:#ad1457;color:#fff;font:inherit;font-weight:800;
+  padding:8px 20px;border-radius:10px;cursor:pointer;font-size:14px;margin-top:8px}
+
+/* 揭示答案 */
+.reveal{padding:6px 22px 16px;display:grid;gap:10px}
+.reveal .r{border:3px solid #ce93d8;background:#fff;border-radius:14px;padding:14px 18px;cursor:pointer;transition:.25s}
+.reveal .r b{font-size:clamp(17px,2.4vw,29px);color:#4a148c;display:block}
+.reveal .r span{font-size:clamp(14px,1.85vw,21px);color:#6a1b9a;font-weight:700;
+  max-height:0;overflow:hidden;opacity:0;transition:.35s;display:block}
+.reveal .r.on{border-color:#7b1fa2;background:#f3e5f5}
+.reveal .r.on span{max-height:90px;opacity:1;margin-top:6px}
+
+/* 连线 */
+.match{padding:6px 22px 16px}
+.mrow{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;margin-bottom:10px}
+.mleft{border:3px solid #80deea;background:#fff;border-radius:12px;padding:14px 18px;
+  font-size:clamp(15px,2.1vw,25px);font-weight:800;color:#006064}
+.mpick{display:flex;gap:8px;flex-wrap:wrap}
+.mpick button{border:3px solid #b2ebf2;background:#fff;color:#006064;font:inherit;font-weight:800;
+  font-size:clamp(13px,1.7vw,19px);padding:10px 16px;border-radius:10px;cursor:pointer}
+.mpick button.ok{border-color:#2e7d32;background:#2e7d32;color:#fff}
+.mpick button.no{border-color:#c62828;background:#ffebee;color:#c62828}
+
+/* 回看 */
+.recap{padding:2px 18px 8px;display:grid;gap:5px}
+.recap .r{border:3px solid #f8bbd0;background:#fff;border-radius:11px;padding:6px 14px;cursor:pointer;transition:.25s}
+.recap .r b{font-size:clamp(17px,2.3vw,28px);color:#880e4f;display:block}
+.recap .r span{font-size:clamp(14px,1.9vw,22px);color:#ad1457;font-weight:700;
+  max-height:0;overflow:hidden;opacity:0;transition:.35s;display:block}
+.recap .r.on{border-color:#ec407a;background:#fce4ec}
+.recap .r.on span{max-height:90px;opacity:1;margin-top:6px}
+
+
+/* ── 项目五专用 ───────────────────────── */
+.k-sect{background:#3e2723;color:#ffcc80}.stamp.st-sect{background:#ffc400;color:#3e2723}
+.k-entry{background:#e8eaf6;color:#283593}.stamp.st-entry{background:#283593;color:#fff}
+.k-buckets{background:#e0f2f1;color:#00695c}.stamp.st-buckets{background:#00695c;color:#fff}
+.k-sortbin{background:#fff3e0;color:#e65100}.stamp.st-sortbin{background:#e65100;color:#fff}
+.k-calc{background:#ede7f6;color:#4527a0}.stamp.st-calc{background:#4527a0;color:#fff}
+.k-drill2{background:#e8f5e9;color:#1b5e20}.stamp.st-drill2{background:#1b5e20;color:#fff}
+.k-errfind{background:#ffebee;color:#b71c1c}.stamp.st-errfind{background:#c62828;color:#fff}
+.k-teacher{background:#efebe9;color:#5d4037}.stamp.st-teacher{background:#5d4037;color:#fff}
+.card.kind-sect{background:linear-gradient(160deg,#2d1b12,#3e2723 55%,#4e342e);border:0!important}
+.card.kind-sect .head h2{color:#ffd54f;font-size:clamp(30px,5.2vw,70px);text-align:center;padding:14px 0 4px}
+.card.kind-sect .body{text-align:center}
+.card.kind-sect .body p{color:#ffe0b2;font-size:clamp(16px,2.1vw,27px);font-weight:650}
+.card.kind-sect .badge{margin-left:22px}
+
+/* 分录卡 */
+.entrybox{padding:2px 18px 10px}
+.entrybox .biz{background:#e8eaf6;border-left:6px solid #283593;border-radius:0 10px 10px 0;
+  padding:7px 14px;font-size:clamp(15px,1.95vw,23px);font-weight:800;color:#1a237e;margin-bottom:8px}
+.jtab{width:100%;border-collapse:collapse;font-size:clamp(15px,2vw,25px);margin-bottom:6px}
+.jtab td{padding:5px 10px;border-bottom:1px dashed #c5cae9}
+.jtab td.dc{width:3.2em;font-weight:900;color:#283593}
+.jtab td.sub{width:3.2em}
+.jtab td.amt{text-align:right;font-weight:900;font-variant-numeric:tabular-nums;white-space:nowrap}
+.jtab tr.cr td.acc{padding-left:2.6em}
+.jtab tr{opacity:0;transform:translateX(-14px);transition:.38s}
+.jtab tr.on{opacity:1;transform:none}
+.entrybox .note{background:#fff8e1;border-left:5px solid #f9a825;border-radius:0 8px 8px 0;
+  padding:6px 12px;font-size:clamp(13px,1.65vw,19px);color:#8d6e63;font-weight:700;
+  max-height:0;overflow:hidden;opacity:0;transition:.35s;padding-top:0;padding-bottom:0}
+.entrybox .note.on{max-height:90px;opacity:1;padding-top:6px;padding-bottom:6px}
+.ebtn{display:flex;gap:9px;justify-content:center;margin-top:6px}
+.ebtn button{border:0;background:#283593;color:#fff;font:inherit;font-weight:900;
+  font-size:clamp(14px,1.8vw,20px);padding:9px 22px;border-radius:11px;cursor:pointer}
+.ebtn button.ghost{background:#efebe9;color:#3e2723}
+
+/* 三个桶 */
+.buckets{padding:2px 18px 10px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bk{border:4px solid #b2dfdb;background:#fff;border-radius:14px;padding:10px 12px;cursor:pointer;transition:.25s}
+.bk:hover{border-color:#00897b}
+.bk b{display:block;font-size:clamp(16px,2.1vw,26px);color:#00695c;text-align:center;margin-bottom:4px}
+.bk .d{font-size:clamp(12px,1.5vw,17px);color:#00695c;font-weight:700;
+  max-height:0;overflow:hidden;opacity:0;transition:.35s}
+.bk .t{font-size:clamp(12px,1.45vw,16px);color:#00838f;font-weight:800;margin-top:5px;
+  max-height:0;overflow:hidden;opacity:0;transition:.35s}
+.bk.on{border-color:#00897b;background:#e0f2f1}
+.bk.on .d,.bk.on .t{max-height:200px;opacity:1}
+
+/* 分桶练习 */
+.sortbin{padding:2px 18px 10px}
+.sbitems{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:9px;min-height:44px}
+.sbi{background:#e65100;color:#fff;padding:7px 14px;border-radius:999px;font-weight:800;
+  font-size:clamp(13px,1.65vw,19px);cursor:pointer;transition:.2s}
+.sbi.sel{background:#3e2723;transform:scale(1.05)}
+.sbi.done{opacity:.32;cursor:default}
+.sbbins{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.sbb{min-height:96px;border:3px dashed #ffb74d;border-radius:13px;padding:7px;background:#fffdf8;cursor:pointer}
+.sbb h4{font-size:clamp(14px,1.8vw,21px);text-align:center;color:#e65100;margin-bottom:5px}
+.sbb .in{display:flex;flex-wrap:wrap;gap:5px;justify-content:center}
+.sbb .in span{background:#ffe0b2;color:#5d4037;border-radius:999px;padding:4px 11px;
+  font-size:clamp(11px,1.35vw,15px);font-weight:800}
+.sbb .in span.no{background:#ffcdd2;color:#b71c1c;text-decoration:line-through}
+.sbmsg{text-align:center;font-weight:900;margin-top:8px;font-size:clamp(15px,1.95vw,23px);color:#e65100;min-height:1.3em}
+
+/* 算一算 */
+.calc{padding:2px 18px 10px}
+.calc table{width:100%;border-collapse:collapse;font-size:clamp(15px,2vw,25px)}
+.calc td{padding:7px 12px;border-bottom:2px solid #ede7f6}
+.calc td:last-child{text-align:right;font-weight:900;font-variant-numeric:tabular-nums;white-space:nowrap;color:#4527a0}
+.calc tr{opacity:0;transform:translateX(-14px);transition:.38s}
+.calc tr.on{opacity:1;transform:none}
+.calc tr:last-child{background:#4527a0}
+.calc tr:last-child td{color:#fff;font-weight:900;border:0}
+.cbtn{display:flex;gap:9px;justify-content:center;margin-top:8px}
+.cbtn button{border:0;background:#4527a0;color:#fff;font:inherit;font-weight:900;
+  font-size:clamp(14px,1.8vw,20px);padding:9px 22px;border-radius:11px;cursor:pointer}
+.cbtn button.ghost{background:#efebe9;color:#3e2723}
+
+/* 自己写一笔 */
+.drill2{padding:2px 18px 10px;text-align:center}
+.drill2 button{border:0;background:#2e7d32;color:#fff;font:inherit;font-weight:900;
+  font-size:clamp(16px,2.1vw,24px);padding:11px 30px;border-radius:13px;cursor:pointer}
+.drill2 .ans{margin-top:10px;max-height:0;overflow:hidden;opacity:0;transition:.4s}
+.drill2 .ans.on{max-height:420px;opacity:1}
+.drill2 .ans table{width:100%;border-collapse:collapse;font-size:clamp(15px,2vw,24px)}
+.drill2 .ans td{padding:5px 10px;border-bottom:1px dashed #a5d6a7}
+.drill2 .ans td.dc{width:3.2em;font-weight:900;color:#1b5e20}
+.drill2 .ans td.amt{text-align:right;font-weight:900;font-variant-numeric:tabular-nums}
+.drill2 .ans tr.cr td.acc{padding-left:2.6em}
+.drill2 .tip{margin-top:7px;background:#fff8e1;border-left:5px solid #f9a825;border-radius:0 8px 8px 0;
+  padding:7px 12px;font-size:clamp(13px,1.65vw,19px);color:#8d6e63;font-weight:700;text-align:left}
+
+/* 找茬 */
+.errfind{padding:2px 18px 6px;display:grid;gap:6px}
+.ef{border:3px solid #ffcdd2;background:#fff;border-radius:11px;padding:5px 11px}
+.ef .biz{font-size:clamp(14px,1.8vw,21px);font-weight:800;color:#b71c1c;margin-bottom:5px}
+.ef table{width:100%;border-collapse:collapse;font-size:clamp(13px,1.7vw,20px)}
+.ef td{padding:2px 9px;border-bottom:1px dashed #ffcdd2;cursor:pointer}
+.ef td.dc{width:3.2em;font-weight:900}
+.ef td.amt{text-align:right;font-weight:900;font-variant-numeric:tabular-nums}
+.ef tr.cr td.acc{padding-left:2.4em}
+.ef tr.hit{background:#ffebee}
+.ef tr.right{background:#e8f5e9}
+.ef .why{margin-top:5px;background:#fff8e1;border-left:5px solid #f9a825;border-radius:0 8px 8px 0;
+  padding:6px 11px;font-size:clamp(12px,1.55vw,18px);color:#8d6e63;font-weight:700;
+  max-height:0;overflow:hidden;opacity:0;transition:.35s;padding-top:0;padding-bottom:0}
+.ef .why.on{max-height:120px;opacity:1;padding-top:6px;padding-bottom:6px}
+.ef .miss{text-align:center;font-size:clamp(13px,1.7vw,20px);font-weight:800;color:#c62828;
+  padding:5px;cursor:pointer;border:2px dashed #ef9a9a;border-radius:9px;margin-top:4px}
+
+
+/* 自己填分录 */
+.k-fillentry{background:#e8f5e9;color:#1b5e20}.stamp.st-fillentry{background:#1b5e20;color:#fff}
+.fe2{padding:2px 18px 8px}
+.fe2 .biz{background:#e8f5e9;border-left:6px solid #2e7d32;border-radius:0 10px 10px 0;
+  padding:4px 13px;font-size:clamp(14px,1.85vw,21px);font-weight:800;color:#1b5e20;margin-bottom:7px}
+.fe2 table{width:100%;border-collapse:collapse;font-size:clamp(13px,1.7vw,20px)}
+.fe2 td{padding:2px 6px;border-bottom:1px dashed #c8e6c9}
+.fe2 td.dc{width:4.6em}
+.fe2 select,.fe2 input{width:100%;font:inherit;font-size:inherit;font-weight:800;
+  padding:4px 8px;border:2px solid #c8b8a6;border-radius:8px;background:#fffdf8;color:#3e2723}
+.fe2 td.amt{width:9em}
+.fe2 td.amt input{text-align:right}
+.fe2 select.ok,.fe2 input.ok{border-color:#2e7d32;background:#e8f5e9}
+.fe2 select.no,.fe2 input.no{border-color:#c62828;background:#ffebee}
+.fe2 .bal{text-align:center;font-weight:900;margin-top:6px;padding:5px;border-radius:9px;
+  font-size:clamp(14px,1.8vw,21px);background:#eceff1;color:#546e7a}
+.fe2 .bal.ok{background:#e8f5e9;color:#1b5e20}
+.fe2 .bal.no{background:#ffebee;color:#b71c1c}
+.fe2 .fbtn2{display:flex;gap:9px;justify-content:center;margin-top:7px}
+.fe2 .fbtn2 button{border:0;background:#2e7d32;color:#fff;font:inherit;font-weight:900;
+  font-size:clamp(14px,1.8vw,20px);padding:9px 24px;border-radius:11px;cursor:pointer}
+.fe2 .fbtn2 button.ghost{background:#efebe9;color:#3e2723}
+.fe2 .msg{text-align:center;font-weight:900;margin-top:6px;min-height:1.3em;
+  font-size:clamp(14px,1.8vw,21px);color:#1b5e20}
+.fe2 .tip{margin-top:6px;background:#fff8e1;border-left:5px solid #f9a825;border-radius:0 8px 8px 0;
+  padding:6px 11px;font-size:clamp(12px,1.55vw,18px);color:#8d6e63;font-weight:700;
+  max-height:0;overflow:hidden;opacity:0;transition:.35s;padding-top:0;padding-bottom:0}
+.fe2 .tip.on{max-height:120px;opacity:1;padding-top:6px;padding-bottom:6px}
+
+
+/* ── 项目六专用 ───────────────────────── */
+.k-dialog{background:#e3f2fd;color:#0d47a1}.stamp.st-dialog{background:#0d47a1;color:#fff}
+.k-reveal2{background:#fff3e0;color:#e65100}.stamp.st-reveal2{background:#e65100;color:#fff}
+.k-findlist{background:#fce4ec;color:#880e4f}.stamp.st-findlist{background:#880e4f;color:#fff}
+.k-tool{background:#e8f5e9;color:#1b5e20}.stamp.st-tool{background:#1b5e20;color:#fff}
+.k-compare{background:#ede7f6;color:#4527a0}.stamp.st-compare{background:#4527a0;color:#fff}
+.k-fillentry2{background:#e8f5e9;color:#1b5e20}.stamp.st-fillentry2{background:#1b5e20;color:#fff}
+.k-twopic{background:#e0f7fa;color:#006064}.stamp.st-twopic{background:#006064;color:#fff}
+
+/* 台词逐句 */
+.dialog{padding:2px 18px 8px;display:grid;gap:5px}
+.dl{display:flex;gap:10px;align-items:flex-start;padding:7px 12px;border-radius:11px;
+  background:#f5f5f5;opacity:0;transform:translateX(-14px);transition:.38s}
+.dl.on{opacity:1;transform:none}
+.dl b{flex:0 0 auto;min-width:4.2em;font-size:clamp(13px,1.7vw,20px);font-weight:900}
+.dl p{font-size:clamp(14px,1.85vw,22px);font-weight:700;line-height:1.4;margin:0}
+.dl.who0{background:#eceff1}.dl.who0 b{color:#546e7a}
+.dl.who1{background:#fff3e0}.dl.who1 b{color:#e65100}
+.dl.who2{background:#e3f2fd}.dl.who2 b{color:#0d47a1}
+.dl.who3{background:#f3e5f5}.dl.who3 b{color:#6a1b9a}
+.dl.star{box-shadow:inset 4px 0 0 #ffc400}
+.dbtn{display:flex;gap:9px;justify-content:center;margin-top:7px}
+.dbtn button{border:0;background:#0d47a1;color:#fff;font:inherit;font-weight:900;
+  font-size:clamp(14px,1.8vw,20px);padding:9px 24px;border-radius:11px;cursor:pointer}
+.dbtn button.ghost{background:#efebe9;color:#3e2723}
+
+/* 公布答案 */
+.reveal2{padding:4px 18px 10px;text-align:center}
+.reveal2 button{border:0;background:#e65100;color:#fff;font:inherit;font-weight:900;
+  font-size:clamp(16px,2.2vw,26px);padding:13px 34px;border-radius:14px;cursor:pointer}
+.reveal2 .rv{margin-top:12px;max-height:0;overflow:hidden;opacity:0;transition:.42s;
+  font-size:clamp(16px,2.15vw,27px);font-weight:800;color:#3e2723;line-height:1.5;
+  background:#fff8e1;border-radius:12px;padding:0 16px}
+.reveal2 .rv.on{max-height:340px;opacity:1;padding:14px 16px}
+
+/* 逐条列表 */
+.findlist{padding:2px 18px 8px;display:grid;gap:6px}
+.fl{border:3px solid #f8bbd0;background:#fff;border-radius:12px;padding:7px 14px;
+  opacity:0;transform:translateY(10px);transition:.38s}
+.fl.on{opacity:1;transform:none}
+.fl b{display:block;font-size:clamp(15px,2vw,24px);color:#880e4f}
+.fl span{font-size:clamp(13px,1.65vw,19px);color:#ad1457;font-weight:700}
+.flbtn{display:flex;gap:9px;justify-content:center;margin-top:7px}
+.flbtn button{border:0;background:#880e4f;color:#fff;font:inherit;font-weight:900;
+  font-size:clamp(14px,1.8vw,20px);padding:9px 24px;border-radius:11px;cursor:pointer}
+.flbtn button.ghost{background:#efebe9;color:#3e2723}
+
+/* 打开工具 */
+.tool{padding:6px 18px 12px;text-align:center}
+.tool a{display:inline-block;background:#1b5e20;color:#fff;text-decoration:none;
+  font-size:clamp(17px,2.3vw,28px);font-weight:900;padding:15px 40px;border-radius:14px;
+  box-shadow:0 6px 18px rgba(27,94,32,.3)}
+.tool a:hover{filter:brightness(1.1)}
+
+/* 两栏对比 */
+.compare{padding:2px 18px 10px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cmp{border:4px solid #b39ddb;background:#fff;border-radius:14px;padding:12px;text-align:center}
+.cmp h4{font-size:clamp(16px,2.1vw,26px);color:#4527a0;margin-bottom:6px}
+.cmp .big{font-size:clamp(22px,3.4vw,44px);font-weight:900;color:#2e7d32;margin-bottom:6px}
+.cmp p{font-size:clamp(13px,1.7vw,20px);color:#5d4037;font-weight:700;line-height:1.4;margin:0}
+
+/* 并排两图 */
+.twopic{padding:2px 18px 10px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.twopic img{width:100%;max-height:46vh;object-fit:contain;border-radius:10px;
+  border:1px solid #ead9c6;background:#faf6f0;cursor:zoom-in}
+
+
+/* ── 项目七：银行余额调节表 ─────────────── */
+.k-adjust{background:#e1f5fe;color:#01579b}.stamp.st-adjust{background:#0277bd;color:#fff}
+.adj{padding:2px 16px 8px}
+.adjhead{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:7px}
+.adjhead div{background:#e1f5fe;border-radius:10px;padding:6px 10px;text-align:center;
+  font-size:clamp(13px,1.7vw,20px);font-weight:900;color:#01579b}
+.adjhead div b{display:block;font-size:clamp(17px,2.3vw,28px);color:#0d47a1}
+.adjrow{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;
+  border-bottom:1px dashed #b3e5fc;padding:4px 0}
+.adjrow .t{font-size:clamp(12px,1.55vw,18px);font-weight:700;color:#37474f;line-height:1.35}
+.adjbtns{display:flex;gap:4px;flex-shrink:0}
+.adjbtns button{border:2px solid #b3e5fc;background:#fff;color:#0277bd;font:inherit;
+  font-weight:900;font-size:clamp(11px,1.35vw,15px);padding:4px 8px;border-radius:8px;cursor:pointer;white-space:nowrap}
+.adjbtns button:hover{border-color:#0288d1;background:#e1f5fe}
+.adjbtns button.picked{background:#0277bd;color:#fff;border-color:#0277bd}
+.adjbtns button.good{background:#2e7d32;color:#fff;border-color:#2e7d32}
+.adjbtns button.bad{background:#c62828;color:#fff;border-color:#c62828}
+.adjwhy{font-size:clamp(11px,1.4vw,16px);color:#8d6e63;font-weight:700;
+  background:#fff8e1;border-left:4px solid #f9a825;border-radius:0 7px 7px 0;
+  max-height:0;overflow:hidden;opacity:0;transition:.3s;padding:0 9px;margin-top:3px}
+.adjwhy.on{max-height:70px;opacity:1;padding:5px 9px}
+.adjsum{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.adjsum div{border-radius:10px;padding:7px;text-align:center;font-weight:900;
+  font-size:clamp(14px,1.85vw,22px);background:#eceff1;color:#546e7a}
+.adjsum div.ok{background:#e8f5e9;color:#1b5e20}
+.adjmsg{text-align:center;font-weight:900;margin-top:7px;min-height:1.3em;
+  font-size:clamp(14px,1.8vw,21px);color:#0277bd}
+
+</style>
+</head>
+<body>
+<div class="ambient" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+<div class="page-flash" id="flash"></div>
+<header class="top">
+  <button type="button" id="menuBtn">目录</button>
+  <button type="button" id="fontBig" class="on">大字体</button>
+  <button type="button" id="fontSmall">小字体</button>
+  <h1>项目七　对账和结账 <small>上课投影网页版 v1.0　2026-09-01</small></h1>
+  <div class="hint">← → 翻页　点图或点字可放大</div>
+</header>
+<div class="layout">
+  <aside class="side" id="side">
+    <input id="q" placeholder="搜 中转站 / 调节表 / 盘盈 / 结账 / 金句" />
+    <div id="nav"></div>
+  </aside>
+  <main class="main" id="main"><article class="card" id="card"></article></main>
+</div>
+<div class="dock">
+  <div class="now" id="nowbar"></div>
+  <div class="bar">
+    <button class="ghost" type="button" id="prev">上一页</button>
+    <div class="pg" id="pg"></div>
+    <button type="button" id="next">下一页</button>
+  </div>
+</div>
+<div class="lb" id="lb"></div>
+<script>
+const SLIDES = [{"n": 1, "kind": "cover", "title": "项目七　对账和结账", "body": ["前六个项目：把账记进本子里。", "这个项目：本子上记的，跟外面真实世界对得上吗？"], "now": "现在你：拿出记录册，翻到项目七。这堂课带着，下课带走，不用交。", "pics": [], "lab": false}, {"n": 2, "kind": "text", "title": "这是最后一个「记账」项目", "body": ["两周，10 个暂停点，其中 **3 次要写分录**。\n\n三个任务看着分散，其实就一条线：\n\n**发现差额 → 查清原因 → 改账 → 封箱。**"], "now": "现在你：听老师。先别写。", "pics": [], "lab": false}, {"n": 3, "kind": "sect", "title": "知识点一　账本上有 30 万，柜子里只有 28 万", "body": ["账实不符，从这里开始。"], "now": "现在你：听老师。", "pics": [], "lab": false}, {"n": 4, "kind": "setup", "title": "先听一句　再看图", "body": ["本子上记的，跟外面真实世界，对得上吗？", "看图时请盯住：\n账上的数，和柜子里真的钱。"], "now": "现在你：听老师把背景说完。先别写。下一张才是图。", "pics": [], "lab": false}, {"n": 5, "kind": "pic", "title": "账上的钱，和真的钱", "body": [], "now": "现在你：看图，听老师讲。先别动笔。", "pics": [{"src": "07-00_上课投影_网页素材/项目七-01_账上的钱和真的钱.jpg"}], "lab": false}, {"n": 6, "kind": "dialog", "title": "账本管不住东西烂掉", "body": [""], "now": "现在你：听这五句。", "pics": [], "lab": false, "dialog": [["旁白", "前面六个项目，你们学的是怎么把账记进本子里。"], ["旁白", "★ 从今天起换个方向：本子上记的，跟外面真实世界，对得上吗？"], ["小新", "记的时候都是照着单子抄的，怎么会对不上？"], ["李会计", "★ 会抄错、会漏抄、会被人偷、还会自己蒸发——酒精放久了会挥发，水果放久了会烂。"], ["小新", "……账本管不住东西烂掉啊。"], ["李会计", "★ 所以才要定期去数一遍。数完了发现不一样，就得查为什么、然后改账。"]]}, {"n": 7, "kind": "pause", "title": "项目七第1暂停点　请写 30 秒", "body": ["账上写着 30000，柜子里只有 28000。\n\n你觉得可能是什么原因？想到几条写几条。"], "now": "现在你：拿出记录册，写在「项目7第1暂停点」。写完不用交、不用举手。老师会抽三个人看册子。", "pics": [], "lab": false}, {"n": 8, "kind": "setup", "title": "先听一句　再看图", "body": ["对账不是一件事，是四件事，要过四道关。", "看图时请盯住：\n四道关分别在对什么。"], "now": "现在你：听老师把背景说完。先别写。下一张才是图。", "pics": [], "lab": false}, {"n": 9, "kind": "pic", "title": "对账，要过四道关", "body": [], "now": "现在你：看图，听老师讲。先别动笔。", "pics": [{"src": "07-00_上课投影_网页素材/项目七-02_对账四道关.jpg"}], "lab": false}, {"n": 10, "kind": "pause", "title": "项目七第2暂停点　请写 30 秒", "body": ["「银行存款日记账」跟「银行寄来的对账单」核对，\n\n这属于第几关？"], "now": "现在你：拿出记录册，写在「项目7第2暂停点」。写完不用交、不用举手。老师会抽三个人看册子。", "pics": [], "lab": false}, {"n": 11, "kind": "reveal2", "title": "答案：第三关，账实核对", "body": ["★ 这一题答错的人比答对的多，很正常。这一题就是要他们错一次。"], "now": "现在你：对一下你写的。错了没关系，这个分界线错一次才记得住。", "pics": [], "lab": false, "reveal2": {"btn": "公布答案", "text": "第三关，账实核对。几乎所有学生都会答成「第二关账账核对」——因为对账单看起来也是一本账。关键在这句：银行对账单不是你的账，是银行那边的真实记录，对你来说它就相当于「柜子里真实的钱」。"}}, {"n": 12, "kind": "sect", "title": "知识点二　什么时候数、数多少", "body": ["这一节不设暂停点，口头问一下就行。"], "now": "现在你：听老师。不用写。", "pics": [], "lab": false}, {"n": 13, "kind": "pic", "title": "猜猜看　这四种情况，数全部还是数一部分", "body": [], "now": "现在你：先猜够 30 秒。答出来的当场给分。", "pics": [{"src": "07-00_上课投影_网页素材/项目七-03_猜猜看清查种类.jpg"}], "lab": false}, {"n": 14, "kind": "reveal2", "title": "答案", "body": ["★ 先让他们猜够 30 秒再点开。"], "now": "现在你：对一下。", "pics": [], "lab": false, "reveal2": {"btn": "公布答案", "text": "① 全面清查（年度决算前）② 局部清查（只查这个保管员管的）③ 局部清查（只查现金，而且是每日定期）④ 局部清查（只查受灾那批）。顺带一句：①是定期清查，②④是不定期清查，③既是局部也是定期。"}}, {"n": 15, "kind": "dialog", "title": "每天都数一遍不得累死", "body": [""], "now": "现在你：听这两句。", "pics": [], "lab": false, "dialog": [["王老板", "我这店里几百样东西，每天都数一遍不得累死？"], ["李会计", "★ 不用。现金天天数，贵重的每月数，年底出报表前才全部数一遍。"]]}, {"n": 16, "kind": "pic", "title": "两种记法：随时记，还是最后倒着算", "body": [], "now": "现在你：看图，听老师讲。先别动笔。", "pics": [{"src": "07-00_上课投影_网页素材/项目七-04_两种盘存制.jpg"}], "lab": false}, {"n": 17, "kind": "sect", "title": "知识点三　数现金：一张白条不能顶钱", "body": ["盘点现金，出纳必须在场。"], "now": "现在你：听老师。", "pics": [], "lab": false}, {"n": 18, "kind": "setup", "title": "先听一句　再看图", "body": ["盘点现金的时候，抽屉里可能有四样东西。", "看图时请盯住：\n哪几样能算钱，哪几样不能。"], "now": "现在你：听老师把背景说完。先别写。下一张才是图。", "pics": [], "lab": false}, {"n": 19, "kind": "pic", "title": "盘点现金：抽屉里都有什么", "body": [], "now": "现在你：看图，听老师讲。先别动笔。", "pics": [{"src": "07-00_上课投影_网页素材/项目七-05_盘点现金.jpg"}], "lab": false}, {"n": 20, "kind": "dialog", "title": "为什么出纳必须在场", "body": [""], "now": "现在你：听这三句。第三句是关键。", "pics": [], "lab": false, "dialog": [["李会计", "★ 盘点现金的时候，出纳必须在场。"], ["小新", "为什么？怕他跑了？"], ["李会计", "★ 是为了保护他。少了钱，他在场能当场说清楚；他不在场，说不清就是他的责任。"]]}, {"n": 21, "kind": "pause", "title": "项目七第3暂停点　请写 35 秒", "body": ["图 5 的钱箱里有四样东西。\n\n哪几样能算进「现金实存数」？为什么？"], "now": "现在你：拿出记录册，写在「项目7第3暂停点」。写完不用交、不用举手。老师会抽三个人看册子。", "pics": [], "lab": false}, {"n": 22, "kind": "findlist", "title": "四样东西，一样一样看", "body": ["点「下一处」。"], "now": "现在你：对一下你写的。", "pics": [], "lab": false, "findlist": [["① 钞票　✓ 算", "这是现金"], ["② 硬币　✓ 算", "这也是现金"], ["③ 借条　✗ 不算", "这是「白条」——教材明确规定**不准以白条抵库**。钱已经被人拿走了，一张纸条不能当钱。这 500 元应该算现金短缺"], ["④ 未报销的发票　✗ 不算", "还没走报销手续、还没入账，现在它既不是现金，也还不是费用"]]}, {"n": 23, "kind": "reveal2", "title": "那这张借条该怎么记？", "body": [""], "now": "现在你：这一句引出下一节。", "pics": [], "lab": false, "reveal2": {"btn": "看老师怎么追这一句", "text": "先记「待处理财产损溢」，查清楚是谁借的、让他还回来。这正好引出下一节——中转站。"}}, {"n": 24, "kind": "sect", "title": "知识点四　★ 待处理财产损溢：一个只能路过的科目", "body": ["这是全项目的核心模型。", "跟项目五的「三个桶」地位一样。"], "now": "现在你：坐直了听。这一节最重要。", "pics": [], "lab": false}, {"n": 25, "kind": "setup", "title": "先听一句　再看图", "body": ["差额发现了，先扔进一个中转站，查清楚了再决定往哪送。", "看图时请盯住：\n中转站的进和出——期末必须是零。"], "now": "现在你：听老师把背景说完。先别写。下一张才是图。", "pics": [], "lab": false}, {"n": 26, "kind": "pic", "title": "★ 中转站：钱在这里只能待一会儿", "body": [], "now": "现在你：看图。这张图今天全程不关。", "pics": [{"src": "07-00_上课投影_网页素材/项目七-06_中转站模型.jpg"}], "lab": false}, {"n": 27, "kind": "dialog", "title": "为什么不能直接记损失", "body": [""], "now": "现在你：听这六句。", "pics": [], "lab": false, "dialog": [["小新", "差了两千就差了两千，直接记成损失不就完了？"], ["李会计", "★ 不行。你还不知道为什么少的。是被偷了、还是记错了、还是有人借走了？"], ["小新", "那先记哪里？"], ["李会计", "★ 先扔进「待处理财产损溢」，等查清楚了再决定往哪送。"], ["王老板", "那要是一直查不清呢？"], ["李会计", "★ 查不清也得走。批准之后转「管理费用」，认了这笔损失。但不能一直挂在中转站里。"]]}, {"n": 28, "kind": "pause", "title": "项目七第4暂停点　请写 35 秒", "body": ["为什么发现差额时不能直接记「管理费用」，\n\n非要先经过中转站？"], "now": "现在你：拿出记录册，写在「项目7第4暂停点」。写完不用交、不用举手。老师会抽三个人看册子。", "pics": [], "lab": false}, {"n": 29, "kind": "key", "title": "没查清之前，<br>这笔钱还没有名字。", "body": ["直接记管理费用，等于替这笔差额下了结论——是损失、认了。", "可它也许是被偷的、被借走的、记错的。中转站的作用就是：先挂着，等查清楚再决定去哪。"], "now": "现在你：这一句写在册子上。", "pics": [], "lab": false}, {"n": 30, "kind": "pic", "title": "连环画①　少了 100 块：从发现到查清", "body": [], "now": "现在你：看图，听老师讲。先别动笔。", "pics": [{"src": "07-00_上课投影_网页素材/项目七-07_连环画1现金短缺.jpg"}], "lab": false}, {"n": 31, "kind": "pause", "title": "项目七第5暂停点　请写 45 秒", "body": ["清查时发现现金**多出来** 200 元，一直查不出原因。\n\n写出发现时和批准后的两笔分录。"], "now": "现在你：拿出记录册，写在「项目7第5暂停点」。写完不用交、不用举手。老师会抽三个人看册子。", "pics": [], "lab": false}, {"n": 32, "kind": "fillentry2", "title": "自己填：发现时那一笔", "body": ["现金多出 200 元。注意方向——跟短缺时正好相反。"], "now": "现在你：先想清楚多出来的钱进中转站哪一方，再填。", "pics": [], "lab": false, "fillentry2": {"biz": "清查发现现金多出 200 元（发现时）", "subs": ["", "库存现金", "银行存款", "原材料", "库存商品", "待处理财产损溢", "其他应收款", "管理费用", "营业外收入", "营业外支出", "应交税费", "应付账款", "应收账款"], "rows": [["借", "库存现金", "200"], ["贷", "待处理财产损溢", "200"]], "tip": "多出来的钱：库存现金增加记借方，中转站记贷方。一半人会写反"}}, {"n": 33, "kind": "fillentry2", "title": "自己填：批准后那一笔", "body": ["查不出原因，批准转营业外收入。", "把中转站清空。"], "now": "现在你：从反方向转走，中转站要清零。", "pics": [], "lab": false, "fillentry2": {"biz": "查不出原因，批准后转营业外收入（批准后）", "subs": ["", "库存现金", "银行存款", "原材料", "库存商品", "待处理财产损溢", "其他应收款", "管理费用", "营业外收入", "营业外支出", "应交税费", "应付账款", "应收账款"], "rows": [["借", "待处理财产损溢", "200"], ["贷", "营业外收入", "200"]], "tip": "中转站从贷方进来，就从借方转走，正好清零"}}, {"n": 34, "kind": "key", "title": "少了钱，中转站在借方；<br>多了钱，中转站在贷方。", "body": ["查清之后，从**反方向**转走，中转站清零。", "这句口诀写在册子上，后面盘盈盘亏还要用。"], "now": "现在你：这一句写在册子上。", "pics": [], "lab": false}, {"n": 35, "kind": "sect", "title": "知识点五　银行说的和你说的不一样", "body": ["谁都没错，只是有些钱还在路上。"], "now": "现在你：听老师。", "pics": [], "lab": false}, {"n": 36, "kind": "dialog", "title": "银行是不是算错了", "body": [""], "now": "现在你：听这四句。", "pics": [], "lab": false, "dialog": [["王老板", "银行说我有 28 万 5，我账上只有 28 万，银行是不是算错了？"], ["李会计", "★ 谁都没错。有些钱你记了银行还没记，有些钱银行记了你还没记。"], ["小新", "那到底我有多少钱能花？"], ["李会计", "★ 这就是要编「银行存款余额调节表」的原因——算出你实际能动用多少。"]]}, {"n": 37, "kind": "setup", "title": "先听一句　再看图", "body": ["四种「还没走到」的钱。", "看图时请盯住：\n谁记了、谁还没记。"], "now": "现在你：听老师把背景说完。先别写。下一张才是图。", "pics": [], "lab": false}, {"n": 38, "kind": "pic", "title": "四种未达账项", "body": [], "now": "现在你：看图，听老师讲。先别动笔。", "pics": [{"src": "07-00_上课投影_网页素材/项目七-08_四种未达账项.jpg"}], "lab": false}, {"n": 39, "kind": "pic", "title": "银行存款余额调节表：两边都调，最后碰头", "body": [], "now": "现在你：看图，听老师讲。先别动笔。", "pics": [{"src": "07-00_上课投影_网页素材/项目七-09_余额调节表.jpg"}], "lab": false}, {"n": 40, "kind": "pause", "title": "项目七第6暂停点　请写 40 秒", "body": ["银行代企业付了电费 183 元，银行已经记了，企业还没接到通知。\n\n编调节表时，企业这边应该加还是减？金额多少？"], "now": "现在你：拿出记录册，写在「项目7第6暂停点」。写完不用交、不用举手。老师会抽三个人看册子。", "pics": [], "lab": false}, {"n": 41, "kind": "adjust", "title": "调节表：自己判断加还是减", "body": ["四笔未达账项。每笔点「企业＋/－」或「银行＋/－」，选完自动核对。"], "now": "现在你：一笔一笔判断。判错会告诉你为什么。", "pics": [], "lab": false, "adjust": {"base": ["企业账面余额", "银行对账单余额", "280000", "285000"], "items": [{"t": "企业已收、银行未收：托收货款 30000", "side": "bank", "sign": "+", "why": "银行还没记这笔进账，银行那边偏小，要加"}, {"t": "企业已付、银行未付：开出支票 25000 尚未兑付", "side": "bank", "sign": "-", "why": "支票还没兑，银行那边的钱还没少，要减"}, {"t": "银行已收、企业未收：代收利息 10183", "side": "firm", "sign": "+", "why": "银行已经把利息打进来了，企业账上还没记，要加"}, {"t": "银行已付、企业未付：代付电费 183", "side": "firm", "sign": "-", "why": "钱已经被扣走了，你还能花吗？不能了，所以要减"}], "target": "290000"}}, {"n": 42, "kind": "key", "title": "看到「银行已付」<br>不要本能地想加。", "body": ["用最笨的办法验一遍：钱已经被扣走了，你还能花吗？不能了，所以要减。"], "now": "现在你：这一句写在册子上。", "pics": [], "lab": false}, {"n": 43, "kind": "pause", "title": "项目七第7暂停点　请写 30 秒", "body": ["调节表算完了，两边都是 290000。\n\n这时候要不要编一张记账凭证，把账改成 290000？"], "now": "现在你：拿出记录册，写在「项目7第7暂停点」。写完不用交、不用举手。老师会抽三个人看册子。", "pics": [], "lab": false}, {"n": 44, "kind": "reveal2", "title": "答案：不要", "body": ["★ 答「不要」并说出「等凭证到了再记」的，当场 5 分。"], "now": "现在你：对一下你写的。", "pics": [], "lab": false, "reveal2": {"btn": "公布答案", "text": "不要。调节表只是拿来核对的，不改账。等以后银行的凭证真的送到了，再按正常流程记账。你刚算出一个漂亮的数字，本能地想把它记上去——被否定的这一下，「调节表不改账」这句话才记得住。"}}, {"n": 45, "kind": "sect", "title": "知识点六　数东西：盘盈和盘亏", "body": ["现金那套办法，原样搬到仓库。"], "now": "现在你：听老师。", "pics": [], "lab": false}, {"n": 46, "kind": "pic", "title": "连环画②　仓库里多出来 60 千克", "body": [], "now": "现在你：看图，听老师讲。先别动笔。", "pics": [{"src": "07-00_上课投影_网页素材/项目七-10_连环画2存货盘盈.jpg"}], "lab": false}, {"n": 47, "kind": "pic", "title": "连环画③　一批料毁损了，税还得转出来", "body": [], "now": "现在你：看图，听老师讲。先别动笔。", "pics": [{"src": "07-00_上课投影_网页素材/项目七-11_连环画3存货毁损.jpg"}], "lab": false}, {"n": 48, "kind": "pause", "title": "项目七第8暂停点　请写 50 秒", "body": ["盘亏甲产品 6 件，每件 35 元，共 210 元。\n\n查明是员工失职造成的，应由他赔。\n\n写出发现时和批准后的两笔分录。"], "now": "现在你：写在「项目7第8暂停点」。★重点题，写对抽到算 5 分。", "pics": [], "lab": false}, {"n": 49, "kind": "fillentry2", "title": "自己填：发现时那一笔", "body": ["盘亏甲产品 6 件 × 35 元 ＝ 210 元。", "甲产品是产成品——贷方科目别写成原材料。"], "now": "现在你：先算金额，再选科目。", "pics": [], "lab": false, "fillentry2": {"biz": "盘亏甲产品 6 件，每件 35 元（发现时）", "subs": ["", "库存现金", "银行存款", "原材料", "库存商品", "待处理财产损溢", "其他应收款", "管理费用", "营业外收入", "营业外支出", "应交税费", "应付账款", "应收账款"], "rows": [["借", "待处理财产损溢", "210"], ["贷", "库存商品", "210"]], "tip": "6 × 35 ＝ 210。甲产品是产成品，用库存商品，不是原材料"}}, {"n": 50, "kind": "fillentry2", "title": "自己填：批准后那一笔", "body": ["查明是员工失职，应由他赔。", "把中转站清空。"], "now": "现在你：该由谁赔，就记到谁头上。", "pics": [], "lab": false, "fillentry2": {"biz": "查明员工失职应赔偿（批准后）", "subs": ["", "库存现金", "银行存款", "原材料", "库存商品", "待处理财产损溢", "其他应收款", "管理费用", "营业外收入", "营业外支出", "应交税费", "应付账款", "应收账款"], "rows": [["借", "其他应收款", "210"], ["贷", "待处理财产损溢", "210"]], "tip": "要他赔＝企业多了一笔应收，记其他应收款。中转站从借方进、从贷方出，清零"}}, {"n": 51, "kind": "pause", "title": "项目七第9暂停点　请写 40 秒", "body": ["图 6 说中转站「期末不能有余额」。\n\n如果月底还挂着 3000 块没转走，说明什么？"], "now": "现在你：拿出记录册，写在「项目7第9暂停点」。写完不用交、不用举手。老师会抽三个人看册子。", "pics": [], "lab": false}, {"n": 52, "kind": "reveal2", "title": "答案", "body": [""], "now": "现在你：对一下，再听老师追一句。", "pics": [], "lab": false, "reveal2": {"btn": "公布答案 + 追问", "text": "说明这笔差额还没查清楚、或者还没批准。挂在中转站里的钱，都是「还没交代清楚」的钱。追问一句：一个企业年年都挂着一大笔待处理财产损溢，说明什么？——管理有问题，东西老是不见，或者根本不查。"}}, {"n": 53, "kind": "sect", "title": "知识点七　欠人的和人欠的，也要对一遍", "body": ["这一节不设暂停点。"], "now": "现在你：听老师。不用写。", "pics": [], "lab": false}, {"n": 54, "kind": "pic", "title": "往来对账单：寄出去，等对方盖章寄回来", "body": [], "now": "现在你：看图，听老师讲。先别动笔。", "pics": [{"src": "07-00_上课投影_网页素材/项目七-12_往来对账单.jpg"}], "lab": false}, {"n": 55, "kind": "key", "title": "对方不盖章寄回来，<br>这笔账就不算对完。", "body": ["空口说「我记得是这个数」，不算数。"], "now": "现在你：听老师。这一句知道就行。", "pics": [], "lab": false}, {"n": 56, "kind": "sect", "title": "知识点八　结账：这个月封箱", "body": ["算之前得先确保没漏账。"], "now": "现在你：听老师。", "pics": [], "lab": false}, {"n": 57, "kind": "dialog", "title": "25 号就想封账行不行", "body": [""], "now": "现在你：听这四句。", "pics": [], "lab": false, "dialog": [["小新", "结账不就是算一下这个月赚了多少吗？"], ["李会计", "★ 算之前得先确保没漏账。漏了一笔，后面全白算。"], ["王老板", "我 25 号就想封账，行不行？"], ["李会计", "★ 实际工作里确实会提前几天封账，后面的报销顺延到下个月。但账不能不记。"]]}, {"n": 58, "kind": "pic", "title": "结账四步，一步都不能少", "body": [], "now": "现在你：看图，听老师讲。先别动笔。", "pics": [{"src": "07-00_上课投影_网页素材/项目七-13_结账四步.jpg"}], "lab": false}, {"n": 59, "kind": "setup", "title": "先听一句　再看图", "body": ["三条红线，画在哪不一样。", "看图时请盯住：\n单红线和双红线的区别。"], "now": "现在你：听老师把背景说完。先别写。下一张才是图。", "pics": [], "lab": false}, {"n": 60, "kind": "pic", "title": "★ 三条红线，画在哪不一样", "body": [], "now": "现在你：看图，听老师讲。先别动笔。", "pics": [{"src": "07-00_上课投影_网页素材/项目七-14_三条红线.jpg"}], "lab": false}, {"n": 61, "kind": "pause", "title": "项目七第10暂停点　请写 35 秒", "body": ["12 月 31 日给「库存现金」总账结账。\n\n要写哪几个字？划几条线？"], "now": "现在你：拿出记录册，写在「项目7第10暂停点」。写完不用交、不用举手。老师会抽三个人看册子。", "pics": [], "lab": false}, {"n": 62, "kind": "findlist", "title": "结账要写的字和划的线", "body": ["点「下一处」。"], "now": "现在你：对一下你写的。答出「两条线」这个关键点就给满分。", "pics": [], "lab": false, "findlist": [["写「本月合计」", "下面划**单红线**"], ["写「本年累计」", "下面划**双红线**"], ["还有余额要结转下年", "最后一行写「结转下年」，下划**双红线**"], ["★ 常见错误", "有人写「本年合计」——教材原词是「本年累计」，顺口纠正，不扣分"]]}, {"n": 63, "kind": "sect", "title": "知识点九　回头看：从记账到封箱", "body": ["这一节不设暂停点。"], "now": "现在你：听老师。不用写。", "pics": [], "lab": false}, {"n": 64, "kind": "pic", "title": "七个项目走到这里，账是这么走完的", "body": [], "now": "现在你：看图。这是七个项目的总图。", "pics": [{"src": "07-00_上课投影_网页素材/项目七-15_全流程回顾.jpg"}], "lab": false}, {"n": 65, "kind": "dialog", "title": "一个月的账全部干净了", "body": [""], "now": "现在你：听这两句。", "pics": [], "lab": false, "dialog": [["旁白", "★ 到这里为止，一个月的账已经全部干净了：记完、对完、数完、封箱。"], ["旁白", "★ 剩下最后一件事——把这些账变成两张表，交给老板看。那是下一个项目的事。"]]}, {"n": 66, "kind": "recap", "title": "两周下来，就一条线", "body": ["点一下每一条，先自己想想再翻开。"], "now": "现在你：六条都看完，再看下一页。", "pics": [], "lab": false, "recap": [["四道关", "账证、账账、账实、账表。银行对账单属于**账实**核对"], ["白条不能抵库", "借条、未报销的发票，都不算现金实存数"], ["中转站", "没查清之前先挂「待处理财产损溢」，期末必须清零"], ["方向口诀", "少了钱中转站在借方，多了钱在贷方；查清后反方向转走"], ["调节表", "两边都调，最后碰头。**算出来的数不改账**"], ["结账", "本月合计划单红线，本年累计划双红线"]]}, {"n": 67, "kind": "key", "title": "账实相符，<br>不是靠记，是靠数。", "body": ["记账再仔细，也管不住东西被偷、被借、烂掉、挥发。", "所以每隔一段时间，必须放下本子，去外面数一遍。"], "now": "现在你：这一句写在册子上。", "pics": [], "lab": false}, {"n": 68, "kind": "teacher", "title": "【收尾】一句话复盘怎么做", "body": ["把**图6（中转站）**和**图15（全流程回顾）**并排投影。\n让学生对着这两张图，把整个项目从头讲一遍。讲得出来的，项目七就过关了。\n★ 不做纸笔小测——这个项目已经动了 10 次笔，其中 3 次是写分录。"], "now": "现在你：听老师安排。", "pics": [], "lab": false}, {"n": 69, "kind": "hw", "title": "作业：给你自己盘一次库", "body": ["下节课**抽人念**，念完全班一起判断中转站用对没有。"], "now": "现在你：按四格填，写在册子项目七最后一页。周日前发班级群。", "pics": [], "lab": false, "hw": {"fields": [["① 盘什么", "你的钱包、饭卡、宿舍的零食箱、手机里的余额——挑一样"], ["② 你以为有多少", "盘之前先写下你心里那个数（这就是「账存数」）"], ["③ 实际数了多少", "真的数一遍（这就是「实存数」）"], ["④ 差了多少，为什么", "差额多少？查得出原因吗？查不出的，就是你的「待处理财产损溢」"]], "check": "四格都填＝合格。④里写出原因或承认查不清＝5 分。②和③填一样的数还说「没差」＝退回重盘。", "why": "四格固定，老师扫一眼就知道有没有真去数，不用逐字读。"}}, {"n": 70, "kind": "spare", "title": "机动素材　时间够再用", "body": ["下面五个不占固定课时，也不设暂停点。"], "now": "现在你：听老师说用不用。没说就收拾书包。", "pics": [], "lab": false}, {"n": 71, "kind": "pic", "title": "找茬　这张现金盘点报告表", "body": [], "now": "现在你：先自己找。四处全找出来当场 5 分。", "pics": [{"src": "07-00_上课投影_网页素材/项目七-16_找茬盘点报告表.jpg"}], "lab": false}, {"n": 72, "kind": "findlist", "title": "四处毛病", "body": ["点「下一处」。第②处最有价值。"], "now": "现在你：对一下你找到几处。", "pics": [], "lab": false, "findlist": [["① 填错栏了", "实存 4800 小于账存 5000，是**盘亏 200**，不是盘盈"], ["② 把 500 元借条算成现金", "★ 白条不能抵库，这 500 应该也算短缺——知识点三又考了一遍"], ["③ 盘点人没有签章", "教材要求「盘点人员、出纳人员及有关负责人签字盖章」"], ["④ 日期没写年份", ""]]}, {"n": 73, "kind": "pic", "title": "猜猜看　这四样东西怎么数", "body": [], "now": "现在你：先猜够 30 秒。", "pics": [{"src": "07-00_上课投影_网页素材/项目七-17_猜猜看四种清查方法.jpg"}], "lab": false}, {"n": 74, "kind": "reveal2", "title": "答案", "body": [""], "now": "现在你：对一下。", "pics": [], "lab": false, "reveal2": {"btn": "公布答案", "text": "① 实地盘点法（称重也算清点）② 技术推算法（煤堆没法一块块数，量体积乘密度）③ 实地盘点法 ④ 技术推算法（量液面高度推算）。一句话分界：能一个一个点清楚的用实地盘点法；堆在一起、装在罐里的用技术推算法。"}}, {"n": 75, "kind": "pic", "title": "排序　财产清查的六个步骤", "body": [], "now": "现在你：抽到的人上来排。", "pics": [{"src": "07-00_上课投影_网页素材/项目七-18_排序清查步骤.jpg"}], "lab": false}, {"n": 76, "kind": "reveal2", "title": "答案", "body": ["②和③谁在前，学生最容易搞错。"], "now": "现在你：对一下顺序。", "pics": [], "lab": false, "reveal2": {"btn": "公布答案", "text": "① 成立清查小组定计划 ② 把账登齐、结出余额 ③ 到现场盘点填盘点表 ④ 账存数和实存数对比查原因 ⑤ 报领导批准 ⑥ 按批准意见做账，中转站清空。②在③前——账都没记齐，拿什么跟实物比？"}}, {"n": 77, "kind": "pic", "title": "连线　这种情况进哪个科目", "body": [], "now": "现在你：抽到的人上来连。★ 有一个科目一次都用不上。", "pics": [{"src": "07-00_上课投影_网页素材/项目七-19_连线清查配科目.jpg"}], "lab": false}, {"n": 78, "kind": "reveal2", "title": "答案（★ 这题有个陷阱）", "body": [""], "now": "现在你：看看你有没有踩坑。", "pics": [], "lab": false, "reveal2": {"btn": "公布答案", "text": "1 其他应收款（出纳赔）2 营业外收入 3 管理费用（冲减）4 其他应收款（应收保险赔偿）5 营业外支出 6 管理费用（现金短缺）。陷阱：「待处理财产损溢」一次都用不上——因为问的是「批准后转到哪」，中转站是转出的起点，不是终点。能识破的说明真懂了图6。"}}, {"n": 79, "kind": "pic", "title": "对比　现金多了和现金少了，方向正好反过来", "body": [], "now": "现在你：并排看两边的方向。", "pics": [{"src": "07-00_上课投影_网页素材/项目七-20_对比盘盈盘亏方向.jpg"}], "lab": false}, {"n": 80, "kind": "end", "title": "下课。", "body": ["记住一句就够了：账实相符，不是靠记，是靠数。"], "now": "现在你：合上册子带走。作业周日前发群里。", "pics": [], "lab": false}];
+const KIND = {cover:"封面",pause:"暂停点",pic:"看图",setup:"先听一句",text:"讲义",spare:"备用",sect:"这一节",adjust:"调节表",dialog:"台词",reveal2:"公布",findlist:"逐条看",tool:"网页工具",compare:"对比",fillentry2:"自己填",twopic:"并排看",calc:"算一算",warn:"注意",recap:"回看",key:"金句",teacher:"给老师",hw:"作业",end:"下课"};
+const DRAW = "../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.29_20260830.html";
+function drawHref(use){
+  const here = location.href.split("#")[0] + "#" + SLIDES[i].n;
+  return DRAW + "?use=" + encodeURIComponent(use) + "&back=" + encodeURIComponent(here);
+}
+function drawBtn(s){
+  if(s.kind==="pause") return {href:drawHref("book"), label:"抽三个人看册子 📒"};
+  if(s.kind==="fillentry2") return {href:drawHref("book"), label:"抽一个人上来填 📒"};
+  return null;
+}
+const KEYS = ["待处理财产损溢","中转站","账实核对","账账核对","未达账项","余额调节表","白条","盘盈","盘亏","本月合计","本年累计","实存数","账存数","其他应收款","营业外收入"];
+let i=0;
+const $=id=>document.getElementById(id);
+function esc(s){return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));}
+function mark(s){
+  let out=esc(s);
+  out=out.replace(/&lt;br\s*\/?&gt;/gi,"<br>");
+  KEYS.forEach(k=>{ out=out.split(esc(k)).join('<mark class="kw">'+esc(k)+'</mark>'); });
+  return out;
+}
+function bodyHtml(blocks){
+  let n=0;
+  return (blocks||[]).map(b=>{
+    const lines=b.split("\n").filter(x=>x.length);
+    const cls=lines.some(x=>x.startsWith("为什么：")||x.startsWith("做什么："))?"why":"";
+    return `<div class="${cls}">`+lines.map(x=>{
+      n++; return `<p style="--d:${(0.08+n*0.07).toFixed(2)}s">${mark(x)}</p>`;
+    }).join("")+`</div>`;
+  }).join("");
+}
+function setFont(big){
+  document.documentElement.style.setProperty("--title", big?"3rem":"2.2rem");
+  document.documentElement.style.setProperty("--body", big?"2rem":"1.45rem");
+  document.documentElement.style.setProperty("--now", big?"1.55rem":"1.25rem");
+  $("fontBig").classList.toggle("on", big);
+  $("fontSmall").classList.toggle("on", !big);
+}
+function renderNav(){
+  const q=$("q").value.trim();
+  $("nav").innerHTML=SLIDES.map((s,idx)=>{
+    const t=s.title||("第"+s.n+"页");
+    if(q && !t.includes(q) && !String(s.n).includes(q)) return "";
+    const short=t.length>16?t.slice(0,15)+"…":t;
+    return `<button class="nav-item ${idx===i?"on":""}" data-i="${idx}"><span class="k">${s.n}</span>${esc(short)}</button>`;
+  }).join("");
+}
+function render(dir){
+  const s=SLIDES[i];
+  const nPic=(s.pics||[]).length;
+  const imgs=(s.pics||[]).map(p=>`<img src="${esc(p.src)}" alt="">`).join("");
+  const d=drawBtn(s);
+  const go=d?`<a class="go-draw" href="${esc(d.href)}">${esc(d.label)}</a>`:"";
+  const card=$("card");
+  card.className="card kind-"+s.kind+" "+(dir==="prev"?"enter-prev":"enter-next");
+  const STAMP={cover:"开讲",setup:"听",pic:"看",pause:"写！",text:"记",spare:"备用",sect:"这一节",adjust:"两边调",dialog:"念",reveal2:"先猜",findlist:"逐条",tool:"上机",compare:"比一比",fillentry2:"动手",twopic:"并排",calc:"跟着算",warn:"当心",recap:"回看",key:"记住",teacher:"给老师",hw:"要交",end:"下课"};
+  const COMIC={cover:["假钞换零钱，晚上被找上门","四个人买东西，有人一分没出","充 100 送 50，到底几折","干了三天，走还是不走"]};
+  const comic=(s.kind==="cover")?`<div class="comic">${(COMIC.cover).map((p,k)=>`<div class="panel" style="--d:${(0.15+k*0.12).toFixed(2)}s"><i>${k+1}</i><p>${esc(p)}</p></div>`).join("")}</div>`:"";
+  let widget="";
+  if(s.adjust){ const aj=s.adjust;
+    widget=`<div class="adj">
+      <div class="adjhead">
+        <div>${esc(aj.base[0])}<b id="ajF">${esc(aj.base[2])}</b></div>
+        <div>${esc(aj.base[1])}<b id="ajB">${esc(aj.base[3])}</b></div>
+      </div>
+      ${aj.items.map((it,k)=>`<div class="adjrow" data-a="${k}">
+        <div class="t">${esc(it.t)}</div>
+        <div class="adjbtns">
+          <button type="button" data-s="firm" data-g="+">企业＋</button>
+          <button type="button" data-s="firm" data-g="-">企业－</button>
+          <button type="button" data-s="bank" data-g="+">银行＋</button>
+          <button type="button" data-s="bank" data-g="-">银行－</button>
+        </div></div><div class="adjwhy" data-w="${k}">${esc(it.why)}</div>`).join("")}
+      <div class="adjsum"><div id="ajFS">企业调节后 —</div><div id="ajBS">银行调节后 —</div></div>
+      <div class="adjmsg" id="ajMsg">点每一笔，判断该调哪一边、加还是减</div></div>`; }
+  else   if(s.dialog){ const names=[...new Set(s.dialog.map(d=>d[0]))];
+    widget=`<div class="dialog">`+s.dialog.map((d,k)=>{
+      const wi=names.indexOf(d[0])%4, st=d[1].indexOf("★")===0?" star":"";
+      return `<div class="dl who${wi}${st}" data-d="${k}"><b>${esc(d[0])}</b><p>${mark(d[1])}</p></div>`;
+    }).join("")+`</div>
+    <div class="dbtn"><button type="button" id="dNext">下一句</button>
+      <button type="button" class="ghost" id="dAll">全部展开</button></div>`; }
+  else if(s.reveal2){ widget=`<div class="reveal2">
+      <button type="button" id="r2Btn">${esc(s.reveal2.btn)}</button>
+      <div class="rv" id="r2Box">${mark(s.reveal2.text)}</div></div>`; }
+  else if(s.findlist){ widget=`<div class="findlist">`+s.findlist.map((f,k)=>
+      `<div class="fl" data-f="${k}"><b>${mark(f[0])}</b><span>${mark(f[1])}</span></div>`).join("")+
+      `</div><div class="flbtn"><button type="button" id="flNext">下一处</button>
+       <button type="button" class="ghost" id="flAll">全部展开</button></div>`; }
+  else if(s.tool){ widget=`<div class="tool"><a href="${esc(s.tool.href)}" target="_blank">${esc(s.tool.label)}</a></div>`; }
+  else if(s.compare){ widget=`<div class="compare">`+s.compare.map(c=>
+      `<div class="cmp"><h4>${esc(c[0])}</h4><div class="big">${esc(c[1])}</div><p>${esc(c[2])}</p></div>`).join("")+`</div>`; }
+  else if(s.twopic){ widget=`<div class="twopic">`+s.twopic.map(p=>`<img src="${esc(p)}" alt="">`).join("")+`</div>`; }
+  else if(s.fillentry2){ const fe=s.fillentry2;
+    widget=`<div class="fe2">
+      <div class="biz">${esc(fe.biz)}</div>
+      <table>${fe.rows.map((r,k)=>`<tr>
+        <td class="dc"><select id="d${k}"><option></option><option>借</option><option>贷</option></select></td>
+        <td><select id="s${k}">${fe.subs.map(o=>`<option>${esc(o)}</option>`).join("")}</select></td>
+        <td class="amt"><input id="m${k}" inputmode="numeric" placeholder="金额"></td></tr>`).join("")}</table>
+      <div class="bal" id="feBal">借贷还没填</div>
+      <div class="fbtn2"><button type="button" id="feChk">检查</button>
+        <button type="button" class="ghost" id="feClr">清空</button></div>
+      <div class="msg" id="feMsg"></div>
+      <div class="tip" id="feTip">${esc(fe.tip||"")}</div></div>`; }
+  else   if(s.fillentry){ const fe=s.fillentry;
+    const opt=v=>fe.subs.map(o=>`<option${o===v?"":""}>${esc(o)}</option>`).join("");
+    widget=`<div class="fe2">
+      <div class="biz">${esc(fe.biz)}</div>
+      <table>${fe.rows.map((r,k)=>`<tr>
+        <td class="dc"><select id="d${k}"><option></option><option>借</option><option>贷</option></select></td>
+        <td><select id="s${k}">${opt("")}</select></td>
+        <td class="amt"><input id="m${k}" inputmode="numeric" placeholder="金额"></td></tr>`).join("")}</table>
+      <div class="bal" id="feBal">借贷还没填</div>
+      <div class="fbtn2"><button type="button" id="feChk">检查</button>
+        <button type="button" class="ghost" id="feClr">清空</button></div>
+      <div class="msg" id="feMsg"></div>
+      <div class="tip" id="feTip">${esc(fe.tip||"")}</div></div>`; }
+  else   if(s.entries){ widget=s.entries.map((e,ei)=>`
+      <div class="entrybox" data-e="${ei}">
+        <div class="biz">${esc(e.biz)}</div>
+        <table class="jtab">${e.rows.map((r,ri)=>
+          `<tr data-r="${ri}" class="${r[0]==='贷'?'cr':'dr'}"><td class="dc">${esc(r[0])}</td>
+           <td class="acc">${esc(r[1])}</td><td class="amt">${esc(r[2])}</td></tr>`).join("")}</table>
+        <div class="note">${esc(e.note||"")}</div>
+      </div>`).join("")+
+      `<div class="ebtn"><button type="button" id="eNext">看下一笔</button>
+       <button type="button" class="ghost" id="eAll">全部展开</button></div>`; }
+  else if(s.buckets){ widget=`<div class="buckets">`+s.buckets.map((b,k)=>
+      `<div class="bk" data-b="${k}"><b>${esc(b[0])}</b><div class="d">${esc(b[1])}</div>
+       <div class="t">${esc(b[2])}</div></div>`).join("")+`</div>`; }
+  else if(s.sortbin){ const sb=s.sortbin;
+    widget=`<div class="sortbin">
+      <div class="sbitems">${sb.items.map((it,k)=>`<span class="sbi" data-i="${k}">${esc(it[0])}</span>`).join("")}</div>
+      <div class="sbbins">${sb.bins.map((b,k)=>`<div class="sbb" data-b="${k}"><h4>${esc(b)}</h4><div class="in"></div></div>`).join("")}</div>
+      <div class="sbmsg" id="sbMsg">先点一笔支出，再点一个桶</div></div>`; }
+  else if(s.calc){ widget=`<div class="calc"><table>`+s.calc.map((r,k)=>
+      `<tr data-r="${k}"><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join("")+
+      `</table><div class="cbtn"><button type="button" id="cNext">下一步</button>
+       <button type="button" class="ghost" id="cAll">全部展开</button></div></div>`; }
+  else if(s.answer){ const a=s.answer;
+    widget=`<div class="drill2"><button type="button" id="aShow">看答案</button>
+      <div class="ans" id="aAns"><table>${a.rows.map(r=>
+        `<tr class="${r[0]==='贷'?'cr':'dr'}"><td class="dc">${esc(r[0])}</td>
+         <td class="acc">${esc(r[1])}</td><td class="amt">${esc(r[2])}</td></tr>`).join("")}</table>
+      <div class="tip">${esc(a.tip||"")}</div></div></div>`; }
+  else if(s.errfind){ widget=`<div class="errfind">`+s.errfind.map((e,ei)=>`
+      <div class="ef" data-f="${ei}">
+        <div class="biz">${esc(e.biz)}</div>
+        <table>${e.rows.map((r,ri)=>
+          `<tr data-r="${ri}" class="${r[0]==='贷'?'cr':'dr'}"><td class="dc">${esc(r[0])}</td>
+           <td class="acc">${esc(r[1])}</td><td class="amt">${esc(r[2])}</td></tr>`).join("")}</table>
+        ${e.bad<0?`<div class="miss">这三行都没错——点这里</div>`:""}
+        <div class="why">${esc(e.why)}</div>
+      </div>`).join("")+`</div>`; }
+
+  if(s.guess){ const g=s.guess;
+    widget=`<div class="guess"><img src="${esc(g.pic)}" alt="">
+      <div class="gs">`+g.items.map((it,k)=>
+        `<div class="g" data-g="${k}"><b>${esc(it[0])}</b><span>${esc(it[1])}</span></div>`).join("")+`</div>
+      <div style="text-align:center"><button type="button" class="gbtn" id="gAll">公布全部</button></div>
+      <div class="gn">${esc(g.note)}</div></div>`; }
+  else if(s.seven){
+    widget=`<div class="seven">`+s.seven.map((x,k)=>
+      `<div class="s ${x[2]==="half"?"half":""}" data-s="${k}"><b>${esc(x[0])}</b><span>${esc(x[1])}</span></div>`).join("")+
+      `<div class="seven-sum" id="sevenSum">七项里，它只有「多少钱」沾一点边——所以这张纸条入不了账。</div></div>`; }
+  else if(s.fillinv){
+    widget=`<div class="fillbox">
+      <div class="biz">3月10日，向城南食材行买 200 袋珍珠，单价 50 元，税率 13%</div>
+      <table class="ftab">
+        <tr><th>① 开票日期</th><td><input id="i1" placeholder="如 3月10日"><div class="hintline">要写清年月日</div></td></tr>
+        <tr><th>③ 购货单位</th><td><input id="i3" placeholder="谁买的"><div class="hintline">买方是我们自己：奶茶店 / 振华（写店名即可）</div></td></tr>
+        <tr><th>④ 销货单位</th><td><input id="i4" placeholder="谁卖的"><div class="hintline">卖方是城南食材行</div></td></tr>
+        <tr><th>⑤ 品名 / 数量</th><td><input id="i5" placeholder="如 珍珠 200"><div class="hintline">要写品名和数量：珍珠 200（袋）</div></td></tr>
+        <tr><th>⑥ 金额（不含税）</th><td><input id="i6" inputmode="numeric" placeholder="200 × 50 ＝ ?"><div class="hintline">200 × 50 ＝ 10000</div></td></tr>
+        <tr><th>⑥ 税额（13%）</th><td><input id="i7" inputmode="numeric" placeholder="10000 × 13% ＝ ?"><div class="hintline">10000 × 0.13 ＝ 1300</div></td></tr>
+        <tr><th>⑥ 价税合计</th><td><input id="i8" inputmode="numeric" placeholder="金额 ＋ 税额"><div class="hintline">10000 ＋ 1300 ＝ 11300</div></td></tr>
+        <tr><th>⑥ 合计大写</th><td><input id="i9" placeholder="人民币…元整"><div class="hintline">人民币壹万壹仟叁佰元整</div></td></tr>
+      </table>
+      <div class="fbtn"><button type="button" id="fChk">检查</button>
+        <button type="button" class="ghost" id="fClr">清空</button></div>
+      <div class="fmsg" id="fMsg"></div></div>`; }
+  else if(s.fillvou||s.fillvou2){
+    const two=!!s.fillvou2;
+    const biz=two?"3月15日，用银行存款支付本月电费 800 元，附电费单 1 张"
+                 :"3月12日，赊购珍珠原料 3000 元（钱还没付），附发票 1 张";
+    const opts=["","库存现金","银行存款","原材料","应付账款","管理费用","实收资本","短期借款"];
+    const sel=id=>`<select id="${id}">`+opts.map(o=>`<option>${o}</option>`).join("")+`</select>`;
+    widget=`<div class="fillbox">
+      <div class="biz">${esc(biz)}</div>
+      <table class="ftab">
+        <tr><th>日期</th><td><input id="v1" placeholder="如 3月15日"><div class="hintline">写业务发生那天</div></td></tr>
+        <tr><th>摘要</th><td><input id="v2" placeholder="一句话说清这笔业务"><div class="hintline">${two?"如「支付本月电费」":"如「赊购珍珠原料」"}</div></td></tr>
+        <tr><th>借方科目</th><td>${sel("v3")}<div class="hintline">${two?"钱花在电费上 → 管理费用":"东西进来了 → 原材料"}</div></td></tr>
+        <tr><th>借方金额</th><td><input id="v4" inputmode="numeric"><div class="hintline">${two?"800":"3000"}</div></td></tr>
+        <tr><th>贷方科目</th><td>${sel("v5")}<div class="hintline">${two?"钱从银行走的 → 银行存款":"钱还没付 → 应付账款"}</div></td></tr>
+        <tr><th>贷方金额</th><td><input id="v6" inputmode="numeric"><div class="hintline">${two?"800":"3000"}</div></td></tr>
+        <tr><th>附件张数</th><td><input id="v7" inputmode="numeric" placeholder="几张票钉在后面"><div class="hintline">1</div></td></tr>
+      </table>
+      <div class="balance" id="vBal">借贷还没填</div>
+      <div class="fbtn"><button type="button" id="vChk">检查</button>
+        <button type="button" class="ghost" id="vClr">清空</button></div>
+      <div class="fmsg" id="vMsg"></div></div>`; }
+  else if(s.bigmoney){
+    widget=`<div class="bigm">`+s.bigmoney.map((b,k)=>
+      `<div class="b" data-b="${k}"><div class="sm">¥ ${esc(b[0])}</div>
+       <button type="button">看答案</button><div class="bg">${esc(b[1])}</div></div>`).join("")+`</div>`; }
+  else if(s.reveal){
+    widget=`<div class="reveal">`+s.reveal.map((r,k)=>
+      `<div class="r" data-r="${k}"><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div>`).join("")+`</div>`; }
+  else if(s.match){ const m=s.match;
+    widget=`<div class="match">`+m.left.map((l,k)=>
+      `<div class="mrow"><div class="mleft">${esc(l[0])}</div>
+       <div class="mpick" data-k="${k}" data-ans="${esc(l[1])}">`+
+       m.right.map(r=>`<button type="button" data-v="${esc(r)}">${esc(r)}</button>`).join("")+
+       `</div></div>`).join("")+`</div>`; }
+
+  if(s.hand){ const h=s.hand;
+    widget=`<div class="handbox">
+      <div class="expect">${esc(h.expect||"")}</div>
+      <div class="counter">
+        <button type="button" class="minus" id="hMinus">−</button>
+        <div><div class="num" id="hNum">0</div><div class="unit">人举手</div></div>
+        <button type="button" id="hPlus">＋</button>
+      </div>
+      <div class="probe" id="probe"><b>${esc(h.probe||"")}</b>
+        <button type="button" class="pbtn" id="pBtn">他答完了，看提示</button>
+        <div class="pn">${esc(h.probeNote||"")}</div></div>
+    </div>`; }
+  else if(s.tally){
+    widget=`<div class="tally" id="tally"></div><div class="tally-note" id="tnote"></div>`; }
+  else if(s.rules){ widget=`<div class="rules">`+s.rules.map((r,k)=>
+      `<div class="r"><i>${k+1}</i><div><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div></div>`).join("")+`</div>`; }
+  else if(s.story){ const st=s.story;
+    widget=`<div class="story">
+      <div class="stage">`+st.actors.map((a,k)=>`<div class="actor" data-a="${k}">${esc(a)}</div>`).join("")+`</div>
+      <div class="flowline" id="fline">点「下一步」开始</div>
+      <div class="slist">`+st.steps.map((x,k)=>
+        `<div class="s" data-s="${k}"><i>${k+1}</i><div>${esc(x.t)}<br><small style="opacity:.75">${esc(x.note||"")}</small></div></div>`).join("")+`</div>
+      <div class="sbtn"><button type="button" id="sNext">下一步</button>
+        <button type="button" class="ghost" id="sReset">重来</button></div></div>`; }
+  else if(s.twopath){ widget=`<div class="twopath">`+s.twopath.map(p=>
+      `<div class="pathc"><h4>${esc(p.name)}</h4><div class="g">${esc(p.get)}</div>
+       <div class="c">${esc(p.cost)}</div><div class="n">${esc(p.note)}</div></div>`).join("")+`</div>`; }
+  else if(s.hw){ const h=s.hw;
+    widget=`<div class="hw">`+h.fields.map(f=>
+      `<div class="f"><b>${esc(f[0])}</b><span>${esc(f[1])}</span></div>`).join("")+
+      `<div class="chk">怎么算合格：${esc(h.check)}</div>
+       <div class="why">${esc(h.why)}</div></div>`; }
+
+  if(s.hands){ widget=`<div class="hands">`+s.hands.map((h,k)=>
+      `<div class="hand-item" data-h="${k}"><div class="hq"><i class="num">${k+1}</i>${esc(h.q)}</div><div class="hh">${esc(h.hint)}</div></div>`
+    ).join("")+`</div>`; }
+  else if(s.collect){ widget=`<div class="collect">
+      <div class="cin"><input id="cIn" placeholder="学生报的答案，回车加一个"><button type="button" id="cAdd">加上</button></div>
+      <div class="chips2" id="cWrap"></div>
+      <div class="tip">一个都不评价。全部写上来，让他们自己吵。</div></div>`; }
+  else if(s.wall){ widget=`<div class="wall">`+s.wall.map(w=>`<span>${esc(w)}</span>`).join("")+`</div>`; }
+  else if(s.ledger){ widget=`<div class="ledger"><table>`+
+      s.ledger.map((r,k)=>`<tr data-r="${k}"><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join("")+
+      `<tr class="sum" data-r="${s.ledger.length}"><td>合计</td><td>${esc(s.total||"")}</td></tr>`+
+      `</table><div class="lbtn"><button type="button" id="lNext">下一笔</button><button type="button" id="lAll">全部展开</button></div></div>`; }
+  else if(s.drill){ widget=`<div class="drill"><button type="button" id="dShow">看答案</button>
+      <div class="ans" id="dAns">${esc(s.drill.ans)}<small>${esc(s.drill.tip)}</small></div></div>`; }
+  else if(s.vote){ widget=`<div class="vote">`+s.vote.map((v,k)=>
+      `<button type="button" data-v="${k}">${esc(v)}</button>`).join("")+`</div>
+      <div class="vote-after" id="vAfter">${esc(s.after||"")}</div>`; }
+  else if(s.recap){ widget=`<div class="recap">`+s.recap.map((r,k)=>
+      `<div class="r" data-r="${k}"><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div>`).join("")+`</div>`; }
+
+  card.innerHTML=`
+    <div class="stamp st-${esc(s.kind)}">${STAMP[s.kind]||""}</div>
+    <div class="head"><span class="badge k-${esc(s.kind)}">${KIND[s.kind]||s.kind}</span><h2>${mark(s.title||"")}</h2></div>
+    <div class="body">${bodyHtml(s.body||[])}</div>
+    ${comic}${widget}
+    ${nPic?`<div class="pics one${s.kind==="pic"?" shine":""}">${imgs}</div><div class="pic-hint">点图片可放大到全屏</div>`:""}
+    ${go}`;
+  const nb=$("nowbar");
+  nb.style.animation="none"; void nb.offsetWidth; nb.style.animation="";
+  nb.innerHTML=s.now?mark(s.now):"";
+  nb.style.display=s.now?"block":"none";
+  $("pg").textContent=(i+1)+" / "+SLIDES.length;
+  const prog=$("prog"); if(prog) prog.style.width=((i+1)/SLIDES.length*100).toFixed(2)+"%";
+  const fl=$("flash"); if(fl && dir){ fl.classList.remove("go"); void fl.offsetWidth; fl.classList.add("go"); }
+  // ── 新卡片交互 ──
+  card.querySelectorAll(".guess .g").forEach(el=>el.onclick=()=>el.classList.toggle("on"));
+  const gAll=$("gAll");
+  if(gAll) gAll.onclick=()=>card.querySelectorAll(".guess .g").forEach(el=>el.classList.add("on"));
+  const sevenEls=[...card.querySelectorAll(".seven .s")];
+  sevenEls.forEach(el=>el.onclick=()=>{ el.classList.toggle("on");
+    const sum=$("sevenSum");
+    if(sum) sum.classList.toggle("on", sevenEls.every(x=>x.classList.contains("on"))); });
+  card.querySelectorAll(".reveal .r,.recap .r").forEach(el=>el.onclick=()=>el.classList.toggle("on"));
+  card.querySelectorAll(".bigm .b button").forEach(b=>b.onclick=()=>{
+    b.parentElement.classList.add("on"); b.style.display="none"; });
+  // 连线
+  card.querySelectorAll(".mpick").forEach(g=>{
+    const ans=g.dataset.ans;
+    g.querySelectorAll("button").forEach(b=>b.onclick=()=>{
+      g.querySelectorAll("button").forEach(x=>x.classList.remove("ok","no"));
+      b.classList.add(b.dataset.v===ans?"ok":"no");
+    });
+  });
+  // 填发票
+  const fChk=$("fChk");
+  if(fChk){
+    const rules=[["i1",v=>/3\s*月\s*10/.test(v)||/03-?10/.test(v)],
+                 ["i3",v=>v.trim().length>=2],
+                 ["i4",v=>v.includes("城南")],
+                 ["i5",v=>v.includes("珍珠")&&/200/.test(v)],
+                 ["i6",v=>+String(v).replace(/[,，\s元]/g,"")===10000],
+                 ["i7",v=>+String(v).replace(/[,，\s元]/g,"")===1300],
+                 ["i8",v=>+String(v).replace(/[,，\s元]/g,"")===11300],
+                 ["i9",v=>v.includes("壹万壹仟叁佰")&&v.includes("整")]];
+    fChk.onclick=()=>{
+      let bad=0;
+      rules.forEach(([id,ok])=>{ const el=$(id); if(!el)return;
+        const good=ok(el.value||""); el.classList.toggle("ok",good); el.classList.toggle("no",!good); if(!good)bad++; });
+      const m=$("fMsg");
+      m.className="fmsg "+(bad?"bad":"good");
+      m.textContent=bad?`还有 ${bad} 处不对——红框下面有提示`:"八项全对。这张发票可以入账了。";
+    };
+    $("fClr").onclick=()=>{rules.forEach(([id])=>{const e=$(id);if(e){e.value="";e.className="";}});$("fMsg").textContent="";};
+  }
+  // 填凭证
+  const vChk=$("vChk");
+  if(vChk){
+    const two=!!s.fillvou2;
+    const amt=two?800:3000, dSub=two?"管理费用":"原材料", cSub=two?"银行存款":"应付账款";
+    const dayRe=two?/3\s*月\s*15|03-?15/:/3\s*月\s*12|03-?12/;
+    const num=v=>+String(v||"").replace(/[,，\s元]/g,"");
+    const bal=()=>{ const b=$("vBal"); if(!b)return;
+      const d=num($("v4").value), c=num($("v6").value);
+      if(!d&&!c){b.className="balance";b.textContent="借贷还没填";return;}
+      const ok=d===c&&d>0;
+      b.className="balance "+(ok?"ok":"no");
+      b.textContent=ok?`借 ${d} ＝ 贷 ${c}　平了`:`借 ${d||0}　贷 ${c||0}　不平`;
+    };
+    ["v4","v6"].forEach(id=>{const e=$(id); if(e) e.oninput=bal;});
+    vChk.onclick=()=>{
+      const rules=[["v1",v=>dayRe.test(v)],["v2",v=>v.trim().length>=3],
+                   ["v3",v=>v===dSub],["v4",v=>num(v)===amt],
+                   ["v5",v=>v===cSub],["v6",v=>num(v)===amt],["v7",v=>num(v)===1]];
+      let bad=0;
+      rules.forEach(([id,ok])=>{const el=$(id);if(!el)return;
+        const good=ok(el.value||""); el.classList.toggle("ok",good); el.classList.toggle("no",!good); if(!good)bad++;});
+      const m=$("vMsg"); m.className="fmsg "+(bad?"bad":"good");
+      m.textContent=bad?`还有 ${bad} 处不对——红框下面有提示`:"七项全对，借贷也平。这张凭证可以入账了。";
+      bal();
+    };
+    $("vClr").onclick=()=>{["v1","v2","v3","v4","v5","v6","v7"].forEach(id=>{
+      const e=$(id); if(e){e.value=e.tagName==="SELECT"?"":"";e.className="";}});
+      $("vMsg").textContent=""; bal();};
+    bal();
+  }
+
+  // 举手计数（存到 sessionStorage，供「数一数」页汇总）
+  const hNum=$("hNum");
+  if(hNum && s.hand){
+    const key="hand"+s.hand.idx;
+    let v=+(sessionStorage.getItem(key)||0); hNum.textContent=v;
+    const set=n=>{v=Math.max(0,n); hNum.textContent=v; sessionStorage.setItem(key,v);};
+    $("hPlus").onclick=()=>set(v+1);
+    $("hMinus").onclick=()=>set(v-1);
+    const pb=$("pBtn");
+    if(pb) pb.onclick=()=>{ $("probe").classList.add("on"); pb.style.display="none"; };
+  }
+  // 三根柱子
+  const tw=$("tally");
+  if(tw){
+    const caps=["上个月花了多少<br>说得出数","AA 时<br>自己算过账","AA 算完<br>被人说过「不对吧」"];
+    const vals=[0,1,2].map(k=>+(sessionStorage.getItem("hand"+k)||0));
+    const mx=Math.max(...vals,1);
+    tw.innerHTML=vals.map((v,k)=>
+      `<div class="tbar"><div class="bar" style="height:0"><span class="bn">${v}</span></div>
+       <div class="cap">${caps[k]}</div></div>`).join("");
+    requestAnimationFrame(()=>{
+      [...tw.querySelectorAll(".bar")].forEach((b,k)=>{ b.style.height=Math.round(vals[k]/mx*230+6)+"px"; });
+    });
+    const tn=$("tnote");
+    if(tn) tn.innerHTML = vals.every(v=>v===0)
+      ? "（还没数。回到前三页点＋号记录人数，这里会自动出图。）"
+      : "第一根最矮，第二根最高——花自己的钱不上心，算别人的钱特别认真。";
+  }
+  // 故事流程
+  const sNext=$("sNext");
+  if(sNext && s.story){
+    const st=s.story; let k=0;
+    const acts=[...card.querySelectorAll(".actor")], rows=[...card.querySelectorAll(".slist .s")];
+    const fl=$("fline");
+    const draw=()=>{
+      acts.forEach(a=>a.classList.remove("act","gone"));
+      rows.forEach((r,j)=>r.classList.toggle("on",j<k));
+      if(k===0){ fl.textContent="点「下一步」开始"; return; }
+      const x=st.steps[k-1];
+      acts[x.from]?.classList.add("act"); acts[x.to]?.classList.add("act");
+      fl.innerHTML=`${esc(st.actors[x.from])} <span class="tok${x.fake?" fake":""}">${esc(x.what)}</span> → ${esc(st.actors[x.to])}`;
+    };
+    sNext.onclick=()=>{ if(k<st.steps.length){k++;draw();} else {
+      acts.forEach((a,j)=>{ if(j===2) a.classList.add("gone"); });
+      fl.innerHTML='<span style="color:#2e7d32">隔壁一进一出正好抵消——可以整个划掉</span>'; } };
+    const sr=$("sReset"); if(sr) sr.onclick=()=>{k=0;draw();};
+    draw();
+  }
+
+  card.querySelectorAll(".hand-item").forEach(el=>el.onclick=()=>el.classList.toggle("on"));
+  card.querySelectorAll(".recap .r").forEach(el=>el.onclick=()=>el.classList.toggle("on"));
+  const cAdd=$("cAdd"), cIn=$("cIn"), cWrap=$("cWrap");
+  if(cAdd&&cIn&&cWrap){
+    const push=()=>{const v=cIn.value.trim(); if(!v)return;
+      const d=document.createElement("span"); d.className="c2"; d.textContent=v; cWrap.appendChild(d);
+      cIn.value=""; cIn.focus();};
+    cAdd.onclick=push; cIn.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();push();}};
+  }
+  const lNext=$("lNext"), lAll=$("lAll");
+  if(lNext){
+    const rows=[...card.querySelectorAll(".ledger tr")]; let shown=0;
+    const step=()=>{ if(shown<rows.length){rows[shown].classList.add("on");shown++;} };
+    lNext.onclick=step;
+    if(lAll) lAll.onclick=()=>{rows.forEach(r=>r.classList.add("on"));shown=rows.length;};
+    step();
+  }
+  const dShow=$("dShow");
+  if(dShow) dShow.onclick=()=>{const a=$("dAns"); if(a){a.classList.add("on"); dShow.style.display="none";}};
+  card.querySelectorAll(".vote button").forEach(b=>b.onclick=()=>{
+    card.querySelectorAll(".vote button").forEach(x=>x.classList.remove("picked"));
+    b.classList.add("picked");
+    const af=$("vAfter"); if(af) af.classList.add("on");
+  });
+  // 分录逐笔
+  const eNext=$("eNext");
+  if(eNext){
+    const rows=[...card.querySelectorAll(".jtab tr")];
+    const notes=[...card.querySelectorAll(".entrybox .note")];
+    let k=0;
+    const step=()=>{ if(k<rows.length){ rows[k].classList.add("on"); k++;
+        const box=rows[k-1].closest(".entrybox");
+        const left=[...box.querySelectorAll(".jtab tr")].filter(r=>!r.classList.contains("on")).length;
+        if(!left) box.querySelector(".note").classList.add("on");
+      }};
+    eNext.onclick=step;
+    const eAll=$("eAll");
+    if(eAll) eAll.onclick=()=>{rows.forEach(r=>r.classList.add("on"));notes.forEach(n=>n.classList.add("on"));k=rows.length;};
+    step();
+  }
+  // 三个桶
+  card.querySelectorAll(".bk").forEach(el=>el.onclick=()=>el.classList.toggle("on"));
+  // 分桶练习
+  if(s.sortbin){
+    const sb=s.sortbin; let sel=null, done=0;
+    const msg=$("sbMsg");
+    card.querySelectorAll(".sbi").forEach(el=>el.onclick=()=>{
+      if(el.classList.contains("done"))return;
+      card.querySelectorAll(".sbi").forEach(x=>x.classList.remove("sel"));
+      el.classList.add("sel"); sel=+el.dataset.i;
+      msg.textContent="再点一个桶";
+    });
+    card.querySelectorAll(".sbb").forEach(bin=>bin.onclick=()=>{
+      if(sel===null){ msg.textContent="先点一笔支出"; return; }
+      const b=+bin.dataset.b, it=sb.items[sel], ok=(it[1]===b);
+      const chip=document.createElement("span");
+      chip.textContent=it[0]; if(!ok) chip.classList.add("no");
+      bin.querySelector(".in").appendChild(chip);
+      const src2=card.querySelector(`.sbi[data-i="${sel}"]`);
+      src2.classList.add("done"); src2.classList.remove("sel");
+      done++; sel=null;
+      msg.textContent = ok ? "对了。继续。" : `不对——「${it[0]}」应该进「${sb.bins[it[1]]}」`;
+      if(done===sb.items.length) msg.textContent="六笔都分完了。红色划掉的是分错的。";
+    });
+  }
+  // 算一算
+  const cNext=$("cNext");
+  if(cNext){
+    const rows=[...card.querySelectorAll(".calc tr")]; let k=0;
+    const step=()=>{ if(k<rows.length){rows[k].classList.add("on");k++;} };
+    cNext.onclick=step;
+    const cAll=$("cAll"); if(cAll) cAll.onclick=()=>{rows.forEach(r=>r.classList.add("on"));k=rows.length;};
+    step();
+  }
+  // 自己写一笔
+  const aShow=$("aShow");
+  if(aShow) aShow.onclick=()=>{const a=$("aAns"); if(a){a.classList.add("on"); aShow.style.display="none";}};
+  // 找茬
+  if(s.errfind){
+    card.querySelectorAll(".ef").forEach((box,fi)=>{
+      const e=s.errfind[fi];
+      const reveal=()=>box.querySelector(".why").classList.add("on");
+      box.querySelectorAll("tbody tr, table tr").forEach(tr=>{
+        tr.onclick=()=>{
+          const ri=+tr.dataset.r;
+          if(e.bad===ri){ tr.classList.add("hit"); reveal(); }
+          else { tr.classList.add("right"); }
+        };
+      });
+      const miss=box.querySelector(".miss");
+      if(miss) miss.onclick=()=>{ miss.style.background="#ffebee"; reveal(); };
+    });
+  }
+  // 自己填分录
+  if(s.fillentry){
+    const fe=s.fillentry, N=fe.rows.length;
+    const num=v=>+String(v||"").replace(/[,，\s元]/g,"");
+    const bal=()=>{
+      let dr=0,cr=0;
+      for(let k=0;k<N;k++){
+        const dc=$("d"+k).value, m=num($("m"+k).value);
+        if(dc==="借") dr+=m; else if(dc==="贷") cr+=m;
+      }
+      const b=$("feBal");
+      if(!dr&&!cr){ b.className="bal"; b.textContent="借贷还没填"; return; }
+      const ok=dr===cr&&dr>0;
+      b.className="bal "+(ok?"ok":"no");
+      b.textContent=ok?`借 ${dr} ＝ 贷 ${cr}　平了`:`借 ${dr}　贷 ${cr}　不平`;
+    };
+    for(let k=0;k<N;k++){
+      ["d","s","m"].forEach(p=>{const e=$(p+k); if(e) e.oninput=bal;});
+    }
+    $("feChk").onclick=()=>{
+      let wrong=0;
+      for(let k=0;k<N;k++){
+        const [wd,ws,wm]=fe.rows[k];
+        const ed=$("d"+k), es=$("s"+k), em=$("m"+k);
+        [[ed,ed.value===wd],[es,es.value===ws],[em,num(em.value)===num(wm)]].forEach(([el,good])=>{
+          el.classList.remove("ok","no"); el.classList.add(good?"ok":"no"); if(!good) wrong++;
+        });
+      }
+      const msg=$("feMsg");
+      if(wrong===0){ msg.style.color="#1b5e20"; msg.textContent="全对。这笔分录可以入账了。"; }
+      else { msg.style.color="#c62828"; msg.textContent=`还有 ${wrong} 处不对——红框的地方再想想`; }
+      $("feTip").classList.add("on");
+    };
+    $("feClr").onclick=()=>{
+      for(let k=0;k<N;k++) ["d","s","m"].forEach(p=>{
+        const e=$(p+k); if(e){ e.value=""; e.classList.remove("ok","no"); }});
+      $("feMsg").textContent=""; $("feTip").classList.remove("on"); bal();
+    };
+  }
+  // 台词逐句
+  const dNext=$("dNext");
+  if(dNext){
+    const ls=[...card.querySelectorAll(".dl")]; let k=0;
+    const step=()=>{ if(k<ls.length){ls[k].classList.add("on");k++;} };
+    dNext.onclick=step;
+    const dAll=$("dAll"); if(dAll) dAll.onclick=()=>{ls.forEach(x=>x.classList.add("on"));k=ls.length;};
+    step();
+  }
+  // 公布答案
+  const r2=$("r2Btn");
+  if(r2) r2.onclick=()=>{const bx=$("r2Box"); if(bx){bx.classList.add("on"); r2.style.display="none";}};
+  // 逐条列表
+  const flNext=$("flNext");
+  if(flNext){
+    const ls=[...card.querySelectorAll(".fl")]; let k=0;
+    const step=()=>{ if(k<ls.length){ls[k].classList.add("on");k++;} };
+    flNext.onclick=step;
+    const flAll=$("flAll"); if(flAll) flAll.onclick=()=>{ls.forEach(x=>x.classList.add("on"));k=ls.length;};
+    step();
+  }
+  // 自己填（项目六版）
+  if(s.fillentry2){
+    const fe=s.fillentry2, N=fe.rows.length;
+    const num=v=>+String(v||"").replace(/[,，\s元]/g,"");
+    const bal=()=>{ let dr=0,cr=0;
+      for(let k=0;k<N;k++){const dc=$("d"+k).value,m=num($("m"+k).value);
+        if(dc==="借")dr+=m; else if(dc==="贷")cr+=m;}
+      const b2=$("feBal");
+      if(!dr&&!cr){b2.className="bal";b2.textContent="借贷还没填";return;}
+      const ok=dr===cr&&dr>0; b2.className="bal "+(ok?"ok":"no");
+      b2.textContent=ok?`借 ${dr} ＝ 贷 ${cr}　平了`:`借 ${dr}　贷 ${cr}　不平`;
+    };
+    for(let k=0;k<N;k++) ["d","s","m"].forEach(p=>{const e=$(p+k); if(e) e.oninput=bal;});
+    $("feChk").onclick=()=>{
+      let wrong=0;
+      for(let k=0;k<N;k++){
+        const [wd,ws,wm]=fe.rows[k];
+        [[$("d"+k),$("d"+k).value===wd],[$("s"+k),$("s"+k).value===ws],
+         [$("m"+k),num($("m"+k).value)===num(wm)]].forEach(([el,g])=>{
+          el.classList.remove("ok","no"); el.classList.add(g?"ok":"no"); if(!g) wrong++;});
+      }
+      const msg=$("feMsg");
+      if(!wrong){msg.style.color="#1b5e20";msg.textContent="全对。这一笔补登对了。";}
+      else{msg.style.color="#c62828";msg.textContent=`还有 ${wrong} 处不对——红框的地方再想想`;}
+      $("feTip").classList.add("on");
+    };
+    $("feClr").onclick=()=>{
+      for(let k=0;k<N;k++) ["d","s","m"].forEach(p=>{const e=$(p+k); if(e){e.value="";e.classList.remove("ok","no");}});
+      $("feMsg").textContent=""; $("feTip").classList.remove("on"); bal();
+    };
+  }
+  // 银行余额调节表
+  if(s.adjust){
+    const aj=s.adjust, N=aj.items.length;
+    let f=+aj.base[2], bk=+aj.base[3], done=0;
+    const fmt=n=>n.toLocaleString("en-US");
+    const upd=()=>{
+      $("ajFS").textContent="企业调节后 "+fmt(f);
+      $("ajBS").textContent="银行调节后 "+fmt(bk);
+      const hit=(f===+aj.target&&bk===+aj.target);
+      $("ajFS").className=hit?"ok":""; $("ajBS").className=hit?"ok":"";
+      if(done===N){
+        $("ajMsg").textContent = hit
+          ? `两边都是 ${fmt(+aj.target)}　对上了。注意：调节表不改账。`
+          : `四笔都判完了，但两边没碰头——看看红色那几笔`;
+      }
+    };
+    card.querySelectorAll(".adjrow").forEach(row=>{
+      const k=+row.dataset.a, it=aj.items[k], amt=+(it.t.match(/(\d+)(?!.*\d)/)||[0])[0];
+      row.querySelectorAll("button").forEach(btn=>btn.onclick=()=>{
+        if(row.dataset.locked) return;
+        row.dataset.locked="1"; done++;
+        const ok=(btn.dataset.s===it.side && btn.dataset.g===it.sign);
+        btn.classList.add(ok?"good":"bad");
+        // 按正确答案调整数字（无论选对错，表都走正确路径）
+        const d=(it.sign==="+"?amt:-amt);
+        if(it.side==="firm") f+=d; else bk+=d;
+        card.querySelector(`.adjwhy[data-w="${k}"]`).classList.add("on");
+        if(!ok) $("ajMsg").textContent="这一笔判错了——看下面那行小字";
+        upd();
+      });
+    });
+    upd();
+  }
+  renderNav(); history.replaceState(null,"","#"+s.n); $("main").scrollTop=0;
+}
+function go(n){ const next=Math.max(0,Math.min(SLIDES.length-1,n)); const dir=next>i?"next":next<i?"prev":"next"; i=next; render(dir); }
+function zoomText(html){ $("lb").innerHTML=`<div class="zoom-text">${html}</div>`; $("lb").classList.add("show"); }
+$("prev").onclick=()=>go(i-1);
+$("next").onclick=()=>go(i+1);
+$("nav").onclick=e=>{ const b=e.target.closest("[data-i]"); if(b) go(+b.dataset.i); };
+$("q").oninput=renderNav;
+$("menuBtn").onclick=()=>{ if(window.innerWidth<=860) $("side").classList.toggle("open"); else document.body.classList.toggle("wide"); };
+$("fontBig").onclick=()=>setFont(true);
+$("fontSmall").onclick=()=>setFont(false);
+document.addEventListener("keydown", e=>{
+  if(e.key==="ArrowRight"||e.key==="PageDown"||e.key===" "){ e.preventDefault(); go(i+1); }
+  if(e.key==="ArrowLeft"||e.key==="PageUp"){ e.preventDefault(); go(i-1); }
+  if(e.key==="Escape") $("lb").classList.remove("show");
+});
+$("card").addEventListener("click", e=>{
+  if(e.target.closest(".go-draw")) return;
+  if(e.target.tagName==="IMG"){ $("lb").innerHTML=`<img src="${e.target.src}" alt="">`; $("lb").classList.add("show"); return; }
+  const p=e.target.closest("p,h2"); if(p) zoomText(p.innerHTML);
+});
+$("nowbar").addEventListener("click", e=>{ if(e.currentTarget.innerHTML) zoomText(e.currentTarget.innerHTML); });
+$("lb").onclick=()=>$("lb").classList.remove("show");
+document.body.classList.add("wide"); setFont(true);
+const hash=parseInt(location.hash.replace("#",""),10);
+if(hash>=1 && hash<=SLIDES.length) i=hash-1;
+render();
+</script>
+</body>
+</html>
