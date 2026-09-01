@@ -21,6 +21,7 @@ body{display:flex;flex-direction:column;min-height:100vh}
 .scale{margin:0 auto 8px;max-width:720px}
 .scale svg{width:100%;height:auto;display:block;filter:drop-shadow(0 10px 12px rgba(0,0,0,.35))}
 #beamG{transform-origin:400px 142px;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+    #lblLG,#lblRG{transition:transform .6s cubic-bezier(.2,.8,.2,1)}
 .diff{text-align:center;font-weight:900;font-size:22px;margin:-4px 0 12px;color:#ffd54f}
 .diff b{color:#ef9a9a}
 .card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:14px;margin-bottom:12px}
@@ -109,19 +110,25 @@ select,input[type=text]{width:100%;background:#12081f;border:2px solid #7b1fa2;c
         <rect x="130" y="136" width="540" height="6" rx="3" fill="#fff8e1" opacity=".35"/>
         <circle cx="170" cy="143" r="7" fill="#5d4037"/>
         <circle cx="630" cy="143" r="7" fill="#5d4037"/>
-        <line x1="170" y1="150" x2="128" y2="228" stroke="#cfd8dc" stroke-width="3"/>
-        <line x1="170" y1="150" x2="212" y2="228" stroke="#cfd8dc" stroke-width="3"/>
-        <line x1="128" y1="228" x2="212" y2="228" stroke="#90a4ae" stroke-width="2"/>
-        <path d="M112 226 Q170 268 228 226" fill="url(#panG)" stroke="#546e7a" stroke-width="3"/>
-        <ellipse cx="170" cy="226" rx="58" ry="8" fill="#78909c"/>
-        <text id="panL" x="170" y="252" text-anchor="middle" font-size="20" font-weight="800" fill="#a5d6a7">借 0</text>
+        <line x1="170" y1="150" x2="110" y2="228" stroke="#cfd8dc" stroke-width="3"/>
+        <line x1="170" y1="150" x2="230" y2="228" stroke="#cfd8dc" stroke-width="3"/>
+        <line x1="110" y1="228" x2="230" y2="228" stroke="#90a4ae" stroke-width="2"/>
+        <path d="M92 226 Q170 280 248 226" fill="url(#panG)" stroke="#546e7a" stroke-width="3"/>
+        <ellipse cx="170" cy="226" rx="78" ry="9" fill="#78909c"/>
+        <g id="lblLG">
+          <rect x="80" y="248" width="180" height="38" rx="19" fill="#0d0f1a" fill-opacity=".93" stroke="#66bb6a" stroke-width="2.5"/>
+          <text id="panL" x="170" y="274" text-anchor="middle" font-size="22" font-weight="800" fill="#c8facc">借 0</text>
+        </g>
         <text x="170" y="118" text-anchor="middle" font-size="16" font-weight="800" fill="#66bb6a">借</text>
-        <line x1="630" y1="150" x2="588" y2="228" stroke="#cfd8dc" stroke-width="3"/>
-        <line x1="630" y1="150" x2="672" y2="228" stroke="#cfd8dc" stroke-width="3"/>
-        <line x1="588" y1="228" x2="672" y2="228" stroke="#90a4ae" stroke-width="2"/>
-        <path d="M572 226 Q630 268 688 226" fill="url(#panG)" stroke="#546e7a" stroke-width="3"/>
-        <ellipse cx="630" cy="226" rx="58" ry="8" fill="#78909c"/>
-        <text id="panR" x="630" y="252" text-anchor="middle" font-size="20" font-weight="800" fill="#ffcc80">贷 0</text>
+        <line x1="630" y1="150" x2="570" y2="228" stroke="#cfd8dc" stroke-width="3"/>
+        <line x1="630" y1="150" x2="690" y2="228" stroke="#cfd8dc" stroke-width="3"/>
+        <line x1="570" y1="228" x2="690" y2="228" stroke="#90a4ae" stroke-width="2"/>
+        <path d="M552 226 Q630 280 708 226" fill="url(#panG)" stroke="#546e7a" stroke-width="3"/>
+        <ellipse cx="630" cy="226" rx="78" ry="9" fill="#78909c"/>
+        <g id="lblRG">
+          <rect x="540" y="248" width="180" height="38" rx="19" fill="#0d0f1a" fill-opacity=".93" stroke="#ffb74d" stroke-width="2.5"/>
+          <text id="panR" x="630" y="274" text-anchor="middle" font-size="22" font-weight="800" fill="#ffe0b2">贷 0</text>
+        </g>
         <text x="630" y="118" text-anchor="middle" font-size="16" font-weight="800" fill="#ffb74d">贷</text>
       </g>
       <polygon points="400,118 422,154 378,154" fill="#ffd54f" stroke="#3e2723" stroke-width="3"/>
@@ -234,6 +241,15 @@ function render(){
   $("panR").textContent="贷 "+fmt(c);
   const tilt=Math.max(-16, Math.min(16, diff/6500));
   $("beamG").style.transform="rotate("+tilt+"deg)";
+  // 数字牌反向旋转，保持水平，投影上才好念
+  const rad=tilt*Math.PI/180;
+  const cx=400, cy=142;
+  [["lblLG",170,267],["lblRG",630,267]].forEach(([id,px,py])=>{
+    const g=$(id); if(!g) return;
+    const nx=cx+(px-cx)*Math.cos(rad)-(py-cy)*Math.sin(rad);
+    const ny=cy+(px-cx)*Math.sin(rad)+(py-cy)*Math.cos(rad);
+    g.setAttribute("transform",`rotate(${-tilt} ${nx} ${ny})`);
+  });
   if(diff===0) $("diffLine").innerHTML="两边一样多。平了。";
   else $("diffLine").innerHTML=(diff>0?"借方多了 ":"贷方多了 ")+"<b>"+fmt(Math.abs(diff))+"</b>";
 }
