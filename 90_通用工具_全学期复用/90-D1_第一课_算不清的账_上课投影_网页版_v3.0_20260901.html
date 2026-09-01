@@ -267,14 +267,14 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
 
 /* 逐笔账 */
 .ledger{padding:4px 22px 16px}
-.ledger table{width:100%;border-collapse:collapse;font-size:clamp(17px,2.3vw,28px)}
-.ledger td{padding:12px 14px;border-bottom:2px solid #e8eaf6}
+.ledger table{width:100%;border-collapse:collapse;font-size:clamp(15px,1.95vw,23px)}
+.ledger td{padding:8px 13px;border-bottom:2px solid #e8eaf6}
 .ledger td:last-child{text-align:right;font-weight:900;font-variant-numeric:tabular-nums;white-space:nowrap}
 .ledger tr{opacity:0;transform:translateX(-18px);transition:.4s}
 .ledger tr.on{opacity:1;transform:none}
 .ledger tr.sum{background:#1a237e;color:#fff}
-.ledger tr.sum td{border:0;font-size:clamp(20px,3vw,36px);font-weight:900;padding:16px 14px}
-.ledger .lbtn{margin-top:12px;display:flex;gap:10px;justify-content:center}
+.ledger tr.sum td{border:0;font-size:clamp(17px,2.3vw,28px);font-weight:900;padding:11px 13px}
+.ledger .lbtn{margin-top:8px;display:flex;gap:10px;justify-content:center}
 .ledger .lbtn button{border:0;background:#283593;color:#fff;font:inherit;font-weight:900;
   font-size:clamp(16px,2vw,22px);padding:12px 26px;border-radius:12px;cursor:pointer}
 
@@ -351,21 +351,21 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
 .rules .r span{font-size:clamp(14px,1.8vw,21px);color:#7a5c4a;font-weight:700}
 
 /* ── 故事流程图 ───────────────────────── */
-.story{padding:4px 18px 14px}
-.stage{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
-.actor{border:4px solid #d7c4b0;background:#fff;border-radius:16px;padding:14px 8px;text-align:center;
-  font-size:clamp(16px,2.3vw,28px);font-weight:900;color:#3e2723;transition:.35s;position:relative}
+.story{padding:2px 18px 8px}
+.stage{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
+.actor{border:4px solid #d7c4b0;background:#fff;border-radius:14px;padding:8px 6px;text-align:center;
+  font-size:clamp(15px,2vw,24px);font-weight:900;color:#3e2723;transition:.35s;position:relative}
 .actor.act{border-color:#bf360c;background:#fff3e0;transform:translateY(-6px);
   box-shadow:0 10px 24px rgba(191,54,12,.25)}
 .actor.gone{opacity:.3;filter:grayscale(1)}
-.flowline{text-align:center;font-size:clamp(17px,2.4vw,30px);font-weight:900;color:#bf360c;
-  min-height:2.4em;padding:8px;background:#fff8e1;border-radius:12px;margin-bottom:10px}
+.flowline{text-align:center;font-size:clamp(16px,2.1vw,26px);font-weight:900;color:#bf360c;
+  min-height:1.9em;padding:6px;background:#fff8e1;border-radius:10px;margin-bottom:7px}
 .flowline .tok{display:inline-block;background:#2e7d32;color:#fff;border-radius:999px;
   padding:4px 16px;margin:0 8px}
 .flowline .tok.fake{background:#c62828;text-decoration:line-through}
-.slist{display:grid;gap:6px;margin-bottom:10px}
-.slist .s{display:flex;gap:10px;align-items:center;font-size:clamp(14px,1.85vw,21px);
-  padding:8px 12px;border-radius:10px;background:#faf6f0;color:#8d6e63;font-weight:700;
+.slist{display:grid;gap:4px;margin-bottom:7px}
+.slist .s{display:flex;gap:9px;align-items:center;font-size:clamp(13px,1.6vw,18px);
+  padding:5px 11px;border-radius:9px;background:#faf6f0;color:#8d6e63;font-weight:700;
   opacity:.35;transition:.3s}
 .slist .s.on{opacity:1;background:#fff3e0;color:#3e2723}
 .slist .s i{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:#bf360c;color:#fff;
@@ -386,9 +386,9 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
 
 /* ── 作业四格 ─────────────────────────── */
 .hw{padding:6px 22px 18px;display:grid;gap:10px}
-.hw .f{background:#fff;border:3px solid #a5d6a7;border-radius:14px;padding:14px 18px}
-.hw .f b{font-size:clamp(18px,2.4vw,28px);color:#1b5e20;display:block;margin-bottom:4px}
-.hw .f span{font-size:clamp(14px,1.85vw,21px);color:#558b2f;font-weight:700}
+.hw .f{background:#fff;border:3px solid #a5d6a7;border-radius:12px;padding:6px 16px}
+.hw .f b{font-size:clamp(16px,2.1vw,24px);color:#1b5e20;display:block;margin-bottom:2px}
+.hw .f span{font-size:clamp(13px,1.65vw,19px);color:#558b2f;font-weight:700}
 .hw .chk{background:#e8f5e9;border-left:6px solid #2e7d32;border-radius:0 10px 10px 0;
   padding:14px 16px;font-size:clamp(15px,2vw,23px);font-weight:800;color:#1b5e20}
 .hw .why{background:#fff8e1;border-left:6px solid #f9a825;border-radius:0 10px 10px 0;
@@ -444,6 +444,7 @@ function esc(s){return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",
 function mark(s){
   let out=esc(s);
   out=out.replace(/&lt;br\s*\/?&gt;/gi,"<br>");
+  out=out.replace(/\*\*([^*]+)\*\*/g,'<mark class="kw">$1</mark>');
   KEYS.forEach(k=>{ out=out.split(esc(k)).join('<mark class="kw">'+esc(k)+'</mark>'); });
   return out;
 }
@@ -469,7 +470,8 @@ function renderNav(){
   $("nav").innerHTML=SLIDES.map((s,idx)=>{
     const t=s.title||("第"+s.n+"页");
     if(q && !t.includes(q) && !String(s.n).includes(q)) return "";
-    const short=t.length>16?t.slice(0,15)+"…":t;
+    const plain=t.replace(/<br\s*\/?>/gi,"　");
+    const short=plain.length>16?plain.slice(0,15)+"…":plain;
     return `<button class="nav-item ${idx===i?"on":""}" data-i="${idx}"><span class="k">${s.n}</span>${esc(short)}</button>`;
   }).join("");
 }
