@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>试算表　哪一条腿漏了</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:#1a1030;color:#fff;font-family:"PingFang SC","Microsoft YaHei",sans-serif}
+body{display:flex;flex-direction:column;min-height:100vh}
+.top{background:#2d1b4e;padding:8px 14px;font-weight:800;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.top small{opacity:.85;font-weight:600}
+.top a,.go{font:inherit;font-weight:800;border:0;border-radius:12px;padding:8px 14px;cursor:pointer;text-decoration:none;color:#3d2352;background:#ffd54f}
+.top a.o{background:rgba(255,255,255,.15);color:#fff}
+.who{background:#fff3e0;color:#bf360c;padding:4px 12px;border-radius:999px}
+.now{background:#2e7d32;color:#fff;padding:10px 16px;font-size:20px;font-weight:800;line-height:1.4}
+.wrap{flex:1;max-width:1080px;width:100%;margin:0 auto;padding:12px 14px 20px}
+.icons{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 12px}
+.ico{flex:1;min-width:140px;background:rgba(255,255,255,.07);border:1px solid rgba(255,213,79,.35);border-radius:14px;padding:8px 10px;display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px}
+.ico svg{flex-shrink:0}
+.scale{margin:0 auto 8px;max-width:720px}
+.scale svg{width:100%;height:auto;display:block;filter:drop-shadow(0 10px 12px rgba(0,0,0,.35))}
+#beamG{transform-origin:400px 142px;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.diff{text-align:center;font-weight:900;font-size:22px;margin:-4px 0 12px;color:#ffd54f}
+.diff b{color:#ef9a9a}
+.card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:14px;margin-bottom:12px}
+.card h3{color:#ffd54f;font-size:16px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+table{width:100%;border-collapse:collapse;font-size:16px}
+th{background:rgba(255,255,255,.1);color:#ffd54f;padding:8px;text-align:left}
+td{border:1px solid rgba(255,255,255,.12);padding:8px 10px}
+td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:800}
+tr.lock td{color:#e0e0e0}
+tr.add td{background:rgba(102,187,106,.22);color:#c8e6c9;font-weight:900}
+tfoot td{background:rgba(255,255,255,.08);font-weight:900;font-size:18px;padding:10px 8px;text-align:right}
+.form{display:grid;grid-template-columns:1.4fr .8fr 1fr auto;gap:8px;align-items:end}
+@media(max-width:720px){.form{grid-template-columns:1fr}}
+label{font-weight:800;font-size:13px;color:#ce93d8;display:block;margin-bottom:4px}
+select,input[type=text]{width:100%;background:#12081f;border:2px solid #7b1fa2;color:#fff;padding:10px;border-radius:10px;font:inherit;font-weight:800}
+.sides{display:flex;gap:6px}
+.sides button{flex:1;padding:10px;border-radius:10px;border:2px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);color:#fff;font:inherit;font-weight:900;cursor:pointer}
+.sides button.on.L{background:#1b5e20;border-color:#66bb6a}
+.sides button.on.R{background:#e65100;border-color:#ffcc80}
+.rule{background:#fff8e1;color:#3e2723;border-radius:14px;padding:12px 14px;font-weight:800;line-height:1.55;margin:10px 0}
+.rule b{color:#bf360c}
+.hud{display:flex;justify-content:center;gap:12px;align-items:center;margin:8px 0}
+.timer{width:88px;height:88px;border-radius:50%;border:8px solid #ffd54f;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;background:#2d1b4e}
+.timer.low{border-color:#ef5350;color:#ef5350;animation:pulse .45s infinite}
+@keyframes pulse{50%{transform:scale(1.06)}}
+.fb{min-height:1.4em;font-weight:800;margin-top:8px;text-align:center}
+.fb.ok{color:#a5d6a7}.fb.no{color:#ef9a9a}.fb.mid{color:#ffcc80}
+.gate,.cut{position:fixed;inset:0;background:rgba(15,8,28,.93);display:none;align-items:center;justify-content:center;z-index:40;padding:20px}
+.gate.on,.cut.on{display:flex}
+.mbox{background:#fff;color:#2c2135;border-radius:18px;padding:28px;max-width:560px;text-align:left}
+.mbox h2{color:#7b1fa2;font-size:26px;margin-bottom:10px;text-align:center}
+.mbox p{font-weight:700;line-height:1.55;margin:6px 0}
+.mbox .go{display:inline-block;margin-top:12px}
+.center{text-align:center}
+</style>
+</head>
+<body>
+<div class="top">
+  试算表　哪一条腿漏了
+  <small>上面四行不要改。漏的那一笔：科目、借还是贷、金额。</small>
+  <span class="who" id="whoBar" hidden></span>
+  <span style="margin-left:auto"></span>
+  <a class="o" id="backDraw" href="../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.29_20260830.html?use=shisuan">换人再抽</a>
+  <a class="o" id="backLecture" href="02-00_项目二_上课投影_网页版_v1.4_20260830.html#59">回课件</a>
+</div>
+<div class="now" id="now">现在你：看借方合计、贷方合计。差多少？下面三个空填漏的那一条腿，点「补上」。</div>
+<div class="wrap">
+  <div class="icons">
+    <div class="ico">
+      <svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true"><rect x="4" y="8" width="12" height="22" rx="2" fill="#66bb6a"/><rect x="20" y="8" width="12" height="22" rx="2" fill="#ffb74d" opacity=".35" stroke="#ffd54f" stroke-dasharray="3 2"/><text x="10" y="22" font-size="9" text-anchor="middle" fill="#fff" font-weight="700">借</text></svg>
+      一笔至少两条腿
+    </div>
+    <div class="ico">
+      <svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true"><circle cx="14" cy="14" r="8" fill="none" stroke="#ffd54f" stroke-width="3"/><path d="M20 20 L30 30" stroke="#ffd54f" stroke-width="3" stroke-linecap="round"/></svg>
+      差额＝漏记的金额
+    </div>
+    <div class="ico">
+      <svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true"><path d="M6 28 L18 8 L30 28 Z" fill="none" stroke="#ce93d8" stroke-width="2"/><path d="M10 28 L26 28" stroke="#ffd54f" stroke-width="3" transform="rotate(-8 18 28)"/></svg>
+      两边加总要一样多
+    </div>
+  </div>
+  <div class="hud"><div class="timer" id="timer" hidden>45</div></div>
+  <div class="scale">
+    <svg viewBox="0 0 800 390" role="img" aria-label="借贷天平">
+      <defs>
+        <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#ffe082"/><stop offset=".45" stop-color="#f6d36b"/><stop offset="1" stop-color="#b8860b"/>
+        </linearGradient>
+        <linearGradient id="wood" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#a1887f"/><stop offset="1" stop-color="#4e342e"/>
+        </linearGradient>
+        <linearGradient id="iron" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#90a4ae"/><stop offset=".5" stop-color="#eceff1"/><stop offset="1" stop-color="#546e7a"/>
+        </linearGradient>
+        <linearGradient id="panG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#fff8e1"/><stop offset="1" stop-color="#b0bec5"/>
+        </linearGradient>
+      </defs>
+      <ellipse cx="400" cy="368" rx="240" ry="14" fill="rgba(0,0,0,.35)"/>
+      <path d="M230 355 L570 355 L530 312 L270 312 Z" fill="url(#wood)"/>
+      <path d="M278 312 L522 312 L508 298 L292 298 Z" fill="#6d4c41"/>
+      <rect x="382" y="168" width="36" height="142" rx="5" fill="url(#iron)"/>
+      <rect x="368" y="300" width="64" height="16" rx="3" fill="#3e2723"/>
+      <g id="beamG">
+        <rect x="118" y="130" width="564" height="26" rx="10" fill="url(#gold)" stroke="#5d4037" stroke-width="2"/>
+        <rect x="130" y="136" width="540" height="6" rx="3" fill="#fff8e1" opacity=".35"/>
+        <circle cx="170" cy="143" r="7" fill="#5d4037"/>
+        <circle cx="630" cy="143" r="7" fill="#5d4037"/>
+        <line x1="170" y1="150" x2="128" y2="228" stroke="#cfd8dc" stroke-width="3"/>
+        <line x1="170" y1="150" x2="212" y2="228" stroke="#cfd8dc" stroke-width="3"/>
+        <line x1="128" y1="228" x2="212" y2="228" stroke="#90a4ae" stroke-width="2"/>
+        <path d="M112 226 Q170 268 228 226" fill="url(#panG)" stroke="#546e7a" stroke-width="3"/>
+        <ellipse cx="170" cy="226" rx="58" ry="8" fill="#78909c"/>
+        <text id="panL" x="170" y="252" text-anchor="middle" font-size="20" font-weight="800" fill="#a5d6a7">借 0</text>
+        <text x="170" y="118" text-anchor="middle" font-size="16" font-weight="800" fill="#66bb6a">借</text>
+        <line x1="630" y1="150" x2="588" y2="228" stroke="#cfd8dc" stroke-width="3"/>
+        <line x1="630" y1="150" x2="672" y2="228" stroke="#cfd8dc" stroke-width="3"/>
+        <line x1="588" y1="228" x2="672" y2="228" stroke="#90a4ae" stroke-width="2"/>
+        <path d="M572 226 Q630 268 688 226" fill="url(#panG)" stroke="#546e7a" stroke-width="3"/>
+        <ellipse cx="630" cy="226" rx="58" ry="8" fill="#78909c"/>
+        <text id="panR" x="630" y="252" text-anchor="middle" font-size="20" font-weight="800" fill="#ffcc80">贷 0</text>
+        <text x="630" y="118" text-anchor="middle" font-size="16" font-weight="800" fill="#ffb74d">贷</text>
+      </g>
+      <polygon points="400,118 422,154 378,154" fill="#ffd54f" stroke="#3e2723" stroke-width="3"/>
+      <circle cx="400" cy="142" r="12" fill="#fffde7" stroke="#3e2723" stroke-width="3"/>
+      <circle cx="400" cy="142" r="4" fill="#3e2723"/>
+    </svg>
+  </div>
+  <div class="diff" id="diffLine"></div>
+  <div class="card">
+    <h3>已经记上的（这四行不要改）</h3>
+    <table>
+      <thead><tr><th>会计科目</th><th style="text-align:right">借方</th><th style="text-align:right">贷方</th></tr></thead>
+      <tbody id="rows"></tbody>
+      <tfoot><tr><td style="text-align:left">合计</td><td id="sumD">0</td><td id="sumC">0</td></tr></tfoot>
+    </table>
+  </div>
+  <div class="card" id="fillCard">
+    <h3>漏的那一条腿，写在这里</h3>
+    <div class="form">
+      <div>
+        <label>科目</label>
+        <select id="sub">
+          <option value="">先选一个</option>
+          <option>银行存款</option>
+          <option>固定资产</option>
+          <option>短期借款</option>
+          <option>实收资本</option>
+          <option>原材料</option>
+          <option>应付账款</option>
+        </select>
+      </div>
+      <div>
+        <label>这一笔是</label>
+        <div class="sides">
+          <button type="button" data-s="L" id="btnL">借</button>
+          <button type="button" data-s="R" id="btnR">贷</button>
+        </div>
+      </div>
+      <div>
+        <label>金额（元）</label>
+        <input type="text" id="amt" placeholder="差多少就填多少" inputmode="numeric">
+      </div>
+      <button class="go" type="button" id="btnFill">补上</button>
+    </div>
+    <div class="fb" id="fb"></div>
+  </div>
+  <div class="rule">
+    <b>怎么算分</b>（点「补上」才算交卷）<br>
+    科目、借还是贷、金额，三个都对 → <b>5 分</b><br>
+    借还是贷、金额对了，科目不对 → <b>2 分</b><br>
+    没点「补上」，或三个里对不上 → <b>0 分</b>
+  </div>
+</div>
+<div class="gate" id="gate"><div class="mbox">
+  <h2 id="gateWho">上场找漏账</h2>
+  <p>上面四行已经记上了，<b>不要改</b>。</p>
+  <p>看合计：哪边多、差多少。漏的就是那一条腿。</p>
+  <p>下面三个空：科目、借还是贷、金额。填完点「补上」。</p>
+  <p>三个都对 5 分。方向和金额对、科目不对 2 分。其他 0 分。</p>
+  <p class="center"><button class="go" type="button" id="btnStart">开始</button></p>
+</div></div>
+<div class="cut" id="cut"><div class="mbox" id="cutBox"></div></div>
+<script>
+const DRAW="../90_通用工具_全学期复用/90-B3_抽人抽组_上场_v1.29_20260830.html?use=shisuan";
+const LECTURE="02-00_项目二_上课投影_网页版_v1.4_20260830.html#59";
+const qs=new URLSearchParams(location.search);
+function currentPlayer(){
+  if(qs.get("name")) return qs.get("name");
+  try{
+    const h=JSON.parse(localStorage.getItem("draw-handoff")||"{}");
+    if(!h||!h.name) return "";
+    if(Date.now()-(h.ts||0)>1000*60*40) return "";
+    if(String(h.use||"").indexOf("试算")<0) return "";
+    return h.name;
+  }catch(e){}
+  return "";
+}
+function lectureHref(){
+  try{ const h=JSON.parse(localStorage.getItem("draw-handoff")||"{}"); if(h&&h.back) return h.back; }catch(e){}
+  return LECTURE;
+}
+const who=currentPlayer();
+const $=id=>document.getElementById(id);
+if(qs.get("back")) $("backDraw").href=qs.get("back");
+$("backLecture").href=lectureHref();
+if(who){ $("whoBar").hidden=false; $("whoBar").textContent=who+"　上场"; }
+
+const LOCKED=[["银行存款",300000,0],["固定资产",80000,0],["短期借款",0,100000],["实收资本",0,200000]];
+let extra=null, side="", playing=false, done=false, tick=null, left=45, best=0, lastJudge=null;
+
+function fmt(n){ return Number(n||0).toLocaleString("zh-CN"); }
+function parseAmt(s){
+  s=String(s||"").trim().replace(/,/g,"").replace(/，/g,"").replace(/\s/g,"");
+  if(/万$/.test(s)) return Math.round((parseFloat(s)||0)*10000);
+  return Math.round(parseFloat(s)||0);
+}
+function sums(){
+  let d=0,c=0;
+  LOCKED.forEach(r=>{ d+=r[1]; c+=r[2]; });
+  if(extra){ d+=extra[1]; c+=extra[2]; }
+  return {d,c,diff:Math.round((d-c)*100)/100};
+}
+function render(){
+  const body=LOCKED.map(r=>`<tr class="lock"><td>${r[0]}</td><td class="num">${r[1]?fmt(r[1]):""}</td><td class="num">${r[2]?fmt(r[2]):""}</td></tr>`);
+  if(extra) body.push(`<tr class="add"><td>${extra[0]}　（补上的）</td><td class="num">${extra[1]?fmt(extra[1]):""}</td><td class="num">${extra[2]?fmt(extra[2]):""}</td></tr>`);
+  $("rows").innerHTML=body.join("");
+  const {d,c,diff}=sums();
+  $("sumD").textContent=fmt(d); $("sumC").textContent=fmt(c);
+  $("panL").textContent="借 "+fmt(d);
+  $("panR").textContent="贷 "+fmt(c);
+  const tilt=Math.max(-16, Math.min(16, diff/6500));
+  $("beamG").style.transform="rotate("+tilt+"deg)";
+  if(diff===0) $("diffLine").innerHTML="两边一样多。平了。";
+  else $("diffLine").innerHTML=(diff>0?"借方多了 ":"贷方多了 ")+"<b>"+fmt(Math.abs(diff))+"</b>";
+}
+function judge(){
+  const sub=($("sub").value||"").trim();
+  const amt=parseAmt($("amt").value);
+  if(!sub || !side || !amt) return {pts:0, why:"三个空都要填，再点「补上」。"};
+  const okSub=sub.indexOf("实收资本")>=0;
+  const okSide=side==="R";
+  const okAmt=amt===80000;
+  if(okSub && okSide && okAmt) return {pts:5, why:"三条都对。漏的是贷方实收资本 8 万。老板投入应是 28 万，表上只记了 20 万。"};
+  if(okSide && okAmt) return {pts:2, why:"方向和金额对了：漏的是贷方 8 万。再看这 8 万是本钱，还是欠别人的。"};
+  if(okAmt && !okSide) return {pts:0, why:"8 万对了，但记错边了。多的在借方，漏的应补在贷方。"};
+  return {pts:0, why:"还没对上。先看合计差多少，差多少就补多少。"};
+}
+function todayStr(){
+  const d=new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function saveScore(pts){
+  if(!who) return;
+  let log=[];
+  try{ log=JSON.parse(localStorage.getItem("draw-score-log")||"[]"); if(!Array.isArray(log)) log=[]; }catch(e){ log=[]; }
+  const tm=new Date().toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  log.push({day:todayStr(), t:tm, name:who, pts, use:"上场·试算表", round:Date.now()});
+  localStorage.setItem("draw-score-log", JSON.stringify(log));
+}
+function finish(timeout){
+  if(done) return; done=true; playing=false;
+  if(tick){ clearInterval(tick); tick=null; }
+  const pts=best;
+  if(who) saveScore(pts);
+  const draw=qs.get("back")||DRAW;
+  $("cut").classList.add("on");
+  const line = pts===5 ? "三个空全对。" : pts===2 ? "方向和金额对了，科目还没对上。" : "没补平。";
+  $("cutBox").innerHTML = (timeout?"时间到。<br>":"")
+    + line + "<br>这次 <b style='color:#7b1fa2'>"+pts+" 分</b>"+(who?"，已记到 "+who+"。":"。")
+    + "<div class='center' style='margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap'>"
+    + "<a class='go' href='"+draw+"'>换人再抽</a>"
+    + "<button class='go' type='button' id='retry'>重做</button></div>"
+    + "<p style='margin-top:10px;font-size:14px;color:#6d4c41'>全对 5 分，方向和金额对科目错 2 分，其他 0 分。不要翻课件下一页。</p>";
+  const rb=$("retry"); if(rb) rb.onclick=()=>{ location.href=location.pathname+location.search; };
+}
+function applyFill(){
+  if(done) return;
+  const j=judge();
+  lastJudge=j;
+  extra=null;
+  const sub=($("sub").value||"").trim();
+  const amt=parseAmt($("amt").value);
+  if(sub && side && amt){
+    extra=[sub, side==="L"?amt:0, side==="R"?amt:0];
+  }
+  render();
+  const fb=$("fb");
+  fb.className="fb "+(j.pts===5?"ok":j.pts===2?"mid":"no");
+  fb.textContent=j.why;
+  if(j.pts>best) best=j.pts;
+  if(j.pts===5) finish(false);
+}
+$("btnL").onclick=()=>{ side="L"; $("btnL").className="on L"; $("btnR").className=""; };
+$("btnR").onclick=()=>{ side="R"; $("btnR").className="on R"; $("btnL").className=""; };
+$("btnFill").onclick=applyFill;
+function start(){
+  $("gate").classList.remove("on");
+  playing=true; done=false; left=45; best=0; extra=null; lastJudge=null;
+  $("sub").value=""; $("amt").value=""; side=""; $("btnL").className=""; $("btnR").className="";
+  $("fb").textContent=""; $("fb").className="fb";
+  render();
+  $("timer").hidden=false; $("timer").textContent=left; $("timer").className="timer";
+  $("now").textContent="现在你：上面四行不要改。三个空填完点「补上」。";
+  tick=setInterval(()=>{
+    left--; $("timer").textContent=Math.max(0,left);
+    if(left<=8) $("timer").classList.add("low");
+    if(left<=0) finish(true);
+  },1000);
+}
+$("btnStart").onclick=start;
+render();
+if(who){
+  $("gate").classList.add("on");
+  $("gateWho").textContent=who+"　上场找漏账";
+  $("now").textContent="现在你：抽到的人点「开始」。";
+}
+</script>
+</body>
+</html>
