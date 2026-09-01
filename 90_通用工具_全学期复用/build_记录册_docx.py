@@ -17,7 +17,7 @@ from docx.oxml import OxmlElement
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC  = os.path.join(HERE, "90-A1_学生记录册_全学期_可打印_v15.0_20260830.html")
-OUT  = os.path.join(HERE, "90-A1_学生记录册_全学期_可打印_v16.0_20260901.docx")
+OUT  = os.path.join(HERE, "90-A1_学生记录册_全学期_可打印_v17.0_20260901.docx")
 
 # ---------- 从 v15 HTML 抽取暂停点 ----------
 import html as htmllib
@@ -166,9 +166,13 @@ for title, body in D1:
     writing_box(doc, "我是这么想的：（写、画、列表都行）", 3, "FAFAFA")
     writing_box(doc, "老师讲完之后，把那个办法写下来：", 2)
 
-H("课后　找一笔你算不清的账", 13, (0x0d,0x47,0xa1), before=12)
-P("留意一件你算不清、或算错过的事：一次 AA、一次充值满减、一次兼职，或者爸妈问「这个月钱花哪了」你答不上来的那一刻。几句话就行，下次带来。", 10.5)
-writing_box(doc, "我要带来的那件事：", 3)
+H("课后　把这个办法用在自己身上一次", 13, (0x0d,0x47,0xa1), before=12)
+P("找一件你算不清、或者算错过的钱：一次 AA、一次充值满减、一次兼职代购都行。按下面四格填，周日前发班级群。", 10.5)
+P("四格都填＝合格。③里有算式＝5 分。只写感想不写数字＝退回重写。", 10.5, (0x88,0x00,0x00), bold=True)
+writing_box(doc, "① 那件事（一句话说清）：", 2)
+writing_box(doc, "② 我当时以为是多少：", 1, "FAFAFA")
+writing_box(doc, "③ 用今天的办法重算（要写算式）：", 3)
+writing_box(doc, "④ 差了多少：", 1, "FAFAFA")
 p = doc.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
 p.paragraph_format.space_before = Pt(10)
 setfont(p.add_run("碰到钱的事，先换个位置看一眼。"), 13, bold=True, color=(0x88,0x00,0x00))
