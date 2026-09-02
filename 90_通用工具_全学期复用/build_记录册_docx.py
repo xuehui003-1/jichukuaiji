@@ -17,7 +17,7 @@ from docx.oxml import OxmlElement
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC  = os.path.join(HERE, "90-A1_学生记录册_全学期_可打印_v15.0_20260830.html")
-OUT  = os.path.join(HERE, "90-A1_学生记录册_全学期_可打印_v17.0_20260901.docx")
+OUT  = os.path.join(HERE, "90-A1_学生记录册_全学期_可打印_v18.0_20260902.docx")
 
 # ---------- 从 v15 HTML 抽取暂停点 ----------
 import html as htmllib
@@ -77,7 +77,7 @@ def set_borders(tbl, color="BFBFBF", sz=6):
         borders.append(e)
     tblPr.append(borders)
 
-def writing_box(doc, label, lines=3, fill="FFFFFF"):
+def writing_box(doc, label, lines=1, fill="FFFFFF"):
     """一个书写框：标签 + 带下划线的空白区"""
     p = doc.add_paragraph(); p.paragraph_format.space_before = Pt(4)
     p.paragraph_format.space_after = Pt(1)
@@ -89,7 +89,7 @@ def writing_box(doc, label, lines=3, fill="FFFFFF"):
     for i in range(lines):
         pp = c.paragraphs[0] if i==0 else c.add_paragraph()
         pp.paragraph_format.space_after = Pt(0)
-        pp.paragraph_format.line_spacing = Pt(19)
+        pp.paragraph_format.line_spacing = Pt(26)
         setfont(pp.add_run(""), 10.5)
     return t
 
@@ -162,16 +162,16 @@ D1 = [
 for title, body in D1:
     H(title, 13, (0x0d,0x47,0xa1), before=12, after=4)
     P(body, 10.5)
-    writing_box(doc, "暂停点答案：", 2)
-    writing_box(doc, "我是这么想的：（写、画、列表都行）", 3, "FAFAFA")
-    writing_box(doc, "老师讲完之后，把那个办法写下来：", 2)
+    writing_box(doc, "暂停点答案：", 1)
+    writing_box(doc, "我是这么想的：（写、画、列表都行）", 1, "FAFAFA")
+    writing_box(doc, "老师讲完之后，把那个办法写下来：", 1)
 
 H("课后　把这个办法用在自己身上一次", 13, (0x0d,0x47,0xa1), before=12)
 P("找一件你算不清、或者算错过的钱：一次 AA、一次充值满减、一次兼职代购都行。按下面四格填，周日前发班级群。", 10.5)
 P("四格都填＝合格。③里有算式＝5 分。只写感想不写数字＝退回重写。", 10.5, (0x88,0x00,0x00), bold=True)
-writing_box(doc, "① 那件事（一句话说清）：", 2)
+writing_box(doc, "① 那件事（一句话说清）：", 1)
 writing_box(doc, "② 我当时以为是多少：", 1, "FAFAFA")
-writing_box(doc, "③ 用今天的办法重算（要写算式）：", 3)
+writing_box(doc, "③ 用今天的办法重算（要写算式）：", 1)
 writing_box(doc, "④ 差了多少：", 1, "FAFAFA")
 p = doc.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
 p.paragraph_format.space_before = Pt(10)
@@ -217,11 +217,11 @@ for g in data:
                     setfont(cc.paragraphs[0].add_run(""), 9.5)
 
         if key:
-            writing_box(doc, "暂停点答案：", 2)
-            writing_box(doc, "我是这么想的：", 2, "FAFAFA")
-            writing_box(doc, "老师讲完之后，把那个办法写下来：", 2)
+            writing_box(doc, "暂停点答案：", 1)
+            writing_box(doc, "我是这么想的：", 1, "FAFAFA")
+            writing_box(doc, "老师讲完之后，把那个办法写下来：", 1)
         else:
-            writing_box(doc, "暂停点答案：", 2)
+            writing_box(doc, "暂停点答案：", 1)
             writing_box(doc, "老师讲完之后（和你不一样再补）：", 1, "FAFAFA")
 
     doc.add_paragraph().add_run().add_break(WD_BREAK.PAGE)
@@ -229,7 +229,7 @@ for g in data:
 # ===== 学期末 =====
 H("学期末，回头看看", 18)
 for q in ["这学期我最有把握的一件事：", "我还是搞不清的一件事：", "如果重来一次，我会："]:
-    writing_box(doc, q, 3)
+    writing_box(doc, q, 1)
 
 doc.save(OUT)
 print(f"已生成：{os.path.basename(OUT)}")
