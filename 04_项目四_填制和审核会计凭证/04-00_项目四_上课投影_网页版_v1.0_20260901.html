@@ -508,6 +508,11 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
 .recap .r.on{border-color:#ec407a;background:#fce4ec}
 .recap .r.on span{max-height:90px;opacity:1;margin-top:6px}
 
+
+/* 投影自适应：内容超出一屏时整体缩放，保证一眼看全 */
+#card{transform-origin:top center}
+.main{scrollbar-width:none}
+.main::-webkit-scrollbar{width:0}
 </style>
 </head>
 <body>
@@ -585,6 +590,22 @@ function renderNav(){
     return `<button class="nav-item ${idx===i?"on":""}" data-i="${idx}"><span class="k">${s.n}</span>${esc(short)}</button>`;
   }).join("");
 }
+
+// ── 投影自适应：卡片超过可视高度就整体缩小 ──
+function fitCard(){
+  const card=document.getElementById("card"), main=document.getElementById("main");
+  if(!card||!main) return;
+  main.style.zoom="";
+  const cs=getComputedStyle(main);
+  const pad=parseFloat(cs.paddingTop||0)+parseFloat(cs.paddingBottom||0);
+  const avail=main.clientHeight-pad;
+  const h=card.getBoundingClientRect().height;
+  if(h>avail && avail>60){
+    main.style.zoom=Math.max(0.55, avail/h);
+  }
+}
+window.addEventListener("resize", ()=>setTimeout(fitCard,60));
+
 function render(dir){
   const s=SLIDES[i];
   const nPic=(s.pics||[]).length;
@@ -871,6 +892,7 @@ function render(dir){
     const af=$("vAfter"); if(af) af.classList.add("on");
   });
   renderNav(); history.replaceState(null,"","#"+s.n); $("main").scrollTop=0;
+  setTimeout(fitCard,30); setTimeout(fitCard,420);
 }
 function go(n){ const next=Math.max(0,Math.min(SLIDES.length-1,n)); const dir=next>i?"next":next<i?"prev":"next"; i=next; render(dir); }
 function zoomText(html){ $("lb").innerHTML=`<div class="zoom-text">${html}</div>`; $("lb").classList.add("show"); }
