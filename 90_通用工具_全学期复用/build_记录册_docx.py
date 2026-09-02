@@ -17,7 +17,7 @@ from docx.oxml import OxmlElement
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC  = os.path.join(HERE, "90-A1_学生记录册_全学期_可打印_v15.0_20260830.html")
-OUT  = os.path.join(HERE, "90-A1_学生记录册_全学期_可打印_v18.0_20260902.docx")
+OUT  = os.path.join(HERE, "90-A1_学生记录册_全学期_可打印_v19.0_20260902.docx")
 
 # ---------- 从 v15 HTML 抽取暂停点 ----------
 import html as htmllib
@@ -93,6 +93,20 @@ def writing_box(doc, label, lines=1, fill="FFFFFF"):
         setfont(pp.add_run(""), 10.5)
     return t
 
+
+# 需要多行作答的题：分录、连线、排序、并列几项——一行装不下
+MULTI = re.compile(r"写.{0,4}分录|分录|连线|排序|一样样|哪三个|哪四步|哪三步|三个数|分别记哪")
+def ans_lines(it):
+    """答案格自然需要几行。其余格一律 1 行。"""
+    t = it["t"] + " " + it["q"]
+    if not MULTI.search(t):
+        return 1
+    if re.search(r"两笔分录|三个科目|分别记哪三个", t):
+        return 4          # 一借一贷两笔 = 4 行
+    if re.search(r"写.{0,4}分录", t):
+        return 2          # 一笔分录 = 借、贷 两行
+    return 2              # 连线/排序/并列，给两行
+
 # ---------- 开始生成 ----------
 doc = Document()
 sec = doc.sections[0]
@@ -163,7 +177,7 @@ for title, body in D1:
     H(title, 13, (0x0d,0x47,0xa1), before=12, after=4)
     P(body, 10.5)
     writing_box(doc, "暂停点答案：", 1)
-    writing_box(doc, "我是这么想的：（写、画、列表都行）", 1, "FAFAFA")
+    writing_box(doc, "我是这么想的：（写、画、列表都行）", 2, "FAFAFA")
     writing_box(doc, "老师讲完之后，把那个办法写下来：", 1)
 
 H("课后　把这个办法用在自己身上一次", 13, (0x0d,0x47,0xa1), before=12)
@@ -171,7 +185,7 @@ P("找一件你算不清、或者算错过的钱：一次 AA、一次充值满�
 P("四格都填＝合格。③里有算式＝5 分。只写感想不写数字＝退回重写。", 10.5, (0x88,0x00,0x00), bold=True)
 writing_box(doc, "① 那件事（一句话说清）：", 1)
 writing_box(doc, "② 我当时以为是多少：", 1, "FAFAFA")
-writing_box(doc, "③ 用今天的办法重算（要写算式）：", 1)
+writing_box(doc, "③ 用今天的办法重算（要写算式）：", 2)
 writing_box(doc, "④ 差了多少：", 1, "FAFAFA")
 p = doc.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
 p.paragraph_format.space_before = Pt(10)
@@ -216,12 +230,13 @@ for g in data:
                     cc.paragraphs[0].paragraph_format.line_spacing = Pt(18)
                     setfont(cc.paragraphs[0].add_run(""), 9.5)
 
+        na = ans_lines(it)
         if key:
-            writing_box(doc, "暂停点答案：", 1)
+            writing_box(doc, "暂停点答案：", na)
             writing_box(doc, "我是这么想的：", 1, "FAFAFA")
             writing_box(doc, "老师讲完之后，把那个办法写下来：", 1)
         else:
-            writing_box(doc, "暂停点答案：", 1)
+            writing_box(doc, "暂停点答案：", na)
             writing_box(doc, "老师讲完之后（和你不一样再补）：", 1, "FAFAFA")
 
     doc.add_paragraph().add_run().add_break(WD_BREAK.PAGE)
