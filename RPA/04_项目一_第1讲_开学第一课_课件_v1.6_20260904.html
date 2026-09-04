@@ -138,16 +138,16 @@ const SLIDES = [
   <div class="emoji-row">🤖 🧺 🧹 🛒 📱</div>
   <h1>财务机器人应用与开发<br><span class="accent">开学第一课</span></h1>
   <div class="sub">给机器人派活 · 定规矩<br>不背公式，靠想清楚</div>
-  <div class="meta">第 1 周 · 90 分钟 · 04_课件 v1.5 · 2026-09-04</div>`,
+  <div class="meta">第 1 周 · 90 分钟 · 04_课件 v1.6 · 2026-09-04</div>`,
  notes:"课前检查投影、音响、大模型登录。先放视频，别急着讲。"},
 
 {cls:"", html:`
   <div class="eyebrow">课堂公约 · 先认标签</div>
   <h1>课上看到这些<span class="accent">标签</span>，就照做</h1>
   <div class="cards">
-    <div class="card"><h2>📒 记录</h2>
-      <li>标签上写着<b>页码</b></li>
-      <li>翻开记录册对应页，<b>动笔写</b></li>
+    <div class="card"><h2>📒 暂停点</h2>
+      <li>翻到记录册对应的<b>暂停点</b>，动笔写</li>
+      <li>每处三行：<b>①想法 → ②思考过程 → ③老师的讲解</b></li>
     </div>
     <div class="card"><h2>🤝 互审</h2>
       <li>和同桌互相查三连：<b>能懂吗 / 想得全吗 / 闹笑话吗</b></li>
@@ -156,12 +156,11 @@ const SLIDES = [
       <li>🙋＝<b>举手抢答</b></li>
       <li>🎲＝<b>随机抽人</b></li>
     </div>
-    <div class="card"><h2>✍️ / 🧑🏫 记录册写法</h2>
-      <li>✍️ 先写<b>你的答案</b></li>
-      <li>🧑🏫 写错了，在下一行<b>补记老师怎么讲的</b></li>
+    <div class="card"><h2>🙋 举纸</h2>
+      <li>草稿纸上的任务，<b>写完举起来</b>给老师看</li>
     </div>
   </div>
-  <div class="sub">五条规矩＋评分标准，记录册封面也有——随时翻</div>`,
+  <div class="sub">✍️ 先写你的 → 🧑🏫 听老师讲，写错了就在「③老师的讲解」那行补记</div>`,
  notes:"标签页放慢一点讲，这是后面所有环节的暗号。随机抽人：答不出，同桌帮——第一次抽人前再强调一遍。"},
 
 {cls:"", badges:[{type:"question", text:"🙋 提问① · 举手抢答"}], html:`
@@ -290,11 +289,11 @@ const SLIDES = [
   </ul>`,
  notes:"一句收住：看懂了吗？写规矩就是这么回事。然后翻页出题。"},
 
-{cls:"pause", badges:[{type:"note", text:"📒 记录① · 册第 2 页"}], html:`
-  <div class="eyebrow">⏸ 暂停点 ①</div>
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点①"}], html:`
+  <div class="eyebrow">⏸ 暂停点①</div>
   <h1>正常流程走得好好的，<br>什么时候会<span class="accent">「出事」</span>？</h1>
-  <div class="sub">写下你能想到的意外情况，<b>越多越好</b>。写完合上，先别讨论。</div>
-  <div class="where">✍️ 翻开记录册第 2 页「记录①」（印制前先写草稿纸）</div>`,
+  <div class="sub">写下你能想到的意外情况（<b>越多越好</b>），再想想它卡住了正常流程的哪一步。写完合上，先别讨论。</div>
+  <div class="where">✍️ 记录册「暂停点①」：①想法 → ②思考过程 → ③听老师讲</div>`,
  notes:"90 秒安静写。这是训练「先想例外」的思维——好工程师先想意外，再写规矩。写完不公布答案，下页抽人。"},
 
 {cls:"draw", badges:[{type:"question", text:"🎲 提问④ · 抽人"}], html:`
@@ -307,7 +306,7 @@ const SLIDES = [
  notes:"用基础会计课的 90-B2 随机点名。学生自己提的意外成为接下来的教学素材；停电、忘洗衣液、没人拿没提到就由老师补上。"},
 
 {cls:"challenge", badges:[
-    {type:"note", text:"📒 记录② · 册第 3 页"},
+    {type:"note", text:"📒 暂停点②"},
     {type:"peer", text:"🤝 互审①"},
     {type:"raise", text:"🙋 举册子"},
   ], html:`
@@ -319,11 +318,11 @@ const SLIDES = [
     <div class="row"><span class="tag if">万一</span><span class="t">突然停电</span></div>
     <div class="row"><span class="tag do">应该</span><span class="t">来电之后，从哪一步继续？写下你的规矩</span></div>
   </div>
-  <div class="sub">同桌合议 → 写进记录册第 3 页 → <b>写完举册子</b> → 老师检查加分</div>`,
+  <div class="sub">同桌合议 → 写进记录册「<b>暂停点②</b>」→ <b>写完举册子</b> → 老师检查加分</div>`,
  notes:"这是今天最关键的题。参考答案：记下洗到哪一步→来电接着洗；或提示「已断电，请重选程序」。写完举册子，老师走查当场加分（2–5 分）；没人举册子才抽人。"},
 
 {cls:"challenge", badges:[
-    {type:"note", text:"📒 记录③ · 册第 3 页"},
+    {type:"note", text:"📒 暂停点③"},
     {type:"peer", text:"🤝 互审②"},
     {type:"raise", text:"🙋 举册子"},
   ], html:`
@@ -335,11 +334,11 @@ const SLIDES = [
     <div class="row"><span class="tag if">万一</span><span class="t">忘了放洗衣液</span></div>
     <div class="row"><span class="tag do">应该</span><span class="t">机器怎么发现？怎么办？写下你的规矩</span></div>
   </div>
-  <div class="sub">同桌合议 → 写进记录册第 3 页 → <b>写完举册子</b> → 老师检查加分</div>`,
+  <div class="sub">同桌合议 → 写进记录册「<b>暂停点③</b>」→ <b>写完举册子</b> → 老师检查加分</div>`,
  notes:"追问不要一次抛完，答出第一层再抛下一层：①机器怎么发现没放？（泡沫检测→蜂鸣提醒「未检测到洗涤剂，是否继续」）②用户就想清水洗？（允许继续）③洗到一半才想起？（暂停＋提示）。写完举册子加分；没人举才抽人。"},
 
 {cls:"challenge", badges:[
-    {type:"note", text:"📒 记录④ · 册第 3 页"},
+    {type:"note", text:"📒 暂停点④"},
     {type:"peer", text:"🤝 互审③"},
     {type:"raise", text:"🙋 举册子"},
   ], html:`
@@ -351,21 +350,20 @@ const SLIDES = [
     <div class="row"><span class="tag if">万一</span><span class="t">一直没人来拿</span></div>
     <div class="row"><span class="tag do">应该</span><span class="t">怎么办？写下你的规矩</span></div>
   </div>
-  <div class="sub">同桌合议 → 写进记录册第 3 页 → <b>写完举册子</b> → 老师检查加分</div>`,
+  <div class="sub">同桌合议 → 写进记录册「<b>暂停点④</b>」→ <b>写完举册子</b> → 老师检查加分</div>`,
  notes:"追问逐层抛：①怎么提醒？提醒几次？（2 次）②衣服皱了怎么办？（每 10 分钟抖散防皱）③一直没人来？（超 1 小时自动关舱门）。写完举册子加分；没人举才抽人。落点句：一台最简单的洗衣机，意外都比你想的多。"},
 
 {cls:"", badges:[
-    {type:"note", text:"📒 记录⑤ · 册第 4 页"},
     {type:"peer", text:"🤝 互审④"},
-    {type:"raise", text:"🙋 举册子"},
+    {type:"raise", text:"🙋 举纸"},
   ], html:`
   <div class="eyebrow">换个机器试试</div>
   <div class="task-card">
     <h2>⚙️ 每人一台新机器</h2>
     <li>老师分配：<b>售货机 / 扫地机 / 电梯 / 共享单车 / 自动门…</b></li>
-    <li>限时 3 分钟：写<b>正常流程</b>（先…再…最后…）＋ <b>3 条意外规矩</b>（如果…就…）</li>
-    <li>写进<b>记录册第 4 页</b> → 写完<b>举起记录册</b> → 老师检查 → 当场加分</li>
-    <li>没人举册子？→ 抽人</li>
+    <li>限时 3 分钟：在<b>草稿纸</b>上写<b>正常流程</b>（先…再…最后…）＋ <b>3 条意外规矩</b>（如果…就…）</li>
+    <li>写完<b>举纸示意</b> → 老师检查 → 当场加分</li>
+    <li>没人举纸？→ 抽人</li>
   </div>`,
  notes:"每台机器只给一组，分配完立刻计时。学生卡住就提示：先写正常流程三步，再想两个意外。检查时当场报分（2–5 分）。" },
 
@@ -422,7 +420,7 @@ const SLIDES = [
     <li>③ 轮到你们：照<b>任务单填空</b>，把命令写具体</li>
     <li>✅ 检查方式：<b>同桌互查</b>＋抽 2 组上台试　⭐ 评分：参与 2 分 · 最清楚 5 分</li>
   </div>`,
- notes:"把「怎么做、怎么检查、怎么评分」一次讲完再开始。任务单已印在记录册第 5 页，学生只填空不自由发挥。"},
+ notes:"把「怎么做、怎么检查、怎么评分」一次讲完再开始。任务单在 A2 页屏幕上，学生只填空不自由发挥，写在草稿纸上。"},
 
 {cls:"", html:`
   <div class="eyebrow">AI 同事 · 第 1 步</div>
@@ -446,7 +444,6 @@ const SLIDES = [
  notes:"还是刚才那行王芳数据，两版结果并排放大对比，让学生自己说出「差在哪」。"},
 
 {cls:"", badges:[
-    {type:"note", text:"📒 记录⑥ · 册第 5 页"},
     {type:"peer", text:"🤝 互审⑤"},
     {type:"question", text:"🎲 提问⑦ · 抽人上台"},
   ], html:`
@@ -456,16 +453,16 @@ const SLIDES = [
     <li><b>任务 A · 整理乱数据</b>（原样发给你）：<br>王芳 13812340001 王芳 wangfang@stu.edu 财会2301 13812340001<br>
     把命令填完整：<b>「请把这行信息整理成表格：①重复的只留＿个；②按＿排序；③要＿列。」</b></li>
     <li><b>任务 B · 写班级通知</b>（把要素填全）：<b>「＿（时间）在＿（地点）＿（事情），请带＿。」</b></li>
-    <li>任务单在<b>记录册第 5 页</b> → 填完同桌互查 → 🎲 抽 2 组，老师把你写的命令<b>原样</b>发给 AI</li>
+    <li>照任务单填空，写在<b>草稿纸</b>上 → 同桌互查 → 🎲 抽 2 组，老师把你写的命令<b>原样</b>发给 AI</li>
     <li>⭐ 参与 2 分 · 最清楚 5 分 · 称号「首席指挥官」</li>
   </div>`,
- notes:"老师分配任务：一半组做 A、一半组做 B。学生只填空不自由发挥；上台组的命令一字不改输入大模型，照字面执行给学生看。学生卡住就提示一句：把话说清楚＝干什么＋怎么算干好。时间紧就只抽 1 组。"},
+ notes:"老师分配任务：一半组做 A、一半组做 B。学生只填空不自由发挥，写在草稿纸上；上台组的命令一字不改输入大模型，照字面执行给学生看。学生卡住就提示一句：把话说清楚＝干什么＋怎么算干好。时间紧就只抽 1 组。"},
 
-{cls:"pause", badges:[{type:"note", text:"📒 记录⑦ · 册第 6 页"}], html:`
-  <div class="eyebrow">⏸ 暂停点 ②</div>
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点⑤"}], html:`
+  <div class="eyebrow">⏸ 暂停点⑤</div>
   <h1>刚才两组的命令，<br>哪句更好？差在哪？</h1>
   <div class="sub">先写判断，再听分享。</div>
-  <div class="where">✍️ 翻开记录册第 6 页「记录⑦」（印制前先写草稿纸）</div>`,
+  <div class="where">✍️ 记录册「暂停点⑤」：①想法 → ②思考过程 → ③听老师讲</div>`,
  notes:"时间够抽 1 人试说，不够就留到下节课。把「说清楚」的要点落到黑板：干什么＋怎么算干好。"},
 
 {cls:"", html:`
