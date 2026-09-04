@@ -89,11 +89,15 @@ ul.items li b{color:var(--primary-dark)}
 .rubric .r .p{font-size:32px;font-weight:800;color:var(--primary-dark)}
 .rubric .r .d{font-size:19px;color:var(--text);margin-top:4px;line-height:1.4}
 /* 角标 */
-.badge{position:absolute;top:20px;right:28px;padding:8px 22px;border-radius:999px;font-size:22px;
-  font-weight:700;color:#fff;z-index:5}
-.badge.draw{background:var(--primary);box-shadow:0 4px 14px rgba(233,120,53,.45)}
+.badges{position:absolute;top:20px;right:28px;display:flex;gap:10px;z-index:5}
+.badge{padding:8px 20px;border-radius:999px;font-size:21px;font-weight:700;color:#fff;
+  white-space:nowrap}
+.badge.draw,.badge.question{background:var(--primary);box-shadow:0 4px 14px rgba(233,120,53,.45)}
 .badge.quick{background:var(--green);box-shadow:0 4px 14px rgba(107,158,107,.45)}
 .badge.raise{background:var(--blue);box-shadow:0 4px 14px rgba(59,110,165,.45)}
+.badge.outline{background:#fff;box-shadow:none;border:2px solid}
+.badge.outline.note{color:var(--primary-dark);border-color:var(--primary)}
+.badge.outline.peer{color:var(--green);border-color:var(--green)}
 /* 结束页 */
 .slide.end{background:#2B211B;color:#FFF9F0;align-items:center;text-align:center}
 .end h1{color:#FFF9F0;font-size:60px}
@@ -134,22 +138,33 @@ const SLIDES = [
   <div class="emoji-row">🤖 🧺 🧹 🛒 📱</div>
   <h1>财务机器人应用与开发<br><span class="accent">开学第一课</span></h1>
   <div class="sub">给机器人派活 · 定规矩<br>不背公式，靠想清楚</div>
-  <div class="meta">第 1 周 · 90 分钟 · 04_课件 v1.3 · 2026-09-04</div>`,
+  <div class="meta">第 1 周 · 90 分钟 · 04_课件 v1.4 · 2026-09-04</div>`,
  notes:"课前检查投影、音响、大模型登录。先放视频，别急着讲。"},
 
 {cls:"", html:`
-  <div class="eyebrow">课堂公约</div>
-  <h1>这学期的<span class="accent">五条规矩</span></h1>
-  <ul class="items">
-    <li>✍️ <b>记录册</b>：暂停点先写你的，再听讲</li>
-    <li>🎲 <b>随机抽人</b>：答不出，同桌帮</li>
-    <li>🧑‍🤝‍🧑 <b>同桌互审</b>：一个做、一个查，做完交换</li>
-    <li>⭐ <b>积分</b>：有字 2 分，写好 5 分</li>
-    <li>🏆 <b>彩蛋库</b>：好作品，全班看</li>
-  </ul>`,
- notes:"规则只念一遍。第一次违规当堂纠正一次就好，不纠缠。"},
+  <div class="eyebrow">课堂公约 · 先认标签</div>
+  <h1>课上看到这些<span class="accent">标签</span>，就照做</h1>
+  <div class="cards">
+    <div class="card"><h2>📒 记录</h2>
+      <li>标签上写着<b>页码</b></li>
+      <li>翻开记录册对应页，<b>动笔写</b></li>
+    </div>
+    <div class="card"><h2>🤝 互审</h2>
+      <li>和同桌互相查三连：<b>能懂吗 / 想得全吗 / 闹笑话吗</b></li>
+    </div>
+    <div class="card"><h2>🙋 / 🎲 提问</h2>
+      <li>🙋＝<b>举手抢答</b></li>
+      <li>🎲＝<b>随机抽人</b></li>
+    </div>
+    <div class="card"><h2>✍️ / 🧑🏫 记录册写法</h2>
+      <li>✍️ 先写<b>你的答案</b></li>
+      <li>🧑🏫 写错了，在下一行<b>补记老师怎么讲的</b></li>
+    </div>
+  </div>
+  <div class="sub">五条规矩＋评分标准，记录册封面也有——随时翻</div>`,
+ notes:"标签页放慢一点讲，这是后面所有环节的暗号。随机抽人：答不出，同桌帮——第一次抽人前再强调一遍。"},
 
-{cls:"", badge:"quick", badgeText:"🙋 举手抢答", html:`
+{cls:"", badges:[{type:"question", text:"🙋 提问① · 举手抢答"}], html:`
   <div class="eyebrow">开场三问</div>
   <h1>你家里也有<span class="accent">“机器人”</span></h1>
   <ul class="items">
@@ -236,7 +251,7 @@ const SLIDES = [
   <div class="sub">为什么从洗衣机开始？它是家里<b>最简单的机器人</b>——先看懂它，别的机器一通百通。好规矩进「规矩宝典」，最好的组获「首席总工程师」🏅</div>`,
  notes:"评分标准当众念一遍：机器能懂 2 分、想得全 3 分、不闹笑话 5 分。规则讲 1 分钟就够。"},
 
-{cls:"", badge:"quick", badgeText:"🙋 抢答", html:`
+{cls:"", badges:[{type:"question", text:"🙋 提问② · 抢答"}], html:`
   <div class="eyebrow">拆一台洗衣机 · ①</div>
   <h1>这台洗衣机，<span class="accent">有哪些本事</span>？</h1>
   <div class="sub">抢答：洗衣机上都有哪些按钮？每个按钮干什么？</div>
@@ -249,7 +264,7 @@ const SLIDES = [
   <div class="sub">还有：启动/暂停、预约、蜂鸣提醒…</div>`,
  notes:"让学生先抢答，老师按五类板书：选模式/水量/温度/保护/提醒。学生说不出的再给页面上这些提示。落点：一台洗衣机，功能比你想的多。"},
 
-{cls:"", badge:"quick", badgeText:"🙋 抢答", html:`
+{cls:"", badges:[{type:"question", text:"🙋 提问③ · 抢答"}], html:`
   <div class="eyebrow">拆一台洗衣机 · ②</div>
   <h1>洗一件衣服，<span class="accent">要经过几步</span>？</h1>
   <div class="flow">
@@ -275,14 +290,14 @@ const SLIDES = [
   </ul>`,
  notes:"一句收住：看懂了吗？写规矩就是这么回事。然后翻页出题。"},
 
-{cls:"pause", html:`
+{cls:"pause", badges:[{type:"note", text:"📒 记录① · 册第 1 页"}], html:`
   <div class="eyebrow">⏸ 暂停点 ①</div>
   <h1>正常流程走得好好的，<br>什么时候会<span class="accent">「出事」</span>？</h1>
   <div class="sub">写下你能想到的意外情况，<b>越多越好</b>。写完合上，先别讨论。</div>
-  <div class="where">✍️ 写在记录册第 1 页（印制前先写草稿纸）</div>`,
+  <div class="where">✍️ 翻开记录册第 1 页「记录①」（印制前先写草稿纸）</div>`,
  notes:"90 秒安静写。这是训练「先想例外」的思维——好工程师先想意外，再写规矩。写完不公布答案，下页抽人。"},
 
-{cls:"draw", html:`
+{cls:"draw", badges:[{type:"question", text:"🎲 提问④ · 抽人"}], html:`
   <div class="eyebrow">🎲 随机抽人</div>
   <h1>抽 2–3 人念自己写的意外</h1>
   <ul class="items">
@@ -291,7 +306,11 @@ const SLIDES = [
   </ul>`,
  notes:"用基础会计课的 90-B2 随机点名。学生自己提的意外成为接下来的教学素材；停电、忘洗衣液、没人拿没提到就由老师补上。"},
 
-{cls:"challenge", badge:"raise", badgeText:"🙋 举册子", html:`
+{cls:"challenge", badges:[
+    {type:"note", text:"📒 记录② · 册第 2 页"},
+    {type:"peer", text:"🤝 互审①"},
+    {type:"raise", text:"🙋 举册子"},
+  ], html:`
   <div class="cardtitle">洗衣机出事了 ①</div>
   <div class="eyebrow" style="margin-top:-6px">按「正常 → 万一 → 应该」写规矩</div>
   <h1>洗到一半，<span class="accent">突然停电</span></h1>
@@ -300,10 +319,14 @@ const SLIDES = [
     <div class="row"><span class="tag if">万一</span><span class="t">突然停电</span></div>
     <div class="row"><span class="tag do">应该</span><span class="t">来电之后，从哪一步继续？写下你的规矩</span></div>
   </div>
-  <div class="sub">同桌合议 → 写进记录册 → <b>写完举册子</b> → 老师检查加分</div>`,
+  <div class="sub">同桌合议 → 写进记录册第 2 页 → <b>写完举册子</b> → 老师检查加分</div>`,
  notes:"这是今天最关键的题。参考答案：记下洗到哪一步→来电接着洗；或提示「已断电，请重选程序」。写完举册子，老师走查当场加分（2–5 分）；没人举册子才抽人。"},
 
-{cls:"challenge", badge:"raise", badgeText:"🙋 举册子", html:`
+{cls:"challenge", badges:[
+    {type:"note", text:"📒 记录③ · 册第 3 页"},
+    {type:"peer", text:"🤝 互审②"},
+    {type:"raise", text:"🙋 举册子"},
+  ], html:`
   <div class="cardtitle">洗衣机出事了 ②</div>
   <div class="eyebrow" style="margin-top:-6px">按「正常 → 万一 → 应该」写规矩</div>
   <h1>忘了放<span class="accent">洗衣液</span></h1>
@@ -312,10 +335,14 @@ const SLIDES = [
     <div class="row"><span class="tag if">万一</span><span class="t">忘了放洗衣液</span></div>
     <div class="row"><span class="tag do">应该</span><span class="t">机器怎么发现？怎么办？写下你的规矩</span></div>
   </div>
-  <div class="sub">同桌合议 → 写进记录册 → <b>写完举册子</b> → 老师检查加分</div>`,
+  <div class="sub">同桌合议 → 写进记录册第 3 页 → <b>写完举册子</b> → 老师检查加分</div>`,
  notes:"追问不要一次抛完，答出第一层再抛下一层：①机器怎么发现没放？（泡沫检测→蜂鸣提醒「未检测到洗涤剂，是否继续」）②用户就想清水洗？（允许继续）③洗到一半才想起？（暂停＋提示）。写完举册子加分；没人举才抽人。"},
 
-{cls:"challenge", badge:"raise", badgeText:"🙋 举册子", html:`
+{cls:"challenge", badges:[
+    {type:"note", text:"📒 记录④ · 册第 4 页"},
+    {type:"peer", text:"🤝 互审③"},
+    {type:"raise", text:"🙋 举册子"},
+  ], html:`
   <div class="cardtitle">洗衣机出事了 ③</div>
   <div class="eyebrow" style="margin-top:-6px">按「正常 → 万一 → 应该」写规矩</div>
   <h1>洗好了，<span class="accent">一直没人拿</span></h1>
@@ -324,21 +351,25 @@ const SLIDES = [
     <div class="row"><span class="tag if">万一</span><span class="t">一直没人来拿</span></div>
     <div class="row"><span class="tag do">应该</span><span class="t">怎么办？写下你的规矩</span></div>
   </div>
-  <div class="sub">同桌合议 → 写进记录册 → <b>写完举册子</b> → 老师检查加分</div>`,
+  <div class="sub">同桌合议 → 写进记录册第 4 页 → <b>写完举册子</b> → 老师检查加分</div>`,
  notes:"追问逐层抛：①怎么提醒？提醒几次？（2 次）②衣服皱了怎么办？（每 10 分钟抖散防皱）③一直没人来？（超 1 小时自动关舱门）。写完举册子加分；没人举才抽人。落点句：一台最简单的洗衣机，意外都比你想的多。"},
 
-{cls:"", badge:"raise", badgeText:"🙋 举册子", html:`
+{cls:"", badges:[
+    {type:"note", text:"📒 记录⑤ · 册第 5 页"},
+    {type:"peer", text:"🤝 互审④"},
+    {type:"raise", text:"🙋 举册子"},
+  ], html:`
   <div class="eyebrow">换个机器试试</div>
   <div class="task-card">
     <h2>⚙️ 每人一台新机器</h2>
     <li>老师分配：<b>售货机 / 扫地机 / 电梯 / 共享单车 / 自动门…</b></li>
     <li>限时 3 分钟：写<b>正常流程</b>（先…再…最后…）＋ <b>3 条意外规矩</b>（如果…就…）</li>
-    <li>写完<b>举起记录册</b> → 老师检查 → 当场加分</li>
+    <li>写进<b>记录册第 5 页</b> → 写完<b>举起记录册</b> → 老师检查 → 当场加分</li>
     <li>没人举册子？→ 抽人</li>
   </div>`,
  notes:"每台机器只给一组，分配完立刻计时。学生卡住就提示：先写正常流程三步，再想两个意外。检查时当场报分（2–5 分）。" },
 
-{cls:"draw", html:`
+{cls:"draw", badges:[{type:"question", text:"🎲 提问⑤ · 抽人"}], html:`
   <div class="eyebrow">🎲 随机抽人</div>
   <h1>抽 2 人念自己机器的规矩</h1>
   <ul class="items">
@@ -348,7 +379,10 @@ const SLIDES = [
   </ul>`,
  notes:"点透：机器不同、逻辑不同；写法相同——这就是举一反三。以后学变量、条件、循环，写的还是这三行。"},
 
-{cls:"", badge:"draw", badgeText:"🎲 抽人说一条", html:`
+{cls:"", badges:[
+    {type:"question", text:"🎲 提问⑥ · 抽人说一条"},
+    {type:"note", text:"📒 记录⑥ · 册第 6 页"},
+  ], html:`
   <div class="eyebrow">拓展 · 设计未来的功能</div>
   <h1>手机：天天指挥它，<br>也天天<span class="accent">吐槽</span>它</h1>
   <ul class="items">
@@ -380,15 +414,15 @@ const SLIDES = [
   </ul>`,
  notes:"这页是「规矩实验室」到 AI 案例的桥，必须讲：刚收束完，接「接下来换个更聪明的对手」。"},
 
-{cls:"", html:`
+{cls:"", badges:[{type:"note", text:"📒 记录⑦ · 册第 7 页"}], html:`
   <div class="eyebrow">实验任务发布</div>
   <div class="task-card">
     <h2>🧪 实验：给 AI 同事派活</h2>
     <li>① 看老师用<b>含糊命令</b>——看它多「死板」</li>
     <li>② 再看<b>清楚命令</b>——看它多「能干」</li>
     <li>③ 全班给它<b>起名，正式入职</b>（见名知意）</li>
-    <li>✅ 检查方式：<b>同桌互审</b>＋抽 2 组上台试</li>
-    <li>⭐ 评分：参与 2 分 · 最清楚 5 分</li>
+    <li>📒 边看边记进<b>记录册第 7 页</b>（差别 / 名字 / 形象 / 职责）</li>
+    <li>✅ 检查方式：<b>同桌互审</b>＋抽 2 组上台试　⭐ 评分：参与 2 分 · 最清楚 5 分</li>
   </div>`,
  notes:"把「怎么做、怎么检查、怎么评分」一次讲完再开始，学生就不会懵。"},
 
@@ -423,21 +457,25 @@ const SLIDES = [
   </div>`,
  notes:"投票举手即可。这个名字以后讲「变量命名要见名知意」时当示范。海报做法：课后把名字＋形象＋岗位职责交给 AI 生成一张图，打印 A3 贴教室；不做海报就写在黑板一角保留一学期。"},
 
-{cls:"", badge:"draw", badgeText:"🎲 抽人上台试", html:`
+{cls:"", badges:[
+    {type:"note", text:"📒 记录⑧ · 册第 8 页"},
+    {type:"peer", text:"🤝 互审⑤"},
+    {type:"question", text:"🎲 提问⑦ · 抽人上台"},
+  ], html:`
   <div class="eyebrow">任务卡 A2</div>
   <div class="task-card">
     <h2>🎤 学生当指挥</h2>
     <li>同桌合作，写一句「命令」让 AI 做件小事（写一条班级通知 / 整理一行乱数据）</li>
-    <li>🎲 抽 2 组上台现场试</li>
+    <li>写进<b>记录册第 8 页</b> → 同桌互查 → 抽 2 组上台现场试</li>
     <li>⭐ 参与 2 分 · 最清楚 5 分 · 称号「首席指挥官」</li>
   </div>`,
  notes:"时间紧就只抽 1 组。演示时故意「照命令字面执行」，让学生体会没说清的下场。"},
 
-{cls:"pause", html:`
+{cls:"pause", badges:[{type:"note", text:"📒 记录⑨ · 册第 9 页"}], html:`
   <div class="eyebrow">⏸ 暂停点 ②</div>
   <h1>刚才两组的命令，<br>哪句更好？差在哪？</h1>
   <div class="sub">先写判断，再听分享。</div>
-  <div class="where">✍️ 写在记录册第 2 页（印制前先写草稿纸）</div>`,
+  <div class="where">✍️ 翻开记录册第 9 页「记录⑨」（印制前先写草稿纸）</div>`,
  notes:"时间够抽 1 人试说，不够就留到下节课。把「说清楚」的要点落到黑板：干什么＋怎么算干好。"},
 
 {cls:"", html:`
@@ -450,14 +488,18 @@ const SLIDES = [
   </ul>`,
  notes:"问学生「你打过什么工、干过什么重复活」，借他们自己的话讲，零术语。1 分钟收住。"},
 
-{cls:"", badge:"draw", badgeText:"🎲 抽人复述", html:`
+{cls:"", badges:[
+    {type:"note", text:"📒 记录⑩ · 册第 10 页"},
+    {type:"question", text:"🎲 提问⑧ · 抽人复述"},
+  ], html:`
   <div class="eyebrow">收尾 · 三句话</div>
   <h1>今天只记这三句</h1>
   <ul class="items">
     <li>🤖 机器人：<b>照规矩干活</b></li>
     <li>🧠 AI：<b>把话说清楚</b>，它就干得漂亮</li>
     <li>😎 这门课：<b>不背公式，靠想清楚</b></li>
-  </ul>`,
+  </ul>
+  <div class="sub">📒 积分、规矩宝典、课后任务——写进记录册第 10 页</div>`,
  notes:"抽 3 人复述「这学期学什么」。课后任务说两遍。"},
 
 {cls:"end", html:`
@@ -482,11 +524,16 @@ SLIDES.forEach((s) => {
   const el = document.createElement("section");
   el.className = "slide " + (s.cls || "");
   el.innerHTML = s.html;
-  if (s.badge) {
-    const b = document.createElement("div");
-    b.className = "badge " + s.badge;
-    b.textContent = s.badgeText || "";
-    el.appendChild(b);
+  if (s.badges && s.badges.length) {
+    const wrap = document.createElement("div");
+    wrap.className = "badges";
+    s.badges.forEach((bd) => {
+      const b = document.createElement("div");
+      b.className = "badge " + bd.type;
+      b.textContent = bd.text;
+      wrap.appendChild(b);
+    });
+    el.appendChild(wrap);
   }
   deck.appendChild(el);
 });
