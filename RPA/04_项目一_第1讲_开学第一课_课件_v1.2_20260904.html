@@ -19,11 +19,11 @@ body{background:#241D17;display:flex;align-items:center;justify-content:center;o
 .slide{position:absolute;inset:0;padding:64px 96px 84px;display:none;flex-direction:column;justify-content:center}
 .slide.active{display:flex}
 .eyebrow{font-size:22px;letter-spacing:.3em;color:var(--primary);font-weight:700;margin-bottom:14px}
-h1{font-size:54px;color:var(--text);line-height:1.25;margin-bottom:22px;font-weight:800}
+h1{font-size:52px;color:var(--text);line-height:1.25;margin-bottom:20px;font-weight:800}
 h1 .accent{color:var(--primary)}
-.sub{font-size:25px;color:var(--muted);margin-bottom:22px;line-height:1.55}
+.sub{font-size:24px;color:var(--muted);margin-bottom:20px;line-height:1.55}
 ul.items{list-style:none}
-ul.items li{font-size:29px;color:var(--text);line-height:1.5;padding:9px 0;
+ul.items li{font-size:28px;color:var(--text);line-height:1.5;padding:8px 0;
   border-bottom:1px dashed var(--line)}
 ul.items li:last-child{border-bottom:none}
 ul.items li b{color:var(--primary-dark)}
@@ -35,39 +35,50 @@ ul.items li b{color:var(--primary-dark)}
 .mcard{flex:1;background:var(--card);border:2px solid var(--line);border-radius:16px;padding:18px 20px}
 .mcard h3{font-size:23px;color:var(--primary-dark);margin-bottom:8px;line-height:1.35}
 .mcard p{font-size:18px;color:var(--muted);line-height:1.45}
-.steps{display:flex;flex-direction:column;gap:16px;margin-top:8px}
-.step{display:flex;align-items:center;gap:20px;background:var(--card);border:2px solid var(--line);
-  border-radius:16px;padding:16px 26px}
-.step .n{flex:0 0 58px;height:58px;border-radius:50%;background:var(--primary);color:#fff;
-  font-size:30px;font-weight:800;display:flex;align-items:center;justify-content:center}
-.step .t{font-size:27px;color:var(--text);line-height:1.5}
+.steps{display:flex;flex-direction:column;gap:14px;margin-top:6px}
+.step{display:flex;align-items:center;gap:18px;background:var(--card);border:2px solid var(--line);
+  border-radius:16px;padding:14px 24px}
+.step .n{flex:0 0 56px;height:56px;border-radius:50%;background:var(--primary);color:#fff;
+  font-size:29px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.step .t{font-size:26px;color:var(--text);line-height:1.5}
 .step .t b{color:var(--primary-dark)}
-.big{font-size:60px;text-align:center;line-height:1.4;color:var(--text);font-weight:800}
+.big{font-size:58px;text-align:center;line-height:1.4;color:var(--text);font-weight:800}
 .big .accent{color:var(--primary)}
-.emoji-row{text-align:center;font-size:72px;letter-spacing:16px;margin-bottom:30px}
+.emoji-row{text-align:center;font-size:70px;letter-spacing:16px;margin-bottom:28px}
 .cover h1{font-size:70px}
 .cover .sub{font-size:29px}
 .meta{position:absolute;left:96px;bottom:34px;font-size:19px;color:var(--muted)}
 /* 暂停点 */
 .slide.pause{background:var(--primary);color:#fff}
 .pause .eyebrow{color:#FFE8D6}
-.pause h1{color:#fff;font-size:56px}
-.pause .sub{color:#FFE8D6;font-size:29px}
-.pause .where{margin-top:30px;font-size:25px;background:rgba(255,255,255,.18);
-  border-radius:14px;padding:14px 26px;display:inline-block;align-self:flex-start}
+.pause h1{color:#fff;font-size:54px}
+.pause .sub{color:#FFE8D6;font-size:28px}
+.pause .where{margin-top:26px;font-size:24px;background:rgba(255,255,255,.18);
+  border-radius:14px;padding:12px 24px;display:inline-block;align-self:flex-start}
 /* 抽人 */
 .slide.draw{background:var(--blue);color:#fff}
 .draw .eyebrow{color:#D6E6F7}
-.draw h1{color:#fff;font-size:56px}
-.draw .sub{color:#D6E6F7;font-size:28px}
+.draw h1{color:#fff;font-size:54px}
+.draw .sub{color:#D6E6F7;font-size:27px}
 .draw li{color:#fff;border-bottom:1px dashed rgba(255,255,255,.25)}
 .draw li b{color:#FFD9A8}
+/* 挑战卡 */
+.slide.challenge{background:#FFF5EA}
+.challenge h1{font-size:50px}
+.challenge .cardtitle{font-size:26px;font-weight:800;color:#fff;background:var(--primary);
+  display:inline-block;padding:10px 28px;border-radius:999px;margin-bottom:18px;align-self:flex-start}
 /* 任务卡 */
 .task-card{background:var(--card);border:3px solid var(--primary);border-radius:20px;
-  padding:32px 40px;max-width:1020px}
-.task-card h2{font-size:33px;color:var(--primary-dark);margin-bottom:16px}
-.task-card li{font-size:24px;color:var(--text);line-height:1.75;list-style:none}
-.task-card li::before{content:"▶ ";color:var(--primary);font-size:19px}
+  padding:30px 40px;max-width:1040px}
+.task-card h2{font-size:32px;color:var(--primary-dark);margin-bottom:14px}
+.task-card li{font-size:23px;color:var(--text);line-height:1.7;list-style:none}
+.task-card li::before{content:"▶ ";color:var(--primary);font-size:18px}
+/* 评分表 */
+.rubric{display:flex;gap:14px;margin-top:14px}
+.rubric .r{flex:1;background:var(--card);border:2px solid var(--line);border-radius:14px;
+  padding:14px 16px;text-align:center}
+.rubric .r .p{font-size:32px;font-weight:800;color:var(--primary-dark)}
+.rubric .r .d{font-size:19px;color:var(--text);margin-top:4px;line-height:1.4}
 /* 角标 */
 .badge{position:absolute;top:20px;right:28px;padding:8px 22px;border-radius:999px;font-size:22px;
   font-weight:700;color:#fff;z-index:5}
@@ -75,8 +86,8 @@ ul.items li b{color:var(--primary-dark)}
 .badge.quick{background:var(--green);box-shadow:0 4px 14px rgba(107,158,107,.45)}
 /* 结束页 */
 .slide.end{background:#2B211B;color:#FFF9F0;align-items:center;text-align:center}
-.end h1{color:#FFF9F0;font-size:62px}
-.end .sub{color:#D8CFC2;font-size:29px;line-height:1.7}
+.end h1{color:#FFF9F0;font-size:60px}
+.end .sub{color:#D8CFC2;font-size:28px;line-height:1.7}
 /* HUD */
 #hud{position:absolute;left:0;right:0;bottom:0;height:56px;background:rgba(43,33,27,.92);
   display:flex;align-items:center;gap:14px;padding:0 22px;color:#FFF9F0;font-size:19px}
@@ -86,7 +97,6 @@ ul.items li b{color:var(--primary-dark)}
 #counter{margin-left:auto}
 #bar{position:absolute;left:0;bottom:56px;height:5px;background:var(--primary);width:0;
   transition:width .25s}
-/* 教师提示面板 */
 #notes{position:absolute;left:0;right:0;bottom:56px;background:rgba(255,249,240,.97);
   border-top:3px solid var(--primary);padding:16px 96px;display:none;font-size:21px;color:var(--text)}
 #notes b{color:var(--primary-dark)}
@@ -114,7 +124,7 @@ const SLIDES = [
   <div class="emoji-row">🤖 🧺 🧹 🛒 📱</div>
   <h1>财务机器人应用与开发<br><span class="accent">开学第一课</span></h1>
   <div class="sub">给机器人派活 · 定规矩<br>不背公式，靠想清楚</div>
-  <div class="meta">第 1 周 · 90 分钟 · 04_课件 v1.1 · 2026-09-04</div>`,
+  <div class="meta">第 1 周 · 90 分钟 · 04_课件 v1.2 · 2026-09-04</div>`,
  notes:"课前检查投影、音响、大模型登录。先放视频，别急着讲。"},
 
 {cls:"", html:`
@@ -197,21 +207,27 @@ const SLIDES = [
     <li>🛒 售货机：<b>投币 → 选货 → 出货</b></li>
     <li>💡 这些规矩，都是<b>人写的</b>——今天，你来写</li>
   </ul>`,
- notes:"每人一句点到为止，马上进任务发布，不恋战。规矩的细节留给后面的实验室。"},
+ notes:"每人一句点到为止，马上进任务发布，不恋战。规矩的细节留给下面的关卡。"},
 
 {cls:"", html:`
-  <div class="eyebrow">规矩实验室</div>
-  <div class="task-card">
-    <h2>🔧 今天你是总工程师</h2>
-    <li>同桌一组，认领一台机器：<b>洗衣机 / 售货机 / 扫地机</b></li>
-    <li>每人给它写 <b>3 条规矩</b>，全部写成「<b>如果…就…</b>」</li>
-    <li>写完先不交流——后面全班一起评：<b>谁的规矩机器能执行？谁的会闹笑话？</b></li>
-    <li>⭐ 参与 2 分 · 好规矩 5 分 · 最佳规矩进班级「规矩宝典」</li>
-  </div>`,
- notes:"发布后留 2 分钟各自写，教师巡场看谁卡住（卡住的正是要帮的）。写不完没关系，后面边讨论边补。"},
+  <div class="eyebrow">规矩实验室 · 任务发布</div>
+  <h1>🔧 考一张<span class="accent">「总工程师执照」</span></h1>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><div class="t"><b>意外攻防</b>：全班打同一台洗衣机，同题才可比</div></div>
+    <div class="step"><div class="n">2</div><div class="t"><b>机器大乱斗</b>：各组认领机器，写「完整规矩清单」，互相攻擂</div></div>
+    <div class="step"><div class="n">3</div><div class="t"><b>BOSS 战</b>：全班给手机立「10 年后」的新规矩</div></div>
+  </div>
+  <div class="rubric">
+    <div class="r"><div class="p">+2</div><div class="d">机器能执行</div></div>
+    <div class="r"><div class="p">+3</div><div class="d">覆盖例外<br>（别人没想到的）</div></div>
+    <div class="r"><div class="p">+5</div><div class="d">没有歧义<br>（机器不闹笑话）</div></div>
+    <div class="r"><div class="p">+2</div><div class="d">攻擂成功<br>（大乱斗）</div></div>
+  </div>
+  <div class="sub">规矩<b>不限条数</b>，写得越全、越防刁难，分越高</div>`,
+ notes:"评分标准公开是这关的关键：学生知道按什么打分，才写得出「好规矩」。规则讲 1 分钟就够。"},
 
 {cls:"", badge:"quick", badgeText:"🙋 抢答", html:`
-  <div class="eyebrow">规矩实验室 · 热身</div>
+  <div class="eyebrow">第 0 关 · 总装车间热身</div>
   <h1>先一起拆一台<span class="accent">洗衣机</span></h1>
   <div class="steps">
     <div class="step"><div class="n">1</div><div class="t">按「快洗」→ <b>只洗 15 分钟</b></div></div>
@@ -219,77 +235,102 @@ const SLIDES = [
     <div class="step"><div class="n">3</div><div class="t">按「脱水」→ <b>只转 3 分钟</b></div></div>
   </div>
   <div class="sub">这些按钮背后，藏着什么规矩？（如果…就…）</div>`,
- notes:"学生说、老师板书「如果…就…」。3 分钟热身，只上口不深入。"},
+ notes:"学生说、老师板书写「如果…就…」。2 分钟热身，只上口不深入。"},
 
 {cls:"pause", html:`
-  <div class="eyebrow">⏸ 暂停点 ①</div>
+  <div class="eyebrow">第 1 关 · 意外攻防 · 卡① ⏸ 暂停点①</div>
   <h1>洗到一半，突然停电。<br>来电之后，洗衣机该怎么做？</h1>
-  <div class="sub">先写你的规矩，写完合上，先别讨论。</div>
+  <div class="sub">先写你的规矩——不限条数，想到几条写几条。写完合上，先别讨论。</div>
   <div class="where">✍️ 写在记录册第 1 页（印制前先写草稿纸）</div>`,
- notes:"90 秒安静写。这是今天最关键的题：考查学生能不能给「例外情况」立规矩。不公布答案，下页抽人。"},
+ notes:"90 秒安静写。今天最关键的一题：考查能不能给「例外情况」立规矩。不公布答案，下页抽人。"},
 
 {cls:"draw", html:`
   <div class="eyebrow">🎲 随机抽人 ②</div>
-  <h1>抽 2–3 人念自己的「停电规矩」</h1>
+  <h1>卡① 展示 · 全班挑刺</h1>
   <ul class="items">
-    <li>点评：哪条<b>机器能执行</b>？</li>
-    <li>哪条<b>会闹笑话</b>？</li>
+    <li>抽 2–3 组念规矩，<b>当堂打分</b>：</li>
+    <li>✅ 机器能执行？　🌟 有没有别人没想到的？　🏆 会不会闹笑话？</li>
     <li>参考：记下洗到哪一步→来电<b>接着洗</b>；或提示「已断电，请重选程序」</li>
   </ul>`,
- notes:"用基础会计课的 90-B2 随机点名。答得差的先夸再补，第一课不扣分。"},
+ notes:"用基础会计课的 90-B2 随机点名。当堂按评分表给分，别事后算。答得差的先夸再补，第一课不扣分。"},
 
-{cls:"", badge:"draw", badgeText:"🎲 抽人③ 分享", html:`
-  <div class="eyebrow">规矩实验室 · 意外大讨论</div>
-  <h1>洗衣机还有多少<span class="accent">意外</span>？</h1>
-  <div class="mcards">
-    <div class="mcard"><h3>🧺 洗到一半<br>想加衣服？</h3><p>你的规矩？（如果…就…）</p></div>
-    <div class="mcard"><h3>🧴 忘放洗衣液？</h3><p>怎么发现？怎么办？</p></div>
-    <div class="mcard"><h3>👕 衣服塞太多？</h3><p>洗还是不洗？</p></div>
-    <div class="mcard"><h3>⏰ 洗好了<br>没人拿？</h3><p>一直等吗？</p></div>
-  </div>
-  <div class="sub">四种意外，每种 1 分钟，全班一起立规矩</div>`,
- notes:"全班举手提规矩，老师板书写「如果…就…」，抽人分享。参考答案：加衣服→水位降到安全线→开锁→重新加水继续；忘洗衣液→泡沫检测不到→蜂鸣提醒「未检测到洗涤剂，是否继续」；塞太多→重量超标→报警拒绝启动；没人拿→提醒 2 次→每 10 分钟抖散防皱→超 1 小时自动关舱门。目标：让学生发现「例外越多，规矩越多」。"},
+{cls:"challenge", badge:"draw", badgeText:"🎲 抽人③", html:`
+  <div class="cardtitle">第 1 关 · 卡②</div>
+  <div class="eyebrow" style="margin-top:-6px">意外攻防</div>
+  <h1>🧴 忘放洗衣液，怎么办？</h1>
+  <ul class="items">
+    <li>先写你的规矩（同桌先各自写，再合议）</li>
+    <li>💬 追问①：机器<b>怎么发现</b>没放？（泡沫检测）</li>
+    <li>💬 追问②：如果用户<b>就想清水洗</b>？（提醒后允许继续）</li>
+    <li>💬 追问③：洗到<b>一半才想起</b>要加？（暂停＋提示）</li>
+  </ul>
+  <div class="sub">每条都按：能执行 2 分 / 覆盖例外 3 分 / 无歧义 5 分</div>`,
+ notes:"先写 90 秒再抽组展示。三个追问不要一次抛完：学生答出第一层再抛第二层，层层加码才见深度。参考答案：泡沫检测不到→蜂鸣提醒「未检测到洗涤剂，是否继续」。"},
+
+{cls:"challenge", badge:"draw", badgeText:"🎲 抽人④", html:`
+  <div class="cardtitle">第 1 关 · 卡③</div>
+  <div class="eyebrow" style="margin-top:-6px">意外攻防</div>
+  <h1>⏰ 洗好了，一直没人拿，怎么办？</h1>
+  <ul class="items">
+    <li>先写你的规矩（同桌先各自写，再合议）</li>
+    <li>💬 追问①：怎么<b>提醒</b>？（蜂鸣）提醒<b>几次</b>？（2 次）</li>
+    <li>💬 追问②：还是没人来？（每 10 分钟<b>抖散防皱</b>）</li>
+    <li>💬 追问③：一直没人来？（超过 1 小时<b>自动关舱门</b>）</li>
+  </ul>
+  <div class="sub">每条都按：能执行 2 分 / 覆盖例外 3 分 / 无歧义 5 分</div>`,
+ notes:"流程同卡②。落点句：“一台最简单的洗衣机，意外都比你想的多——所以好工程师先想意外，再写规矩。”"},
 
 {cls:"", badge:"quick", badgeText:"🙋 抢答（不抽人）", html:`
-  <div class="eyebrow">规矩实验室 · 快问快答</div>
-  <h1>售货机<span class="accent">闹脾气</span>了</h1>
+  <div class="eyebrow">附加题 · 快问快答</div>
+  <h1>售货机 & 扫地机<span class="accent">闹脾气</span></h1>
   <ul class="items">
-    <li>💰 塞的纸币<b>卡住了</b>？</li>
-    <li>🪙 <b>找零不够</b>？</li>
-    <li>🥤 <b>出货被卡住</b>？</li>
+    <li>💰 塞的纸币<b>卡住了</b>？　🪙 <b>找零不够</b>？　🥤 <b>出货被卡住</b>？</li>
+    <li>🚪 扫地机<b>卡在门槛</b>？　🪜 冲到<b>楼梯边</b>？　🔋 扫到一半<b>没电</b>？</li>
+    <li>每题 20 秒，抢答说规矩</li>
   </ul>`,
- notes:"每问 20 秒，抢答即可。这是简单题，刻意不抽人。参考：卡币→退回并提示换一张；找零不够→提示用纸币或取消交易退回；出货卡住→再推一次，失败自动退款。"},
+ notes:"简单题热身，抢答即可。参考：卡币→退回并提示换一张；找零不够→提示用纸币或取消交易；出货卡住→再推一次失败自动退款；卡门槛→后退换路线；楼梯边→悬崖传感器停；没电→记位置回充后回原地继续。"},
 
-{cls:"", badge:"quick", badgeText:"🙋 抢答（不抽人）", html:`
-  <div class="eyebrow">规矩实验室 · 快问快答</div>
-  <h1>扫地机也<span class="accent">闹脾气</span>了</h1>
+{cls:"", html:`
+  <div class="eyebrow">第 2 关 · 机器大乱斗</div>
+  <div class="task-card">
+    <h2>⚔️ 认领机器，写「完整规矩清单」</h2>
+    <li>每组认领一台：<b>售货机 / 扫地机 / 电梯 / 共享单车 / 自动门…</b></li>
+    <li>给自家机器写清单：<b>不限条数</b>——想意外、写规矩，越全越防刁难</li>
+    <li>写完互相<b>攻擂</b>：攻方说一个刁难情况，守方当场答规矩</li>
+    <li>答得出守方 <b>+2</b>，答不出攻方 <b>+2</b></li>
+  </div>`,
+ notes:"写 4 分钟，攻防 4 分钟。守擂组报出机器类型再开攻。冷场就先示范一轮：老师当攻方问「投的是游戏币怎么办？」。答不出时同桌补答也算守擂成功。"},
+
+{cls:"draw", html:`
+  <div class="eyebrow">🎲 随机抽人 ⑤</div>
+  <h1>⚔️ 攻防时间</h1>
   <ul class="items">
-    <li>🚪 <b>卡在门槛</b>上？</li>
-    <li>🪜 冲到<b>楼梯边</b>？</li>
-    <li>🔋 扫到一半<b>没电</b>？</li>
+    <li>攻方：说一个<b>刁难情况</b></li>
+    <li>守方：当场<b>答出规矩</b></li>
+    <li>答得出守方 <b>+2</b>，答不出攻方 <b>+2</b></li>
   </ul>`,
- notes:"同上，快速过。参考：卡门槛→后退换路线；楼梯边→悬崖传感器停；没电→记位置回充后回原地继续。"},
+ notes:"抽攻方代表发言，守方整组商量 10 秒后由记录员作答。时间到就收，别恋战。"},
 
-{cls:"", badge:"draw", badgeText:"🎲 抽人④ 说一条", html:`
-  <div class="eyebrow">规矩实验室 · 终极想象</div>
+{cls:"", badge:"draw", badgeText:"🎲 抽人⑥ 说一条", html:`
+  <div class="eyebrow">BOSS 战 · 终极想象</div>
   <h1>手机：天天指挥它，<br>也天天<span class="accent">吐槽</span>它</h1>
   <ul class="items">
     <li>📱 先吐槽：它最烦人的 <b>3 个毛病</b>（举手说）</li>
     <li>🔮 再想象：<b>10 年后的手机</b>，有哪些新规矩？<br>　例：「如果晚上 11 点，就自动免打扰」</li>
     <li>💡 机器越复杂，规矩越多——但每条都是<b>人写的</b></li>
   </ul>`,
- notes:"先吐槽热场 1 分钟，再想象，抽 2–3 人说一条自己的「十年后规矩」。引导参考：开会自动静音、睡觉免打扰、低电量自动预约充电、自动清缓存、提醒久坐。落点：写规矩=造智能。冷场就把引导例子抛出去。"},
+ notes:"先吐槽热场 1 分钟，再想象，抽 2–3 人说一条「十年后规矩」。引导参考：开会自动静音、睡觉免打扰、低电量自动预约充电、自动清缓存、提醒久坐。落点：写规矩＝造智能。"},
 
 {cls:"", html:`
-  <div class="eyebrow">规矩实验室 · 收束</div>
+  <div class="eyebrow">第 3 关 · 授勋</div>
   <h1>聪明程度 = 规矩的<span class="accent">数量 × 质量</span></h1>
   <div class="steps">
     <div class="step"><div class="n">洗</div><div class="t">洗衣机：<b>几十条</b>规矩</div></div>
     <div class="step"><div class="n">机</div><div class="t">手机：<b>成千上万条</b>规矩</div></div>
-    <div class="step"><div class="n">名</div><div class="t">「如果…就…」叫<b>条件</b>，「一直/几遍」叫<b>循环</b>——今天先混个脸熟，项目二、三正式学</div></div>
+    <div class="step"><div class="n">名</div><div class="t">「如果…就…」叫<b>条件</b>，「一直/几遍」叫<b>循环</b>——今天混脸熟，项目二、三正式学</div></div>
   </div>
-  <div class="sub">好规矩记入班级「规矩宝典」，一学期积累，期末打印成册</div>`,
- notes:"一句收束即可，术语点到为止。「规矩宝典」=把每节课学生写的好规矩记下来，期末打印成册发给学生。"},
+  <div class="sub">积分最高组授「<b>首席总工程师</b>」🏅，好规矩进班级「规矩宝典」</div>`,
+ notes:"报积分、授勋、一句收束。术语点到为止。「规矩宝典」=每节课学生写的好规矩记下来，期末打印成册发给学生。"},
 
 {cls:"", html:`
   <div class="eyebrow">转折 · 从机器到 AI</div>
@@ -300,7 +341,7 @@ const SLIDES = [
     <li>💡 给机器人立规矩、给 AI 下命令，其实是<b>同一件事</b>：把话说清楚</li>
     <li>🎯 下面做个小实验：<b>把 AI 当同事，给它派活</b></li>
   </ul>`,
- notes:"这页是抽人之后到 AI 案例的桥，必须讲，不能跳：上页学生还在抽人，这页正好接上「接下来换个更聪明的对手」。"},
+ notes:"这页是「规矩实验室」到 AI 案例的桥，必须讲：上页刚授勋，这页接「接下来换个更聪明的对手」。"},
 
 {cls:"", html:`
   <div class="eyebrow">实验任务发布</div>
@@ -343,9 +384,9 @@ const SLIDES = [
     <div class="step"><div class="n">3</div><div class="t">生成「自我介绍 + 岗位职责」</div></div>
     <div class="step"><div class="n">4</div><div class="t">📌 做成<b>入职海报</b>贴教室，名字一学期沿用</div></div>
   </div>`,
- notes:"投票举手即可。这个名字以后讲「变量命名要见名知意」时当示范。海报做法：课后把名字＋形象＋岗位职责交给 AI 生成一张图，打印 A3 贴教室；不做海报就把名字和岗位写在黑板一角保留一学期。"},
+ notes:"投票举手即可。这个名字以后讲「变量命名要见名知意」时当示范。海报做法：课后把名字＋形象＋岗位职责交给 AI 生成一张图，打印 A3 贴教室；不做海报就写在黑板一角保留一学期。"},
 
-{cls:"", badge:"draw", badgeText:"🎲 抽人⑤ 上台试", html:`
+{cls:"", badge:"draw", badgeText:"🎲 抽人⑦ 上台试", html:`
   <div class="eyebrow">任务卡 A2</div>
   <div class="task-card">
     <h2>🎤 学生当指挥</h2>
@@ -370,9 +411,9 @@ const SLIDES = [
     <li>财务里一样：<b>开票、对账、报销</b></li>
     <li>🎯 这学期，就做<b>帮财务干活的机器人</b></li>
   </ul>`,
- notes:"问学生「你打过什么工、干过什么重复活」，借他们自己的话讲，零术语。"},
+ notes:"问学生「你打过什么工、干过什么重复活」，借他们自己的话讲，零术语。1 分钟收住。"},
 
-{cls:"", badge:"draw", badgeText:"🎲 抽人⑥ 复述", html:`
+{cls:"", badge:"draw", badgeText:"🎲 抽人⑧ 复述", html:`
   <div class="eyebrow">收尾 · 三句话</div>
   <h1>今天只记这三句</h1>
   <ul class="items">
