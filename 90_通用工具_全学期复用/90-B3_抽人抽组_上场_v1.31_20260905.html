@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>上场　v1.30</title>
+<title>上场　v1.31</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:#05070d;color:#eef4ff;
@@ -147,6 +147,11 @@ body.focus .rail, body.focus .rail-tab, body.focus .top{opacity:0;pointer-events
 .co-top{display:flex;align-items:center;gap:12px;padding:10px 16px;background:#132038;
   border-bottom:1px solid #2a3754;flex-shrink:0}
 .co-top h2{font-size:clamp(18px,2.4vw,28px);color:#ffe9a8;margin:0}
+.co-sw{display:flex;align-items:center;gap:6px;font-size:14px;color:#cfe0ff;font-weight:800;
+  background:#0b1220;border:1px solid #2a3754;border-radius:9px;padding:7px 12px;cursor:pointer;user-select:none}
+.co-sw input{width:16px;height:16px;accent-color:#e0b13a;cursor:pointer}
+.co-sw b{color:#ffe9a8}
+.co-cell .pt{display:block;font-size:12px;color:#7fd18c;font-weight:800;margin-top:2px;min-height:1.2em}
 .co-top .rest{margin-left:auto;font-size:clamp(15px,2vw,22px);color:#8ea0c3;font-weight:800}
 .co-top button{border:0;background:#2a3754;color:#cfe0ff;font:inherit;font-weight:800;
   font-size:14px;padding:8px 14px;border-radius:9px;cursor:pointer}
@@ -254,7 +259,7 @@ input[type=file].pick{display:block;width:100%;margin-top:6px;font-size:12px;col
 <div class="ui">
   <div class="top">
     <div class="brand">上场</div>
-    <span class="ver">v1.30</span>
+    <span class="ver">v1.31</span>
   </div>
   <div class="stage">
     <div class="ring-wrap">
@@ -269,12 +274,13 @@ input[type=file].pick{display:block;width:100%;margin-top:6px;font-size:12px;col
 <div class="checkout" id="checkout">
   <div class="co-top">
     <h2>下课前　检查册子</h2>
+    <label class="co-sw"><input type="checkbox" id="coScore" checked> 消名字时记 <b>1</b> 分</label>
     <button type="button" id="coBack">← 全部退回</button>
     <button class="gold" type="button" id="coClose">关闭</button>
     <span class="rest">还剩 <b id="coRest">0</b> 人</span>
   </div>
   <div class="co-grid" id="coGrid"></div>
-  <div class="co-bar">检查过谁的册子，就点一下他的名字——变灰就可以走了。灰掉的再点一下能退回。</div>
+  <div class="co-bar">检查过谁的册子，点一下他的名字——变灰就可以走了。灰掉的再点一下能退回（分数一起收回）。<br><b>课上主动给你看 / 被提问到 → 在抽人弹窗上点 2 分；拖到下课被动检查 → 这里点一下记 1 分。</b></div>
 </div>
 <div class="dim" id="dim"></div>
 <aside class="panel" id="panel">
@@ -553,7 +559,8 @@ function renderCheckout(){
   const done=new Set(coDone());
   $("coGrid").innerHTML = names.map(n=>{
     const img = photos[n] ? `<img src="${photos[n]}" alt="">` : `<div class="face"></div>`;
-    return `<div class="co-cell${done.has(n)?" done":""}" data-n="${esc(n)}">${img}<div class="nm">${esc(n)}</div></div>`;
+    const got = scoreLog.some(r=>r.day===todayStr() && r.name===n && r.use==="下课检查册子");
+    return `<div class="co-cell${done.has(n)?" done":""}" data-n="${esc(n)}">${img}<div class="nm">${esc(n)}</div><span class="pt">${got?"+1 分":""}</span></div>`;
   }).join("") || '<div style="color:#8ea0c3">名单是空的。先在「名单 / 组名」里贴名单。</div>';
   $("coRest").textContent = String(names.filter(n=>!done.has(n)).length);
 }
@@ -696,7 +703,7 @@ function sheetXmlOOXML(rows){
   return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>`
     +`<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>${body}</sheetData></worksheet>`;
 }
-function buildXlsx(sheetMap, bakText){
+function buildXlsx(sheetMap, bakText, extraFiles){
   const names=Object.keys(sheetMap).filter(k=>k!=="_bak");
   const types=[
     `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>`,
@@ -727,9 +734,48 @@ function buildXlsx(sheetMap, bakText){
   };
   names.forEach((n,i)=>{ files["xl/worksheets/sheet"+(i+1)+".xml"]=sheetXmlOOXML(sheetMap[n]); });
   if(bakText) files["jichukuaiji.json"]=bakText;
+  if(extraFiles) Object.keys(extraFiles).forEach(k=>{ files[k]=extraFiles[k]; });
   return zipStore(files);
 }
-function exportTable(){
+
+// ── 备份/恢复：把照片原图从 IndexedDB 取出来 ──
+async function allPhotoBlobs(){
+  const out={};
+  try{
+    const db=await dbp();
+    const store=db.transaction("img").objectStore("img");
+    await new Promise(res=>{
+      const req=store.openCursor();
+      req.onsuccess=e=>{ const c=e.target.result;
+        if(!c){ res(); return; }
+        out[c.key]=c.value; c.continue(); };
+      req.onerror=()=>res();
+    });
+  }catch(e){}
+  return out;
+}
+function blobExt(b){
+  const t=(b&&b.type)||"";
+  if(t.includes("png")) return "png";
+  if(t.includes("webp")) return "webp";
+  return "jpg";
+}
+function safeFile(n){ return String(n).replace(/[\\/:*?"<>|]/g,"_"); }
+async function restorePhotos(map){
+  // map: {姓名: Uint8Array}
+  let k=0;
+  for(const name of Object.keys(map)){
+    const u8=map[name];
+    if(!u8 || !u8.length) continue;
+    const ext=(name.split(".").pop()||"").toLowerCase();
+    const mime = ext==="png"?"image/png" : ext==="webp"?"image/webp" : "image/jpeg";
+    const base=name.replace(/\.(png|jpe?g|webp)$/i,"");
+    await putPhoto(base, new Blob([u8],{type:mime}));
+    k++;
+  }
+  return k;
+}
+async function exportTable(){
   const people=lines($("people"));
   const today=todayByName();
   const tot=totalByName();
@@ -751,13 +797,35 @@ function exportTable(){
   let surveyJson=[];
   try{ surveyJson=JSON.parse(localStorage.getItem("draw-survey")||"[]"); if(!Array.isArray(surveyJson)) surveyJson=[]; }catch(e){ surveyJson=[]; }
   const bakText=JSON.stringify({people:$("people").value, groups:$("groups").value, hist:hist, scoreLog:scoreLog, survey:surveyJson});
-  const blob=buildXlsx({"记分":sum, "抽取记录":histRows, "分数明细":det, "点单":dia, "名单":ming}, bakText);
+  // 把照片原图一起打包
+  let extra={}, nPhoto=0;
+  try{
+    const blobs=await allPhotoBlobs();
+    for(const nm of Object.keys(blobs)){
+      const b=blobs[nm];
+      if(!b) continue;
+      const u8=new Uint8Array(await b.arrayBuffer());
+      extra["photos/"+safeFile(nm)+"."+blobExt(b)]=u8;
+      nPhoto++;
+    }
+  }catch(e){}
+  // 消名字记录也一并带走
+  const coAll={};
+  try{
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(k && k.indexOf("draw-checkout-")===0) coAll[k]=localStorage.getItem(k);
+    }
+  }catch(e){}
+  const bak2=JSON.stringify({people:$("people").value, groups:$("groups").value,
+    hist:hist, scoreLog:scoreLog, survey:surveyJson, checkout:coAll});
+  const blob=buildXlsx({"记分":sum, "抽取记录":histRows, "分数明细":det, "点单":dia, "名单":ming}, bak2, extra);
   const a=document.createElement("a");
   a.href=URL.createObjectURL(blob);
   a.download="课堂数据_"+todayStr()+".xlsx";
   a.click();
   setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
-  sayImport("已下载课堂数据_"+todayStr()+".xlsx。同一台电脑下节课直接打开即可，不必导入。", true);
+  sayImport("已下载 课堂数据_"+todayStr()+".xlsx（含名单、分数、"+nPhoto+" 张照片）。换教室换电脑，导入这一个文件就全回来了。", true);
 }
 function applyBak(data){
   if(!data || typeof data!=="object") return false;
@@ -765,10 +833,17 @@ function applyBak(data){
   if(data.groups!=null){ $("groups").value=data.groups; localStorage.setItem("draw-groups", data.groups); }
   if(Array.isArray(data.scoreLog)){ scoreLog=data.scoreLog; saveScores(); }
   if(Array.isArray(data.survey)) localStorage.setItem("draw-survey", JSON.stringify(data.survey));
+  if(data.checkout && typeof data.checkout==="object"){
+    try{ Object.keys(data.checkout).forEach(k=>{
+      if(k.indexOf("draw-checkout-")===0) localStorage.setItem(k, data.checkout[k]); }); }catch(e){}
+  }
   count(); renderList(); renderHist(); renderScores(); paintIdle();
   const n=lines($("people")).length;
   const tot=Object.values(totalByName()).reduce((s,x)=>s+Number(x||0),0);
-  sayImport("已恢复。名单 "+n+" 人，累计 "+tot+" 分。本堂记录还是这一页上抽过的。", true);
+  const ph=window._restoredPhotos||0;
+  window._restoredPhotos=0;
+  count();
+  sayImport("已恢复。名单 "+n+" 人，累计 "+tot+" 分"+(ph?("，照片 "+ph+" 张"):"")+"。本堂记录还是这一页上抽过的。", true);
   return true;
 }
 function applyPeople(names, surveyRows){
@@ -1195,6 +1270,11 @@ async function parseXlsx(buf){
   if(files["jichukuaiji.json"]){
     try{ sheets._bak=JSON.parse(xmlText(files["jichukuaiji.json"])); }catch(e){}
   }
+  const pm={};
+  Object.keys(files).forEach(k=>{
+    if(k.indexOf("photos/")===0){ pm[k.slice(7)]=files[k]; }
+  });
+  if(Object.keys(pm).length) sheets._photos=pm;
   return sheets;
 }
 function sheetSummary(sheets){
@@ -1244,6 +1324,12 @@ async function importTableFile(file){
     let sheets=null;
     if(u8[0]===0x50 && u8[1]===0x4b){
       try{ sheets=await parseXlsx(buf); }catch(e){ console.error(e); sheets=null; }
+      if(sheets && sheets._photos){
+        try{
+          const k=await restorePhotos(sheets._photos);
+          if(k) window._restoredPhotos=k;
+        }catch(e){}
+      }
       if(sheets && sheets._bak){
         const sumRows=sheets["记分"]||sheets["成绩汇总"];
         const sum=isGrid(sumRows)?parseScoreSum(sumRows):[];
@@ -1828,12 +1914,31 @@ if($("coBack")) $("coBack").onclick = ()=>{
   if(!confirm("把今天所有灰掉的名字全部退回？")) return;
   coSave([]); renderCheckout();
 };
+function coRemoveScore(name){
+  // 只撤销「下课检查」这一条，手动打的 2/5 分不动
+  const day=todayStr();
+  for(let i=scoreLog.length-1;i>=0;i--){
+    const r=scoreLog[i];
+    if(r.day===day && r.name===name && r.use==="下课检查册子"){ scoreLog.splice(i,1); break; }
+  }
+  saveScores(); renderScores(); renderHist();
+}
+function coAddScore(name){
+  const day=todayStr();
+  const has=scoreLog.some(r=>r.day===day && r.name===name && r.use==="下课检查册子");
+  if(has) return;
+  const tm=new Date().toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  scoreLog.push({day, t:tm, name, pts:1, use:"下课检查册子", round:Date.now()});
+  saveScores(); renderScores(); renderHist();
+}
 if($("coGrid")) $("coGrid").onclick = e=>{
   const c=e.target.closest(".co-cell"); if(!c) return;
   const n=c.dataset.n;
   const done=coDone();
   const i=done.indexOf(n);
-  if(i>=0) done.splice(i,1); else done.push(n);
+  const scoreOn=$("coScore") && $("coScore").checked;
+  if(i>=0){ done.splice(i,1); if(scoreOn) coRemoveScore(n); }
+  else { done.push(n); if(scoreOn) coAddScore(n); }
   coSave(done); renderCheckout();
 };
 document.addEventListener("keydown", e=>{
