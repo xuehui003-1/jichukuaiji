@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>上场　v1.31</title>
+<title>上场　v1.32</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:#05070d;color:#eef4ff;
@@ -133,6 +133,12 @@ body.focus .rail, body.focus .rail-tab, body.focus .top{opacity:0;pointer-events
 .score-list b{color:#ffe9a8;margin-left:auto}
 
 /* 记分搜索框 */
+
+.vol-box{display:inline-flex;align-items:center;gap:4px;background:#0b1220;border:1px solid #2a3754;
+  border-radius:9px;padding:3px 7px;margin-left:4px}
+.vol-box .vol-b{padding:2px 8px;font-size:15px;font-weight:900;line-height:1.2;border-radius:6px}
+.vol-s{width:78px;accent-color:#e0b13a;cursor:pointer}
+.vol-box b{color:#ffe9a8;font-size:12px;min-width:2.6em;text-align:right;font-variant-numeric:tabular-nums}
 .score-find{display:flex;gap:6px;margin-bottom:6px}
 .score-find input{flex:1;background:#0b1220;color:#ffe9a8;border:1px solid #e0b13a;
   border-radius:8px;padding:6px 10px;font:inherit;font-size:13px;font-weight:700}
@@ -144,32 +150,33 @@ body.focus .rail, body.focus .rail-tab, body.focus .top{opacity:0;pointer-events
 /* 消名字（下课前检查册子） */
 .checkout{position:fixed;inset:0;z-index:60;background:#0b1220;display:none;flex-direction:column}
 .checkout.on{display:flex}
-.co-top{display:flex;align-items:center;gap:12px;padding:10px 16px;background:#132038;
+.co-top{display:flex;align-items:center;gap:10px;padding:6px 12px;flex-wrap:wrap;background:#132038;
   border-bottom:1px solid #2a3754;flex-shrink:0}
-.co-top h2{font-size:clamp(18px,2.4vw,28px);color:#ffe9a8;margin:0}
+.co-top h2{font-size:clamp(15px,1.9vw,23px);color:#ffe9a8;margin:0}
 .co-sw{display:flex;align-items:center;gap:6px;font-size:14px;color:#cfe0ff;font-weight:800;
   background:#0b1220;border:1px solid #2a3754;border-radius:9px;padding:7px 12px;cursor:pointer;user-select:none}
 .co-sw input{width:16px;height:16px;accent-color:#e0b13a;cursor:pointer}
 .co-sw b{color:#ffe9a8}
-.co-cell .pt{display:block;font-size:12px;color:#7fd18c;font-weight:800;margin-top:2px;min-height:1.2em}
+.co-cell .pt{display:block;font-size:var(--pt,11px);color:#7fd18c;font-weight:800;line-height:1.1;min-height:1.05em}
 .co-top .rest{margin-left:auto;font-size:clamp(15px,2vw,22px);color:#8ea0c3;font-weight:800}
 .co-top button{border:0;background:#2a3754;color:#cfe0ff;font:inherit;font-weight:800;
   font-size:14px;padding:8px 14px;border-radius:9px;cursor:pointer}
 .co-top button.gold{background:#e0b13a;color:#2a1c00}
-.co-grid{flex:1;overflow:auto;padding:14px;display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(clamp(110px,11vw,160px),1fr));gap:10px;align-content:start}
-.co-cell{background:#16233c;border:3px solid #2a3754;border-radius:14px;padding:10px 6px;
-  text-align:center;cursor:pointer;transition:.18s;user-select:none}
-.co-cell:hover{border-color:#e0b13a;transform:translateY(-2px)}
-.co-cell img{width:clamp(54px,5.5vw,78px);height:clamp(54px,5.5vw,78px);border-radius:50%;
-  object-fit:cover;display:block;margin:0 auto 6px}
-.co-cell .face{width:clamp(54px,5.5vw,78px);height:clamp(54px,5.5vw,78px);border-radius:50%;
-  background:#2a3754;margin:0 auto 6px}
-.co-cell .nm{font-size:clamp(15px,1.7vw,22px);font-weight:900;color:#fff8d6}
+.co-grid{flex:1;overflow:auto;padding:6px;display:grid;
+  grid-template-columns:repeat(var(--cols,8),1fr);gap:var(--gap,6px);align-content:start}
+.co-cell{background:#16233c;border:2px solid #2a3754;border-radius:10px;padding:var(--pad,5px) 3px;
+  text-align:center;cursor:pointer;transition:.14s;user-select:none;overflow:hidden}
+.co-cell:hover{border-color:#e0b13a}
+.co-cell img{width:var(--av,52px);height:var(--av,52px);border-radius:50%;
+  object-fit:cover;display:block;margin:0 auto 3px}
+.co-cell .face{width:var(--av,52px);height:var(--av,52px);border-radius:50%;
+  background:#2a3754;margin:0 auto 3px}
+.co-cell .nm{font-size:var(--nm,16px);font-weight:900;color:#fff8d6;line-height:1.15;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .co-cell.done{opacity:.32;filter:grayscale(1);border-color:#1b2740;cursor:default}
 .co-cell.done .nm{text-decoration:line-through;color:#6b7a99}
-.co-bar{flex-shrink:0;padding:10px 16px;background:#132038;border-top:1px solid #2a3754;
-  text-align:center;font-size:clamp(14px,1.8vw,20px);color:#8ea0c3;font-weight:700}
+.co-bar{flex-shrink:0;padding:5px 12px;background:#132038;border-top:1px solid #2a3754;
+  text-align:center;font-size:clamp(11px,1.25vw,15px);line-height:1.35;color:#8ea0c3;font-weight:700}
 .now{font-size:14px;line-height:1.55;color:#fff8d6;background:#3a1d08;border:1px solid #e0b13a;border-radius:10px;padding:10px}
 .gold.wide{display:block;width:100%;text-align:center;border-radius:10px;padding:10px 12px}
 .score-list .mini{color:#8ea0c3;font-size:11px;font-weight:700}
@@ -193,6 +200,12 @@ input[type=file].pick{display:block;width:100%;margin-top:6px;font-size:12px;col
     <button class="gold" type="button" id="btnList" style="padding:8px 12px;border-radius:10px">名单 / 组名</button>
     <span class="head-btns">
       <button class="ghost" type="button" id="btnMute">音效开</button>
+      <span class="vol-box">
+        <button class="ghost vol-b" type="button" id="volDown" title="减小音量">−</button>
+        <input id="volSlider" class="vol-s" type="range" min="0" max="150" step="5" value="70" title="音量">
+        <button class="ghost vol-b" type="button" id="volUp" title="增大音量">＋</button>
+        <b id="volLab">70%</b>
+      </span>
       <button class="ghost" type="button" id="railShut">收起</button>
     </span>
   </div>
@@ -259,7 +272,7 @@ input[type=file].pick{display:block;width:100%;margin-top:6px;font-size:12px;col
 <div class="ui">
   <div class="top">
     <div class="brand">上场</div>
-    <span class="ver">v1.31</span>
+    <span class="ver">v1.32</span>
   </div>
   <div class="stage">
     <div class="ring-wrap">
@@ -276,6 +289,7 @@ input[type=file].pick{display:block;width:100%;margin-top:6px;font-size:12px;col
     <h2>下课前　检查册子</h2>
     <label class="co-sw"><input type="checkbox" id="coScore" checked> 消名字时记 <b>1</b> 分</label>
     <button type="button" id="coBack">← 全部退回</button>
+    <button type="button" id="coFull">全屏显示</button>
     <button class="gold" type="button" id="coClose">关闭</button>
     <span class="rest">还剩 <b id="coRest">0</b> 人</span>
   </div>
@@ -554,6 +568,37 @@ function coDone(){
   catch(e){ return []; }
 }
 function coSave(a){ localStorage.setItem(coKey(), JSON.stringify(a)); }
+
+// 自动算列数：让所有卡片刚好铺满一屏，不用滚
+function coFit(){
+  const grid=$("coGrid"); if(!grid) return;
+  const n=lines($("people")).length;
+  if(!n) return;
+  const W=grid.clientWidth, H=grid.clientHeight;
+  if(W<50||H<50) return;
+  let best=null;
+  for(let cols=1; cols<=n; cols++){
+    const rows=Math.ceil(n/cols);
+    const gap=6;
+    const cw=(W-gap*(cols-1))/cols;
+    const ch=(H-gap*(rows-1))/rows;
+    if(cw<58||ch<52) continue;          // 太小就不考虑
+    // 头像取宽高都能容下的最大值：高度里要留出名字(约0.42)和分数(约0.2)
+    const av=Math.min(cw*0.62, ch*0.55, 120);
+    // 谁能把头像做得最大就选谁；同样大时优先行数少（更方正）
+    const score=av*1000 - rows;
+    if(!best||score>best.score) best={cols,rows,cw,ch,av,score};
+  }
+  if(!best){ best={cols:Math.ceil(Math.sqrt(n*1.6)),rows:0,av:40,cw:70,ch:60}; }
+  const av=Math.max(26, Math.round(best.av));
+  const nm=Math.max(11, Math.min(26, Math.round(av*0.34)));
+  grid.style.setProperty("--cols", best.cols);
+  grid.style.setProperty("--av", av+"px");
+  grid.style.setProperty("--nm", nm+"px");
+  grid.style.setProperty("--pt", Math.max(9,Math.round(nm*0.68))+"px");
+  grid.style.setProperty("--pad", (av>56?5:3)+"px");
+  grid.style.setProperty("--gap", (av>56?6:4)+"px");
+}
 function renderCheckout(){
   const names=lines($("people"));
   const done=new Set(coDone());
@@ -563,6 +608,7 @@ function renderCheckout(){
     return `<div class="co-cell${done.has(n)?" done":""}" data-n="${esc(n)}">${img}<div class="nm">${esc(n)}</div><span class="pt">${got?"+1 分":""}</span></div>`;
   }).join("") || '<div style="color:#8ea0c3">名单是空的。先在「名单 / 组名」里贴名单。</div>';
   $("coRest").textContent = String(names.filter(n=>!done.has(n)).length);
+  requestAnimationFrame(coFit);
 }
 function giveScore(name, pts, btn){
   const day=todayStr();
@@ -1581,10 +1627,32 @@ function burst(){
 }
 
 let audio, noiseBuf;
+let masterGain=null;
+let volLevel=(function(){
+  const v=parseFloat(localStorage.getItem("draw-vol"));
+  return (isFinite(v)&&v>=0&&v<=1.5)?v:0.7;
+})();
 function ac(){
   if(!audio) audio=new (window.AudioContext||window.webkitAudioContext)();
   if(audio.state==="suspended") audio.resume();
+  if(!masterGain){
+    masterGain=audio.createGain();
+    masterGain.gain.value=volLevel;
+    masterGain.connect(audio.destination);
+  }
   return audio;
+}
+// 所有音效都接这里，而不是直接接 destination
+function out(){ ac(); return masterGain; }
+function setVol(v){
+  volLevel=Math.max(0, Math.min(1.5, v));
+  localStorage.setItem("draw-vol", String(volLevel));
+  if(masterGain) masterGain.gain.value=volLevel;
+  const pct=Math.round(volLevel/1.5*100);
+  const lab=$("volLab"); if(lab) lab.textContent=Math.round(volLevel*100)+"%";
+  const sl=$("volSlider"); if(sl && Number(sl.value)!==Math.round(volLevel*100)) sl.value=String(Math.round(volLevel*100));
+  // 语音播报音量同步（0~1）
+  window._speakVol=Math.min(1, volLevel);
 }
 function noiseBuffer(){
   const ctx=ac();
@@ -1603,7 +1671,7 @@ function tickSound(urgent){
     const bp=ctx.createBiquadFilter(); bp.type="bandpass";
     bp.frequency.value = urgent ? 3200 : 1900; bp.Q.value = urgent ? 8 : 5;
     const g=ctx.createGain(); g.gain.value = urgent ? 0.32 : 0.16;
-    src.connect(bp); bp.connect(g); g.connect(ctx.destination);
+    src.connect(bp); bp.connect(g); g.connect(out());
     src.start();
   }catch(e){}
 }
@@ -1631,7 +1699,7 @@ function winSound(){
           g.gain.exponentialRampToValueAtTime(0.18, start+0.015);
           g.gain.setValueAtTime(0.15, start+step-0.025);
           g.gain.exponentialRampToValueAtTime(0.0001, start+step);
-          o.connect(fl); fl.connect(g); g.connect(ctx.destination);
+          o.connect(fl); fl.connect(g); g.connect(out());
           o.start(start); o.stop(start+step);
         });
       }
@@ -1646,7 +1714,7 @@ function winSound(){
           g.gain.setValueAtTime(0.0001, start);
           g.gain.exponentialRampToValueAtTime(0.2, start+0.01);
           g.gain.exponentialRampToValueAtTime(0.0001, start+step);
-          o.connect(g); g.connect(ctx.destination);
+          o.connect(g); g.connect(out());
           o.start(start); o.stop(start+step);
         });
       }
@@ -1660,7 +1728,7 @@ function winSound(){
       g.gain.exponentialRampToValueAtTime(0.16, t0+0.04);
       g.gain.setValueAtTime(0.14, t0+0.45);
       g.gain.exponentialRampToValueAtTime(0.0001, t0+0.6);
-      o.connect(g); g.connect(ctx.destination);
+      o.connect(g); g.connect(out());
       o.start(t0); o.stop(t0+0.62);
     }
   }catch(e){}
@@ -1843,7 +1911,7 @@ function speakLine(names){
   ut.lang="zh-CN";
   ut.rate=one?0.95:0.88;   // 抽三个人时放慢，听得清
   ut.pitch=1.05;
-  ut.volume=1;
+  ut.volume=(typeof window._speakVol==="number")?window._speakVol:0.7;
   const pick=()=>{
     const vs=speechSynthesis.getVoices()||[];
     const zh=vs.find(v=>/^zh/.test(v.lang))||vs.find(v=>/Chinese|中文|普通话|Xiaoxiao|Xiaoyi/.test(v.name));
@@ -1908,7 +1976,26 @@ if($("scoreFind")){
 }
 if($("scoreFindClr")) $("scoreFindClr").onclick = ()=>{ $("scoreFind").value=""; applyScoreFind(); $("scoreFind").focus(); };
 // 下课消名字
-if($("btnCheckout")) $("btnCheckout").onclick = ()=>{ renderCheckout(); $("checkout").classList.add("on"); };
+
+// 消名字页：全屏 + 自适应
+if($("coFull")) $("coFull").onclick = async ()=>{
+  const el=$("checkout");
+  try{
+    if(!document.fullscreenElement){ await el.requestFullscreen(); }
+    else { await document.exitFullscreen(); }
+  }catch(e){}
+  setTimeout(coFit,120); setTimeout(coFit,420);
+};
+document.addEventListener("fullscreenchange", ()=>{
+  const b=$("coFull");
+  if(b) b.textContent = document.fullscreenElement ? "退出全屏" : "全屏显示";
+  setTimeout(coFit,120); setTimeout(coFit,420);
+});
+window.addEventListener("resize", ()=>{ if($("checkout")&&$("checkout").classList.contains("on")) setTimeout(coFit,80); });
+if($("btnCheckout")) $("btnCheckout").onclick = ()=>{
+  $("checkout").classList.add("on"); renderCheckout();
+  setTimeout(coFit,60); setTimeout(coFit,300);
+};
 if($("coClose")) $("coClose").onclick = ()=> $("checkout").classList.remove("on");
 if($("coBack")) $("coBack").onclick = ()=>{
   if(!confirm("把今天所有灰掉的名字全部退回？")) return;
@@ -1946,6 +2033,14 @@ document.addEventListener("keydown", e=>{
     $("checkout").classList.remove("on");
   }
 });
+
+// 音量
+if($("volSlider")){
+  $("volSlider").oninput = e=>{ setVol(Number(e.target.value)/100); };
+}
+if($("volDown")) $("volDown").onclick = ()=>{ setVol(volLevel-0.1); tickSound(false); };
+if($("volUp"))   $("volUp").onclick   = ()=>{ setVol(volLevel+0.1); tickSound(false); };
+setVol(volLevel);
 $("btnMute").onclick = ()=>{
   muted=!muted;
   $("btnMute").textContent = muted?"音效关":"音效开";
