@@ -98,6 +98,8 @@ ul.items li b{color:var(--primary-dark)}
 .badge.outline{background:#fff;box-shadow:none;border:2px solid}
 .badge.outline.note{color:var(--primary-dark);border-color:var(--primary)}
 .badge.outline.peer{color:var(--green);border-color:var(--green)}
+.badge.solid-note{background:var(--primary);color:#fff;box-shadow:0 4px 14px rgba(233,120,53,.45)}
+.badge.solid-peer{background:var(--green);color:#fff;box-shadow:0 4px 14px rgba(107,158,107,.45)}
 /* 结束页 */
 .slide.end{background:#2B211B;color:#FFF9F0;align-items:center;text-align:center}
 .end h1{color:#FFF9F0;font-size:60px}
@@ -138,7 +140,7 @@ const SLIDES = [
   <div class="emoji-row">🤖 🧺 🧹 🛒 📱</div>
   <h1>财务机器人应用与开发<br><span class="accent">开学第一课</span></h1>
   <div class="sub">给机器人派活 · 定规矩<br>不背公式，靠想清楚</div>
-  <div class="meta">第 1 周 · 90 分钟 · 04_课件 v1.6 · 2026-09-04</div>`,
+  <div class="meta">第 1 周 · 90 分钟 · 04_课件 v1.7 · 2026-09-04</div>`,
  notes:"课前检查投影、音响、大模型登录。先放视频，别急着讲。"},
 
 {cls:"", html:`
@@ -163,7 +165,7 @@ const SLIDES = [
   <div class="sub">✍️ 先写你的 → 🧑🏫 听老师讲，写错了就在「③老师的讲解」那行补记</div>`,
  notes:"标签页放慢一点讲，这是后面所有环节的暗号。随机抽人：答不出，同桌帮——第一次抽人前再强调一遍。"},
 
-{cls:"", badges:[{type:"question", text:"🙋 提问① · 举手抢答"}], html:`
+{cls:"", badges:[{type:"question", text:"🙋 抢答"}], html:`
   <div class="eyebrow">开场三问</div>
   <h1>你家里也有<span class="accent">“机器人”</span></h1>
   <ul class="items">
@@ -250,7 +252,7 @@ const SLIDES = [
   <div class="sub">为什么从洗衣机开始？它是家里<b>最简单的机器人</b>——先看懂它，别的机器一通百通。好规矩进「规矩宝典」，最好的组获「首席总工程师」🏅</div>`,
  notes:"评分标准当众念一遍：机器能懂 2 分、想得全 3 分、不闹笑话 5 分。规则讲 1 分钟就够。"},
 
-{cls:"", badges:[{type:"question", text:"🙋 提问② · 抢答"}], html:`
+{cls:"", badges:[{type:"question", text:"🙋 抢答"}], html:`
   <div class="eyebrow">拆一台洗衣机 · ①</div>
   <h1>这台洗衣机，<span class="accent">有哪些本事</span>？</h1>
   <div class="sub">抢答：洗衣机上都有哪些按钮？每个按钮干什么？</div>
@@ -263,7 +265,7 @@ const SLIDES = [
   <div class="sub">还有：启动/暂停、预约、蜂鸣提醒…</div>`,
  notes:"让学生先抢答，老师按五类板书：选模式/水量/温度/保护/提醒。学生说不出的再给页面上这些提示。落点：一台洗衣机，功能比你想的多。"},
 
-{cls:"", badges:[{type:"question", text:"🙋 提问③ · 抢答"}], html:`
+{cls:"", badges:[{type:"question", text:"🙋 抢答"}], html:`
   <div class="eyebrow">拆一台洗衣机 · ②</div>
   <h1>洗一件衣服，<span class="accent">要经过几步</span>？</h1>
   <div class="flow">
@@ -296,7 +298,7 @@ const SLIDES = [
   <div class="where">✍️ 记录册「暂停点①」：①想法 → ②思考过程 → ③听老师讲</div>`,
  notes:"90 秒安静写。这是训练「先想例外」的思维——好工程师先想意外，再写规矩。写完不公布答案，下页抽人。"},
 
-{cls:"draw", badges:[{type:"question", text:"🎲 提问④ · 抽人"}], html:`
+{cls:"draw", badges:[{type:"question", text:"🎲 抽人①"}], html:`
   <div class="eyebrow">🎲 随机抽人</div>
   <h1>抽 2–3 人念自己写的意外</h1>
   <ul class="items">
@@ -306,8 +308,8 @@ const SLIDES = [
  notes:"用基础会计课的 90-B2 随机点名。学生自己提的意外成为接下来的教学素材；停电、忘洗衣液、没人拿没提到就由老师补上。"},
 
 {cls:"challenge", badges:[
-    {type:"note", text:"📒 暂停点②"},
-    {type:"peer", text:"🤝 互审①"},
+    {type:"solid-note", text:"📒 暂停点②"},
+    {type:"solid-peer", text:"🤝 互审①"},
     {type:"raise", text:"🙋 举册子"},
   ], html:`
   <div class="cardtitle">洗衣机出事了 ①</div>
@@ -322,8 +324,8 @@ const SLIDES = [
  notes:"这是今天最关键的题。参考答案：记下洗到哪一步→来电接着洗；或提示「已断电，请重选程序」。写完举册子，老师走查当场加分（2–5 分）；没人举册子才抽人。"},
 
 {cls:"challenge", badges:[
-    {type:"note", text:"📒 暂停点③"},
-    {type:"peer", text:"🤝 互审②"},
+    {type:"solid-note", text:"📒 暂停点③"},
+    {type:"solid-peer", text:"🤝 互审②"},
     {type:"raise", text:"🙋 举册子"},
   ], html:`
   <div class="cardtitle">洗衣机出事了 ②</div>
@@ -338,8 +340,8 @@ const SLIDES = [
  notes:"追问不要一次抛完，答出第一层再抛下一层：①机器怎么发现没放？（泡沫检测→蜂鸣提醒「未检测到洗涤剂，是否继续」）②用户就想清水洗？（允许继续）③洗到一半才想起？（暂停＋提示）。写完举册子加分；没人举才抽人。"},
 
 {cls:"challenge", badges:[
-    {type:"note", text:"📒 暂停点④"},
-    {type:"peer", text:"🤝 互审③"},
+    {type:"solid-note", text:"📒 暂停点④"},
+    {type:"solid-peer", text:"🤝 互审③"},
     {type:"raise", text:"🙋 举册子"},
   ], html:`
   <div class="cardtitle">洗衣机出事了 ③</div>
@@ -354,7 +356,7 @@ const SLIDES = [
  notes:"追问逐层抛：①怎么提醒？提醒几次？（2 次）②衣服皱了怎么办？（每 10 分钟抖散防皱）③一直没人来？（超 1 小时自动关舱门）。写完举册子加分；没人举才抽人。落点句：一台最简单的洗衣机，意外都比你想的多。"},
 
 {cls:"", badges:[
-    {type:"peer", text:"🤝 互审④"},
+    {type:"solid-peer", text:"🤝 互审④"},
     {type:"raise", text:"🙋 举纸"},
   ], html:`
   <div class="eyebrow">换个机器试试</div>
@@ -367,7 +369,7 @@ const SLIDES = [
   </div>`,
  notes:"每台机器只给一组，分配完立刻计时。学生卡住就提示：先写正常流程三步，再想两个意外。检查时当场报分（2–5 分）。" },
 
-{cls:"draw", badges:[{type:"question", text:"🎲 提问⑤ · 抽人"}], html:`
+{cls:"draw", badges:[{type:"question", text:"🎲 抽人②"}], html:`
   <div class="eyebrow">🎲 随机抽人</div>
   <h1>抽 2 人念自己机器的规矩</h1>
   <ul class="items">
@@ -377,9 +379,7 @@ const SLIDES = [
   </ul>`,
  notes:"点透：机器不同、逻辑不同；写法相同——这就是举一反三。以后学变量、条件、循环，写的还是这三行。"},
 
-{cls:"", badges:[
-    {type:"question", text:"🎲 提问⑥ · 抽人说一条"},
-  ], html:`
+{cls:"", html:`
   <div class="eyebrow">拓展 · 设计未来的功能</div>
   <h1>手机：天天指挥它，<br>也天天<span class="accent">吐槽</span>它</h1>
   <ul class="items">
@@ -387,7 +387,7 @@ const SLIDES = [
     <li>🔮 再设计：10 年后给手机加一个<b>新功能</b>——<b>什么情况下启动</b>？有什么特殊情况？</li>
     <li>💡 例：「如果晚上 11 点，就自动免打扰」</li>
   </ul>`,
- notes:"先吐槽热场 1 分钟，再设计，抽 2 人说一条。引导参考：开会自动静音、睡觉免打扰、低电量自动预约充电、自动清缓存、提醒久坐。落点：设计未来功能＝把流程想得更复杂——正好用到条件、循环。"},
+ notes:"先吐槽热场 1 分钟，再设计，自愿举手说 2 条，不抽人。引导参考：开会自动静音、睡觉免打扰、低电量自动预约充电、自动清缓存、提醒久坐。落点：设计未来功能＝把流程想得更复杂——正好用到条件、循环。"},
 
 {cls:"", html:`
   <div class="eyebrow">规矩实验室 · 收束</div>
@@ -444,8 +444,8 @@ const SLIDES = [
  notes:"还是刚才那行王芳数据，两版结果并排放大对比，让学生自己说出「差在哪」。"},
 
 {cls:"", badges:[
-    {type:"peer", text:"🤝 互审⑤"},
-    {type:"question", text:"🎲 提问⑦ · 抽人上台"},
+    {type:"solid-peer", text:"🤝 互审⑤"},
+    {type:"question", text:"🎲 抽人③"},
   ], html:`
   <div class="eyebrow">任务卡 A2</div>
   <div class="task-card">
@@ -476,7 +476,7 @@ const SLIDES = [
  notes:"问学生「你打过什么工、干过什么重复活」，借他们自己的话讲，零术语。1 分钟收住。"},
 
 {cls:"", badges:[
-    {type:"question", text:"🎲 提问⑧ · 抽人复述"},
+    {type:"question", text:"🎲 抽人④"},
   ], html:`
   <div class="eyebrow">收尾 · 三句话</div>
   <h1>今天只记这三句</h1>
