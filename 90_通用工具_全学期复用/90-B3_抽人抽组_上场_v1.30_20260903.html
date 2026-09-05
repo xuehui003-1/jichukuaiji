@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>上场　v1.29</title>
+<title>上场　v1.30</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:#05070d;color:#eef4ff;
@@ -131,6 +131,40 @@ body.focus .rail, body.focus .rail-tab, body.focus .top{opacity:0;pointer-events
 .score-list{font-size:12px;line-height:1.45;flex:1 1 auto;min-height:220px;max-height:42vh;overflow:auto;background:#0b1220;border:1px solid #2a3754;border-radius:10px;padding:4px}
 .score-list div{display:flex;gap:6px;align-items:center;padding:5px 6px;border-bottom:1px solid #2a3754}
 .score-list b{color:#ffe9a8;margin-left:auto}
+
+/* 记分搜索框 */
+.score-find{display:flex;gap:6px;margin-bottom:6px}
+.score-find input{flex:1;background:#0b1220;color:#ffe9a8;border:1px solid #e0b13a;
+  border-radius:8px;padding:6px 10px;font:inherit;font-size:13px;font-weight:700}
+.score-find input::placeholder{color:#5d7099}
+.score-find button{border:0;background:#2a3754;color:#cfe0ff;font:inherit;font-weight:800;
+  font-size:12px;padding:6px 10px;border-radius:8px;cursor:pointer}
+.score-list div.hit{background:#1d3a1f;box-shadow:inset 3px 0 0 #4caf50}
+.score-list div.dim{display:none}
+/* 消名字（下课前检查册子） */
+.checkout{position:fixed;inset:0;z-index:60;background:#0b1220;display:none;flex-direction:column}
+.checkout.on{display:flex}
+.co-top{display:flex;align-items:center;gap:12px;padding:10px 16px;background:#132038;
+  border-bottom:1px solid #2a3754;flex-shrink:0}
+.co-top h2{font-size:clamp(18px,2.4vw,28px);color:#ffe9a8;margin:0}
+.co-top .rest{margin-left:auto;font-size:clamp(15px,2vw,22px);color:#8ea0c3;font-weight:800}
+.co-top button{border:0;background:#2a3754;color:#cfe0ff;font:inherit;font-weight:800;
+  font-size:14px;padding:8px 14px;border-radius:9px;cursor:pointer}
+.co-top button.gold{background:#e0b13a;color:#2a1c00}
+.co-grid{flex:1;overflow:auto;padding:14px;display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(clamp(110px,11vw,160px),1fr));gap:10px;align-content:start}
+.co-cell{background:#16233c;border:3px solid #2a3754;border-radius:14px;padding:10px 6px;
+  text-align:center;cursor:pointer;transition:.18s;user-select:none}
+.co-cell:hover{border-color:#e0b13a;transform:translateY(-2px)}
+.co-cell img{width:clamp(54px,5.5vw,78px);height:clamp(54px,5.5vw,78px);border-radius:50%;
+  object-fit:cover;display:block;margin:0 auto 6px}
+.co-cell .face{width:clamp(54px,5.5vw,78px);height:clamp(54px,5.5vw,78px);border-radius:50%;
+  background:#2a3754;margin:0 auto 6px}
+.co-cell .nm{font-size:clamp(15px,1.7vw,22px);font-weight:900;color:#fff8d6}
+.co-cell.done{opacity:.32;filter:grayscale(1);border-color:#1b2740;cursor:default}
+.co-cell.done .nm{text-decoration:line-through;color:#6b7a99}
+.co-bar{flex-shrink:0;padding:10px 16px;background:#132038;border-top:1px solid #2a3754;
+  text-align:center;font-size:clamp(14px,1.8vw,20px);color:#8ea0c3;font-weight:700}
 .now{font-size:14px;line-height:1.55;color:#fff8d6;background:#3a1d08;border:1px solid #e0b13a;border-radius:10px;padding:10px}
 .gold.wide{display:block;width:100%;text-align:center;border-radius:10px;padding:10px 12px}
 .score-list .mini{color:#8ea0c3;font-size:11px;font-weight:700}
@@ -208,14 +242,19 @@ input[type=file].pick{display:block;width:100%;margin-top:6px;font-size:12px;col
 
   <h3>记分</h3>
   <div class="hist-sum">今天 <b id="scoreN">0</b> 分</div>
+  <div class="score-find">
+    <input id="scoreFind" type="search" placeholder="搜名字，直接跳到他那一行" autocomplete="off">
+    <button type="button" id="scoreFindClr">清空</button>
+  </div>
   <div class="score-list" id="scoreList"></div>
+  <button class="gold wide" type="button" id="btnCheckout" style="margin-bottom:6px">下课消名字（检查册子）</button>
   <button class="ghost wide" type="button" id="clearScore">清空今日分</button>
 </aside>
 
 <div class="ui">
   <div class="top">
     <div class="brand">上场</div>
-    <span class="ver">v1.29</span>
+    <span class="ver">v1.30</span>
   </div>
   <div class="stage">
     <div class="ring-wrap">
@@ -227,6 +266,16 @@ input[type=file].pick{display:block;width:100%;margin-top:6px;font-size:12px;col
   </div>
 </div>
 
+<div class="checkout" id="checkout">
+  <div class="co-top">
+    <h2>下课前　检查册子</h2>
+    <button type="button" id="coBack">← 全部退回</button>
+    <button class="gold" type="button" id="coClose">关闭</button>
+    <span class="rest">还剩 <b id="coRest">0</b> 人</span>
+  </div>
+  <div class="co-grid" id="coGrid"></div>
+  <div class="co-bar">检查过谁的册子，就点一下他的名字——变灰就可以走了。灰掉的再点一下能退回。</div>
+</div>
 <div class="dim" id="dim"></div>
 <aside class="panel" id="panel">
   <h2>人名单　一行一个</h2>
@@ -471,6 +520,42 @@ function renderScores(){
   $("scoreList").innerHTML = '<div><span>姓名</span><span class="mini">今天</span><b>累计</b></div>' + names.map(n=>
     `<div><span>${n}</span><input class="mini-in" type="number" data-name="${n}" value="${today[n]||0}"><b>${tot[n]||0}</b></div>`
   ).join("");
+  applyScoreFind();
+}
+
+function esc(t){return String(t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+// ── 记分搜索：输名字直接定位并高亮 ──
+function applyScoreFind(){
+  const q=(($("scoreFind")&&$("scoreFind").value)||"").trim().toLowerCase();
+  const rows=[...$("scoreList").querySelectorAll("div")];
+  let first=null, n=0;
+  rows.forEach((r,idx)=>{
+    if(idx===0) return;                       // 表头不参与
+    const sp=r.querySelector("span");
+    const nm=sp?sp.textContent.trim().toLowerCase():"";
+    r.classList.remove("hit","dim");
+    if(!q) return;
+    if(nm.includes(q)){ r.classList.add("hit"); n++; if(!first) first=r; }
+    else r.classList.add("dim");
+  });
+  if(first) first.scrollIntoView({block:"center"});
+}
+
+// ── 下课消名字 ──
+function coKey(){ return "draw-checkout-"+todayStr(); }
+function coDone(){
+  try{ const a=JSON.parse(localStorage.getItem(coKey())||"[]"); return Array.isArray(a)?a:[]; }
+  catch(e){ return []; }
+}
+function coSave(a){ localStorage.setItem(coKey(), JSON.stringify(a)); }
+function renderCheckout(){
+  const names=lines($("people"));
+  const done=new Set(coDone());
+  $("coGrid").innerHTML = names.map(n=>{
+    const img = photos[n] ? `<img src="${photos[n]}" alt="">` : `<div class="face"></div>`;
+    return `<div class="co-cell${done.has(n)?" done":""}" data-n="${esc(n)}">${img}<div class="nm">${esc(n)}</div></div>`;
+  }).join("") || '<div style="color:#8ea0c3">名单是空的。先在「名单 / 组名」里贴名单。</div>';
+  $("coRest").textContent = String(names.filter(n=>!done.has(n)).length);
 }
 function giveScore(name, pts, btn){
   const day=todayStr();
@@ -1729,6 +1814,33 @@ $("result").onclick = e=>{ if(e.target.id==="result") $("result").classList.remo
 $("draw1").onclick = ()=>{ groupsMode=false; spin(lines($("people")),1); };
 $("drawG").onclick = ()=>{ groupsMode=true; spin(lines($("groups")),1); };
 $("draw3").onclick = ()=>{ groupsMode=false; spin(lines($("people")),3); };
+
+// 记分搜索
+if($("scoreFind")){
+  $("scoreFind").oninput = applyScoreFind;
+  $("scoreFind").onkeydown = e=>{ if(e.key==="Escape"){ $("scoreFind").value=""; applyScoreFind(); } };
+}
+if($("scoreFindClr")) $("scoreFindClr").onclick = ()=>{ $("scoreFind").value=""; applyScoreFind(); $("scoreFind").focus(); };
+// 下课消名字
+if($("btnCheckout")) $("btnCheckout").onclick = ()=>{ renderCheckout(); $("checkout").classList.add("on"); };
+if($("coClose")) $("coClose").onclick = ()=> $("checkout").classList.remove("on");
+if($("coBack")) $("coBack").onclick = ()=>{
+  if(!confirm("把今天所有灰掉的名字全部退回？")) return;
+  coSave([]); renderCheckout();
+};
+if($("coGrid")) $("coGrid").onclick = e=>{
+  const c=e.target.closest(".co-cell"); if(!c) return;
+  const n=c.dataset.n;
+  const done=coDone();
+  const i=done.indexOf(n);
+  if(i>=0) done.splice(i,1); else done.push(n);
+  coSave(done); renderCheckout();
+};
+document.addEventListener("keydown", e=>{
+  if(e.key==="Escape" && $("checkout") && $("checkout").classList.contains("on")){
+    $("checkout").classList.remove("on");
+  }
+});
 $("btnMute").onclick = ()=>{
   muted=!muted;
   $("btnMute").textContent = muted?"音效关":"音效开";
