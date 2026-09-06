@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>变量——机器人的储物格 · 项目二第1讲 · 财务机器人应用与开发</title>
+<style>
+:root{
+  --bg:#FFF9F0; --card:#FFFFFF; --text:#2B211B; --muted:#79695e;
+  --primary:#E97835; --primary-dark:#C25A1F; --primary-soft:#F5B583; --line:#EADFD0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:#241D17;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;}
+#stage{position:relative;width:1280px;height:720px;background:var(--bg);overflow:hidden;
+  transform-origin:center center;box-shadow:0 20px 60px rgba(0,0,0,.5);border-radius:6px}
+.slide{position:absolute;inset:0;padding:64px 96px 84px;display:none;flex-direction:column;justify-content:center}
+.slide.active{display:flex}
+.eyebrow{font-size:22px;letter-spacing:.3em;color:var(--primary);font-weight:700;margin-bottom:14px}
+h1{font-size:52px;color:var(--text);line-height:1.25;margin-bottom:20px;font-weight:800}
+h1 .accent{color:var(--primary)}
+.sub{font-size:24px;color:var(--muted);margin-bottom:20px;line-height:1.55}
+ul.items{list-style:none}
+ul.items li{font-size:28px;color:var(--text);line-height:1.5;padding:8px 0;
+  border-bottom:1px dashed var(--line)}
+ul.items li:last-child{border-bottom:none}
+ul.items li b{color:var(--primary-dark)}
+.cards{display:flex;gap:30px;margin-top:8px}
+.card{flex:1;background:var(--card);border:2px solid var(--line);border-radius:18px;padding:28px 32px}
+.card h2{font-size:29px;margin-bottom:14px;color:var(--primary-dark)}
+.card li{font-size:22px;color:var(--text);line-height:1.7;list-style:none;padding:5px 0}
+.steps{display:flex;flex-direction:column;gap:14px;margin-top:6px}
+.step{display:flex;align-items:center;gap:18px;background:var(--card);border:2px solid var(--line);
+  border-radius:16px;padding:14px 24px}
+.step .n{flex:0 0 56px;height:56px;border-radius:50%;background:var(--primary);color:#fff;
+  font-size:29px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.step .t{font-size:26px;color:var(--text);line-height:1.5}
+.step .t b{color:var(--primary-dark)}
+.flow{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0 18px}
+.flow span{background:var(--card);border:2px solid var(--line);border-radius:12px;padding:10px 18px;
+  font-size:23px;color:var(--text)}
+.flow span b{color:var(--primary-dark)}
+/* 思维模板 正常→万一→应该 */
+.tpl{display:flex;flex-direction:column;gap:10px;margin:10px 0 16px}
+.tpl .row{display:flex;align-items:center;gap:16px;font-size:26px;background:var(--card);
+  border:2px solid var(--line);border-radius:14px;padding:12px 22px}
+.tpl .tag{flex:0 0 90px;text-align:center;font-weight:800;color:#fff;border-radius:10px;padding:6px 0}
+.tpl .tag.ok{background:var(--primary-dark)}
+.tpl .tag.if{background:var(--primary)}
+.tpl .tag.do{background:var(--primary-soft)}
+.tpl .t b{color:var(--primary-dark)}
+.big{font-size:58px;text-align:center;line-height:1.4;color:var(--text);font-weight:800}
+.big .accent{color:var(--primary)}
+.emoji-row{text-align:center;font-size:70px;letter-spacing:16px;margin-bottom:28px}
+.cover h1{font-size:70px}
+.cover .sub{font-size:29px}
+.meta{position:absolute;left:96px;bottom:34px;font-size:19px;color:var(--muted)}
+/* 暂停点 */
+.slide.pause{background:var(--primary);color:#fff}
+.pause .eyebrow{color:#FFE8D6}
+.pause h1{color:#fff;font-size:54px}
+.pause .sub{color:#FFE8D6;font-size:28px}
+.pause .where{margin-top:26px;font-size:24px;background:rgba(255,255,255,.18);
+  border-radius:14px;padding:12px 24px;display:inline-block;align-self:flex-start}
+/* 抽人页不再单独配色（普通页＋角标） */
+/* 意外卡 */
+.slide.challenge{background:var(--bg)}
+.challenge h1{font-size:48px}
+.challenge .cardtitle{font-size:25px;font-weight:800;color:#fff;background:var(--primary);
+  display:inline-block;padding:9px 26px;border-radius:999px;margin-bottom:16px;align-self:flex-start}
+/* 任务卡 */
+.task-card{background:var(--card);border:3px solid var(--primary);border-radius:20px;
+  padding:30px 40px;max-width:1040px}
+.task-card h2{font-size:32px;color:var(--primary-dark);margin-bottom:14px}
+.task-card li{font-size:23px;color:var(--text);line-height:1.7;list-style:none}
+.task-card li::before{content:"▶ ";color:var(--primary);font-size:18px}
+/* 评分表 */
+.rubric{display:flex;gap:14px;margin-top:14px}
+.rubric .r{flex:1;background:var(--card);border:2px solid var(--line);border-radius:14px;
+  padding:14px 16px;text-align:center}
+.rubric .r .p{font-size:32px;font-weight:800;color:var(--primary-dark)}
+.rubric .r .d{font-size:19px;color:var(--text);margin-top:4px;line-height:1.4}
+/* 角标：只有两种——橙底=📒暂停点；白底橙字描边=其他所有课堂动作 */
+.badges{position:absolute;top:20px;right:28px;display:flex;gap:10px;z-index:5}
+.badge{padding:8px 20px;border-radius:999px;font-size:21px;font-weight:700;white-space:nowrap;
+  background:#fff;border:2.5px solid var(--primary);color:var(--primary-dark)}
+.badge.note,.badge.solid-note,.badge.outline.note{background:var(--primary);color:#fff}
+/* 结束页 */
+.slide.end{background:#2B211B;color:#FFF9F0;align-items:center;text-align:center}
+.end h1{color:#FFF9F0;font-size:60px}
+.end .sub{color:#D8CFC2;font-size:28px;line-height:1.7}
+/* HUD */
+#hud{position:absolute;left:0;right:0;bottom:0;height:56px;background:rgba(43,33,27,.92);
+  display:flex;align-items:center;gap:14px;padding:0 22px;color:#FFF9F0;font-size:19px}
+#hud button{background:none;border:1.5px solid rgba(255,249,240,.4);color:#FFF9F0;
+  font-size:20px;padding:6px 16px;border-radius:10px;cursor:pointer}
+#hud button:hover{background:var(--primary);border-color:var(--primary)}
+#counter{margin-left:auto}
+#bar{position:absolute;left:0;bottom:56px;height:5px;background:var(--primary);width:0;
+  transition:width .25s}
+#notes{position:absolute;left:0;right:0;bottom:56px;background:rgba(255,249,240,.97);
+  border-top:3px solid var(--primary);padding:16px 96px;display:none;font-size:21px;color:var(--text)}
+#notes b{color:var(--primary-dark)}
+#notes.show{display:block}
+
+/* ===== v2.1 配色对齐基础会计投影 + 大字号 + 全局缩放（A+/A− 或 +/− 键） ===== */
+:root{
+  --bg:#FFF8E1; --card:#FFFFFF; --text:#212121; --muted:#5D4037;
+  --primary:#BF360C; --primary-dark:#BF360C; --primary-soft:#FFCC80;
+  --line:#E0D5C3; --green:#2E7D32; --z:1;
+}
+body{font-family:"微软雅黑","Microsoft YaHei","PingFang SC",sans-serif}
+.eyebrow{font-size:calc(20px*var(--z));letter-spacing:.24em;color:var(--primary);font-weight:700;margin-bottom:12px}
+h1{font-size:calc(50px*var(--z));line-height:1.22;margin-bottom:16px}
+h1 .accent{color:var(--primary)}
+.sub{font-size:calc(26px*var(--z));color:var(--muted);margin-bottom:14px;line-height:1.5}
+ul.items li{font-size:calc(28px*var(--z));line-height:1.5;padding:8px 0}
+ul.items li b{color:var(--primary)}
+.card h2{font-size:calc(30px*var(--z));margin-bottom:10px}
+.card li{font-size:calc(25px*var(--z));line-height:1.6}
+.steps{gap:12px}
+.step .t{font-size:calc(27px*var(--z));line-height:1.5}
+.step .n{font-size:calc(30px*var(--z))}
+.flow span{font-size:calc(25px*var(--z))}
+.task-card{border-width:2.5px}
+.task-card h2{font-size:calc(32px*var(--z));margin-bottom:12px}
+.task-card li{font-size:calc(25px*var(--z));line-height:1.7}
+.pause h1{font-size:calc(52px*var(--z))}
+.pause .sub{font-size:calc(28px*var(--z));color:#FFE9D2}
+.pause .where{font-size:calc(24px*var(--z))}
+.end h1{font-size:calc(48px*var(--z))}
+.end .sub{font-size:calc(26px*var(--z))}
+.cover h1{font-size:calc(62px*var(--z))}
+.cover .sub{font-size:calc(27px*var(--z))}
+.big{font-size:calc(54px*var(--z))}
+.meta{font-size:18px}
+.stu{color:var(--green);font-weight:700}
+.rawline{font-family:Consolas,"Courier New",monospace;font-size:calc(27px*var(--z));background:#fff;
+  border:3px dashed var(--primary);border-radius:12px;padding:14px 18px;text-align:center;color:var(--text)}
+.cmdline{font-size:calc(26px*var(--z));background:#fff;border:3px solid var(--primary);border-radius:12px;
+  padding:12px 18px;text-align:center;font-weight:700;color:var(--text)}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="deck"></div>
+  <div id="bar"></div>
+  <div id="notes"></div>
+  <div id="hud">
+    <button id="prev" title="上一页">◀</button>
+    <button id="next" title="下一页">▶</button>
+    <span id="counter">1 / 1</span>
+    <button id="zout" title="缩小字号（快捷键 −）">A−</button>
+    <button id="zin" title="放大字号（快捷键 +）">A+</button>
+    <button id="notesBtn" title="教师提示">📝 教师提示</button>
+    <button id="fsBtn" title="全屏">⛶ 全屏</button>
+  </div>
+</div>
+<div style="position:fixed;bottom:8px;right:12px;color:#999;font-size:13px;z-index:99">
+  翻页：← → 或空格 ｜ 教师提示：N ｜ 全屏：F</div>
+<script>
+const SLIDES = [
+{cls:"cover", html:`
+  <div class="eyebrow">项目二 · 第 1 讲</div>
+  <h1>变量<span class="accent">——</span>机器人记东西的地方</h1>
+  <div class="sub">《财务机器人应用与开发》· 第 2 次课 · 90 分钟 · 教室课（不用电脑）<br>今天只学一个词，但要学全：<b>是什么 · 干什么用 · 怎么用 · 分几类 · 用在哪</b></div>
+  <div class="meta">第 2 次课 · 08_课件 v2.2 · 2026-09-06 ｜ 配套 07_规划 v2.2 · 05_记录册 v1.8</div>`,
+ notes:"开场 30 秒：先收上节课的作业（16 分钟），剩下只学「变量」一个词。今天全课规矩：学生先开口，老师最后命名。"},
+
+{cls:"", html:`
+  <div class="eyebrow">今天做两件事</div>
+  <ul class="items">
+    <li>① 先收上节课的活——你写的命令，<b>原样发给 AI</b>（16 分钟）</li>
+    <li>② 只学一个词：<b>变量</b>（75 分钟，一直学到下课）</li>
+    <li>规矩不变：写了 2 分 · 写得好 5 分 · 看到<b>橙色页</b>才动笔</li>
+  </ul>`,
+ notes:"把「只学一个词」说出口——学生最怕一节课一堆名词。今天例外：就一个，但学全。"},
+
+{cls:"challenge", html:`
+  <div class="eyebrow">收作业 · 揭榜</div>
+  <h1>上节课那句含糊命令，<span class="accent">再发一次</span></h1>
+  <div class="rawline">王芳13812340001 王芳 wangfang@stu.edu 财会2301 13812340001</div>
+  <div class="cmdline">「帮我整理这份名单。」</div>
+  <div style="background:#fff;border:2px solid var(--line);border-radius:14px;padding:10px 22px;max-width:940px;margin-top:10px">
+    <table style="border-collapse:collapse;font-size:23px;width:100%">
+      <tr style="color:var(--primary);font-weight:bold">
+        <td style="padding:6px 22px;border-bottom:2px solid var(--line)">姓名</td>
+        <td style="padding:6px 22px;border-bottom:2px solid var(--line)">手机号</td>
+        <td style="padding:6px 22px;border-bottom:2px solid var(--line)">邮箱</td>
+        <td style="padding:6px 22px;border-bottom:2px solid var(--line)">班级/专业</td>
+      </tr>
+      <tr>
+        <td style="padding:6px 22px">王芳</td>
+        <td style="padding:6px 22px">13812340001</td>
+        <td style="padding:6px 22px">wangfang@stu.edu</td>
+        <td style="padding:6px 22px">财会2301</td>
+      </tr>
+    </table>
+  </div>`,
+ notes:"原始数据＋命令＋结果三样一起投。当堂实测最真实；无网投预跑截图。不解释，直接翻页。"},
+
+{cls:"challenge", html:`
+  <div class="eyebrow">它干对了，但是——</div>
+  <h1>它一声不吭，<span class="accent">替你做了 3 个主</span></h1>
+  <ul class="items">
+    <li>1️⃣ 重复的<b>只留 1 个</b>——为什么不是全留着？它没问你</li>
+    <li>2️⃣ 按<b>姓名</b>排——为什么不是按学号？它没问你</li>
+    <li>3️⃣ 只<b>要 4 列</b>——为什么不是 5 列 6 列？它没问你</li>
+    <li>💬 你没说的，它都是<b>猜</b>的。这次猜中了，下次呢？</li>
+  </ul>`,
+ notes:"逐条问「它问过你吗？」全班齐答。收口一句：一行名单猜错无所谓，工资表猜错呢。"},
+
+{cls:"", badges:[
+    {type:"question", text:"🎲 抽人①"},
+  ], html:`
+  <div class="eyebrow">收作业 · 原样执行</div>
+  <div class="task-card">
+    <h2>🎤 照你写的，原样执行</h2>
+    <li>1️⃣ 掏出上节课的<b>草稿纸</b>——你填好的命令</li>
+    <li>2️⃣ 🎲 抽 2 组上台，命令<b>一字不改</b>，老师原样发给 AI</li>
+    <li>3️⃣ 全班当裁判：成了吗？是<b>按你的主意</b>，还是<b>它自己的主意</b>？</li>
+    <li>⭐ 参与 2 分 · 最清楚 5 分</li>
+  </div>`,
+ notes:"任务A/B各抽一组；命令照抄不打折，填得怪也让AI照做，结果本身就是教材。"},
+
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点⑤ · 册子第 1 页"}], html:`
+  <div class="eyebrow">⏸ 暂停点⑤（补上节课）</div>
+  <h1>哪句命令更好？差在哪？</h1>
+  <div class="sub">提示一：含糊命令里，哪些要求是 <b>AI 自己猜的</b>？<br>提示二：要是它猜错了，你知道<b>去哪查</b>吗？</div>
+  <div class="where">✍️ 册子第 1 页最后一行：①想法 → ②思考过程 → ③听老师讲</div>`,
+ notes:"写 90 秒，抽 1–2 人念。收口：清楚命令＝要求说死，AI 不用猜，错了照着命令一步步查；含糊命令＝它替你猜，错了不知道去哪查。"},
+
+{cls:"", html:`
+  <div class="eyebrow">生活里找变量 · 第 1 站</div>
+  <h1>你手机上的<span class="accent">电量</span>，今天变了几次？</h1>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><div class="t">早上出门 <b>100%</b>，一路刷视频，中午剩 <b>62%</b></div></div>
+    <div class="step"><div class="n">2</div><div class="t">傍晚插上充电，回血到 <b>80%</b></div></div>
+    <div class="step"><div class="n">3</div><div class="t">半夜剩 <b>23%</b>，手机自己弹出提醒：「低电量」</div></div>
+  </div>
+  <ul class="items" style="margin-top:12px">
+    <li>🙋 三个问题抢答：它有<b>名字</b>吗？它<b>变</b>了吗？手机存着 100、62 的<b>历史清单</b>吗？</li>
+    <li>屏幕上永远只有<b>最新一个数</b>——旧的，被新的<b>顶掉了</b></li>
+  </ul>`,
+ notes:"开场就问全班「你现在电量多少」——七八个答案立刻出来，人人有话说。三问逐个抢答（是/是/没有），结论学生自己说出口。低电量提醒先埋一句：手机会「看」电量做决定——这就是后面的「取」。"},
+
+{cls:"", badges:[{type:"note", text:"📒 暂停点①"}], html:`
+  <div class="eyebrow">轮到你了 · 议一议</div>
+  <h1>生活里，还有哪些「<span class="accent">有名字、会变的数</span>」？</h1>
+  <div class="task-card">
+    <h2>🖋 草稿纸写 3 个</h2>
+    <li>写 2 个：<b>有名字、里面的数会变</b>的（电量除外。例：游戏血条、钱包余额）</li>
+    <li>再写 1 个：有名字但<b>从来不变</b>的（想想：你的学号？一周 7 天？）</li>
+    <li><span class="stu">现在你：同桌交换，互相讲明白——它装什么、什么时候变</span></li>
+    <li>🎲 抽 3 人上黑板各写一个，老师全收、先不评判　⭐ 参与 2 分</li>
+  </div>`,
+ notes:"预期池子（板书备用）：血条/金币/余额/步数/班级群人数/饭卡余额/体温 vs 学号/一周7天/一小时60分。说歪了也先收着——下一页总结时正好拿来做对比。冷场就先抛示范：游戏血条，打死掉血、吃血包回血。"},
+
+{cls:"", html:`
+  <div class="eyebrow">老师总结 · 你们刚找到的，有个统一的名字</div>
+  <h1>有名字 · 会变 · 只留最新 —— <span class="accent">变量</span></h1>
+  <ul class="items">
+    <li>黑板上这一排，逐个三连问：有名字？会变？只留最新？——<b>全是</b></li>
+    <li>它们都是：一个<b>有名字的容器</b>，装着一个<b>会变的数</b>，任何时刻只有<b>最新的一个</b></li>
+    <li>这样的容器，正式名字叫：<b>变量</b>（学号、一周 7 天那种永远不变的，叫常量——今天不管它）</li>
+    <li>🤖 机器人记性比你还差：算完一步不放进容器，转头就忘——它记东西，和你手机记电量<b>一模一样</b></li>
+    <li><span class="stu">现在你：用一句话把「变量是什么」讲给同桌——只许用电量、余额打比方</span></li>
+  </ul>`,
+ notes:"费曼时刻：词最后才给，学生先讲。谁讲得好，请他再讲给另一组听。「机器人转头就忘」就是它必须用格子的理由——需求是学生自己长出来的。"},
+
+{cls:"", html:`
+  <div class="eyebrow">把变量画成你天天见的东西</div>
+  <h1>快递柜，<span class="accent">对得上吗？</span></h1>
+  <div class="cards">
+    <div class="card"><h2>柜子上的编号</h2><li>A8-2012</li></div>
+    <div class="card"><h2>格子里放的包裹</h2><li>你的快递</li></div>
+    <div class="card"><h2>新包裹放进去</h2><li>旧的被清走</li></div>
+    <div class="card"><h2>要拿包裹</h2><li>报编号开格</li></div>
+  </div>
+  <ul class="items" style="margin-top:12px">
+    <li>❓ 这四件事，和你刚写的「电量 / 余额」对得上吗？</li>
+    <li><span class="stu">现在你：同桌讨论连线——编号↔？　包裹↔？　放新清旧↔？　报编号↔？</span></li>
+    <li>🎲 抽人连：编号↔名字（电量）｜包裹↔数（62%）｜放新清旧↔80 顶掉 62｜报编号↔看电量弹提醒</li>
+  </ul>`,
+ notes:"学生先连，老师后揭示——储物格模型是学生自己接上的，不是灌的。连完收口一句：变量＝贴了名字标签的快递柜格，今天都叫它「格子」。"},
+
+{cls:"", html:`
+  <div class="eyebrow">变量的三个动作 · 你的钱包天天在演</div>
+  <h1><span class="accent">放 → 换 → 取</span></h1>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><div class="t"><b>放</b>：奖学金到账，余额格放进 <b>1000</b></div></div>
+    <div class="step"><div class="n">2</div><div class="t"><b>换</b>：买球鞋花 600——余额变 <b>400</b>，<b>1000 被 400 顶掉了</b>（找不回来了）</div></div>
+    <div class="step"><div class="n">3</div><div class="t"><b>取</b>：下次结账，系统「看一眼」余额——<b>400</b> 够不够？</div></div>
+  </div>
+  <ul class="items" style="margin-top:10px">
+    <li>黑板跟着演：画一个「余额」格——放 1000 → <b>擦掉</b>写 400 → 结账读 400</li>
+    <li><span class="stu">现在你：当「取件员」——老师报格子名，你喊出格子里的数</span></li>
+  </ul>`,
+ notes:"「擦掉」这个动作就是「换」的本体，擦慢点，让学生看清 1000 没了。取件员游戏玩三轮：报「余额」喊 400；再放个新数再喊。赋值、内存这些术语今天忍住不说。"},
+
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点②"}], html:`
+  <div class="eyebrow">⏸ 暂停点② · 先猜后验</div>
+  <h1>余额格：早上 50，妈妈转来 200，买奶茶花 30</h1>
+  <div class="sub">现在格子里是多少？<br><b>50 和 200 还在吗？它们去哪了？</b>写下来，黑板验证。猜错不扣分——猜错的地方正是要点。</div>
+  <div class="where">✍️ 册子追加页「暂停点②」：我的猜想 → 验证之后 → 老师的讲解</div>`,
+ notes:"先写后验，顺序不能反。黑板「余额」格演：50 →擦成 250→擦成 220。请猜 480 的同学说思路——错处正是「只留最新」。验完同桌互讲：50 和 200 为什么不见了。"},
+
+{cls:"", badges:[
+    {type:"question", text:"🎲 抽人②"},
+  ], html:`
+  <div class="eyebrow">给格子起名字</div>
+  <h1>名字必须<span class="accent">见名知义</span></h1>
+  <ul class="items">
+    <li>黑板上那个格子叫「余额」——这就是名字：一看就知道格子里装什么</li>
+    <li>规则一：<b>见名知义</b>——凭名字取数，名字糊涂数就取错</li>
+    <li>规则二：<b>一格一用</b>——班费的钱别放进话费的格子</li>
+  </ul>
+  <div class="flow" style="margin-top:10px">
+    <span>cardBalance 饭卡余额 <b>✓</b></span><span>a1 <b>✗</b></span><span>money1 <b>△</b></span><span>banFei 班费 <b>✓</b></span><span>x <b>✗</b></span>
+  </div>
+  <ul class="items" style="margin-top:10px">
+    <li><span class="stu">现在你：全班判——✗ 错在哪？△ 差在哪？</span></li>
+    <li>（名字写成英文，是机器人软件的规矩——下节课进机房揭晓为什么）</li>
+  </ul>`,
+ notes:"a1、x 过三天自己都不认识；money1 说不清「哪个钱」。判定让全班说，老师兜底。"},
+
+{cls:"", badges:[
+    {type:"question", text:"🎲 抽人③"},
+  ], html:`
+  <div class="eyebrow">任务 2-E2 · 📒 暂停点③</div>
+  <div class="task-card">
+    <h2>🎤 给三个数贴标签</h2>
+    <li>给<b>饭卡余额、每月话费、班费</b>各起一个变量名，写进册子追加页「暂停点③」</li>
+    <li><span class="stu">现在你：写完和同桌互审——见名知义吗？不合格打回重起</span></li>
+    <li>🎲 抽 2 组念名字，全班评判</li>
+    <li>⭐ 合格 2 分 · 三个都规范 5 分 ｜ 最佳命名上「班级规矩宝典」墙</li>
+  </div>`,
+ notes:"a1、aa、x 当场打回示范。名字好坏让全班判，老师只兜底。"},
+
+{cls:"", html:`
+  <div class="eyebrow">不同货，不同格 · 先分堆，再对表</div>
+  <h1>五个货，<span class="accent">你会怎么分堆？</span></h1>
+  <div class="flow" style="justify-content:center;margin-top:4px">
+    <span>¥35.5</span><span>A8-2012</span><span>学生证.jpg</span><span>2026-09-09</span><span>14:30</span>
+  </div>
+  <ul class="items" style="margin-top:10px">
+    <li><span class="stu">现在你：先说你的分法——谁和谁一伙？凭什么？</span>（分法没有标准答案）</li>
+  </ul>
+  <div class="cards" style="margin-top:10px">
+    <div class="card"><h2>数值</h2><li>35.5、200</li><li><b>能加减乘除</b></li></div>
+    <div class="card"><h2>字符</h2><li>"王芳"、A8-2012</li><li><b>文字，不能算</b></li></div>
+    <div class="card"><h2>日期 / 时间</h2><li>2026-09-09｜14:30</li><li>哪天、几点</li></div>
+    <div class="card"><h2>文件</h2><li>学生证.jpg</li><li>文件在哪</li></div>
+  </div>`,
+ notes:"先听 2–3 种学生分法（按长得像/按用途分都收），再给正式五类表对照——分类是学生分完才命名的。"},
+
+{cls:"", html:`
+  <div class="eyebrow">为什么必须分清</div>
+  <h1>分错类，机器人<span class="accent">当场翻脸</span></h1>
+  <ul class="items">
+    <li>✅ <b>35.5 + 10 = 45.5</b>——数值能算术，天经地义</li>
+    <li>❌ <b>"A8-2012" + 10 = ？</b>——编号是文字，加 10 是要干嘛？机器人<b>直接报错</b></li>
+    <li>❓ <b>"王芳" + "王芳" = ？</b>——文字只能拼接，算术没意义</li>
+    <li>💡 所以拿到一个值，第一件事：<b>判断它是数还是文字</b></li>
+  </ul>`,
+ notes:"这一页就是分类的「为什么」。「A8-2012+10 报错」下节课进机房真跑一遍验证——悬念从这里开始埋。"},
+
+{cls:"", badges:[
+    {type:"question", text:"🙋 抢答"},
+  ], html:`
+  <div class="eyebrow">快闪 · 📒 暂停点④</div>
+  <h1>五个货，<span class="accent">哪一类？</span></h1>
+  <div class="flow" style="justify-content:center;margin-top:4px">
+    <span>¥35.5</span><span>A8-2012</span><span>学生证.jpg</span><span>2026-09-09</span><span>14:30</span>
+  </div>
+  <ul class="items" style="margin-top:12px">
+    <li><span class="stu">现在你：老师念货，你喊类名——数值 / 字符 / 日期 / 时间 / 文件</span></li>
+    <li>抢答完 → 📒 册子追加页「暂停点④」把五个货写进五类（先自己分，再对答案，分对三种以上过关）</li>
+  </ul>`,
+ notes:"抢答正反两轮，然后动笔写册子。对答案只报类名。"},
+
+{cls:"", html:`
+  <div class="eyebrow">变量用在哪 · 真实三连</div>
+  <h1>先记住，<span class="accent">才能算</span></h1>
+  <div class="cards">
+    <div class="card"><h2>🛒 超市收银机</h2><li>记住单价、数量、会员折扣</li><li>才能算出应收金额</li></div>
+    <div class="card"><h2>📱 手机流量</h2><li>记住总量、已用</li><li>才知道月底还剩多少</li></div>
+    <div class="card"><h2>🧾 工资条机器人</h2><li>记住每人的姓名、基本工资、加班费</li><li>才能一人一条，不错发</li></div>
+  </div>
+  <ul class="items" style="margin-top:12px">
+    <li>🙋 先猜：这三个的共同点是什么？——都是<b>先把数放进格子记住，才能算、才能发</b></li>
+    <li>💼 以后你做的<b>每一个财务机器人</b>，第一步都是把数放进格子——今天学的就是这一步</li>
+  </ul>`,
+ notes:"共同点让学生先用今天的话猜，老师只复述。工资条那条顺口回扣命名：名字起错=发错人。"},
+
+{cls:"", badges:[
+    {type:"question", text:"🎲 抽人④"},
+  ], html:`
+  <div class="eyebrow">全班动手 · 变量接龙</div>
+  <div class="task-card">
+    <h2>🧮 班费这格子，接力变形</h2>
+    <li>黑板起点：<b>班费 = 200</b></li>
+    <li>各组轮流上台走一步：<b>买横幅 −50</b> → 班费=？；<b>卖废纸 +30</b> → ？；<b>买奖状 −25</b> → ？…</li>
+    <li><span class="stu">现在你：先在纸上算好，再上台写——写错值，全组重来</span></li>
+    <li>⭐ 每步对 2 分 · 坚持到最后 5 分</li>
+  </div>`,
+ notes:"老师当出题机，每步 20 秒，节奏要快；时间紧就步数减半。收口点题：刚才每一步，格子里都只记当前值——这就是变量。"},
+
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点⑤ · 追加页"}], html:`
+  <div class="eyebrow">⏸ 暂停点⑤ · 今天的争论题</div>
+  <h1>"A8-2012" 能当数算吗？</h1>
+  <div class="sub">取件码明明带数字，它是<b>数值</b>还是<b>字符</b>？<br>写下你的判断＋一条理由。<b>今天不揭晓</b>——下节课进机房，让机器人当场算给你看。</div>
+  <div class="where">✍️ 册子追加页「暂停点⑤」：我的判断 → 我的理由 → 下节课的答案</div>`,
+ notes:"两派都请人说理由，不裁决。黑板写「下节课揭晓」。下节课开场第一个动作就是拿真机器人算这道题。"},
+
+{cls:"", badges:[
+    {type:"question", text:"🎲 抽人⑤"},
+  ], html:`
+  <div class="eyebrow">收尾 · 三句话</div>
+  <h1>今天只记三句</h1>
+  <ul class="items">
+    <li>1️⃣ 变量＝<b>贴名字标签的格子</b>——有名字、会变、只留最新</li>
+    <li>2️⃣ 名字<b>见名知义</b>，一格一用</li>
+    <li>3️⃣ 先分清<b>五类</b>——数值能算，文字不能</li>
+    <li><span class="stu">现在你：抽人复述三句话</span></li>
+  </ul>`,
+ notes:"当场报分。下节课预告一句话。"},
+
+{cls:"end", html:`
+  <div class="emoji-row" style="font-size:56px">🗄️ 🏬 🤖</div>
+  <h1>下节课：进机房</h1>
+  <div class="sub">
+    把今天的格子<b>搬进真正的机器人</b>——带上你起的名字<br>
+    当场揭晓："A8-2012" + 10 到底会不会报错<br><br>
+    课后必做：给生活里三个数各起一个「见名知义」的变量名（下节课抽查 +2 分）<br>
+    课后选做：把「电量、余额」的变量故事讲给室友听，让他复述给你（+2 分）
+  </div>`,
+ notes:"课后任务说两遍。提醒：下节课机房，机位即岗位。"},
+
+];
+
+const deck = document.getElementById("deck");
+const notesEl = document.getElementById("notes");
+const bar = document.getElementById("bar");
+const counter = document.getElementById("counter");
+let cur = 0;
+
+SLIDES.forEach((s) => {
+  const el = document.createElement("section");
+  el.className = "slide " + (s.cls || "");
+  el.innerHTML = s.html;
+  if (s.badges && s.badges.length) {
+    const wrap = document.createElement("div");
+    wrap.className = "badges";
+    s.badges.forEach((bd) => {
+      const b = document.createElement("div");
+      b.className = "badge " + bd.type;
+      b.textContent = bd.text;
+      wrap.appendChild(b);
+    });
+    el.appendChild(wrap);
+  }
+  deck.appendChild(el);
+});
+const slides = deck.querySelectorAll(".slide");
+
+function show(i) {
+  cur = (i + SLIDES.length) % SLIDES.length;
+  slides.forEach((el, k) => el.classList.toggle("active", k === cur));
+  counter.textContent = (cur + 1) + " / " + SLIDES.length;
+  bar.style.width = ((cur + 1) / SLIDES.length * 100) + "%";
+  notesEl.innerHTML = "<b>📝 教师提示：</b>" + (SLIDES[cur].notes || "");
+}
+show(0);
+
+function fit() {
+  const s = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+  document.getElementById("stage").style.transform = "scale(" + s + ")";
+}
+window.addEventListener("resize", fit);
+fit();
+
+document.getElementById("prev").onclick = () => show(cur - 1);
+document.getElementById("next").onclick = () => show(cur + 1);
+document.getElementById("stage").addEventListener("click", (e) => {
+  if (e.target.closest("#hud") || e.target.closest("#notes")) return;
+  show(cur + 1);
+});
+document.getElementById("notesBtn").onclick = () => notesEl.classList.toggle("show");
+document.getElementById("fsBtn").onclick = () => {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+};
+window.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") { e.preventDefault(); show(cur + 1); }
+  else if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); show(cur - 1); }
+  else if (e.key === "Home") show(0);
+  else if (e.key === "End") show(SLIDES.length - 1);
+  else if (e.key === "n" || e.key === "N") notesEl.classList.toggle("show");
+  else if (e.key === "f" || e.key === "F") document.getElementById("fsBtn").click();
+});
+let tx = 0;
+window.addEventListener("touchstart", (e) => tx = e.touches[0].clientX);
+window.addEventListener("touchend", (e) => {
+  const dx = e.changedTouches[0].clientX - tx;
+  if (Math.abs(dx) > 60) show(cur + (dx < 0 ? 1 : -1));
+});
+</script>
+<script>
+(function(){
+  var z = 1;
+  function set(){ document.documentElement.style.setProperty("--z", z); }
+  var zin = document.getElementById("zin"), zout = document.getElementById("zout");
+  if (zin) zin.onclick = function(){ z = Math.min(1.8, Math.round((z+0.1)*10)/10); set(); };
+  if (zout) zout.onclick = function(){ z = Math.max(0.7, Math.round((z-0.1)*10)/10); set(); };
+  window.addEventListener("keydown", function(e){
+    if (e.key === "+" || e.key === "="){ if(zin) zin.click(); }
+    else if (e.key === "-"){ if(zout) zout.click(); }
+  });
+})();
+</script>
+</body>
+</html>
