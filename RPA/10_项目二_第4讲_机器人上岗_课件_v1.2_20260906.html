@@ -239,29 +239,7 @@ const SLIDES = [
 {cls:"", html:`
   <div class="eyebrow">纸上的格子搬进来</div>
   <h1>纸上的「余额」格 ↔ <span class="accent">软件里三步</span></h1>
-  <svg viewBox="0 0 980 300" style="width:100%;max-height:26vh;display:block;background:#fff;border:2px solid var(--line);border-radius:14px" xmlns="http://www.w3.org/2000/svg">
-  <text x="490" y="32" text-anchor="middle" font-size="22" fill="#5D4037" font-weight="bold">纸上的动作 ↔ 软件里的按钮（一一对应）</text>
-  <rect x="60" y="52" width="360" height="48" rx="12" fill="#FFF3E0" stroke="#BF360C" stroke-width="3"/>
-  <text x="240" y="83" text-anchor="middle" font-size="20" fill="#212121">纸上：画格子、写名字</text>
-  <line x1="430" y1="76" x2="560" y2="76" stroke="#8D6E63" stroke-width="3"/><polygon points="560,69 574,76 560,83" fill="#8D6E63"/>
-  <rect x="580" y="52" width="340" height="48" rx="12" fill="#E8F0E9" stroke="#2E7D32" stroke-width="3"/>
-  <text x="750" y="83" text-anchor="middle" font-size="20" fill="#2E7D32" font-weight="bold">新建变量 ＋ 选类型</text>
-  <rect x="60" y="112" width="360" height="48" rx="12" fill="#FFF3E0" stroke="#BF360C" stroke-width="3"/>
-  <text x="240" y="143" text-anchor="middle" font-size="20" fill="#212121">纸上：把 50 放进格子</text>
-  <line x1="430" y1="136" x2="560" y2="136" stroke="#8D6E63" stroke-width="3"/><polygon points="560,129 574,136 560,143" fill="#8D6E63"/>
-  <rect x="580" y="112" width="340" height="48" rx="12" fill="#E8F0E9" stroke="#2E7D32" stroke-width="3"/>
-  <text x="750" y="143" text-anchor="middle" font-size="20" fill="#2E7D32" font-weight="bold">赋值（把数装进去）</text>
-  <rect x="60" y="172" width="360" height="48" rx="12" fill="#FFF3E0" stroke="#BF360C" stroke-width="3"/>
-  <text x="240" y="203" text-anchor="middle" font-size="20" fill="#212121">纸上：擦掉写 200（只留最新）</text>
-  <line x1="430" y1="196" x2="560" y2="196" stroke="#8D6E63" stroke-width="3"/><polygon points="560,189 574,196 560,203" fill="#8D6E63"/>
-  <rect x="580" y="172" width="340" height="48" rx="12" fill="#E8F0E9" stroke="#2E7D32" stroke-width="3"/>
-  <text x="750" y="203" text-anchor="middle" font-size="20" fill="#2E7D32" font-weight="bold">再赋值一次</text>
-  <rect x="60" y="232" width="360" height="48" rx="12" fill="#FFF3E0" stroke="#BF360C" stroke-width="3"/>
-  <text x="240" y="263" text-anchor="middle" font-size="20" fill="#212121">纸上：报出格子里的数</text>
-  <line x1="430" y1="256" x2="560" y2="256" stroke="#8D6E63" stroke-width="3"/><polygon points="560,249 574,256 560,263" fill="#8D6E63"/>
-  <rect x="580" y="232" width="340" height="48" rx="12" fill="#E8F0E9" stroke="#2E7D32" stroke-width="3"/>
-  <text x="750" y="263" text-anchor="middle" font-size="20" fill="#2E7D32" font-weight="bold">输出（运行看结果）</text>
-</svg>
+  <img class="pic" src="img/ai/10_p07_duizhao.png" alt="纸上余额格 ↔ 软件四块积木：上机只是搬家">
   <ul class="items" style="margin-top:12px">
     <li>🙋 抢答：纸上「放 50 再放 200」，对应软件哪一步？——<b>赋值做两次</b></li>
   </ul>`,
@@ -510,12 +488,26 @@ window.addEventListener("touchend", (e) => {
     h[0].classList.add("rvshow");
     if (h[0].scrollIntoView) h[0].scrollIntoView({behavior:"smooth", block:"nearest"});
     if (!hiddenRv().length && rvBtn) rvBtn.textContent = "✓ 已揭晓";
+    syncRvPill();
   }
   if (rvBtn) rvBtn.onclick = revealNext;
+  /* ===== 揭晓提示条：有未揭晓内容时常驻提示，写明点哪里 ===== */
+  var rvPill = document.createElement("div");
+  rvPill.className = "rvpill";
+  rvPill.style.cssText = "position:fixed;left:50%;transform:translateX(-50%);bottom:64px;background:#BF360C;color:#fff;padding:9px 22px;border-radius:999px;font-size:17px;z-index:60;box-shadow:0 4px 12px rgba(0,0,0,.28);display:none;cursor:pointer;white-space:nowrap";
+  document.body.appendChild(rvPill);
+  rvPill.onclick = function(e){ e.stopPropagation(); revealNext(); };
+  function syncRvPill(){
+    var n = hiddenRv().length;
+    if (n){ rvPill.style.display = "block"; rvPill.textContent = "👇 本页还有 " + n + " 条内容未揭晓 · 点击页面任意处逐条显示（按 R 键也行）"; }
+    else { rvPill.style.display = "none"; }
+  }
+  syncRvPill();
   window.addEventListener("keydown", function(e){
     if (e.key === "r" || e.key === "R") revealNext();
   });
   document.addEventListener("click", function(e){
+    if (e.target && e.target.closest && e.target.closest(".pic")) return; /* 点图片=只放大看图，不消耗揭晓 */
     var st = document.getElementById("stage");
     if (st && st.contains(e.target) && hiddenRv().length){
       revealNext();
@@ -531,6 +523,7 @@ window.addEventListener("touchend", (e) => {
       rvBtn.style.display = has ? "" : "none";
       rvBtn.textContent = "▶ 揭晓";
     }
+    syncRvPill();
   };
 })();
 </script>

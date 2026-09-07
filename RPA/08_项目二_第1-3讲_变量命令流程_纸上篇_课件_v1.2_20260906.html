@@ -248,28 +248,7 @@ const SLIDES = [
 {cls:"", html:`
   <div class="eyebrow">生活里找变量 · 第 1 站</div>
   <h1>你手机上的<span class="accent">电量</span>，今天变了几次？</h1>
-  <svg viewBox="0 0 980 240" style="width:100%;max-height:29vh;display:block;background:#fff;border:2px solid var(--line);border-radius:14px" xmlns="http://www.w3.org/2000/svg">
-  <text x="500" y="34" text-anchor="middle" font-size="24" fill="#5D4037">⚡ 低电量提醒：夜 23:40 才弹</text>
-  <circle cx="110" cy="120" r="50" fill="#FFF3E0" stroke="#BF360C" stroke-width="5"/>
-  <text x="110" y="131" text-anchor="middle" font-size="30" font-weight="bold" fill="#BF360C">100%</text>
-  <text x="110" y="200" text-anchor="middle" font-size="19" fill="#5D4037">早 7:00 出门</text>
-  <line x1="168" y1="120" x2="308" y2="120" stroke="#8D6E63" stroke-width="4"/><polygon points="308,112 326,120 308,128" fill="#8D6E63"/>
-  <text x="247" y="102" text-anchor="middle" font-size="19" fill="#5D4037">刷视频 −38</text>
-  <circle cx="380" cy="120" r="50" fill="#FFCC80" stroke="#BF360C" stroke-width="5"/>
-  <text x="380" y="131" text-anchor="middle" font-size="30" font-weight="bold" fill="#BF360C">62%</text>
-  <text x="380" y="200" text-anchor="middle" font-size="19" fill="#5D4037">午 12:30</text>
-  <line x1="438" y1="120" x2="578" y2="120" stroke="#2E7D32" stroke-width="4"/><polygon points="578,112 596,120 578,128" fill="#2E7D32"/>
-  <text x="517" y="102" text-anchor="middle" font-size="19" fill="#2E7D32">充电 +18</text>
-  <circle cx="650" cy="120" r="50" fill="#DCEDC8" stroke="#2E7D32" stroke-width="5"/>
-  <text x="650" y="131" text-anchor="middle" font-size="30" font-weight="bold" fill="#2E7D32">80%</text>
-  <text x="650" y="200" text-anchor="middle" font-size="19" fill="#5D4037">晚 18:00</text>
-  <line x1="708" y1="120" x2="848" y2="120" stroke="#8D6E63" stroke-width="4"/><polygon points="848,112 866,120 848,128" fill="#8D6E63"/>
-  <text x="787" y="102" text-anchor="middle" font-size="19" fill="#5D4037">待机一夜 −57</text>
-  <circle cx="920" cy="120" r="50" fill="#fff" stroke="#BF360C" stroke-width="5"/>
-  <text x="920" y="131" text-anchor="middle" font-size="30" font-weight="bold" fill="#BF360C">23%</text>
-  <text x="920" y="200" text-anchor="middle" font-size="19" fill="#5D4037">夜 23:40</text>
-  <rect x="120" y="196" width="700" height="0" fill="none"/>
-</svg>
+  <img class="pic" src="img/ai/p07_dianliang.png" alt="一天四次的电量：有名字·会变·只留最新">
   <div class="rv"><div class="anscard">📱 答案先不说——<b>屏幕上永远只有最新一个数</b>：62 一出现，100 就没了；80 一出现，62 就没了。三问的答案，等你抢答完再揭晓</div></div>
   <div class="steps">
     <div class="step"><div class="n">1</div><div class="t">早上出门 <b>100%</b>，一路刷视频，中午剩 <b>62%</b></div></div>
@@ -397,6 +376,7 @@ const SLIDES = [
 {cls:"", html:`
   <div class="eyebrow">为什么必须分清</div>
   <h1>分错类，机器人<span class="accent">当场翻脸</span></h1>
+  <img class="pic" src="img/ai/p16_fanlian.png" alt=""A8-2012"+10 报错现场：类型混用，机器人翻脸">
   <ul class="items">
     <li>✅ <b>35.5 + 10 = 45.5</b>——数值能算术，天经地义</li>
     <li>❌ <b>"A8-2012" + 10 = ？</b>——编号是文字，加 10 是要干嘛？机器人<b>直接报错</b></li>
@@ -515,7 +495,7 @@ const SLIDES = [
   <div class="eyebrow">引入 · 先说生活</div>
   <h1>让室友带饭，<span class="accent">怎么说他才不会买错？</span></h1>
   <div class="duo">
-    <img class="pic" src="img/canteen.png" alt="食堂打饭窗口">
+    <img class="pic" src="img/ai/p27_daifan.png" alt="「带个饭回来」vs 清单四行：焖面·1份·不要辣·加醋·多要饭">
     <img class="pic" src="img/cmdcard.png" alt="命令卡">
   </div>
   <ul class="items" style="margin-top:8px">
@@ -529,6 +509,7 @@ const SLIDES = [
 {cls:"", html:`
   <div class="eyebrow">老师命名 · 这就是命令的三要素</div>
   <h1>动作 ＋ 参数 ＋ <span class="accent">输出</span></h1>
+  <img class="pic" src="img/ai/p28_sanyaosu.png" alt="命令三要素：参数→动作→输出">
   <div class="cards">
     <div class="card"><h2>动作</h2><li>干什么：买饭／排序／弹出提示</li></div>
     <div class="card"><h2>参数</h2><li>按什么要求：12 元／按姓名排</li></div>
@@ -542,38 +523,7 @@ const SLIDES = [
 {cls:"", html:`
   <div class="eyebrow">案例① · 背景</div>
   <h1>石邮院食堂二楼的<span class="accent">叫号屏</span></h1>
-  <svg viewBox="0 0 980 330" style="width:100%;max-height:29vh;display:block;background:#fff;border:2px solid var(--line);border-radius:14px" xmlns="http://www.w3.org/2000/svg">
-  <text x="245" y="32" text-anchor="middle" font-size="24" fill="#BF360C" font-weight="bold">🕑 12:02 大屏坏时</text>
-  <rect x="40" y="52" width="410" height="170" rx="12" fill="#FFF3E0" stroke="#BF360C" stroke-width="3"/>
-  <rect x="58" y="80" width="80" height="118" fill="#FFCC80" stroke="#8D6E63" stroke-width="3"/>
-  <text x="98" y="146" text-anchor="middle" font-size="19" fill="#5D4037">取餐口</text>
-  <circle cx="200" cy="120" r="14" fill="#8D6E63"/><rect x="188" y="136" width="24" height="40" rx="8" fill="#8D6E63"/>
-  <circle cx="252" cy="105" r="14" fill="#BF360C"/><rect x="240" y="121" width="24" height="42" rx="8" fill="#BF360C"/>
-  <circle cx="305" cy="128" r="14" fill="#5D4037"/><rect x="293" y="144" width="24" height="38" rx="8" fill="#5D4037"/>
-  <circle cx="358" cy="108" r="14" fill="#8D6E63"/><rect x="346" y="124" width="24" height="42" rx="8" fill="#8D6E63"/>
-  <circle cx="410" cy="132" r="14" fill="#BF360C"/><rect x="398" y="148" width="24" height="36" rx="8" fill="#BF360C"/>
-  <rect x="196" y="66" width="104" height="30" rx="12" fill="#fff" stroke="#BF360C" stroke-width="2"/>
-  <text x="248" y="87" text-anchor="middle" font-size="17" fill="#BF360C">先给我！</text>
-  <rect x="300" y="180" width="128" height="30" rx="12" fill="#fff" stroke="#5D4037" stroke-width="2"/>
-  <text x="364" y="201" text-anchor="middle" font-size="17" fill="#5D4037">是不是我的？</text>
-  <line x1="190" y1="200" x2="230" y2="182" stroke="#BF360C" stroke-width="3"/>
-  <line x1="230" y1="200" x2="190" y2="182" stroke="#BF360C" stroke-width="3"/>
-  <text x="245" y="250" text-anchor="middle" font-size="20" fill="#5D4037">20 多人挤成一团，全靠嗓子喊</text>
-  <text x="245" y="282" text-anchor="middle" font-size="23" fill="#BF360C" font-weight="bold">＝ 没有命令，全靠猜</text>
-  <line x1="490" y1="40" x2="490" y2="292" stroke="#E0D5C3" stroke-width="3" stroke-dasharray="8 6"/>
-  <text x="735" y="32" text-anchor="middle" font-size="24" fill="#2E7D32" font-weight="bold">🕓 12:10 大屏修好后</text>
-  <rect x="530" y="52" width="410" height="170" rx="12" fill="#fff" stroke="#2E7D32" stroke-width="3"/>
-  <rect x="552" y="72" width="250" height="52" rx="10" fill="#DCEDC8" stroke="#2E7D32" stroke-width="3"/>
-  <text x="677" y="105" text-anchor="middle" font-size="21" fill="#2E7D32" font-weight="bold">「37 号，麻辣烫好了」</text>
-  <line x1="677" y1="124" x2="677" y2="152" stroke="#2E7D32" stroke-width="3"/><polygon points="677,152 670,140 684,140" fill="#2E7D32"/>
-  <circle cx="677" cy="172" r="13" fill="#2E7D32"/><rect x="666" y="187" width="22" height="30" rx="8" fill="#2E7D32"/>
-  <path d="M 700 205 q 12 -14 24 0 z" fill="#BF360C"/>
-  <rect x="742" y="160" width="170" height="30" rx="12" fill="#fff" stroke="#2E7D32" stroke-width="2"/>
-  <text x="827" y="181" text-anchor="middle" font-size="17" fill="#2E7D32">37 号端走，队伍顺了</text>
-  <text x="735" y="250" text-anchor="middle" font-size="20" fill="#5D4037">同样一群人、同一个窗口</text>
-  <text x="735" y="282" text-anchor="middle" font-size="23" fill="#2E7D32" font-weight="bold">＝ 一条命令，三样齐全</text>
-  <text x="490" y="318" text-anchor="middle" font-size="20" fill="#8D6E63">变的只有一件事：话说没说清楚</text>
-</svg>
+  <img class="pic" src="img/ai/p29_jiaohao.png" alt="12:02没命令全靠猜 vs 12:10一条命令三样齐全">
   <ul class="items" style="margin-top:6px">
       <li>周三 12:02，食堂二楼<b>麻辣烫窗口</b>排了 20 多人，取餐口挤成一团——谁端走了谁的碗，全靠嗓子喊</li>
       <li>12:10 大屏修好，弹出一句话，队伍立刻顺了：<b>「37 号同学，你的麻辣烫好了」</b></li>
@@ -697,38 +647,7 @@ const SLIDES = [
   ], html:`
   <div class="eyebrow">案例③ · 背景</div>
   <h1>周六，正定古城<span class="accent">一日游</span></h1>
-  <svg viewBox="0 0 980 400" style="width:100%;max-height:27vh;display:block;background:#fff;border:2px solid var(--line);border-radius:14px" xmlns="http://www.w3.org/2000/svg">
-  <rect x="20" y="52" width="96" height="40" rx="20" fill="#BF360C"/><text x="68" y="80" text-anchor="middle" font-size="23" fill="#fff">顺序</text>
-  <rect x="130" y="56" width="128" height="54" rx="12" fill="#FFF3E0" stroke="#BF360C" stroke-width="3"/><text x="194" y="90" text-anchor="middle" font-size="22" fill="#212121">石邮院</text>
-  <line x1="258" y1="83" x2="296" y2="83" stroke="#8D6E63" stroke-width="3"/><polygon points="296,76 310,83 296,90" fill="#8D6E63"/>
-  <rect x="312" y="56" width="128" height="54" rx="12" fill="#FFF3E0" stroke="#BF360C" stroke-width="3"/><text x="376" y="90" text-anchor="middle" font-size="22" fill="#212121">隆兴寺</text>
-  <line x1="440" y1="83" x2="478" y2="83" stroke="#8D6E63" stroke-width="3"/><polygon points="478,76 492,83 478,90" fill="#8D6E63"/>
-  <rect x="494" y="56" width="150" height="54" rx="12" fill="#FFF3E0" stroke="#BF360C" stroke-width="3"/><text x="569" y="90" text-anchor="middle" font-size="22" fill="#212121">荣国府·午餐</text>
-  <line x1="644" y1="83" x2="682" y2="83" stroke="#8D6E63" stroke-width="3"/><polygon points="682,76 696,83 682,90" fill="#8D6E63"/>
-  <rect x="698" y="56" width="128" height="54" rx="12" fill="#FFF3E0" stroke="#BF360C" stroke-width="3"/><text x="762" y="90" text-anchor="middle" font-size="22" fill="#212121">正定夜市</text>
-  <line x1="826" y1="83" x2="856" y2="83" stroke="#8D6E63" stroke-width="3"/><polygon points="856,76 870,83 856,90" fill="#8D6E63"/>
-  <rect x="872" y="56" width="88" height="54" rx="12" fill="#FFF3E0" stroke="#BF360C" stroke-width="3"/><text x="916" y="90" text-anchor="middle" font-size="22" fill="#212121">回校</text>
-  <rect x="20" y="182" width="96" height="40" rx="20" fill="#2E7D32"/><text x="68" y="210" text-anchor="middle" font-size="23" fill="#fff">条件</text>
-  <polygon points="330,146 446,202 330,258 214,202" fill="#fff" stroke="#2E7D32" stroke-width="3"/>
-  <text x="330" y="196" text-anchor="middle" font-size="22" fill="#212121">天气</text>
-  <text x="330" y="226" text-anchor="middle" font-size="22" fill="#212121">怎么样？</text>
-  <line x1="446" y1="188" x2="520" y2="164" stroke="#2E7D32" stroke-width="3"/><polygon points="520,164 506,162 512,174" fill="#2E7D32"/>
-  <text x="486" y="158" text-anchor="middle" font-size="20" fill="#2E7D32">下雨</text>
-  <rect x="524" y="140" width="200" height="50" rx="12" fill="#E8F0E9" stroke="#2E7D32" stroke-width="3"/><text x="624" y="172" text-anchor="middle" font-size="21" fill="#212121">改逛博物馆</text>
-  <line x1="446" y1="216" x2="520" y2="244" stroke="#8D6E63" stroke-width="3"/><polygon points="520,244 512,232 506,244" fill="#8D6E63"/>
-  <text x="486" y="252" text-anchor="middle" font-size="20" fill="#5D4037">晴天</text>
-  <rect x="524" y="222" width="200" height="50" rx="12" fill="#FFF3E0" stroke="#BF360C" stroke-width="3"/><text x="624" y="254" text-anchor="middle" font-size="21" fill="#212121">按原路线走</text>
-  <rect x="20" y="316" width="96" height="40" rx="20" fill="#5D4037"/><text x="68" y="344" text-anchor="middle" font-size="23" fill="#fff">循环</text>
-  <rect x="150" y="316" width="190" height="54" rx="12" fill="#FFF3E0" stroke="#5D4037" stroke-width="3"/><text x="245" y="350" text-anchor="middle" font-size="21" fill="#212121">每到一个景点</text>
-  <line x1="340" y1="343" x2="388" y2="343" stroke="#8D6E63" stroke-width="3"/><polygon points="388,336 402,343 388,350" fill="#8D6E63"/>
-  <rect x="404" y="316" width="180" height="54" rx="12" fill="#FFF3E0" stroke="#5D4037" stroke-width="3"/><text x="494" y="350" text-anchor="middle" font-size="21" fill="#212121">打卡拍照</text>
-  <line x1="584" y1="343" x2="632" y2="343" stroke="#8D6E63" stroke-width="3"/><polygon points="632,336 646,343 632,350" fill="#8D6E63"/>
-  <rect x="648" y="316" width="170" height="54" rx="12" fill="#FFF3E0" stroke="#5D4037" stroke-width="3"/><text x="733" y="350" text-anchor="middle" font-size="21" fill="#212121">去下一个</text>
-  <path d="M 733 316 C 733 288 245 288 245 314" fill="none" stroke="#5D4037" stroke-width="3" stroke-dasharray="8 6"/>
-  <polygon points="245,314 238,300 252,300" fill="#5D4037"/>
-  <text x="490" y="292" text-anchor="middle" font-size="20" fill="#5D4037">重复，直到把 4 个景点逛完</text>
-  <text x="500" y="392" text-anchor="middle" font-size="20" fill="#8D6E63">——班委贴在群里的三行命令，就长这样（找找哪行缺了关键参数）</text>
-</svg>
+  <img class="pic" src="img/ai/p40_zhengding.png" alt="正定古城一日游行程图：顺序+条件+循环">
   <ul class="items" style="margin-top:6px">
     <li>周五晚，班级群接龙：<b>38 人报名</b>。班委包了往返大巴（每人 15 元）；隆兴寺<b>学生半价 25 元</b>；中午荣国府旁吃<b>正定八大碗</b>；晚上逛正定夜市再回学校</li>
     <li>班委把行程写成了三行命令，贴在群里：<br>
@@ -841,6 +760,7 @@ const SLIDES = [
 {cls:"", html:`
   <div class="eyebrow">回收 · 第 2 次课那道题</div>
   <h1>外卖满减：<span class="accent">这回机器人算</span></h1>
+  <img class="pic" src="img/ai/p49_waimai.png" alt="外卖满减：39.9×2=79.8，满25减4，应付75.8">
   <ul class="items">
     <li>第 2 次课：老师黑板算——39.9 × 2 → 满 25 减 4 → <b>应付 75.8</b></li>
     <li>今天：<b>你让「人机器人」算</b>——同桌照你的图纸一步一步执行</li>
@@ -852,40 +772,13 @@ const SLIDES = [
   <div class="eyebrow">任务卡 A</div>
   <div class="task-card">
     <h2>🛒 外卖满减计算器</h2>
-    <li><img class="pic" src="img/waimai.png" alt="外卖满减" style="max-height:18vh;max-width:34%"></li>
+    <li></li>
     <li>① 建变量：单价（39.9）、份数（2）——<b>选对类型</b></li>
     <li>② 算出小计，再判断：<b>满 25 减 4</b>（这就是条件！）</li>
     <li>③ 弹出：「应付 75.8 元」</li>
     <li>🏅 挑战：份数改成 3，你的流程还 对 吗？先猜再「跑」</li>
   </div>
-<svg viewBox="0 0 980 280" style="width:100%;max-height:24vh;display:block;background:#fff;border:2px solid var(--line);border-radius:14px;margin-top:8px" xmlns="http://www.w3.org/2000/svg">
-  <rect x="40" y="100" width="210" height="70" rx="12" fill="#FFF3E0" stroke="#BF360C" stroke-width="3"/>
-  <text x="145" y="128" text-anchor="middle" font-size="20" fill="#212121">输入</text>
-  <text x="145" y="156" text-anchor="middle" font-size="20" fill="#BF360C" font-weight="bold">单价 39.9 × 2 份</text>
-  <line x1="250" y1="135" x2="296" y2="135" stroke="#8D6E63" stroke-width="3"/><polygon points="296,128 310,135 296,142" fill="#8D6E63"/>
-  <rect x="312" y="100" width="170" height="70" rx="12" fill="#fff" stroke="#5D4037" stroke-width="3"/>
-  <text x="397" y="128" text-anchor="middle" font-size="20" fill="#212121">算小计</text>
-  <text x="397" y="156" text-anchor="middle" font-size="20" fill="#BF360C" font-weight="bold">79.8 元</text>
-  <line x1="482" y1="135" x2="520" y2="135" stroke="#8D6E63" stroke-width="3"/><polygon points="520,128 534,135 520,142" fill="#8D6E63"/>
-  <polygon points="625,80 740,135 625,190 510,135" fill="#fff" stroke="#BF360C" stroke-width="3"/>
-  <text x="625" y="128" text-anchor="middle" font-size="20" fill="#212121">小计 ≥ 25 ？</text>
-  <text x="625" y="156" text-anchor="middle" font-size="18" fill="#8D6E63">（满减线）</text>
-  <line x1="740" y1="120" x2="790" y2="92" stroke="#2E7D32" stroke-width="3"/><polygon points="790,92 776,92 784,104" fill="#2E7D32"/>
-  <text x="762" y="86" text-anchor="middle" font-size="19" fill="#2E7D32" font-weight="bold">是</text>
-  <rect x="794" y="56" width="170" height="56" rx="12" fill="#DCEDC8" stroke="#2E7D32" stroke-width="3"/>
-  <text x="879" y="90" text-anchor="middle" font-size="19" fill="#2E7D32">应付＝小计 − 4</text>
-  <line x1="740" y1="152" x2="790" y2="180" stroke="#BF360C" stroke-width="3"/><polygon points="790,180 784,168 776,180" fill="#BF360C"/>
-  <text x="762" y="192" text-anchor="middle" font-size="19" fill="#BF360C" font-weight="bold">否</text>
-  <rect x="794" y="176" width="170" height="56" rx="12" fill="#FFF3E0" stroke="#BF360C" stroke-width="3"/>
-  <text x="879" y="210" text-anchor="middle" font-size="19" fill="#BF360C">应付＝小计</text>
-  <line x1="879" y1="112" x2="879" y2="226" stroke="#8D6E63" stroke-width="0"/>
-  <path d="M 879 232 C 879 262 500 262 470 240" fill="none" stroke="#8D6E63" stroke-width="3"/>
-  <path d="M 700 232 C 700 262 660 262 640 248" fill="none" stroke="#8D6E63" stroke-width="3"/>
-  <polygon points="470,240 470,226 484,234" fill="#8D6E63"/>
-  <rect x="300" y="216" width="330" height="50" rx="12" fill="#FFCC80" stroke="#BF360C" stroke-width="3"/>
-  <text x="465" y="248" text-anchor="middle" font-size="21" fill="#BF360C" font-weight="bold">弹出：「应付 75.8 元」</text>
-  <text x="490" y="34" text-anchor="middle" font-size="22" fill="#5D4037" font-weight="bold">外卖满减计算器 · 图纸（第 5 次课照它搭真流程）</text>
-</svg>`,
+<img class="pic" src="img/ai/p50_manjian.png" alt="满减流程：输入→小计79.8→够25吗→减4/原价→75.8">`,
  notes:"挑战题专门抓「写死 75.8」的人——数是变量算出来的，不是抄出来的。这正是变量的意义。"},
 
 {cls:"", html:`
@@ -950,25 +843,7 @@ const SLIDES = [
 
 {cls:"", html:`
   <div class="eyebrow">全班找错 · 三张带病图纸</div>
-  <svg viewBox="0 0 980 220" style="width:100%;max-height:19vh;display:block;background:#fff;border:2px solid var(--line);border-radius:14px;margin-bottom:8px" xmlns="http://www.w3.org/2000/svg">
-  <text x="490" y="32" text-anchor="middle" font-size="22" fill="#5D4037" font-weight="bold">调试三步 · 一个圈转到底</text>
-  <rect x="60" y="70" width="230" height="76" rx="14" fill="#FFF3E0" stroke="#BF360C" stroke-width="3"/>
-  <text x="175" y="102" text-anchor="middle" font-size="21" fill="#BF360C" font-weight="bold">① 读现象</text>
-  <text x="175" y="130" text-anchor="middle" font-size="18" fill="#212121">执行人卡在哪一步？</text>
-  <line x1="290" y1="108" x2="346" y2="108" stroke="#8D6E63" stroke-width="3"/><polygon points="346,101 360,108 346,115" fill="#8D6E63"/>
-  <rect x="362" y="70" width="230" height="76" rx="14" fill="#fff" stroke="#5D4037" stroke-width="3"/>
-  <text x="477" y="102" text-anchor="middle" font-size="21" fill="#5D4037" font-weight="bold">② 定位</text>
-  <text x="477" y="130" text-anchor="middle" font-size="18" fill="#212121">图纸的那一行——就一处</text>
-  <line x1="592" y1="108" x2="648" y2="108" stroke="#8D6E63" stroke-width="3"/><polygon points="648,101 662,108 648,115" fill="#8D6E63"/>
-  <rect x="664" y="70" width="230" height="76" rx="14" fill="#E8F0E9" stroke="#2E7D32" stroke-width="3"/>
-  <text x="779" y="102" text-anchor="middle" font-size="21" fill="#2E7D32" font-weight="bold">③ 最小改动</text>
-  <text x="779" y="130" text-anchor="middle" font-size="18" fill="#212121">一次只改一处，马上再跑</text>
-  <path d="M 779 70 C 779 30 175 30 175 66" fill="none" stroke="#BF360C" stroke-width="3" stroke-dasharray="8 6"/>
-  <polygon points="175,66 168,52 182,52" fill="#BF360C"/>
-  <text x="477" y="46" text-anchor="middle" font-size="18" fill="#BF360C">再跑还卡？回①——别一口气改五处</text>
-  <text x="490" y="188" text-anchor="middle" font-size="19" fill="#8D6E63">每收一次网，册子记一行：现象 → 改了哪行 → 再跑怎样（排错三行）</text>
-  <text x="490" y="214" text-anchor="middle" font-size="19" fill="#212121">下面三张病号图纸，照这个圈诊一遍——病在哪一行？</text>
-</svg>
+  <img class="pic" src="img/ai/p57_bingli.png" alt="三张带病图纸：少参数·类型错·顺序反">
   <div class="task-card">
     <h2>🐛 投影三张图纸，病在哪？</h2>
     <li>病号①：<b>变量名对不上</b>——图纸上建的是 banFei，用的时候写成 bangFei</li>
@@ -1124,12 +999,26 @@ window.addEventListener("touchend", (e) => {
     h[0].classList.add("rvshow");
     if (h[0].scrollIntoView) h[0].scrollIntoView({behavior:"smooth", block:"nearest"});
     if (!hiddenRv().length && rvBtn) rvBtn.textContent = "✓ 已揭晓";
+    syncRvPill();
   }
   if (rvBtn) rvBtn.onclick = revealNext;
+  /* ===== 揭晓提示条：有未揭晓内容时常驻提示，写明点哪里 ===== */
+  var rvPill = document.createElement("div");
+  rvPill.className = "rvpill";
+  rvPill.style.cssText = "position:fixed;left:50%;transform:translateX(-50%);bottom:64px;background:#BF360C;color:#fff;padding:9px 22px;border-radius:999px;font-size:17px;z-index:60;box-shadow:0 4px 12px rgba(0,0,0,.28);display:none;cursor:pointer;white-space:nowrap";
+  document.body.appendChild(rvPill);
+  rvPill.onclick = function(e){ e.stopPropagation(); revealNext(); };
+  function syncRvPill(){
+    var n = hiddenRv().length;
+    if (n){ rvPill.style.display = "block"; rvPill.textContent = "👇 本页还有 " + n + " 条内容未揭晓 · 点击页面任意处逐条显示（按 R 键也行）"; }
+    else { rvPill.style.display = "none"; }
+  }
+  syncRvPill();
   window.addEventListener("keydown", function(e){
     if (e.key === "r" || e.key === "R") revealNext();
   });
   document.addEventListener("click", function(e){
+    if (e.target && e.target.closest && e.target.closest(".pic")) return; /* 点图片=只放大看图，不消耗揭晓 */
     var st = document.getElementById("stage");
     if (st && st.contains(e.target) && hiddenRv().length){
       revealNext();
@@ -1145,6 +1034,7 @@ window.addEventListener("touchend", (e) => {
       rvBtn.style.display = has ? "" : "none";
       rvBtn.textContent = "▶ 揭晓";
     }
+    syncRvPill();
   };
 })();
 </script>
