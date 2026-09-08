@@ -741,7 +741,7 @@ const SLIDES = [
     <li>② 一个目标：<b>下课前，每人一张跑通的图纸</b></li>
     <li>新规矩：<b>没图纸不开工</b>｜卡住三板斧：读现象→找那一步→问同桌</li>
   </ul>`,
- notes:"图纸今天课上画：外卖任务卡⓪先画三行。开场先收课后任务，再进图纸——没图纸不开工。"},
+ notes:"图纸今天课上画：外卖任务卡「第一步·动笔」画三行。开场先收课后任务，再进图纸——没图纸不开工。"},
 
 {cls:"", badges:[
     {type:"question", text:"🎲 抽人①"},
@@ -774,16 +774,17 @@ const SLIDES = [
   <div class="eyebrow">任务卡 A · 第一步 · 全班必做</div>
   <div class="task-card">
     <h2>🛒 外卖满减计算器</h2>
-    <li>⓪ 先动笔：草稿纸上画三行图纸——① 变量（名字＋类型）　② 命令　③ 串法；画完再点下面的揭晓对一带</li>
+    <li>📋 第一步·动笔（2 分钟）：在<b>任务卡背面</b>画三行图纸——<b>第 1 行 变量</b>：建哪几个格、各是什么类型；<b>第 2 行 命令</b>：用哪几条命令；<b>第 3 行 串法</b>：先算什么 → 再判断什么 → 最后弹什么</li>
+    <li>✅ 第二步·对答案：老师说「揭晓」，屏幕一行一行出参考——把自己的图纸凑上去<b>逐行对照</b>：缺的补上，错的划掉改过来；<b>三行都对，这张卡才算过关</b></li>
     <li>① 建变量：单价（39.9）、份数（2）——<b>选对类型</b></li>
     <li>② 算出小计，再判断：<b>满 25 减 4</b>（这就是条件！）</li>
     <li>③ 弹出：「应付 75.8 元」</li>
     <li>🏅 挑战：份数改成 3，你的流程还 对 吗？先猜再「跑」</li>
   </div>
 <img class="pic" src="img/ai/p50_manjian.png" alt="满减流程：输入→小计79.8→够25吗→减4/原价→75.8">
-  <div class="rv"><div class="anscard"><b>① 参考答案</b>：单价 39.9 → 小数；份数 2 → 整数。名字照行规：danJia、fenShu</div></div>
-  <div class="rv"><div class="anscard"><b>② 参考答案</b>：小计＝39.9 × 2 ＝ 79.8；79.8 ≥ 25 成立 → 减 4</div></div>
-  <div class="rv"><div class="anscard"><b>③ 参考答案</b>：弹出「应付 75.8 元」｜🏅 挑战：份数改 3 → 小计 119.7 → 仍满 25 → 减 4 →「应付 115.7 元」</div></div>`,
+  <div class="rv"><div class="anscard"><b>第 1 行·变量 参考</b>：单价 39.9 → 小数；份数 2 → 整数。名字照行规：danJia、fenShu</div></div>
+  <div class="rv"><div class="anscard"><b>第 2 行·命令 参考</b>：小计＝39.9 × 2 ＝ 79.8；79.8 ≥ 25 成立 → 减 4</div></div>
+  <div class="rv"><div class="anscard"><b>第 3 行·串法 参考</b>：弹出「应付 75.8 元」｜🏅 挑战：份数改 3 → 小计 119.7 → 仍满 25 → 减 4 →「应付 115.7 元」</div></div>`,
  notes:"挑战题专门抓「写死 75.8」的人——数是变量算出来的，不是抄出来的。这正是变量的意义。"},
 
 {cls:"", html:`
@@ -791,22 +792,23 @@ const SLIDES = [
   <div class="eyebrow">任务卡 B · 第二步 · 做完 A 再来</div>
   <div class="task-card">
     <h2>💰 班费记账小助手</h2>
-    <li>⓪ 先动笔：草稿纸上画三行图纸——① 变量（名字＋类型）　② 命令　③ 串法；画完再点下面的揭晓对一带</li>
+    <li>📋 第一步·动笔（2 分钟）：在<b>任务卡背面</b>画三行图纸——<b>第 1 行 变量</b>：建哪几个格、各是什么类型；<b>第 2 行 命令</b>：用哪几条命令；<b>第 3 行 串法</b>：先算什么 → 再判断什么 → 最后弹什么</li>
+    <li>✅ 第二步·对答案：老师说「揭晓」，屏幕一行一行出参考——把自己的图纸凑上去<b>逐行对照</b>：缺的补上，错的划掉改过来；<b>三行都对，这张卡才算过关</b></li>
     <li>① 建变量：班费（200）、这一笔（自己放数）</li>
     <li>② 每记一笔：<b>班费 = 班费 − 这一笔</b>（变量给自己减！）</li>
     <li>③ 每记完一笔 → 弹出<b>现在的班费</b>；如果班费<b>不足 50</b>，就再弹一句「该停手了」——这句「如果…就…」就是条件</li>
     <li>🏅 挑战：连记 3 笔——用<b>循环</b>，别复制粘贴三遍</li>
   </div>
-  <div class="rv"><div class="anscard"><b>① 参考答案</b>：班费 200 → 整数；「这一笔」→ 整数（例：放 80）</div></div>
-  <div class="rv"><div class="anscard"><b>② 参考答案</b>：记 80 → 班费＝200−80＝120；再记 100 → 班费＝20（每记一笔，格子擦掉重写）</div></div>
-  <div class="rv"><div class="anscard"><b>③ 参考答案</b>：20 ＜ 50 → 弹「该停手了」｜🏅 挑战：循环 3 笔＝「记一笔 → 减 → 判断」重复 3 次，别复制粘贴三遍</div></div>`,
+  <div class="rv"><div class="anscard"><b>第 1 行·变量 参考</b>：班费 200 → 整数；「这一笔」→ 整数（例：放 80）</div></div>
+  <div class="rv"><div class="anscard"><b>第 2 行·命令 参考</b>：记 80 → 班费＝200−80＝120；再记 100 → 班费＝20（每记一笔，格子擦掉重写）</div></div>
+  <div class="rv"><div class="anscard"><b>第 3 行·串法 参考</b>：20 ＜ 50 → 弹「该停手了」｜🏅 挑战：循环 3 笔＝「记一笔 → 减 → 判断」重复 3 次，别复制粘贴三遍</div></div>`,
  notes:"「班费=班费−一笔」是放→换的图纸版，变量课的「擦掉重写」落进流程。循环是挑战不强制——画出来直接 +5。"},
 
 {cls:"pause", badges:[{type:"note", text:"📒 暂停点⑫ · 记录册"}], html:`
   <div style="display:inline-block;background:#BF360C;color:#fff;border-radius:999px;padding:3px 14px;font-size:.72em;letter-spacing:1px;margin:0 0 6px">外卖计算器 · 4/4 · 检查开工</div>
   <div class="eyebrow">⏸ 暂停点⑫ · 图纸三行</div>
   <h1>图纸三行，补全了才许开工</h1>
-  <div class="sub">① 变量清单（名字＋类型）｜② 命令清单（哪几条）｜③ 串法（顺序？条件？循环？）<br><b>写在任务卡背面或记录册「暂停点⑫」</b>——三行写全，才许讲。<span style="color:var(--green);font-weight:700">现在你：讲给同桌听一遍，他点头才开工</span></div>
+  <div class="sub">① 变量清单（名字＋类型）｜② 命令清单（哪几条）｜③ 串法（顺序？条件？循环？）<br><b>写在任务卡背面或记录册「暂停点⑫」</b>——三行写全，才许讲。<span style="color:#FFE082;font-weight:700">现在你：讲给同桌听一遍，他点头才开工</span></div>
   <div class="rv"><div class="anscard"><b>① 参考图纸</b>：danJia 单价 39.9 → 小数；fenShu 份数 2 → 整数</div></div>
   <div class="rv"><div class="anscard"><b>② 参考图纸</b>：算小计 = danJia × fenShu；满 25 减 4；弹出「应付 75.8 元」</div></div>
   <div class="rv"><div class="anscard"><b>③ 参考图纸</b>：顺序（算 → 减 → 弹）＋ 一个条件（够 25 才减）</div></div>
@@ -846,15 +848,15 @@ const SLIDES = [
  notes:"三病号＝前三讲三大高发。抢答说线索，点一下出一个改法；「文本转数值」再埋一手到上机那节课。记录册⑬只写一行：最狠的病＋改法。"},
 
 {cls:"pause", badges:[{type:"note", text:"📒 暂停点⑭ · 记录册"}], html:`
-  <div style="display:inline-block;background:#BF360C;color:#fff;border-radius:999px;padding:3px 14px;font-size:.72em;letter-spacing:1px;margin:0 0 6px">同桌互验 · 换数考它</div>
-  <div class="eyebrow">⏸ 暂停点⑭ · 同桌互验验收单</div>
-  <h1>同桌互验：出个刁钻输入考它</h1>
-  <div class="sub">他把图纸口头跑给你看，然后你<b>换数考他</b>：0 份？<b>恰好 25 元</b>？便宜到 10 元？<br>写验收单：我测了＿＿＿，他的图纸（稳／翻车）——翻车的帮他指到那一步</div>
-  <div class="where">✍️ 记录册「暂停点⑭」：我测了什么 → 他的表现 → 我建议他改哪</div>
+  <div style="display:inline-block;background:#BF360C;color:#fff;border-radius:999px;padding:3px 14px;font-size:.72em;letter-spacing:1px;margin:0 0 6px">同桌互验 · 三个数考它</div>
+  <div class="eyebrow">⏸ 暂停点⑭ · 三数互验</div>
+  <h1>同桌互验：<span class="accent">三个数，轮着考他的图纸</span></h1>
+  <div class="sub">不用自己想考题——<b>三个数屏幕上已经给好</b>。拿同桌的图纸，你念数、他口头跑，跑完互换：<br>① <b>恰好 25 元</b> → 该弹多少？　② <b>便宜到 10 元</b> → 弹多少？　③ <b>0 份</b> → 弹多少？<br>三个数都答上＝图纸稳；有答不上的，帮他指出卡在哪一行</div>
+  <div class="where">✍️ 记录册「暂停点⑭」：三个数各弹多少 → 哪个数翻了车 → 卡在哪一行（帮他圈出来）</div>
   <div class="rv"><div class="anscard"><b>恰好 25 元</b>：25 ≥ 25 成立 → 减 4 → 应付 21 元——「满 25」含 25 本身，最阴的边界</div></div>
   <div class="rv"><div class="anscard"><b>便宜到 10 元</b>：不够 25 → 原价直过 → 应付 10 元</div></div>
   <div class="rv"><div class="anscard"><b>0 份</b>：小计 0 → 弹「应付 0 元」——翻不翻车看图纸怎么写，能把这题说清就是好验收</div></div>`,
- notes:"边界值意识第一次露头（恰好 25 是满减分界）。验收单三格写全，互相签字——像样一点的工程感。"},
+ notes:"考题给定，学生只管念数、记答案——动手执行，不考策划。恰好 25 是边界第一次露头：满 25 含 25 本身。两人各跑一轮约 6 分钟；揭晓逐题对，翻车的当场圈行。"},
 
 {cls:"", html:`
   <div class="eyebrow">纸上篇结业 · 一张图</div>
