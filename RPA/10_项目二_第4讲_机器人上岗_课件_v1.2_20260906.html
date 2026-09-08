@@ -493,6 +493,9 @@ window.addEventListener("touchend", (e) => {
   lb.appendChild(im);
   lb.onclick = function(){ lb.style.display = "none"; };
   document.body.appendChild(lb);
+  window.addEventListener("keydown", function(e){
+    if (lb.style.display !== "none" && e.key !== "f" && e.key !== "F") lb.style.display = "none"; /* 灯箱开着：按键先关灯箱（翻页/ Esc 同样生效） */
+  }, true);
   Array.prototype.forEach.call(document.querySelectorAll(".pic"), function(p){
     p.style.cursor = "zoom-in";
     p.title = "点击放大，再点关闭";
@@ -531,6 +534,7 @@ window.addEventListener("touchend", (e) => {
   });
   document.addEventListener("click", function(e){
     if (!e.target || !e.target.closest) return;
+    if (lb.style.display !== "none") return; /* 灯箱开着：这次点击只负责关灯箱，不揭晓不翻页 */
     if (e.target.closest(".pic,button,a,#rvBtn,#hud,#notes,#tocMenu,.rvpill,input,select,textarea")) return;
     if (hiddenRv().length){ revealNext(); e.stopPropagation(); } /* 有未揭晓→任意点击先揭晓；没得揭晓才翻页 */
   }, true);
