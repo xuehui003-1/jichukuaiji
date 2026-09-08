@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>项目二 · 纸上篇（变量·命令·流程） v1.2 · 第2–4次课</title>
+<title>项目二 · 纸上篇（变量·命令·流程） v1.2</title>
 <style>
 :root{
   --bg:#FFF9F0; --card:#FFFFFF; --text:#2B211B; --muted:#79695e;
@@ -176,11 +176,11 @@ ul.items li b{color:var(--primary)}
 <script>
 const SLIDES = [
 {cls:"cover", html:`
-  <div class="eyebrow">项目二 · 第 1 讲</div>
+  <div class="eyebrow">项目二 · 变量</div>
   <h1>变量<span class="accent">——</span>机器人记东西的地方</h1>
   <div class="sub">《财务机器人应用与开发》· 90 分钟 · 教室课（不用电脑）<br>今天只学一个词，但要学全：<b>是什么 · 干什么用 · 怎么用 · 分几类 · 用在哪</b></div>
   <img class="pic" src="img/ai/p01_fengmian.png" alt="封面：石邮院校门·储物格墙·小邮贴「余额」标签">
-  <div class="meta">第 1 章 · 变量） · 08_纸上篇 v1.2 ｜ 配套 07_规划 v2.3 · 05_记录册 v2.3 追加页 A</div>`,
+  <div class="meta">第 1 章 · 变量 · 08_纸上篇 v1.2 ｜ 配套 07_规划 v2.5 · 05_记录册 v2.3 ｜ 会计学院 · 大数据与会计 2501 班</div>`,
  notes:"开场 30 秒：先收上节课的作业（16 分钟），剩下只学「变量」一个词。今天全课规矩：学生先开口，老师最后命名。"},
 
 {cls:"", html:`
@@ -239,11 +239,11 @@ const SLIDES = [
   </div>`,
  notes:"任务A/B各抽一组；命令照抄不打折，填得怪也让AI照做，结果本身就是教材。"},
 
-{cls:"pause", badges:[{type:"note", text:"📒 暂停点⑤ · 册子第 1 页"}], html:`
-  <div class="eyebrow">⏸ 暂停点⑤（补上节课）</div>
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点① · 记录册第 1 页"}], html:`
+  <div class="eyebrow">⏸ 暂停点① · 补前课（好命令三行）</div>
   <h1>哪句命令更好？差在哪？</h1>
   <div class="sub">提示一：含糊命令里，哪些要求是 <b>AI 自己猜的</b>？<br>提示二：要是它猜错了，你知道<b>去哪查</b>吗？</div>
-  <div class="where">✍️ 册子第 1 页最后一行：①想法 → ②思考过程 → ③听老师讲</div>`,
+  <div class="where">✍️ 记录册第 1 页最后一行：①想法 → ②思考过程 → ③听老师讲</div>`,
  notes:"写 90 秒，抽 1–2 人念。收口：清楚命令＝要求说死，AI 不用猜，错了照着命令一步步查；含糊命令＝它替你猜，错了不知道去哪查。"},
 
 {cls:"", html:`
@@ -262,7 +262,7 @@ const SLIDES = [
   </ul>`,
  notes:"开场就问全班「你现在电量多少」——七八个答案立刻出来，人人有话说。三问逐个抢答（是/是/没有），结论学生自己说出口。低电量提醒先埋一句：手机会「看」电量做决定——这就是后面的「取」。"},
 
-{cls:"", badges:[{type:"note", text:"📒 暂停点①"}], html:`
+{cls:"", html:`
   <div class="eyebrow">轮到你了 · 议一议</div>
   <h1>生活里，还有哪些「<span class="accent">有名字、会变的数</span>」？</h1>
   <div class="task-card">
@@ -277,6 +277,7 @@ const SLIDES = [
 {cls:"", html:`
   <div class="eyebrow">老师总结 · 你们刚找到的，有个统一的名字</div>
   <h1>有名字 · 会变 · 只留最新 —— <span class="accent">变量</span></h1>
+  <img class="pic" src="img/ai/p09_santazheng.png" alt="变量三特征概念图：有名字·会变·只留最新→汇聚成「变量」">
   <ul class="items">
     <li>黑板上这一排，逐个三连问：有名字？会变？只留最新？——<b>全是</b></li>
     <li>它们都是：一个<b>有名字的容器</b>，装着一个<b>会变的数</b>，任何时刻只有<b>最新的一个</b></li>
@@ -319,7 +320,7 @@ const SLIDES = [
  notes:"「擦掉」这个动作就是「换」的本体，擦慢点，让学生看清 1000 没了。取件员游戏玩三轮：报「余额」喊 400；再放个新数再喊。赋值、内存这些术语今天忍住不说。"},
 
 {cls:"pause", badges:[{type:"note", text:"📒 暂停点②"}], html:`
-  <div class="eyebrow">⏸ 暂停点② · 先猜后验</div>
+  <div class="eyebrow">⏸ 暂停点② · 余额格先猜后验</div>
   <h1>余额格：早上 50，妈妈转来 200，买奶茶花 30</h1>
   <img class="pic" src="img/ai/p12_yue.png" alt="黑板余额格：50→250→220，擦掉重写只留最新">
   <div class="sub">现在格子里是多少？<br><b>50 和 200 还在吗？它们去哪了？</b>写下来，黑板验证。猜错不扣分——猜错的地方正是要点。</div>
@@ -331,6 +332,7 @@ const SLIDES = [
   ], html:`
   <div class="eyebrow">给格子起名字</div>
   <h1>名字必须<span class="accent">见名知义</span></h1>
+  <img class="pic" src="img/ai/p13_qiming.png" alt="起名法庭：a1/aa/money1 打回 vs yuE/banFei/fenShu 过关">
   <ul class="items">
     <li>黑板上那个格子叫「余额」——这就是名字：一看就知道格子里装什么</li>
     <li>规则一：<b>见名知义</b>——凭名字取数，名字糊涂数就取错</li>
@@ -348,7 +350,7 @@ const SLIDES = [
 {cls:"", badges:[
     {type:"question", text:"🎲 抽人③"},
   ], html:`
-  <div class="eyebrow">任务 2-E2 · 📒 暂停点③</div>
+  <div class="eyebrow">任务 2-E2 · ⏸ 暂停点③ · 给三个数起名</div>
   <div class="task-card">
     <h2>🎤 给三个数贴标签</h2>
     <li>给<b>饭卡余额、每月话费、班费</b>各起一个变量名，写进记录册「暂停点③」</li>
@@ -417,6 +419,7 @@ const SLIDES = [
 {cls:"", html:`
   <div class="eyebrow">变量用在哪 · 真实三连</div>
   <h1>先记住，<span class="accent">才能算</span></h1>
+  <img class="pic" src="img/ai/p19_gongzi.png" alt="工资条对比：工号是文本、工资是数">
   <div class="cards">
     <div class="card"><h2>🛒 超市收银机</h2><li>记住单价、数量、会员折扣</li><li>才能算出应收金额</li></div>
     <div class="card"><h2>📱 手机流量</h2><li>记住总量、已用</li><li>才知道月底还剩多少</li></div>
@@ -434,6 +437,7 @@ const SLIDES = [
   <div class="eyebrow">全班动手 · 变量接龙</div>
   <div class="task-card">
     <h2>🧮 班费这格子，接力变形</h2>
+  <img class="pic" src="img/ai/p20_jielong.png" alt="变量接龙：每步擦旧写新，只留当前值">
     <li>黑板起点：<b>班费 = 200</b></li>
     <li>各组轮流上台走一步：<b>买横幅 −50</b> → 班费=？；<b>卖废纸 +30</b> → ？；<b>买奖状 −25</b> → ？…</li>
     <li><span class="stu">现在你：先在纸上算好，再上台写——写错值，全组重来</span></li>
@@ -441,8 +445,8 @@ const SLIDES = [
   </div>`,
  notes:"老师当出题机，每步 20 秒，节奏要快；时间紧就步数减半。收口点题：刚才每一步，格子里都只记当前值——这就是变量。"},
 
-{cls:"pause", badges:[{type:"note", text:"📒 暂停点⑤ · 追加页"}], html:`
-  <div class="eyebrow">⏸ 暂停点⑤ · 今天的争论题</div>
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点⑤ · 记录册"}], html:`
+  <div class="eyebrow">⏸ 暂停点⑤ · 取件码能不能算</div>
   <h1>"A8-2012" 能当数算吗？</h1>
   <img class="pic" src="img/ai/p21_tianping.png" alt="悬念天平：带引号的 A8-2012 vs 数 10，进机房揭晓">
   <div class="sub">取件码明明带数字，它是<b>数值</b>还是<b>字符</b>？<br>写下你的判断＋一条理由。<b>今天不揭晓</b>——上机那节课进机房，让机器人当场算给你看。</div>
@@ -473,10 +477,10 @@ const SLIDES = [
   </div>`,
  notes:"课后任务说两遍。预告：真机器人等你们进机房才登场——先纸后机，基础打牢再上机。"},
 {cls:"cover", html:`
-  <div class="eyebrow">项目二 · 第 2 讲</div>
+  <div class="eyebrow">项目二 · 命令</div>
   <h1>教机器人干活——<span class="accent">命令</span></h1>
   <div class="sub">《财务机器人应用与开发》· 90 分钟 · 教室课（不用电脑 · 命令卡）<br>今天一个词：<b>命令</b>——动作、参数、输出，外加把命令串起来的三种规矩</div>
-  <div class="meta">第 2 章 · 命令） · 08_纸上篇 v1.2 ｜ 配套 09_规划 v1.3 · 05_记录册 v2.3 追加页 B</div>`,
+  <div class="meta">第 2 章 · 命令 · 08_纸上篇 v1.2 ｜ 配套 09_规划 v1.4 · 05_记录册 v2.3 ｜ 会计学院 · 大数据与会计 2501 班</div>`,
  notes:"开场抽查上节课的三个变量名。今天兑现项目一那节课两笔账：公式翻译成三要素、洗衣机规矩正式命名。全程纸面命令卡——上机统一留到上机那节课。"},
 
 {cls:"", html:`
@@ -494,7 +498,7 @@ const SLIDES = [
   <div class="eyebrow">开场抽查 · 上节课的活</div>
   <div class="task-card">
     <h2>🎤 亮出你的三个名字</h2>
-    <li>掏出记录册追加页 A——你给生活三个数起的变量名</li>
+    <li>掏出记录册——你给生活三个数起的变量名</li>
     <li><span class="stu">现在你：同桌交换，两问互审——见名知义吗？一格一用吗？</span></li>
     <li>🎲 抽 3 人念名字，全班判：过关 +2 分，被打回的现场重起</li>
   </div>`,
@@ -542,12 +546,12 @@ const SLIDES = [
   </ul>`,
  notes:"案例①A（背景）：先讲背景别提问——王同学插队/端错碗的乱劲讲 30 秒，屏幕修好前后对比拉满。「一句话就叫得动人」= 命令三要素齐了。背景讲完再翻下一页布置动笔。"},
 
-{cls:"pause", badges:[{type:"note", text:"📒 暂停点① · 记录册"}], html:`
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点⑥ · 记录册"}], html:`
   <div style="display:inline-block;background:#BF360C;color:#fff;border-radius:999px;padding:3px 14px;font-size:.72em;letter-spacing:1px;margin:0 0 6px">案例① 食堂叫号 · 2/3 · 动笔</div>
-  <div class="eyebrow">⏸ 暂停点① · 案例①的问题</div>
+  <div class="eyebrow">⏸ 暂停点⑥ · 拆叫号命令</div>
   <h1>「37 号同学，你的麻辣烫好了」</h1>
   <div class="sub">把它当成一条命令拆开，写进记录册「暂停点①」：<br><b>动作</b>＝它让屏幕干什么？　<b>参数</b>＝给了什么要求？　<b>输出</b>＝大家看到了什么？<br>追问：要是只弹「你的麻辣烫好了」<b>不弹号</b>，窗口会怎样？</div>
-  <div class="where">✍️ 记录册「暂停点①」：动作 → 参数 → 输出 → 不弹号会怎样</div>`,
+  <div class="where">✍️ 记录册「暂停点⑥」：动作 → 参数 → 输出 → 不弹号会怎样</div>`,
  notes:"案例①B（动笔）：背景刚讲完趁热布置；写 90 秒，老师下讲台看两排——这页就是检查时间。写完翻揭晓页共评。"},
 
 {cls:"", html:`
@@ -560,12 +564,12 @@ const SLIDES = [
   <div class="rv"><div class="anscard"><b>输出</b>：全窗口都看见 → 37 号端走麻辣烫，队伍继续顺</div></div>
   <div class="rv"><div class="anscard">🖥 不弹号会怎样：全窗口的人都在猜「是不是我的」→ <b>参数不能省</b>。这套「弹出提示」，上机那节课你自己就能拖出来</div></div>`,
  notes:"案例①C（揭晓）：点一下出一条，逐条共评；请写对的同学念。机器人软件里的「弹出提示」组件和这屏一模一样——伏笔上机那节课。"},
-{cls:"pause", badges:[{type:"note", text:"📒 暂停点① · 记录册"}], html:`
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点⑦ · 记录册"}], html:`
   <div style="display:inline-block;background:#BF360C;color:#fff;border-radius:999px;padding:3px 14px;font-size:.72em;letter-spacing:1px;margin:0 0 6px">案例① 食堂叫号 · 附 · 迁移练</div>
-  <div class="eyebrow">⏸ 暂停点①</div>
+  <div class="eyebrow">⏸ 暂停点⑦ · 弹出提示三要素</div>
   <h1>「弹出提示」的三要素，各是什么？</h1>
   <div class="sub">动作＝＿＿＿＿｜参数＝＿＿＿＿｜输出＝＿＿＿＿<br>写完和同桌对——空参数那次算不算有输出？说说你的理由</div>
-  <div class="where">✍️ 记录册「暂停点①」</div>`,
+  <div class="where">✍️ 记录册「暂停点⑦」</div>`,
  notes:"空参数之争是好题：弹了个空框也是输出（空输出）。不裁决对错，重要的是会拿三要素去拆。"},
 
 {cls:"", html:`
@@ -600,12 +604,12 @@ const SLIDES = [
   </div>`,
  notes:"案例②A（背景）：三连问 vs 一句话不问——「参数写全」的对比学生秒懂。4 条 AI 说明逐条念一遍，别急着判——下一页动笔。"},
 
-{cls:"pause", badges:[{type:"note", text:"📒 暂停点② · 记录册"}], html:`
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点⑧ · 记录册"}], html:`
   <div style="display:inline-block;background:#BF360C;color:#fff;border-radius:999px;padding:3px 14px;font-size:.72em;letter-spacing:1px;margin:0 0 6px">案例② 打印店 · 2/3 · 动笔</div>
-  <div class="eyebrow">⏸ 暂停点② · 案例②的两个问题</div>
+  <div class="eyebrow">⏸ 暂停点⑧ · 补命令＋揪卧底</div>
   <h1>补命令 ＋ 揪卧底</h1>
-  <div class="sub">写进记录册「暂停点②」：<br>① 把「<b>打印讲义</b>」补成师傅<b>一句话都不用问</b>的完整命令（提示：师傅问了三样）<br>② 4 条 AI 说明里，<b>哪条说反了？</b>它把参数和输出怎么弄反的？写一条理由</div>
-  <div class="where">✍️ 记录册「暂停点②」：我的完整命令 → 卧底是＿条 → 理由</div>`,
+  <div class="sub">写进记录册「暂停点⑧」：<br>① 把「<b>打印讲义</b>」补成师傅<b>一句话都不用问</b>的完整命令（提示：师傅问了三样）<br>② 4 条 AI 说明里，<b>哪条说反了？</b>它把参数和输出怎么弄反的？写一条理由</div>
+  <div class="where">✍️ 记录册「暂停点⑧」：我的完整命令 → 卧底是＿条 → 理由</div>`,
  notes:"案例②B（动笔）：两个小题都动笔，写 2 分钟；老师看两排——重点看补的命令缺没缺「几份/单双面/黑白」。写完翻揭晓。"},
 
 {cls:"", html:`
@@ -642,7 +646,7 @@ const SLIDES = [
   </div>
   <ul class="items" style="margin-top:8px">
     <li>🙋 抢答：从宿舍到省博物馆 <b>7.5 公里</b>，车费多少？先在草稿纸算，算完同桌对——再点揭晓</li>
-    <li>📒 动笔：记录册「暂停点②」——三个例子各哪种串法＋<b>你家的一个新例子</b>（同桌互判）</li>
+    <li>📒 动笔 · 暂停点⑨：顺序／条件／循环各配一个例子＋<b>你家的一个新例子</b>，写进记录册「暂停点⑨ · 三串法配例」（同桌互判）</li>
   </ul>
   <div class="rv"><div class="anscard">💰 8 + 4.5 × 1.6 = <b>15.2 元</b>——计价器内部就是这条「条件命令」在算，机器人算得比表还快</div></div>`,
  notes:"名字对号入座。出租车题是石家庄真实计价（起步 3 公里 8 元、超出 1.6 元/公里）：7.5 公里 15.2 元——先算后揭晓。抢答验一下：闹钟响按掉 5 分钟再响，是哪种？（循环套条件——说到就表扬，不展开）。"},
@@ -681,12 +685,12 @@ const SLIDES = [
 `,
  notes:"案例③A（背景）：38 人接龙、大巴 15 元、八大碗——全是真细节，学生听着就乐。三行命令念完直接抢答缺参数，答案是下一页动笔的内容，先别揭晓。"},
 
-{cls:"pause", badges:[{type:"note", text:"📒 暂停点③ · 记录册"}], html:`
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点⑩ · 记录册"}], html:`
   <div style="display:inline-block;background:#BF360C;color:#fff;border-radius:999px;padding:3px 14px;font-size:.72em;letter-spacing:1px;margin:0 0 6px">案例③ 正定一日游 · 2/3 · 动笔</div>
-  <div class="eyebrow">⏸ 暂停点③ · 案例③的问题</div>
+  <div class="eyebrow">⏸ 暂停点⑩ · 给行程单挑刺</div>
   <h1>给班委的行程单<span class="accent">挑刺</span></h1>
-  <div class="sub">写进记录册「暂停点③」：<br>① 三行命令里，<b>最要命的一处缺参数</b>是哪？缺了周六早上会出什么乱子？<br>② 挑战：给夜市环节自己<b>加一条循环命令</b>（例：每到一个小吃摊…重复到…）</div>
-  <div class="where">✍️ 记录册「暂停点③」：缺的参数 → 乱子 → 我的补法 ｜ 挑战：我的循环命令</div>
+  <div class="sub">写进记录册「暂停点⑩」：<br>① 三行命令里，<b>最要命的一处缺参数</b>是哪？缺了周六早上会出什么乱子？<br>② 挑战：给夜市环节自己<b>加一条循环命令</b>（例：每到一个小吃摊…重复到…）</div>
+  <div class="where">✍️ 记录册「暂停点⑩」：缺的参数 → 乱子 → 我的补法 ｜ 挑战：我的循环命令</div>
   <img class="pic" src="img/zhengding_comic.png" alt="正定一日游四格连环画：登车→隆兴寺→八大碗→夜市" style="max-height:20vh;margin-top:6px">`,
  notes:"案例③B（动笔）：写 2 分钟；老师重点看「缺参数」是不是抓到了『没写集合时间』——38 个人没写几点出发，周六早上车等人/人等车。写完翻揭晓共评。"},
 
@@ -700,7 +704,7 @@ const SLIDES = [
   <div class="rv"><div class="anscard">📏 一句话：<b>命令里没写全的要求，就叫缺参数</b>——到了机房，缺一个参数机器人就罢工</div></div>`,
  notes:"案例③C（揭晓）：逐层点出，每层请一个同学念。收口接到上机那节课：上机缺参数真罢工——纸上挑出来最便宜。"},
 {cls:"", badges:[
-    {type:"note", text:"📒 暂停点④ · 记录册"},
+    {type:"note", text:"📒 暂停点⑪ · 记录册"},
     {type:"question", text:"🎲 抽人⑤"},
   ], html:`
   <div class="eyebrow">收尾 · 三句话</div>
@@ -709,7 +713,7 @@ const SLIDES = [
     <li>1️⃣ 命令＝<b>动作＋参数＋输出</b>，漏一条就歪</li>
     <li>2️⃣ 三种串法：<b>顺序／条件／循环</b></li>
     <li>3️⃣ 参数填不对，命令就干歪活——<b>先猜再跑</b></li>
-    <li>✍️ <b>动笔</b>：三句话各抄进记录册「暂停点④」，每句后面补一个<b>你自己的例子</b></li>
+    <li>✍️ <b>动笔</b>：三句话各抄进记录册「暂停点⑪ · 三句话配私例」，每句后面补一个<b>你自己的例子</b></li>
     <li><span class="stu">现在你：写完抽人复述三句话</span></li>
   </ul>`,
  notes:"当场报分。抄三句＋配私例——能配上例子的才是真懂。接下来翻预告页。"},
@@ -724,10 +728,10 @@ const SLIDES = [
   </div>`,
  notes:"课后任务说两遍。任务卡上画的图纸，接下来人肉开工要用——没画完的先补完。"},
 {cls:"cover", html:`
-  <div class="eyebrow">项目二 · 第 3 讲</div>
+  <div class="eyebrow">项目二 · 流程与调试</div>
   <h1>跑起来，<span class="accent">修得好</span>——你的第一张流程图纸</h1>
   <div class="sub">《财务机器人应用与开发》· 90 分钟 · 教室课（不用电脑 · 人肉运行）<br>今天一个词：<b>流程</b>——变量＋命令＋串法，拼成一张能跑的图纸</div>
-  <div class="meta">第 3 章 · 流程与调试） · 08_纸上篇 v1.2 ｜ 配套 09_规划 v1.3 · 05_记录册 v2.3 追加页 C</div>`,
+  <div class="meta">第 3 章 · 流程与调试 · 08_纸上篇 v1.2 ｜ 配套 09_规划 v1.4 · 05_记录册 v2.3 ｜ 会计学院 · 大数据与会计 2501 班</div>`,
  notes:"纸上篇收官。开场抽查电器串法。今天动笔只有 3 个暂停点，其余时间全在「人肉运行」。"},
 
 {cls:"", html:`
@@ -744,8 +748,9 @@ const SLIDES = [
   ], html:`
   <div class="eyebrow">开场抽查 · 电器串法</div>
   <div class="task-card">
-    <h2>🎤 你家的顺序／条件／循环</h2>
-    <li>🎲 抽 3 人念：洗衣机甩干前必须漂净（顺序）／空调到 26 度停（条件）／电饭煲跳闸前反复加热（循环）…</li>
+    <h2>🎤 抽的就是上一页的课后任务</h2>
+    <li>📦 来源：上一页布置的课后任务——你在记录册上写的 3 件「按固定步骤做事」（先…再…最后…）</li>
+    <li>🎲 抽 3 人念自己的三件事——例：洗衣机（放衣→注水→甩干）＝顺序、空调到 26 度停＝条件、电饭煲反复加热＝循环；说错串法的现场改判</li>
     <li>全班判：分对没？分错的现场改判</li>
     <li>⭐ 三例分对 +2 分 · 有冷门例子讲清理由 +5 分</li>
   </div>`,
@@ -789,20 +794,23 @@ const SLIDES = [
     <li>⓪ 先动笔：草稿纸上画三行图纸——① 变量（名字＋类型）　② 命令　③ 串法；画完再点下面的揭晓对一带</li>
     <li>① 建变量：班费（200）、这一笔（自己放数）</li>
     <li>② 每记一笔：<b>班费 = 班费 − 这一笔</b>（变量给自己减！）</li>
-    <li>③ 弹出：记完后的班费；<b>不足 50</b> 弹「该停手了」（条件）</li>
+    <li>③ 每记完一笔 → 弹出<b>现在的班费</b>；如果班费<b>不足 50</b>，就再弹一句「该停手了」——这句「如果…就…」就是条件</li>
     <li>🏅 挑战：连记 3 笔——用<b>循环</b>，别复制粘贴三遍</li>
   </div>
   <div class="rv"><div class="anscard"><b>① 参考答案</b>：班费 200 → 整数；「这一笔」→ 整数（例：放 80）</div></div>
   <div class="rv"><div class="anscard"><b>② 参考答案</b>：记 80 → 班费＝200−80＝120；再记 100 → 班费＝20（每记一笔，格子擦掉重写）</div></div>
   <div class="rv"><div class="anscard"><b>③ 参考答案</b>：20 ＜ 50 → 弹「该停手了」｜🏅 挑战：循环 3 笔＝「记一笔 → 减 → 判断」重复 3 次，别复制粘贴三遍</div></div>`,
- notes:"「班费=班费−一笔」是放→换的图纸版，学变量那节课的「擦掉重写」落进流程。循环是挑战不强制——画出来直接 +5。"},
+ notes:"「班费=班费−一笔」是放→换的图纸版，变量课的「擦掉重写」落进流程。循环是挑战不强制——画出来直接 +5。"},
 
-{cls:"pause", badges:[{type:"note", text:"📒 暂停点① · 记录册"}], html:`
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点⑫ · 记录册"}], html:`
   <div style="display:inline-block;background:#BF360C;color:#fff;border-radius:999px;padding:3px 14px;font-size:.72em;letter-spacing:1px;margin:0 0 6px">外卖计算器 · 4/4 · 检查开工</div>
-  <div class="eyebrow">⏸ 暂停点① · 先设计后动手</div>
+  <div class="eyebrow">⏸ 暂停点⑫ · 图纸三行</div>
   <h1>图纸三行，补全了才许开工</h1>
-  <div class="sub">① 变量清单（名字＋类型）｜② 命令清单（哪几条）｜③ 串法（顺序？条件？循环？）<br><span style="color:var(--green);font-weight:700">现在你：讲给同桌听一遍，他点头才开工</span></div>
-  <div class="where">✍️ 记录册「暂停点①」——图纸不全就先补图</div>`,
+  <div class="sub">① 变量清单（名字＋类型）｜② 命令清单（哪几条）｜③ 串法（顺序？条件？循环？）<br><b>写在任务卡背面或记录册「暂停点⑫」</b>——三行写全，才许讲。<span style="color:var(--green);font-weight:700">现在你：讲给同桌听一遍，他点头才开工</span></div>
+  <div class="rv"><div class="anscard"><b>① 参考图纸</b>：danJia 单价 39.9 → 小数；fenShu 份数 2 → 整数</div></div>
+  <div class="rv"><div class="anscard"><b>② 参考图纸</b>：算小计 = danJia × fenShu；满 25 减 4；弹出「应付 75.8 元」</div></div>
+  <div class="rv"><div class="anscard"><b>③ 参考图纸</b>：顺序（算 → 减 → 弹）＋ 一个条件（够 25 才减）</div></div>
+  <div class="where">✍️ 记录册「暂停点⑫」——图纸不全就先补图</div>`,
  notes:"设计页。同桌点头这个动作，把「讲得清」变成开机的门槛（费曼）。巡回检查图纸，缺类型的当场补。"},
 
 {cls:"", html:`
@@ -812,10 +820,13 @@ const SLIDES = [
   <img class="pic" src="img/ai/p53_renrou.png" alt="人肉机器人：只做图纸写的，没写清喊卡">
   <div class="steps">
     <div class="step"><div class="n">1</div><div class="t"><b>换图纸</b>：主管把自己的图纸交给机器人</div></div>
-    <div class="step"><div class="n">2</div><div class="t"><b>逐条干</b>：机器人只做图纸写的，每做一步<b>喊出来</b>（「我建了变量」「我弹出提示」）</div></div>
-    <div class="step"><div class="n">3</div><div class="t"><b>卡住喊卡</b>：图纸没写清楚就停住喊「卡！」——不许自己编</div></div>
-    <div class="step"><div class="n">4</div><div class="t"><b>记改跑</b>：主管记一行卡壳 → 改图纸 → <b>再跑一遍</b>；然后互换角色</div></div>
-  </div>`,
+    <div class="step"><div class="n">2</div><div class="t"><b>照着做</b>：机器人只做图纸写的，每步喊出来；图纸没写清就停住喊「<b>卡！</b>」——不许自己编</div></div>
+    <div class="step"><div class="n">3</div><div class="t"><b>卡了就改</b>：主管只记两样——<b>第几步卡的、怪在哪</b> → 改那一行 → 再跑</div></div>
+    <div class="step"><div class="n">4</div><div class="t"><b>举手线</b>：连喊两次「卡」→ 举手叫老师，别自己死磕</div></div>
+  </div>
+  <ul class="items" style="margin-top:8px">
+    <li>⏱ 节奏固定：<b>前 10 分钟</b> A 当机器人 → <b>中 10 分钟</b>互换 → <b>最后 5 分钟</b>抽 2 组投屏演示</li>
+  </ul>`,
  notes:"规则页：老师先当一次「故意卡壳的机器人」示范喊「卡！」——机器人不自己动脑子这条立住了，活动才不乱。"},
 
 {cls:"", html:`
@@ -823,7 +834,7 @@ const SLIDES = [
   <div class="eyebrow">人肉运行 25 分钟 · 开工</div>
   <h1>你「跑」你的，<span class="accent">老师只巡回</span></h1>
   <ul class="items">
-    <li>🤖 机器人：只做图纸写的，一个字不多干 ｜ 📋 主管：只记录、不插手</li>
+    <li>🤖 机器人：只做图纸写的 ｜ 📋 主管：只记「第几步卡的、怪在哪」｜ 🆘 连喊两次「卡」→ 举手</li>
     <li>卡住三板斧：<b>读现象 → 找那一步 → 问同桌</b>——三斧过完才举手</li>
     <li>每卡一次记一行——<b>写满三行换 2 分</b>；先跑通的举手当<b>小教练</b></li>
   </ul>`,
@@ -843,12 +854,12 @@ const SLIDES = [
   <img class="pic" src="img/ai/p55_tiaoshi.png" alt="调试三步循环：读→定位→改，一次只改一处">`,
  notes:"调试三步纸上先立住，上机那节课换成真报错同一套路。「一次只改一处」要重复两遍——学生最爱一口气改五处。"},
 
-{cls:"pause", badges:[{type:"note", text:"📒 暂停点② · 记录册"}], html:`
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点⑬ · 记录册"}], html:`
   <div style="display:inline-block;background:#BF360C;color:#fff;border-radius:999px;padding:3px 14px;font-size:.72em;letter-spacing:1px;margin:0 0 6px">人肉运行·调试 · 4/6 · 记录四行</div>
-  <div class="eyebrow">⏸ 暂停点② · 人肉运行记录</div>
+  <div class="eyebrow">⏸ 暂停点⑬ · 人肉运行记录</div>
   <h1>把今天卡得最狠的那次，写全四行</h1>
   <div class="sub">现象（执行人卡在哪）→ 我改了图纸哪行 → <b>再「跑」怎样了</b><br>四行＝一张收网记录——会修图纸的人最值钱</div>
-  <div class="where">✍️ 记录册「暂停点②」</div>`,
+  <div class="where">✍️ 记录册「暂停点⑬」</div>`,
  notes:"人肉运行记录的完成体。挑 1 份投屏：全班照这条线索走一遍——别人的坑就是大家的教材。"},
 
 {cls:"", html:`
@@ -860,19 +871,19 @@ const SLIDES = [
     <li>病号①：<b>变量名对不上</b>——图纸上建的是 banFei，用的时候写成 bangFei</li>
     <li>病号②：<b>文本当数值加</b>——把取件码 "A8-2012" 直接拿去 +10</li>
     <li>病号③：<b>条件写反了</b>——余额够 15 弹「忍住」，不够反而弹「走起」</li>
-    <li><span class="stu">现在你：抢答病在哪、该改哪一行；把最狠的一个记进册子</span></li>
+    <li><span class="stu">现在你：抢答病在哪、该改哪一行；把最狠的一个记进记录册</span></li>
     <li>⭐ 指认 2 分 · 说出改法 5 分</li>
   </div>
   <div class="rv"><div class="anscard">🩺 病号① 改法：把 <b>bangFei 全部改回 banFei</b>——变量名错一个字母，机器人「查无此人」</div></div>
   <div class="rv"><div class="anscard">🩺 病号② 改法：取件码是<b>文字，不能 +10</b>；要算先「转成数值」——进机房揭晓怎么转</div></div>
   <div class="rv"><div class="anscard">🩺 病号③ 改法：把条件里的<b>够／不够调换</b>回来——条件写反，机器人就「奖励懒人」</div></div>`,
  notes:"91-D3 玩法C 找错替代小组赛（省道具省时间）：三病号＝前三讲三大高发。抢答说线索，点一下出一个改法；「文本转数值」再埋一手到上机那节课。"},
-{cls:"pause", badges:[{type:"note", text:"📒 暂停点③ · 记录册"}], html:`
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点⑭ · 记录册"}], html:`
   <div style="display:inline-block;background:#BF360C;color:#fff;border-radius:999px;padding:3px 14px;font-size:.72em;letter-spacing:1px;margin:0 0 6px">人肉运行·调试 · 6/6 · 同桌互验</div>
-  <div class="eyebrow">⏸ 暂停点③ · 主管验收</div>
+  <div class="eyebrow">⏸ 暂停点⑭ · 同桌互验验收单</div>
   <h1>同桌互验：出个刁钻输入考它</h1>
   <div class="sub">他的流程跑给你看，然后你<b>换数考它</b>：0 份？<b>恰好 25 元</b>？便宜到 10 元？<br>写验收单：我测了＿＿＿，它的流程（稳／翻车）——翻车的帮他指到那一步</div>
-  <div class="where">✍️ 记录册「暂停点③」：我测了什么 → 它的表现 → 我建议他改哪</div>
+  <div class="where">✍️ 记录册「暂停点⑭」：我测了什么 → 它的表现 → 我建议他改哪</div>
   <div class="rv"><div class="anscard"><b>恰好 25 元</b>：25 ≥ 25 成立 → 减 4 → 应付 21 元——「满 25」含 25 本身，最阴的边界</div></div>
   <div class="rv"><div class="anscard"><b>便宜到 10 元</b>：不够 25 → 原价直过 → 应付 10 元</div></div>
   <div class="rv"><div class="anscard"><b>0 份</b>：小计 0 → 弹「应付 0 元」——翻不翻车看图纸怎么写，能把这题说清就是好验收</div></div>`,
@@ -880,7 +891,8 @@ const SLIDES = [
 
 {cls:"", html:`
   <div class="eyebrow">纸上篇结业 · 三次课一张图</div>
-  <h1>三次课，<span class="accent">你攒下了三样本事</span></h1>
+  <h1>你攒下了<span class="accent">三样本事</span></h1>
+  <img class="pic" src="img/ai/p58_sanjian.png" alt="三金牌总结：会记·变量｜会派·命令｜会修·调试">
   <div class="flow" style="justify-content:center">
     <span>学变量那节课<br>变量</span><span>→ 纸上练命令那节课<br>命令与串法</span><span>→ 今天<br>图纸人肉跑通</span><span>→ 接下来<br>真机器人！</span>
   </div>
@@ -895,10 +907,11 @@ const SLIDES = [
 {cls:"", html:`
   <div class="eyebrow">下一站</div>
   <h1>进机房——<span class="accent">真机器人上岗</span></h1>
+  <img class="pic" src="img/ai/p59_jifang.png" alt="机房门口：带上图纸·今天够格">
   <ul class="items">
     <li>纸上你已经全会了：变量、命令、串法、图纸、调试——接下来把图纸<b>交给真机器人</b>照着跑</li>
     <li>📅 期末发布会：这张图纸跑通后，就是你的<b>第一个参展作品</b>——留着，别丢</li>
-    <li><span class="stu">现在你：把图纸夹进册子，写上名字——接下来开机就要用</span></li>
+    <li><span class="stu">现在你：把图纸夹进记录册，写上名字——接下来开机就要用</span></li>
   </ul>`,
  notes:"预告：真机器人第一次登场（先纸后机，基础打牢今天才够格上机）。发布会预热一句带过。"},
 
@@ -1056,9 +1069,9 @@ window.addEventListener("touchend", (e) => {
 
 <div id="tocMenu" style="display:none;position:fixed;right:18px;bottom:74px;background:#fff;border:2px solid #BF360C;border-radius:12px;padding:12px 18px;z-index:99;box-shadow:0 4px 14px rgba(0,0,0,.25);font-size:19px;line-height:2">
   <div style="font-weight:bold;color:#BF360C;margin-bottom:4px">📖 项目二 · 纸上篇（第 2–4 次课）</div>
-  <div><a href="javascript:void(0)" data-go="0">学变量那节课 · 第 1 章 变量——储物格</a></div>
-  <div><a href="javascript:void(0)" data-go="22">纸上练命令那节课 · 第 2 章 命令</a></div>
-  <div><a href="javascript:void(0)" data-go="39">纸上人肉跑那节课 · 第 3 章 流程与调试</a></div>
+  <div><a href="javascript:void(0)" data-go="0">第 1 章 变量——储物格</a></div>
+  <div><a href="javascript:void(0)" data-go="22">第 2 章 命令</a></div>
+  <div><a href="javascript:void(0)" data-go="39">第 3 章 流程与调试</a></div>
 </div>
 <script>
 (function(){
