@@ -15,8 +15,9 @@ REFS = os.path.join(ROOT, "_refs")
 F04 = "04_项目一_第1讲_开学第一课_课件_v2.1_20260906.html"
 F08 = "08_项目二_第1-3讲_变量命令流程_纸上篇_课件_v1.2_20260906.html"
 F10 = "10_项目二_第4讲_机器人上岗_课件_v1.2_20260906.html"
-OUT = "05_机器人实验记录册_全程_v2.4_20260908.docx"
-NUM = "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲"
+F14 = "14_项目三_第1讲_图纸搬家_课件_v1.0_20260908.html"
+OUT = "05_机器人实验记录册_全程_v2.5_20260908.docx"
+NUM = "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓"
 
 def strip(t):
     t = re.sub(r"<br\s*/?>", " ", t)
@@ -30,17 +31,18 @@ def pauses(fn):
     slides = json.load(io.open(tmp, encoding="utf-8"))
     out = {}
     for pg in slides:
-        m = re.search(r"⏸\s*暂停点([①-⑳])(?:\s*·\s*([^<\n`]{2,16}))?", pg["html"])
+        m = re.search(r"⏸\s*暂停点([①-⑳㉑㉒㉓])(?:\s*·\s*([^<\n`]{2,16}))?", pg["html"])
         if m and m.group(1) not in out:
             h1 = re.search(r"<h1[^>]*>(.*?)</h1>", pg["html"], re.S)
             title = (m.group(2) or "").strip() or (strip(h1.group(1))[:12] if h1 else "")
             out[m.group(1)] = (pg["no"], title)
     return out
 
-p4, p8, p10 = pauses(F04), pauses(F08), pauses(F10)
+p4, p8, p10, p14 = pauses(F04), pauses(F08), pauses(F10), pauses(F14)
 assert sorted(p4) == list("①②③④"), p4
 assert sorted(p8, key=NUM.index) == list(NUM[:14]), p8
-assert sorted(p10, key=NUM.index) == list(NUM[14:]), p10
+assert sorted(p10, key=NUM.index) == list(NUM[14:19]), p10
+assert sorted(p14, key=NUM.index) == list(NUM[19:]), p14
 
 doc = Document()
 sec = doc.sections[0]
@@ -61,7 +63,7 @@ def sec_head(t):
     p = P(t, 13, True, "C0390B", 0, 6)
     return p
 def pause(code, src, desc):
-    pg, title = {"04": p4, "08": p8, "10": p10}[src][code]
+    pg, title = {"04": p4, "08": p8, "10": p10, "14": p14}[src][code]
     p = P("⏸ 暂停点%s · %s　——课件 %s · p%d" % (code, title, src, pg), 11.5, True, "1A5276", 10, 2)
     if desc: P(desc, 9.5, False, "555555", 0, 3)
     return p
@@ -165,8 +167,26 @@ P("🏁 项目二大任务（p21，一周，+5 分）：本周生活费记账机
 grid(["我的预算（本周）", "第 1 行 变量＋第 2 行 命令", "第 3 行 串法（含「低于 100」）", "周一流水", "周三流水", "周五流水", "周日流水", "机房当场跑：结果＋老师签字"])
 selfcheck("□⑮按顺序写全　□⑯先猜后验　□⑰抄了报错原话　□⑱排错三行　□⑲三句配了例子　　我最怕的报错词：＿＿＿＿＿＿＿＿＿＿")
 
+# ───────── 项目三 · 图纸搬家（课件 14） ─────────
+sec_head("项目三 · 图纸搬家｜课件 14")
+pause("⑳", "14", "考考你：记账流程先做什么后做什么？一句话讲给同桌，再写下来（先…→再…→然后…→最后…）。")
+grid(["我的流程一句话"])
+pause("㉑", "14", "搬家三步动手：新建流程→照⑫图纸拖组件→跑。先猜弹多少再点运行；不对照「翻车三兄弟」自己修。")
+grid(["我猜弹多少", "实际弹多少", "3 份挑战：我猜／实际"])
+pause("㉒", "14", "把今天翻车的那次写成三行（第一次真机排错）。")
+grid(["第几步卡", "它说了啥", "我改了什么·结果"])
+pause("㉓", "14", "三句话收尾，各配一个今天的真机例子。")
+grid(["图纸＝说明书·例子", "组件＝积木·例子", "先猜再跑·例子"])
+P("📋 老师布置的任务（课件 14）", 12, True, "C0390B", 12, 3)
+P("必做（p18）：把 waimaiJSQ 再跑 3 遍——分别输入 1、3、5，先猜再跑，三个得数写下来（开头抽查 +2 分）。", 10)
+grid(["输入 1：猜／实际", "输入 3：猜／实际", "输入 5：猜／实际"])
+P("选做（p18）：另想一个「会问数的小计算器」（食堂套餐/打印费），画三行图纸带来拼。", 10)
+grid(["我的场景", "三行图纸"])
+selfcheck("□⑳一句话写全　□㉑先猜再跑　□㉒三行写全　□㉓例子配了　　今天最难的一步：＿＿＿＿＿＿＿＿＿＿")
+
 doc.save(os.path.join(RPA, OUT))
 print("生成", OUT)
 print("04:", {k: v[0] for k, v in sorted(p4.items(), key=lambda x: NUM.index(x[0]))})
 print("08:", {k: v[0] for k, v in sorted(p8.items(), key=lambda x: NUM.index(x[0]))})
 print("10:", {k: v[0] for k, v in sorted(p10.items(), key=lambda x: NUM.index(x[0]))})
+print("14:", {k: v[0] for k, v in sorted(p14.items(), key=lambda x: NUM.index(x[0]))})

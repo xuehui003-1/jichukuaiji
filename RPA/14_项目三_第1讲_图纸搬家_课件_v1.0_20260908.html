@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>图纸搬家 · 项目三第1讲 · 财务机器人应用与开发</title>
+<style>
+:root{
+  --bg:#FFF9F0; --card:#FFFFFF; --text:#2B211B; --muted:#79695e;
+  --primary:#E97835; --primary-dark:#C25A1F; --primary-soft:#F5B583; --line:#EADFD0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:#241D17;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;}
+#stage{position:relative;width:100vw;height:100vh;background:var(--bg);overflow:hidden}
+.slide{position:absolute;inset:0;padding:44px 84px 84px;display:none;flex-direction:column;overflow-y:auto}
+.slide::before{content:"";margin-top:auto}
+.slide::after{content:"";margin-bottom:auto}
+.slide.active{display:flex}
+.eyebrow{font-size:22px;letter-spacing:.3em;color:var(--primary);font-weight:700;margin-bottom:14px}
+h1{font-size:52px;color:var(--text);line-height:1.25;margin-bottom:20px;font-weight:800}
+h1 .accent{color:var(--primary)}
+.sub{font-size:24px;color:var(--muted);margin-bottom:20px;line-height:1.55}
+ul.items{list-style:none}
+ul.items li{font-size:28px;color:var(--text);line-height:1.5;padding:8px 0;
+  border-bottom:1px dashed var(--line)}
+ul.items li:last-child{border-bottom:none}
+ul.items li b{color:var(--primary-dark)}
+.cards{display:flex;gap:30px;margin-top:8px}
+.card{flex:1;background:var(--card);border:2px solid var(--line);border-radius:18px;padding:28px 32px}
+.card h2{font-size:29px;margin-bottom:14px;color:var(--primary-dark)}
+.card li{font-size:22px;color:var(--text);line-height:1.7;list-style:none;padding:5px 0}
+.steps{display:flex;flex-direction:column;gap:14px;margin-top:6px}
+.step{display:flex;align-items:center;gap:18px;background:var(--card);border:2px solid var(--line);
+  border-radius:16px;padding:14px 24px}
+.step .n{flex:0 0 56px;height:56px;border-radius:50%;background:var(--primary);color:#fff;
+  font-size:29px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.step .t{font-size:26px;color:var(--text);line-height:1.5}
+.step .t b{color:var(--primary-dark)}
+.flow{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0 18px}
+.flow span{background:var(--card);border:2px solid var(--line);border-radius:12px;padding:10px 18px;
+  font-size:23px;color:var(--text)}
+.flow span b{color:var(--primary-dark)}
+/* 思维模板 正常→万一→应该 */
+.tpl{display:flex;flex-direction:column;gap:10px;margin:10px 0 16px}
+.tpl .row{display:flex;align-items:center;gap:16px;font-size:26px;background:var(--card);
+  border:2px solid var(--line);border-radius:14px;padding:12px 22px}
+.tpl .tag{flex:0 0 90px;text-align:center;font-weight:800;color:#fff;border-radius:10px;padding:6px 0}
+.tpl .tag.ok{background:var(--primary-dark)}
+.tpl .tag.if{background:var(--primary)}
+.tpl .tag.do{background:var(--primary-soft)}
+.tpl .t b{color:var(--primary-dark)}
+.big{font-size:58px;text-align:center;line-height:1.4;color:var(--text);font-weight:800}
+.big .accent{color:var(--primary)}
+.emoji-row{text-align:center;font-size:70px;letter-spacing:16px;margin-bottom:28px}
+.cover h1{font-size:70px}
+.cover .sub{font-size:29px}
+.meta{position:absolute;left:96px;bottom:34px;font-size:19px;color:var(--muted)}
+/* 暂停点 */
+.slide.pause{background:var(--primary);color:#fff}
+.pause .eyebrow{color:#FFE8D6}
+.pause h1{color:#fff;font-size:54px}
+.pause .sub{color:#FFE8D6;font-size:28px}
+.pause .where{margin-top:26px;font-size:24px;background:rgba(255,255,255,.18);
+  border-radius:14px;padding:12px 24px;display:inline-block;align-self:flex-start}
+/* 抽人页不再单独配色（普通页＋角标） */
+/* 意外卡 */
+.slide.challenge{background:var(--bg)}
+.challenge h1{font-size:48px}
+.challenge .cardtitle{font-size:25px;font-weight:800;color:#fff;background:var(--primary);
+  display:inline-block;padding:9px 26px;border-radius:999px;margin-bottom:16px;align-self:flex-start}
+/* 任务卡 */
+.task-card{background:var(--card);border:3px solid var(--primary);border-radius:20px;
+  padding:30px 40px;max-width:1040px}
+.task-card h2{font-size:32px;color:var(--primary-dark);margin-bottom:14px}
+.task-card li{font-size:23px;color:var(--text);line-height:1.7;list-style:none}
+.task-card li::before{content:"▶ ";color:var(--primary);font-size:18px}
+/* 评分表 */
+.rubric{display:flex;gap:14px;margin-top:14px}
+.rubric .r{flex:1;background:var(--card);border:2px solid var(--line);border-radius:14px;
+  padding:14px 16px;text-align:center}
+.rubric .r .p{font-size:32px;font-weight:800;color:var(--primary-dark)}
+.rubric .r .d{font-size:19px;color:var(--text);margin-top:4px;line-height:1.4}
+/* 角标：只有两种——橙底=📒暂停点；白底橙字描边=其他所有课堂动作 */
+.badges{position:absolute;top:20px;right:28px;display:flex;gap:10px;z-index:5}
+.badge{padding:8px 20px;border-radius:999px;font-size:21px;font-weight:700;white-space:nowrap;
+  background:#fff;border:2.5px solid var(--primary);color:var(--primary-dark)}
+.badge.note,.badge.solid-note,.badge.outline.note{background:var(--primary);color:#fff}
+/* 结束页 */
+.slide.end{background:#2B211B;color:#FFF9F0;align-items:center;text-align:center}
+.end h1{color:#FFF9F0;font-size:60px}
+.end .sub{color:#D8CFC2;font-size:28px;line-height:1.7}
+/* HUD */
+#hud{position:absolute;left:0;right:0;bottom:0;height:56px;background:rgba(43,33,27,.92);
+  display:flex;align-items:center;gap:14px;padding:0 22px;color:#FFF9F0;font-size:19px}
+#hud button{background:none;border:1.5px solid rgba(255,249,240,.4);color:#FFF9F0;
+  font-size:20px;padding:6px 16px;border-radius:10px;cursor:pointer}
+#hud button:hover{background:var(--primary);border-color:var(--primary)}
+#counter{margin-left:auto}
+#bar{position:absolute;left:0;bottom:56px;height:5px;background:var(--primary);width:0;
+  transition:width .25s}
+#notes{position:absolute;left:0;right:0;bottom:56px;background:rgba(255,249,240,.97);
+  border-top:3px solid var(--primary);padding:16px 96px;display:none;font-size:21px;color:var(--text)}
+#notes b{color:var(--primary-dark)}
+#notes.show{display:block}
+
+/* ===== v2.1 配色对齐基础会计投影 + 大字号 + 全局缩放（A+/A− 或 +/− 键） ===== */
+:root{
+  --bg:#FFF8E1; --card:#FFFFFF; --text:#212121; --muted:#5D4037;
+  --primary:#BF360C; --primary-dark:#BF360C; --primary-soft:#FFCC80;
+  --line:#E0D5C3; --green:#2E7D32; --z:1;
+}
+body{font-family:"微软雅黑","Microsoft YaHei","PingFang SC",sans-serif}
+.eyebrow{font-size:calc(20px*var(--z));letter-spacing:.24em;color:var(--primary);font-weight:700;margin-bottom:12px}
+h1{font-size:calc(50px*var(--z));line-height:1.22;margin-bottom:16px}
+h1 .accent{color:var(--primary)}
+.sub{font-size:calc(26px*var(--z));color:var(--muted);margin-bottom:14px;line-height:1.5}
+ul.items li{font-size:calc(28px*var(--z));line-height:1.5;padding:8px 0}
+ul.items li b{color:var(--primary)}
+.card h2{font-size:calc(30px*var(--z));margin-bottom:10px}
+.card li{font-size:calc(25px*var(--z));line-height:1.6}
+.steps{gap:12px}
+.step .t{font-size:calc(27px*var(--z));line-height:1.5}
+.step .n{font-size:calc(30px*var(--z))}
+.flow span{font-size:calc(25px*var(--z))}
+.task-card{border-width:2.5px}
+.task-card h2{font-size:calc(32px*var(--z));margin-bottom:12px}
+.task-card li{font-size:calc(25px*var(--z));line-height:1.7}
+.pause h1{font-size:calc(52px*var(--z))}
+.pause .sub{font-size:calc(28px*var(--z));color:#FFE9D2}
+.pause .where{font-size:calc(24px*var(--z))}
+.end h1{font-size:calc(48px*var(--z))}
+.end .sub{font-size:calc(26px*var(--z))}
+.cover h1{font-size:calc(62px*var(--z))}
+.cover .sub{font-size:calc(27px*var(--z))}
+.big{font-size:calc(54px*var(--z))}
+.meta{font-size:18px}
+.stu{color:var(--green);font-weight:700}
+.rawline{font-family:Consolas,"Courier New",monospace;font-size:calc(27px*var(--z));background:#fff;
+  border:3px dashed var(--primary);border-radius:12px;padding:14px 18px;text-align:center;color:var(--text)}
+.cmdline{font-size:calc(26px*var(--z));background:#fff;border:3px solid var(--primary);border-radius:12px;
+  padding:12px 18px;text-align:center;font-weight:700;color:var(--text)}
+.pic{display:block;margin:6px auto 2px;max-height:33vh;max-width:86%;border-radius:18px;
+  border:3px solid var(--line);box-shadow:0 6px 18px rgba(93,64,55,.12)}
+.duo{display:flex;gap:16px;align-items:flex-start;justify-content:center}
+.duo .pic{max-height:29vh;max-width:46%;margin:4px 0}
+.rv{display:none}
+.rvshow{display:block;animation:rvin .3s ease}
+@keyframes rvin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.anscard{background:#fff;border:3px solid var(--green);border-radius:14px;padding:10px 20px;
+  margin-top:10px;font-size:calc(24px*var(--z));line-height:1.65}
+.anscard b{color:var(--green)}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="deck"></div>
+  <div id="bar"></div>
+  <div id="notes"></div>
+  <div id="hud">
+    <button id="prev" title="上一页">◀</button>
+    <button id="next" title="下一页">▶</button>
+    <span id="counter">1 / 1</span>
+    <button id="zout" title="缩小字号（快捷键 −）">A−</button>
+    <button id="zin" title="放大字号（快捷键 +）">A+</button>
+    <button id="rvBtn" title="揭晓答案（快捷键 R）" style="display:none">▶ 揭晓</button>
+    <button id="notesBtn" title="教师提示">📝 教师提示</button>
+    <button id="fsBtn" title="全屏">⛶ 全屏</button>
+  </div>
+</div>
+<div style="position:fixed;bottom:8px;right:12px;color:#999;font-size:13px;z-index:99">
+  翻页：← → 或空格 ｜ 教师提示：N ｜ 全屏：F ｜ 图片：点击放大</div>
+<script>
+const SLIDES = [
+{cls:"cover", html:`
+  <div class="eyebrow">项目三 · 图纸搬家</div>
+  <h1>图纸搬家<span class="accent">——</span>外卖计算器真跑</h1>
+  <div class="sub">《财务机器人应用与开发》· 90 分钟 · 机房课<br>上周画好的图纸，今天进软件拼成真流程——拼完就跑，跑对 75.8 才算数</div>
+  <img class="pic" src="img/ai/14_p01_fengmian.png" alt="封面：小邮抱图纸进机房，大屏积木流程亮起">
+  <div class="meta">第 1 章 · 图纸搬家 · 14_课件 v1.0 ｜ 配套 13_规划 v1.0 · 05_记录册 v2.5 ｜ 会计学院 · 大数据与会计 2501 班</div>`,
+ notes:"开场 30 秒：今天不学新词——把三讲攒下的本事拼成第一个真流程。规矩先说：跑错了不扣分，翻车正好用「读→定位→改」。"},
+
+{cls:"", html:`
+  <div class="eyebrow">今天做两件事</div>
+  <ul class="items">
+    <li>① 先验收 <b>大任务</b>：本周生活费记账——流水 7 行，进机房<b>当场真跑</b>给老师看（15 分钟）</li>
+    <li>② 再<b>搬家</b>：把外卖计算器的图纸，在智多星里拼成真流程、跑出 75.8（75 分钟）</li>
+    <li>规矩：先猜后跑 ｜ 跑错就写排错三行 ｜ 跑通立刻保存</li>
+  </ul>`,
+ notes:"两件事都是动手。大任务没写完的先照同桌流水补三行，课后补交——别卡在门口。"},
+
+{cls:"challenge", html:`
+  <div class="eyebrow">大任务验收 · 当场跑</div>
+  <div class="task-card">
+    <h2>🏁 生活费记账机器人 · 验收</h2>
+    <li>1️⃣ 打开记录册「大任务」页——你的流水 7 行、预算自己定的那份</li>
+    <li>2️⃣ 照图纸拼：设变量 → 每笔算一算 → 低于 100 弹「该省省了」</li>
+    <li>3️⃣ 老师逐排巡回：流水 7 行 ✓ ＋ 当场跑通 ✓ → <b>+5 分登记</b></li>
+  </div>
+  <div class="rv"><div class="anscard">🙋 没画完／没带？——照同桌的流水补画三行，今天先跑通，记录册课后补齐补交</div></div>`,
+ notes:"验收标尺就两条：流水 7 行、当场跑通。跑错的按调试三步陪跑——第一次真修，翻车是素材。15 分钟封顶，到点进正课。"},
+
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点⑳ · 记录册"}], html:`
+  <div class="eyebrow">⏸ 暂停点⑳ · 一句话讲流程</div>
+  <h1>考考你：这一串，先做什么后做什么？</h1>
+  <div class="sub">看屏幕上你刚拼的记账流程，用一句话讲给同桌：<b>先＿＿ → 再＿＿ → 然后＿＿ → 最后＿＿</b><br>讲完把这句话写下来——这是你第一次「说流程」，说清了才好搬家</div>
+  <div class="where">✍️ 记录册「暂停点⑳」｜🎲 抽 2 人念给大家</div>`,
+ notes:"验收刚完的热乎劲正好用：把刚拼的东西口语化。写 60 秒，抽 2 人念——别纠用词，顺序对就算过。"},
+
+{cls:"", html:`
+  <div class="eyebrow">从今天起 · 它有名字了</div>
+  <h1>刚才那一串，正式的名字：<span class="accent">流程</span></h1>
+  <div class="sub">一套<b>按顺序排好的步骤</b>，机器人照着做，就能替人干完一整段活<br>你其实早就会了：余额格是流程、外卖计算器是流程、刚跑通的记账机器人也是流程</div>
+  <ul class="items">
+    <li><span class="stu">现在你：回头看你⑳写的句子——那就是你的第一个流程</span></li>
+  </ul>`,
+ notes:"术语最后才给的老规矩：先跑出来，名字后贴。点破即可，不写定义不背。"},
+
+{cls:"", html:`
+  <div class="eyebrow">搬什么 · 图纸对软件</div>
+  <h1>纸上的三行，对上软件里的四块</h1>
+  <img class="pic" src="img/ai/14_p06_duizhao.png" alt="图纸三行对照软件积木：变量/命令/串法 → 变量/计算/判断/弹出">
+  <div class="rv"><div class="anscard"><b>对一下</b>：第 1 行 变量 → 「变量」块 ｜ 第 2 行 命令 → 「计算」「弹出」块 ｜ 第 3 行 串法 → 「判断」块和先后顺序——三行图纸就是拼装说明书</div></div>`,
+ notes:"让学生先自己连，再点揭晓。说破对应关系：纸上怎么画，软件里就怎么拼——今天全程照图纸，不自由发挥。"},
+
+{cls:"", html:`
+  <div class="eyebrow">认识工作台 · 组件</div>
+  <h1>组件四兄弟：今天四个全用上</h1>
+  <img class="pic" src="img/ai/14_p07_zujian.png" alt="组件四宫格：设变量/算一算/如果就/弹出来">
+  <ul class="items">
+    <li>每个组件就是一块积木：<b>拖进画布、摆好顺序、连起来</b>——就这三个动作，没有代码</li>
+    <li><span class="stu">现在你：对照外卖图纸——四兄弟各用在哪一行？心里指一遍</span></li>
+  </ul>`,
+ notes:"老师大屏演示拖、摆、连各 10 秒。学生先不开电脑——看懂再动手，少一半事故。"},
+
+{cls:"challenge", html:`
+  <div class="eyebrow">老师演示 · 你只管看</div>
+  <h1>全程跟一张图：外卖计算器拼给它看</h1>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><div class="t"><b>新建流程</b>：命名 waimaiJSQ（名字用英文——第 4 讲的规矩）</div></div>
+    <div class="step"><div class="n">2</div><div class="t"><b>照图纸拖</b>：变量 danJia=39.9、fenShu=2 → 计算 danJia×fenShu → 判断 满 25 减 4 → 弹出「应付＿元」</div></div>
+    <div class="step"><div class="n">3</div><div class="t"><b>点运行</b>：先猜弹什么 → 再点——弹 75.8，一起喊出来</div></div>
+  </div>
+  <div class="rv"><div class="anscard">👀 看的时候数着：老师一共拖了几块？——4 块组件＋连线，就这些，没有一行代码</div></div>`,
+ notes:"演示 3 分钟全程投屏。只演示不代做：不保存、不输入，留给学生自己。喊 75.8 是仪式感——跑通的声音要大。"},
+
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点㉑ · 记录册"}], html:`
+  <div class="eyebrow">⏸ 暂停点㉑ · 搬家三步</div>
+  <h1>轮到你：照你的图纸，拼出来</h1>
+  <img class="pic" src="img/ai/14_p09_banjia.png" alt="搬家三步：建流程→照图纸搭→跑对得数" style="max-height:26vh">
+  <div class="sub">① 新建流程 → ② 照记录册「暂停点⑫」的图纸拖组件 → ③ 跑——<b>先猜弹多少，再点运行</b><br>跑对 75.8 → 举手喊老师看一眼；不对 → 翻页有药方</div>
+  <div class="where">✍️ 记录册「暂停点㉑」：我猜弹＿＿ → 实际弹＿＿</div>`,
+ notes:"全员动手 8 分钟。巡回只问一句「对图纸了吗」——不替学生改。跑对的举手，秒验秒登记。"},
+
+{cls:"", html:`
+  <div class="eyebrow">对答案 · 一致才算通</div>
+  <h1>拼对了，应该弹出：<span class="accent">应付 75.8 元</span></h1>
+  <div class="rv"><div class="anscard"><b>① 变量</b>：danJia=39.9（小数）｜fenShu=2（整数）——名字和类型都照图纸</div></div>
+  <div class="rv"><div class="anscard"><b>② 串法</b>：算小计 → 判断 ≥25 → 真减 4 → 弹「应付 75.8 元」——顺序不能乱</div></div>
+  <div class="rv"><div class="anscard"><b>③ 没弹出来？</b>多半连线少一根、组件顺序反了——先按下一页的三步自己找，找不到再举手</div></div>`,
+ notes:"点击逐条出。全班口径：弹 75.8＝跑通，⑳下面补一行「实际弹 75.8」。先自诊再举手——调试习惯从第一次就立住。"},
+
+{cls:"", html:`
+  <div class="eyebrow">跑错了 · 正常</div>
+  <h1>先自己修：<span class="accent">读 → 定位 → 改</span></h1>
+  <div class="steps">
+    <div class="step"><div class="n">读</div><div class="t">它弹了什么／弹没弹？把现象念出来</div></div>
+    <div class="step"><div class="n">定位</div><div class="t">从不对的那一步，找到画布上那块组件</div></div>
+    <div class="step"><div class="n">改</div><div class="t">一次只改一处，改完<b>马上再跑</b>——别攒一堆一起改</div></div>
+  </div>
+  <ul class="items" style="margin-top:8px">
+    <li>改对一处 +2 分；三步过完还卡 → 举手，老师只提示不代改</li>
+  </ul>`,
+ notes:"调试三步第二次登场，这次用在真软件上。「一次只改一处」再重复一遍——学生最爱一口气改五处。"},
+
+{cls:"", html:`
+  <div class="eyebrow">加一步 · 让流程会问</div>
+  <h1>加「输入」组件：它问「买几份？」，人来答</h1>
+  <img class="pic" src="img/ai/14_p13_shuru.png" alt="输入组件：弹出买几份，学生输入3，弹出应付115.7元" style="max-height:26vh">
+  <ul class="items">
+    <li>输入组件放<b>最前面</b>：流程一开始先问「买几份？」——答 3 就按 3 算</li>
+    <li><span class="stu">现在你：先猜——3 份应付多少？（记录册㉑下面补一行）再跑验证</span></li>
+  </ul>
+  <div class="rv"><div class="anscard">答：3 份 → 小计 119.7 → 仍满 25 → 减 4 → <b>应付 115.7 元</b>——和第 2 讲纸上算的一字不差</div></div>`,
+ notes:"先猜再跑第三次用：115.7 第 2 讲纸上算过，今天机器人替你验算。输入块的连线别断：输入→算→判→弹。"},
+
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点㉒ · 记录册"}], html:`
+  <div class="eyebrow">⏸ 暂停点㉒ · 真报错对照</div>
+  <h1>翻车三兄弟，真机上一只不缺</h1>
+  <img class="pic" src="img/ai/14_p14_fanfan.png" alt="翻车三兄弟：名字对不上/文本当数/条件写反" style="max-height:24vh">
+  <div class="task-card">
+    <li>① <b>名字对不上</b>：建的是 danJia，用成了 danjia——它「查无此人」</li>
+    <li>② <b>文本当数</b>：回看第 4 讲——"A8-2012"+10 当场报错，一个道理</li>
+    <li>③ <b>条件写反</b>：够 25 反而不减——弹出的数一对就知道</li>
+    <li><span class="stu">现在你：把刚才翻的那次写成三行——第几步卡／它说了啥／我改了什么</span></li>
+  </div>
+  <div class="where">✍️ 记录册「暂停点㉒」｜⭐ 写全三行 +2</div>`,
+ notes:"三兄弟就是上节课黑板上那张——今天配上真机。㉒排错三行是第 4 讲⑱的第二次使用，写到「我改了什么·结果」为止。"},
+
+{cls:"", html:`
+  <div class="eyebrow">跑通的 · 立刻存档</div>
+  <h1>保存 = 给你的作品上货架</h1>
+  <img class="pic" src="img/ai/14_p16_cundang.png" alt="作品货架：小邮把跑通的流程放上标着发布会的货架" style="max-height:24vh">
+  <ul class="items">
+    <li>点保存 → 命名 <b>waimaiJSQ-你的学号</b>——这台「外卖计算器」就是你的了</li>
+    <li>📅 它是<b>期末发布会的第一件展品</b>——以后每周搬一块，越摞越高</li>
+    <li><span class="stu">现在你：保存完举手，老师登记「已上架」</span></li>
+  </ul>`,
+ notes:"存档是今天的硬验收：没保存＝没跑通。命名带学号，老师登记表打钩即可。"},
+
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点㉓ · 记录册"}], html:`
+  <div class="eyebrow">⏸ 暂停点㉓ · 三句话收尾</div>
+  <h1>今天只记三句</h1>
+  <div class="sub">1️⃣ <b>图纸＝说明书</b>：纸上怎么画，软件里就怎么拼<br>2️⃣ <b>组件＝积木</b>：拖进来、摆顺序、连起来——没有代码<br>3️⃣ <b>先猜再跑</b>：猜 75.8，跑出 75.8——对上了才算真会</div>
+  <div class="where">✍️ 记录册「暂停点㉓」：三句抄下，每句配一个今天的真机例子（组件名／报错词／弹出的数都行）</div>
+  <div class="rv"><div class="anscard">例子备查：变量块 danJia=39.9 ｜「买几份?」输入框 ｜ 弹「应付 115.7 元」 ｜ 排错三行改对一处</div></div>`,
+ notes:"写 3 分钟，抽人念例子。报分：大任务验收、搬家跑通、输入挑战、排错三行——今天的分全是动手分。"},
+
+{cls:"", html:`
+  <div class="eyebrow">今天 · 你完成了三件事</div>
+  <h1>从图纸到真流程，你走完了全程</h1>
+  <div class="flow" style="justify-content:center">
+    <span>验收大任务<br>当场真跑</span><span>→ 照图纸搬家<br>跑出 75.8</span><span>→ 加输入块<br>会问人了</span><span>→ 存档上架<br>发布会第 1 件</span>
+  </div>
+  <ul class="items" style="margin-top:10px">
+    <li>现在你会的：把任何一个「纸上跑得通」的想法，变成「软件里跑得动」的流程</li>
+    <li><span class="stu">现在你：抽人用一句话讲「今天最难的一步，我是怎么过的」</span></li>
+  </ul>`,
+ notes:"收束页不引入新东西。学生那句「怎么过的」就是最好的复述——抽 1–2 人。"},
+
+{cls:"", html:`
+  <div class="eyebrow">下一讲 · 流程变聪明</div>
+  <h1>记 30 笔账，只拼 1 块「循环」</h1>
+  <img class="pic" src="img/ai/14_p18_xunhuan.png" alt="循环：小邮沿圆圈跑，每到一处记一笔，下周见" style="max-height:22vh">
+  <ul class="items">
+    <li>今天拼 4 块才算 1 笔账；记 30 笔要拖 120 块？<b>下节课一块「循环」全解决</b></li>
+  </ul>`,
+ notes:"钩子只挂「循环」一个词，不展开——下周自己拼出来才算会。"},
+
+{cls:"end", html:`
+  <div class="emoji-row" style="font-size:56px">💾 🐛 📅</div>
+  <h1>课后任务</h1>
+  <div class="sub">
+    课后必做：把今天的 waimaiJSQ 再跑 3 遍——分别输入 1、3、5，<b>先猜再跑</b>，三个得数写在记录册大任务页下面（开头抽查 +2 分）<br>
+    课后选做：另想一个「会问数的小计算器」（食堂套餐？打印费？）画三行图纸，下周带来拼（+2 分）<br><br>
+    下周：进机房继续——<b>循环</b>让流程替你干 30 倍的活
+  </div>`,
+ notes:"必做三输入是「先猜再跑」的课后版：先写猜的数再跑，三个都对才算。选做图纸＝下次开场的拼装素材。"},
+];
+const deck = document.getElementById("deck");
+const notesEl = document.getElementById("notes");
+const bar = document.getElementById("bar");
+const counter = document.getElementById("counter");
+let cur = 0;
+
+SLIDES.forEach((s) => {
+  const el = document.createElement("section");
+  el.className = "slide " + (s.cls || "");
+  el.innerHTML = s.html;
+  if (s.badges && s.badges.length) {
+    const wrap = document.createElement("div");
+    wrap.className = "badges";
+    s.badges.forEach((bd) => {
+      const b = document.createElement("div");
+      b.className = "badge " + bd.type;
+      b.textContent = bd.text;
+      wrap.appendChild(b);
+    });
+    el.appendChild(wrap);
+  }
+  deck.appendChild(el);
+});
+const slides = deck.querySelectorAll(".slide");
+
+function show(i) {
+  cur = (i + SLIDES.length) % SLIDES.length;
+  slides.forEach((el, k) => el.classList.toggle("active", k === cur));
+  counter.textContent = (cur + 1) + " / " + SLIDES.length;
+  bar.style.width = ((cur + 1) / SLIDES.length * 100) + "%";
+  notesEl.innerHTML = "<b>📝 教师提示：</b>" + (SLIDES[cur].notes || "");
+  if (window.resetRv) resetRv(i); /* 换页后按当前页同步揭晓提示条（必须在 cur 更新之后） */
+}
+show(0);
+
+
+document.getElementById("prev").onclick = () => show(cur - 1);
+document.getElementById("next").onclick = () => show(cur + 1);
+document.getElementById("stage").addEventListener("click", (e) => {
+  if (e.target.closest("#hud") || e.target.closest("#notes")) return;
+  show(cur + 1);
+});
+document.getElementById("notesBtn").onclick = () => notesEl.classList.toggle("show");
+document.getElementById("fsBtn").onclick = () => {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+};
+window.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") { e.preventDefault(); show(cur + 1); }
+  else if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); show(cur - 1); }
+  else if (e.key === "Home") show(0);
+  else if (e.key === "End") show(SLIDES.length - 1);
+  else if (e.key === "n" || e.key === "N") notesEl.classList.toggle("show");
+  else if (e.key === "f" || e.key === "F") document.getElementById("fsBtn").click();
+});
+let tx = 0;
+window.addEventListener("touchstart", (e) => tx = e.touches[0].clientX);
+window.addEventListener("touchend", (e) => {
+  const dx = e.changedTouches[0].clientX - tx;
+  if (Math.abs(dx) > 60) show(cur + (dx < 0 ? 1 : -1));
+});
+</script>
+<script>
+(function(){
+  function base(){ return Math.max(0.55, Math.min(2.4, window.innerWidth/1280)); }
+  var uz = 1;
+  function set(){ document.documentElement.style.setProperty("--z", (base()*uz).toFixed(3)); }
+  var zin = document.getElementById("zin"), zout = document.getElementById("zout");
+  if (zin) zin.onclick = function(){ uz = Math.min(2, Math.round((uz+0.1)*10)/10); set(); };
+  if (zout) zout.onclick = function(){ uz = Math.max(0.6, Math.round((uz-0.1)*10)/10); set(); };
+  window.addEventListener("keydown", function(e){
+    if (e.key === "+" || e.key === "="){ if(zin) zin.click(); }
+    else if (e.key === "-"){ if(zout) zout.click(); }
+  });
+  window.addEventListener("resize", set);
+  set();
+  var lb = document.createElement("div");
+  lb.style.cssText = "display:none;position:fixed;inset:0;background:rgba(20,14,8,.9);z-index:999;align-items:center;justify-content:center;cursor:zoom-out";
+  var im = document.createElement("img");
+  im.style.cssText = "max-width:96vw;max-height:96vh;border-radius:14px";
+  lb.appendChild(im);
+  lb.onclick = function(){ lb.style.display = "none"; };
+  document.body.appendChild(lb);
+  window.addEventListener("keydown", function(e){
+    if (lb.style.display !== "none" && e.key !== "f" && e.key !== "F") lb.style.display = "none"; /* 灯箱开着：按键先关灯箱（翻页/ Esc 同样生效） */
+  }, true);
+  Array.prototype.forEach.call(document.querySelectorAll(".pic"), function(p){
+    p.style.cursor = "zoom-in";
+    p.title = "点击放大，再点关闭";
+    p.addEventListener("click", function(ev){
+      ev.stopPropagation();
+      im.src = p.getAttribute("src");
+      lb.style.display = "flex";
+    });
+  });
+  var rvBtn = document.getElementById("rvBtn");
+  function curSlide(){ return document.querySelectorAll(".slide")[cur]; }
+  function hiddenRv(){ var sl = curSlide(); return sl ? sl.querySelectorAll(".rv:not(.rvshow)") : []; }
+  function revealNext(){
+    var h = hiddenRv();
+    if (!h.length) return;
+    h[0].classList.add("rvshow");
+    if (h[0].scrollIntoView) h[0].scrollIntoView({behavior:"smooth", block:"nearest"});
+    if (!hiddenRv().length && rvBtn) rvBtn.textContent = "✓ 已揭晓";
+    syncRvPill();
+  }
+  if (rvBtn) rvBtn.onclick = revealNext;
+  /* ===== 揭晓提示条：有未揭晓内容时常驻提示，写明点哪里 ===== */
+  var rvPill = document.createElement("div");
+  rvPill.className = "rvpill";
+  rvPill.style.cssText = "position:fixed;left:50%;transform:translateX(-50%);bottom:64px;background:#BF360C;color:#fff;padding:9px 22px;border-radius:999px;font-size:17px;z-index:60;box-shadow:0 4px 12px rgba(0,0,0,.28);display:none;cursor:pointer;white-space:nowrap";
+  document.body.appendChild(rvPill);
+  rvPill.onclick = function(e){ e.stopPropagation(); revealNext(); };
+  function syncRvPill(){
+    var n = hiddenRv().length;
+    if (n){ rvPill.style.display = "block"; rvPill.textContent = "👇 本页还有 " + n + " 条内容未揭晓 · 点击页面任意处逐条显示（按 R 键也行）"; }
+    else { rvPill.style.display = "none"; }
+  }
+  syncRvPill();
+  window.addEventListener("keydown", function(e){
+    if (e.key === "r" || e.key === "R") revealNext();
+  });
+  document.addEventListener("click", function(e){
+    if (!e.target || !e.target.closest) return;
+    if (lb.style.display !== "none") return; /* 灯箱开着：这次点击只负责关灯箱，不揭晓不翻页 */
+    if (e.target.closest(".pic,button,a,#rvBtn,#hud,#notes,#tocMenu,.rvpill,input,select,textarea")) return;
+    if (hiddenRv().length){ revealNext(); e.stopPropagation(); } /* 有未揭晓→任意点击先揭晓；没得揭晓才翻页 */
+  }, true);
+  window.resetRv = function(i){
+    var sl = document.querySelectorAll(".slide")[i];
+    if (!sl) return;
+    sl.querySelectorAll(".rv").forEach(function(x){ x.classList.remove("rvshow"); });
+    if (rvBtn){
+      var has = sl.querySelector(".rv");
+      rvBtn.style.display = has ? "" : "none";
+      rvBtn.textContent = "▶ 揭晓";
+    }
+    syncRvPill();
+  };
+})();
+</script>
+</body>
+</html>
