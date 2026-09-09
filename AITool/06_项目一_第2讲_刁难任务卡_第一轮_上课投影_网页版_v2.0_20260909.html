@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>第3讲 刁难任务卡 上课投影 v1.0</title>
+<title>第2讲 刁难任务卡·第一轮 上课投影 v2.0</title>
 <style>
 :root{
   --orange:#bf360c; --green:#2e7d32; --ink:#22170f;
@@ -107,13 +107,6 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
 
 /* 乱通知原文块 */
 .raw{margin:6px 22px 14px;background:#fffbe6;border:3px dashed #ef6c00;border-radius:14px;padding:16px 18px;font-size:clamp(15px,2vw,23px);font-weight:700;line-height:1.7;color:#5d4037}
-/* 揭示 */
-.reveal{padding:6px 22px 16px;display:grid;gap:10px}
-.reveal .r{border:3px solid #ce93d8;background:#fff;border-radius:14px;padding:14px 18px;cursor:pointer;transition:.25s}
-.reveal .r b{font-size:clamp(17px,2.4vw,29px);color:#4a148c;display:block}
-.reveal .r span{font-size:clamp(14px,1.85vw,21px);color:#6a1b9a;font-weight:700;max-height:0;overflow:hidden;opacity:0;transition:.35s;display:block}
-.reveal .r.on{border-color:#7b1fa2;background:#f3e5f5}
-.reveal .r.on span{max-height:200px;opacity:1;margin-top:6px}
 /* 回看 */
 .recap{padding:6px 22px 18px;display:grid;gap:10px}
 .recap .r{border:3px solid #f8bbd0;background:#fff;border-radius:14px;padding:14px 18px;cursor:pointer;transition:.25s}
@@ -133,12 +126,12 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
   <button type="button" id="fontDown">缩小字体</button>
   <button type="button" id="fontUp">增大字体</button>
   <span id="fontPct" style="font-size:11px;opacity:.85;min-width:38px;text-align:center">100%</span>
-  <h1>AI工具实战应用 第3讲·刁难任务卡 <small>上课投影网页版 v1.0　2026-09-09</small></h1>
+  <h1>AI工具实战应用 第2讲·刁难任务卡第一轮 <small>上课投影网页版 v2.0　2026-09-09</small></h1>
   <div class="hint">← → 翻页　点字可放大</div>
 </header>
 <div class="layout">
   <aside class="side" id="side">
-    <input id="q" placeholder="搜 刁难卡 / 追问 / 限制 / 暂停" />
+    <input id="q" placeholder="搜 刁难卡 / 模板 / 追问 / 暂停" />
     <div id="nav"></div>
   </aside>
   <main class="main" id="main"><article class="card" id="card"></article></main>
@@ -154,30 +147,27 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
 <div class="lb" id="lb"></div>
 <script>
 const SLIDES = [
-{n:1, kind:"cover", title:"第3讲　刁难任务卡", body:["今天不讲任何新理论。\n三张刁难卡，一张比一张刁——用上节课的四要素，去挨、去修、去赢。"], now:"现在你：打开豆包。今天的分，全靠验收挣。"},
-{n:2, kind:"text", title:"今天的规矩", body:["① 卡片全是老师给的：原文、步骤、话术、验收标准——你只管照着做。\n② 每一张卡做完，对着验收条目自查，全过才举手报分：卡① +2、卡② +3、卡③ +3。\n③ 三张全过，额外 +2。\n④ 卡壳了别慌——卡壳的地方，正是要学的地方。"], now:"现在你：听清楚：验收过了才举手，虚报的不算。"},
-{n:3, kind:"task", title:"刁难卡①　辅导员的乱通知", body:["辅导员在群里甩了这么一段（原文已发群里，长按复制）："], now:"现在你：先把这段乱通知复制到手。下一页看怎么收拾它。"},
-{n:4, kind:"task", title:"卡①三步走（验收过 +2 分）", body:["第一步：发给豆包——「把下面这段乱通知整理成要点清单，分条写清：什么时间、什么地点、干什么、带什么、谁负责什么、截止什么时候：【粘贴乱通知】」\n第二步：验收——五个都要有：时间（9月13日周六 8:30）/ 地点（宿舍楼下集合）/ 带什么（扫帚、拖把、抹布）/ 请假制度（不能来提前报备）/ 截止（周五中午前交工具清单）。漏一个，用追问修好。\n第三步：再发一句变形——「把上面的要点，改写成一条家长能看懂的短信，80 字以内。」"], now:"现在你：按三步做。验收全过，举手报 +2。"},
-{n:5, kind:"text", title:"卡壳了？工具包现在发：追问六句", body:["刚才有人被 AI 坑了：漏了项、或者和稀泥。就等你这一刻，发工具：\n① 漏了项：「你漏了【缺的内容】，补上重来，其他别动」\n② 太长了：「压缩成 3 句话」\n③ 太笼统：「给具体步骤，至少 5 步」\n④ 格式不对：「改成表格 / 改成清单」\n⑤ 猜错了：「我没说要 XX，按我说的重新来」\n⑥ 不放心：「你这个说法，依据是什么？」\n两条规矩：不换话题；只说要改的。"], now:"现在你：挑一句用回去，把卡①修到验收过关。"},
-{n:6, kind:"task", title:"刁难卡②　带限制的 50 元一日游（验收过 +3 分）", body:["任务：石邮院出发，石家庄一日游，预算 50 元。限制三条：\n① 不许打车，只准公交 / 地铁 / 共享单车；② 午饭总共不超过 15 元；③ 下午 6 点前必须回到学校。\n第一步：四要素模板问——角色：石家庄本地向导；任务：一日游方案；要求：预算 50 元＋三条限制原样粘贴进去；格式：表格（时间 / 地点 / 花费 / 交通方式）。\n第二步：AI 出方案后，把这句自查话术原样粘贴——「对照上面三条限制，逐条检查这个方案：每一条回答『满足』还是『违反』，违反了指出在方案哪一站。」\n第三步：有违反，就追问修，再让它自查一遍，直到三条全过。"], now:"现在你：三步做完举手。报分时说清楚：AI 第一次在哪条上翻了车。"},
-{n:7, kind:"pause", title:"暂停点⑦　请写 60 秒", body:["三条限制，AI 最容易违反哪一条？你是怎么抓出来的？"], now:"现在你：写在记录册「暂停点⑦」。"},
-{n:8, kind:"task", title:"刁难卡③　自相矛盾的需求（验收过 +3 分）", body:["第一步：把这句原样发给豆包——「给我写一张社团招新海报的文案。要求：醒目，但要克制；内容尽量丰富，但要短小；有趣，但要严肃。」看它怎么和稀泥。\n第二步：取舍二选一（老师给定，你只选）：\nA——优先醒目、有趣，内容可以精简；B——优先内容丰富，设计可以普通。\n第三步：追问加一句——「取舍：优先【你选的】，可以牺牲【另一头】，重新写。」"], now:"现在你：三步做完，把结果再读一遍——自己不打架了，才算过。"},
-{n:9, kind:"pause", title:"暂停点⑧　请写 60 秒", body:["AI 和稀泥的时候，你是用哪一步让它老实的？一句话写下来。"], now:"现在你：写在记录册「暂停点⑧」。"},
-{n:10, kind:"key", title:"不背花话术：<br>错了就追问，多就列限制，<br>矛盾就取舍。", body:["这就是全部。往后不再加新话术——剩下的，全在任务里练。"], now:"现在你：这三句，写进记录册。"},
-{n:11, kind:"recap", title:"回看：三张卡，三招", body:["点一下每一条，先自己说出来，再翻开对。"], now:"现在你：三条都看完，再看下一页。"},
-{n:12, kind:"end", title:"下课。", body:["记住一句：AI 不是要你会说漂亮话，是要你把话说清楚、把账算明白。", "课后任务（必做）：写下一件「你想让 AI 查得准、答得准的事」，发到企业微信群——下节课，我们给 AI 发一本参考书。"], now:"现在你：记录册合上带走。下次课：ima 知识库。"},
-{n:13, kind:"spare", title:"时间够再用：刁难卡④　长话压三句", body:["老师发一段 300 字的乱长文。发给豆包：「压缩成 3 句话＋1 张表格。」\n验收：数字、时间、截止事项一个没丢。+2 分。"], now:"现在你：老师没说用，就不用看这页。"},
-{n:14, kind:"spare", title:"时间够再用：刁难卡⑤　社团自我介绍", body:["把你的自我介绍原样发给豆包，再发：「润色这段自我介绍：真诚、不夸张、150 字以内。」\n验收：读一遍，像人话、没吹牛。+2 分。"], now:"现在你：老师没说用，就不用看这页。"}
+{n:1, kind:"cover", title:"第2讲　刁难任务卡·第一轮", body:["今天不讲提示词课。\n三张刁难卡，一张比一张刁——你卡壳的那一刻，老师才发工具。"], now:"现在你：打开豆包。今天的分，全靠验收挣。"},
+{n:2, kind:"text", title:"今天的规矩", body:["① 卡片全是老师给的：原文、步骤、话术、验收标准——你只管照着做。\n② 验收过了才举手报分：卡① +2、卡② +3、卡③ +3，三张全过额外 +2。\n③ 卡壳了别慌——卡壳的地方，正是要发工具的地方。"], now:"现在你：听清楚：验收过了才举手，虚报的不算。"},
+{n:3, kind:"task", title:"热身 3 分钟：按你平时的方式问", body:["给豆包发这一句：「帮我写一个请假条。」一个字都不要多加。\n它答完，看一眼结果，记在心里：能用吗？差在哪？"], now:"现在你：发出去。这个结果先留着，一会儿要用。"},
+{n:4, kind:"task", title:"刁难卡①　辅导员的乱通知：先自己试", body:["辅导员在群里甩了这么一段（原文已发群里，长按复制）：", "任务：让豆包把这段乱通知整理成要点清单。\n怎么问，用你自己的方式。\n验收预告：时间 / 地点 / 带什么 / 请假制度 / 截止——五条，一条都不能漏。"], now:"现在你：先用自己的问法试。数一数：五条你能问出几条？"},
+{n:5, kind:"text", title:"卡壳了？现在发工具：四要素模板", body:["刚才漏了项、问出一堆废话的——多半是这四样里少说了哪样：\n「你是【角色】。请【任务】。要求：【要求】。请用【格式】输出。」\n① 角色——让它当谁；② 任务——让它干什么；③ 要求——干到什么程度；④ 格式——怎么交给你。\n你不说的那一样，它就替你编一样。"], now:"现在你：对着四个空想一想——刚才你漏的是哪一样？"},
+{n:6, kind:"text", title:"追问六句：模板一遍不行，就接着问", body:["① 漏了项：「你漏了【缺的内容】，补上重来，其他别动」\n② 太长了：「压缩成 3 句话」\n③ 太笼统：「给具体步骤，至少 5 步」\n④ 格式不对：「改成表格 / 改成清单」\n⑤ 猜错了：「我没说要 XX，按我说的重新来」\n⑥ 不放心：「你这个说法，依据是什么？」\n两条规矩：不换话题；只说要改的。"], now:"现在你：读一遍。下一页，用它把乱通知修到过。"},
+{n:7, kind:"task", title:"卡①修到过（验收过 +2 分）", body:["第一步：把乱通知粘进四要素模板——角色填「辅导员助理」，要求里写明「时间、地点、带什么、请假制度、截止，一条都不能漏」——重新发。\n第二步：对着五条验收。漏了哪条，用追问六句修到齐。\n第三步：再发一句变形——「把上面的要点，改写成一条家长能看懂的短信，80 字以内。」"], now:"现在你：填模板、重问、验收。全过举手报 +2。"},
+{n:8, kind:"pause", title:"暂停点⑤　请写 60 秒", body:["比一比两种问法：你原来的问法，和填了模板的问法，差在哪？\n刚才修漏项，你用的是哪一句？"], now:"现在你：写在记录册「暂停点⑤」。"},
+{n:9, kind:"task", title:"刁难卡②　带限制的 50 元一日游（验收过 +3 分）", body:["任务：石邮院出发，石家庄一日游，预算 50 元。限制三条：\n① 不许打车，只准公交 / 地铁 / 共享单车；② 午饭总共不超过 15 元；③ 下午 6 点前必须回到学校。\n第一步：四要素模板问——角色：石家庄本地向导；任务：一日游方案；要求：预算 50 元＋三条限制原样粘进去；格式：表格（时间 / 地点 / 花费 / 交通方式）。\n第二步：AI 出方案后，原样粘这句自查话术——「对照上面三条限制，逐条检查这个方案：每一条回答『满足』还是『违反』，违反了指出在方案哪一站。」\n第三步：有违反，追问修，再让它自查，直到三条全过。"], now:"现在你：三步做完举手。报分时说清楚：AI 第一次在哪条上翻了车。"},
+{n:10, kind:"task", title:"刁难卡③　自相矛盾的需求（验收过 +3 分）", body:["第一步：把这句原样发给豆包——「给我写一张社团招新海报的文案。要求：醒目，但要克制；内容尽量丰富，但要短小；有趣，但要严肃。」看它怎么和稀泥。\n第二步：取舍二选一（老师给定，你只选）：\nA——优先醒目、有趣，内容可以精简；B——优先内容丰富，设计可以普通。\n第三步：追问加一句——「取舍：优先【你选的】，可以牺牲【另一头】，重新写。」"], now:"现在你：三步做完，把结果再读一遍——自己不打架了，才算过。"},
+{n:11, kind:"pause", title:"暂停点⑥　请写 60 秒", body:["今天，你是用哪一步让 AI 听话的？一句话写下来。"], now:"现在你：写在记录册「暂停点⑥」。"},
+{n:12, kind:"task", title:"收个尾：《提示词小抄》（5 分钟）", body:["老师发半成品模板，你只填四个空：\n「问 AI 办事，要说四件事：①＿＿＿＿，告诉它当谁；②＿＿＿＿，告诉它干什么；③＿＿＿＿，告诉它干到什么程度；④＿＿＿＿，告诉它怎么交给你。」\n填完，把今天你修好的那条命令粘在最下面，截图保存。\n这是这门课唯一的提示词讲义——往后，全靠任务里练。"], now:"现在你：填空、贴命令、截图。忘了空里填什么，回翻第 5 页。"},
+{n:13, kind:"key", title:"不用刻意学提示词，<br>任务会教你。", body:["卡壳填模板，漏了就追问，多了列限制，矛盾就取舍——全用上了。"], now:"现在你：这四招记在心里。"},
+{n:14, kind:"end", title:"下课。", body:["记住一句：AI 听得懂人话——只要你说清楚要什么、怎么算完。", "课后任务（必做）：写下一件「你想让 AI 查得准、答得准的事」，发企业微信群——第 4 次课，我们给 AI 发一本参考书。"], now:"现在你：记录册合上带走。下次课：刁难卡第二轮，任务更复杂。"},
+{n:15, kind:"spare", title:"时间够再用：刁难卡④　长话压三句", body:["老师发一段 300 字的乱长文。发给豆包：「压缩成 3 句话＋1 张表格。」\n验收：数字、时间、截止事项一个没丢。+2 分。"], now:"现在你：老师没说用，就不用看这页。"},
+{n:16, kind:"spare", title:"时间够再用：刁难卡⑤　社团自我介绍", body:["把你的自我介绍原样发给豆包，再发：「润色这段自我介绍：真诚、不夸张、150 字以内。」\n验收：读一遍，像人话、没吹牛。+2 分。"], now:"现在你：老师没说用，就不用看这页。"}
 ];
 const RAW_NOTICE="通知：这周六就是9月13日各班要把宿舍卫生区打扫一遍8点半楼下集合带清洁工具扫帚拖把抹布都带上不能来的提前跟我报备当天还要检查用电安全宿舍里不许用大功率电器班长把清洁工具统计一下周五中午之前报给我别忘了";
-const RECAP=[
- ["卡①　AI 漏项、和稀泥","用追问修：你漏了【缺的内容】，补上重来，其他别动"],
- ["卡②　AI 违反限制还不自知","限制写进要求里，再粘自查话术，让 AI 自己逐条核"],
- ["卡③　AI 对着矛盾需求两头讨好","选一个优先，明说牺牲哪头，让它重写"]
-];
 const KIND={cover:"封面",text:"讲义",setup:"先听一句",task:"动手",pause:"暂停点",key:"金句",reveal:"对答案",recap:"回看",end:"下课",spare:"备用"};
-const STAMP={cover:"开讲",text:"记",setup:"听",task:"动手",pause:"写！",key:"记住",reveal:"对答案",recap:"回看",end:"下课",spare:"备用"};
-const KEYS=["追问","限制","自查","取舍","验收","四要素","模板","暂停点"];
+const STAMP={cover:"开讲",text:"发工具",setup:"听",task:"动手",pause:"写！",key:"记住",reveal:"对答案",recap:"回看",end:"下课",spare:"备用"};
+const KEYS=["模板","追问","限制","自查","取舍","验收","四要素","暂停点"];
 let i=0;
 const $=id=>document.getElementById(id);
 function esc(s){return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
@@ -230,9 +220,7 @@ function render(dir){
   const card=$("card");
   card.className="card kind-"+s.kind+" "+(dir==="prev"?"enter-prev":"enter-next");
   let widget="";
-  if(s.kind==="recap"){
-    widget=`<div class="recap">`+RECAP.map((r,k)=>`<div class="r" data-r="${k}"><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div>`).join("")+`</div>`;
-  }else if(s.n===3){
+  if(s.n===4){
     widget=`<div class="raw">${esc(RAW_NOTICE)}</div>`;
   }
   card.innerHTML=`
@@ -247,7 +235,6 @@ function render(dir){
   $("pg").textContent=(i+1)+" / "+SLIDES.length;
   const prog=$("prog"); if(prog) prog.style.width=((i+1)/SLIDES.length*100).toFixed(2)+"%";
   const fl=$("flash"); if(fl && dir){ fl.classList.remove("go"); void fl.offsetWidth; fl.classList.add("go"); }
-  card.querySelectorAll(".recap .r").forEach(el=>el.onclick=()=>el.classList.toggle("on"));
   renderNav(); history.replaceState(null,"","#"+s.n); $("main").scrollTop=0;
   setTimeout(fitCard,30); setTimeout(fitCard,420);
 }

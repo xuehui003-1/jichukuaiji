@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>第2讲 把话说清楚 上课投影 v1.1</title>
+<title>第3讲 刁难任务卡·第二轮 上课投影 v2.0</title>
 <style>
 :root{
   --orange:#bf360c; --green:#2e7d32; --ink:#22170f;
@@ -105,14 +105,8 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
 .now{animation:nowIn .7s cubic-bezier(.16,1,.3,1) both;box-shadow:0 -8px 24px rgba(46,125,50,.35)}
 @keyframes nowIn{from{transform:translateY(28px);opacity:0}to{transform:none;opacity:1}}
 
-/* 命令模板 */
-.cmd{margin:6px 22px 14px;background:#fff;border:3px solid var(--green);border-radius:14px;padding:16px 18px;font-size:clamp(16px,2.2vw,26px);font-weight:800;line-height:1.6}
-.cmd .slot{display:inline-block;background:#fff8e1;border:2px dashed #ef6c00;border-radius:8px;padding:2px 12px;color:#e65100;margin:0 2px}
-/* 场景卡 */
-.opts{padding:0 22px 14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
-.optc{background:#fff;border:3px solid #c8b8a6;border-radius:12px;padding:12px 16px}
-.optc h4{font-size:clamp(16px,2.1vw,23px);color:#bf360c;margin-bottom:8px}
-.optc span{display:block;background:#faf6f0;border:2px solid var(--line);border-radius:10px;padding:6px 12px;margin:5px 0 0;font-size:clamp(13px,1.8vw,18px);font-weight:800;color:#3e2723;line-height:1.4}
+/* 乱文本块 */
+.raw{margin:6px 22px 14px;background:#fffbe6;border:3px dashed #ef6c00;border-radius:14px;padding:16px 18px;font-size:clamp(15px,2vw,23px);font-weight:700;line-height:1.7;color:#5d4037}
 /* 揭示 */
 .reveal{padding:6px 22px 16px;display:grid;gap:10px}
 .reveal .r{border:3px solid #ce93d8;background:#fff;border-radius:14px;padding:14px 18px;cursor:pointer;transition:.25s}
@@ -139,12 +133,12 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
   <button type="button" id="fontDown">缩小字体</button>
   <button type="button" id="fontUp">增大字体</button>
   <span id="fontPct" style="font-size:11px;opacity:.85;min-width:38px;text-align:center">100%</span>
-  <h1>AI工具实战应用 第2讲·最小提示词工具包 <small>上课投影网页版 v1.1　2026-09-09</small></h1>
+  <h1>AI工具实战应用 第3讲·刁难任务卡第二轮 <small>上课投影网页版 v2.0　2026-09-09</small></h1>
   <div class="hint">← → 翻页　点字可放大</div>
 </header>
 <div class="layout">
   <aside class="side" id="side">
-    <input id="q" placeholder="搜 四要素 / 追问 / 场景卡 / 暂停" />
+    <input id="q" placeholder="搜 任务 / 找茬 / 拆开 / 暂停" />
     <div id="nav"></div>
   </aside>
   <main class="main" id="main"><article class="card" id="card"></article></main>
@@ -160,44 +154,35 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
 <div class="lb" id="lb"></div>
 <script>
 const SLIDES = [
-{n:1, kind:"cover", title:"第2讲　把话说清楚", body:["今天不讲理论，就干一件事：同一个问题，问两遍。\n第一遍按你原来的习惯问，第二遍换新问法。\n看看 AI 对你，会不会两副面孔。"], now:"现在你：打开手机豆包，准备开工。"},
-{n:2, kind:"text", title:"今天怎么跟", body:["① 热身：按老习惯问一遍，把结果记下来。\n② 学一套模板：四要素，照着填。\n③ 填好再问一遍，自己对比。\n④ 格式控制：一句话换排版。⑤ 填好自己的《提示词小抄》存手机。"], now:"现在你：听。下一页就开始热身。"},
-{n:3, kind:"task", title:"热身：按你平时的方式问（3 分钟）", body:["给豆包发这一句：「帮我写一个请假条。」\n一个字都不要多加——你平时怎么问，就怎么问。\n它答完，你记两件事：出来多少字？哪让你不满意？"], now:"现在你：发出去，看结果。两个答案先记在心里。"},
-{n:4, kind:"pause", title:"暂停点⑤　请写 60 秒", body:["把你刚才发的那句话，原样抄进记录册。\n再写一句：这次的结果，你最不满意哪里？"], now:"现在你：写在记录册「暂停点⑤」。写完合上，先别讨论。"},
-{n:5, kind:"setup", title:"先听一句", body:["你托人办事，是不是有四件事要说？少说一件，对方就得猜一件。\nAI 一模一样——只不过它猜得又快又自信，还不告诉你它在猜。"], now:"现在你：听这四件事是什么。"},
-{n:6, kind:"text", title:"四要素：一人一句", body:["① 角色——让它当谁：「你是班主任…」\n② 任务——让它干什么：「写一张请假条…」\n③ 要求——干到什么程度：「150 字以内，语气礼貌…」\n④ 格式——怎么交给你：「分三段：原因、时间、署名」"], now:"现在你：四条读一遍。下一页，全班跟着拼一条。"},
-{n:7, kind:"task", title:"跟着拼一条：老师带着填", body:["模板（原样抄）：「你是【角色】。请【任务】。要求：【要求】。请用【格式】输出。」", "老师在大屏上填：「你是有经验的班主任。请帮我写一张病假请假条。要求：150 字以内，语气礼貌，原因是感冒发烧。请输出三段：原因、请假时间、署名。」\n发出去——看这张请假条，是不是能直接交？"], now:"现在你：看大屏，小声跟读。"},
-{n:8, kind:"task", title:"现在你填：三张场景卡，挑一张", body:["场景卡老师发，内容全给好了——你只做一件事：把四个空填进模板，原样发出去。"], now:"现在你：挑一张卡，填四个空，原样发给豆包。"},
-{n:9, kind:"task", title:"对比：两个结果摆一起", body:["看这个新结果，再回想热身那一个。\n问自己三个问题：还用来回改吗？它瞎猜的地方少了吗？格式是你想要的吗？"], now:"现在你：看自己的结果，三个问题在心里过一遍。"},
-{n:10, kind:"pause", title:"暂停点⑥　请写 60 秒", body:["把你填好的新命令，完整抄进记录册。\n再写一句：跟热身那次比，具体好在哪？"], now:"现在你：写在记录册「暂停点⑥」。"},
-{n:11, kind:"reveal", title:"对照：三张卡的命令样板", body:["点开看。跟你填的对一对——空填的位置对，就算过。"], now:"现在你：一条一条点开，对一对你填的。"},
-{n:12, kind:"key", title:"四要素，少一样，<br>它就猜一样。", body:["角色、任务、要求、格式——你不说，它就编。"], now:"现在你：这一句写在记录册。"},
-{n:13, kind:"task", title:"格式控制：多加一句话（3 分钟）", body:["看刚才的结果——要是一大片文字，一句话就能改。\n在你的命令末尾，加上一句：「请用表格输出」，整条重新发出去。\n看：内容没变，立刻变成表格——这就是格式控制。"], now:"现在你：加一句，重新发。要清单就说「清单格式」，要简短就说「100 字以内」。"},
-{n:14, kind:"task", title:"产出你的《提示词小抄》（5 分钟）", body:["老师发半成品模板，你只填四个空：\n「问 AI 办事，要说四件事：①＿＿＿＿，告诉它当谁；②＿＿＿＿，告诉它干什么；③＿＿＿＿，告诉它干到什么程度；④＿＿＿＿，告诉它怎么交给你。」\n填完，把你今天最满意的那条命令，粘贴在最下面。\n截图保存——这张小抄，跟你走完整门课。"], now:"现在你：填空、贴命令、截图保存。忘了空里填什么，回翻第 6 页。"},
-{n:15, kind:"recap", title:"回看：今天三句", body:["点一下每一条，先自己背出来，再翻开对。"], now:"现在你：三条都看完，再看下一页。"},
-{n:16, kind:"end", title:"下课。", body:["记住一句：你说得清，它才办得对。", "课后任务（必做）：用四要素模板，问豆包一个跟你专业有关的问题，截图发企业微信群。\n选做：给你的命令加一句格式要求（表格 / 清单 / 100字以内），看结果变成什么样。"], now:"现在你：记录册合上带走。下次课：刁难任务卡——拿今天学的去挨刁。"},
-{n:17, kind:"spare", title:"时间够再用：刁难卡", body:["老师报一个刁难场景：「给快递小哥写一条感谢短信」。\n四要素填空，原样发出去。谁的结果最接近「能直接发」，举手展示，+2 分。"], now:"现在你：老师没说用，就不用看这页。"},
-{n:18, kind:"spare", title:"时间够再用：格式大比拼", body:["同一个问题：谁的命令，能让 AI 一次就出表格（不用重问）？\n标准：四要素齐全，格式写清楚。举手展示，+2 分。"], now:"现在你：老师没说用，就不用看这页。"}
+{n:1, kind:"cover", title:"第3讲　刁难任务卡·第二轮", body:["今天也不讲课。任务更复杂——一个任务连着干三件事，还要让 AI 自己当找茬员。\n你的武器，上次课已经全发完了。"], now:"现在你：打开豆包，翻出你的小抄。"},
+{n:2, kind:"text", title:"你的全部武器＋今天的规矩", body:["武器清点：四要素模板 / 追问六句 / 限制＋自查话术 / 取舍。就这些，今天不再发新的。\n规矩：任务① +4（步骤多）、任务② +3、任务③ +3，三个全过额外 +2。\n验收过了才举手，虚报的不算。"], now:"现在你：听清楚分值。开始。"},
+{n:3, kind:"task", title:"任务①　活动执行表：三连变形（验收过 +4 分）", body:["班委收到这么一段乱要求（原文已发群里）：", "第一步：让豆包把它整理成执行表——列：时间 / 事项 / 负责人 / 物资。负责人只能填：班长 / 安全员 / 全班。\n第二步：粘自查话术，让 AI 对照三条限制逐条核：① 全班预算 200 元以内；② 下雨有备选日期；③ 每件事都有负责人。\n第三步：再让它出结果——「写一条能直接发班群的通知，80 字以内。」\n验收：表格齐全 / 三条限制全过 / 通知 80 字内能直接发。"], now:"现在你：三步一步一步来，每步验一次。全过举手报 +4。"},
+{n:4, kind:"task", title:"任务②　让 AI 当找茬员（找全 +3 分）", body:["这是「AI 写的」秋游通知——老师在里面埋了 3 处错。把它发给豆包，命令照抄：\n「你是检查员。请找出这条通知里的所有错误——前后矛盾、不可能发生、跟常理对不上的——一条一条列出来：【粘贴通知】」", "AI 找到几处？没找全，追问：「再看一遍日期和钱。」\n谁找全 3 处，举手 +3。答案下一页暂停点之后揭晓。"], now:"现在你：先让 AI 找，再自己读一遍——AI 漏的，你补上。"},
+{n:5, kind:"pause", title:"暂停点⑦　请写 60 秒", body:["你给 AI 的命令里，加了哪几句，它才把错找全？\n哪一处错，AI 最容易漏？"], now:"现在你：写在记录册「暂停点⑦」。写完老师揭晓三处错。"},
+{n:6, kind:"reveal", title:"答案：三处预埋的错", body:["点开，一条一条对。"], now:"现在你：对一对——AI 找全了吗？你找全了吗？"},
+{n:7, kind:"task", title:"任务③　一条命令干三件事（验收过 +3 分）", body:["第一步：把这一条命令原样发出去——「① 列出石家庄兼职的 5 个坑；② 把它们整理成表格：坑 / 应对办法；③ 最后写一句 50 字以内的提醒。」\n看：三件事，它漏了哪件？\n第二步：两条路自己挑——追问把漏的补上；或者拆成三条命令，一条只干一件事，重新做。\n第三步：对比哪种做法更省事。验收：三样产出（清单／表格／提醒）都齐。"], now:"现在你：先一条命令试，看它漏活。再想办法补齐。"},
+{n:8, kind:"pause", title:"暂停点⑧　请写 60 秒", body:["一条命令干三件事，和三条命令各干一件事——哪种更好使？为什么？"], now:"现在你：写在记录册「暂停点⑧」。"},
+{n:9, kind:"key", title:"一条命令干不动，就拆开；<br>AI 拿不准，就让它自己查。", body:["不背话术，不学理论——这两招，是你今天自己试出来的。"], now:"现在你：这两句，写进记录册。"},
+{n:10, kind:"recap", title:"回看：第二轮三招", body:["点一下每一条，先自己说出来，再翻开对。"], now:"现在你：三条都看完，再看下一页。"},
+{n:11, kind:"end", title:"下课。", body:["记住一句：复杂的活，拆成简单的步骤，一步一步验。", "课后任务（必做）：写下一件「你想让 AI 查得准、答得准的事」，发企业微信群——下次课，我们给 AI 发一本参考书。"], now:"现在你：记录册合上带走。下次课：ima 知识库。"},
+{n:12, kind:"spare", title:"时间够再用：任务④　检查员对照清单查", body:["给检查员加一张验收清单，让它对照查：「对照下面清单逐条检查这份方案：①预算不超 200 ②有雨天备选 ③每件事有负责人。每条回答过/不过。」\n验收：清单三条都有明确结论。+2 分。"], now:"现在你：老师没说用，就不用看这页。"},
+{n:13, kind:"spare", title:"时间够再用：任务⑤　账目算给 AI 看", body:["把上次的 50 元一日游方案发给豆包：「按这个方案算总账：一项一项列花费，最后加总，看超没超 50。」\n验收：总数算对，超没超说清楚。+2 分。"], now:"现在你：老师没说用，就不用看这页。"}
 ];
-const SCENES=[
- ["卡A · 请假条","角色：班主任","任务：写一张病假请假条","要求：150 字以内，语气礼貌，原因是感冒发烧","格式：三段——原因、请假时间、署名"],
- ["卡B · 兼职避坑","角色：干过三年兼职的学长","任务：讲石家庄奶茶店兼职的坑，和开工前要问的话","要求：列 5 条，每条配一个真实例子","格式：表格——坑 / 应对办法"],
- ["卡C · 石家庄一日游","角色：石家庄本地向导","任务：从石邮院出发一日游，预算 50 元","要求：省钱但不无聊，不安排购物点","格式：表格——时间 / 地点 / 花费 / 避坑提醒"]
-];
+const RAW_REQ="班委这周六想搞个秋游去公园预算200块以内包一辆大巴车接送9点校门口集合带水和零食班长负责提前买门票安全员清点人数下雨就不去了改下周六拍照发班群";
+const RAW_BAD_NOTICE="通知：本周六（9月12日）上午9点校门口集合，前往世纪公园秋游。班费每人交50元，周五前交给班长。自带午餐和饮用水，如遇下雨，活动自动取消。——2025级快递运营1班班委 9月13日";
 const REVEAL=[
- ["卡A · 命令样板","「你是有经验的班主任。请帮我写一张病假请假条。要求：150 字以内，语气礼貌，原因是感冒发烧。请输出三段：原因、请假时间、署名。」"],
- ["卡B · 命令样板","「你是干过三年兼职的学长。请讲石家庄奶茶店兼职有哪些坑，以及开工前该问什么。要求：列 5 条，每条配一个真实例子。请用表格输出：坑 / 应对办法。」"],
- ["卡C · 命令样板","「你是石家庄本地向导。请给我安排从石邮院出发的一日游，预算 50 元。要求：省钱但不无聊，不安排购物点。请用表格输出：时间 / 地点 / 花费 / 避坑提醒。」"]
+ ["① 日子对不上", "通知说「本周六（9月12日）」集合，落款却是 9 月 13 日——发通知那天，活动已经过了"],
+ ["② 钱对不上", "全班预算总共 200 元，通知却收「每人 50 元」——一个班收上来就是两千"],
+ ["③ 下雨的处理对不上", "原要求是「下雨改下周六」，通知写成了「自动取消」"]
 ];
 const RECAP=[
- ["一遍问对很少见，但模板在手","四要素：角色、任务、要求、格式——少一样，它猜一样"],
- ["想换样子，一句话管格式","「请用表格输出 / 清单格式」——内容不变，排版变"],
- ["提示词到此为止，往后靠任务学","小抄已存手机。下次课：刁难任务卡"]
+ ["任务①　复杂要求三连变形", "先变表格、再查限制、最后压成通知——一步一验收，不攒着一起错"],
+ ["任务②　让 AI 当找茬员", "给它角色「检查员」，要它一条一条列；AI 漏的错，你补上"],
+ ["任务③　一条命令漏了活", "干不动就拆开：三条命令各干一件事，一件都不漏"]
 ];
-const TPL='你是【角色】。请【任务】。要求：【要求】。请用【格式】输出。';
 const KIND={cover:"封面",text:"讲义",setup:"先听一句",task:"动手",pause:"暂停点",key:"金句",reveal:"对答案",recap:"回看",end:"下课",spare:"备用"};
 const STAMP={cover:"开讲",text:"记",setup:"听",task:"动手",pause:"写！",key:"记住",reveal:"对答案",recap:"回看",end:"下课",spare:"备用"};
-const KEYS=["四要素","角色","任务","要求","格式","追问","模板","场景卡","暂停点"];
+const KEYS=["自查","追问","限制","验收","拆开","检查员","模板","暂停点"];
 let i=0;
 const $=id=>document.getElementById(id);
 function esc(s){return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
@@ -250,15 +235,14 @@ function render(dir){
   const card=$("card");
   card.className="card kind-"+s.kind+" "+(dir==="prev"?"enter-prev":"enter-next");
   let widget="";
-  if(s.kind==="reveal"){
+  if(s.n===3){
+    widget=`<div class="raw">${esc(RAW_REQ)}</div>`;
+  }else if(s.n===4){
+    widget=`<div class="raw">${esc(RAW_BAD_NOTICE)}</div>`;
+  }else if(s.kind==="reveal"){
     widget=`<div class="reveal">`+REVEAL.map((r,k)=>`<div class="r" data-r="${k}"><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div>`).join("")+`</div>`;
   }else if(s.kind==="recap"){
     widget=`<div class="recap">`+RECAP.map((r,k)=>`<div class="r" data-r="${k}"><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div>`).join("")+`</div>`;
-  }else if(s.n===7){
-    const cmdHtml=esc(TPL).replace(/【(角色|任务|要求|格式)】/g,'<span class="slot">【$1】</span>');
-    widget=`<div class="cmd">${cmdHtml}</div>`;
-  }else if(s.n===8){
-    widget=`<div class="opts">`+SCENES.map(o=>`<div class="optc"><h4>${esc(o[0])}</h4>`+o.slice(1).map(x=>`<span>${esc(x)}</span>`).join("")+`</div>`).join("")+`</div>`;
   }
   card.innerHTML=`
     <div class="stamp st-${esc(s.kind)}">${STAMP[s.kind]||""}</div>
