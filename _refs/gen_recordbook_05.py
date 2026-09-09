@@ -17,8 +17,9 @@ F08 = "08_项目二_第1-3讲_变量命令流程_纸上篇_课件_v1.2_20260906.
 F10 = "10_项目二_第4讲_机器人上岗_课件_v1.2_20260906.html"
 F14 = "14_项目三_第1讲_图纸搬家_课件_v1.0_20260908.html"
 F16 = "16_项目三_第2讲_循环_课件_v1.0_20260908.html"
-OUT = "05_机器人实验记录册_全程_v2.7_20260908.docx"
-NUM = "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗"
+F17 = "17_项目三_第3讲_判断加循环_课件_v1.0_20260908.html"
+OUT = "05_机器人实验记录册_全程_v2.8_20260908.docx"
+NUM = "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛"
 
 def strip(t):
     t = re.sub(r"<br\s*/?>", " ", t)
@@ -32,19 +33,20 @@ def pauses(fn):
     slides = json.load(io.open(tmp, encoding="utf-8"))
     out = {}
     for pg in slides:
-        m = re.search(r"⏸\s*暂停点([①-⑳㉑㉒㉓㉔㉕㉖㉗])(?:\s*·\s*([^<\n`]{2,16}))?", pg["html"])
+        m = re.search(r"⏸\s*暂停点([①-⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛])(?:\s*·\s*([^<\n`]{2,16}))?", pg["html"])
         if m and m.group(1) not in out:
             h1 = re.search(r"<h1[^>]*>(.*?)</h1>", pg["html"], re.S)
             title = (m.group(2) or "").strip() or (strip(h1.group(1))[:12] if h1 else "")
             out[m.group(1)] = (pg["no"], title)
     return out
 
-p4, p8, p10, p14, p16 = pauses(F04), pauses(F08), pauses(F10), pauses(F14), pauses(F16)
+p4, p8, p10, p14, p16, p17 = pauses(F04), pauses(F08), pauses(F10), pauses(F14), pauses(F16), pauses(F17)
 assert sorted(p4) == list("①②③④"), p4
 assert sorted(p8, key=NUM.index) == list(NUM[:14]), p8
 assert sorted(p10, key=NUM.index) == list(NUM[14:19]), p10
 assert sorted(p14, key=NUM.index) == list(NUM[19:23]), p14
-assert sorted(p16, key=NUM.index) == list(NUM[23:]), p16
+assert sorted(p16, key=NUM.index) == list(NUM[23:27]), p16
+assert sorted(p17, key=NUM.index) == list(NUM[27:]), p17
 
 doc = Document()
 sec = doc.sections[0]
@@ -65,7 +67,7 @@ def sec_head(t):
     p = P(t, 13, True, "C0390B", 0, 6)
     return p
 def pause(code, src, desc):
-    pg, title = {"04": p4, "08": p8, "10": p10, "14": p14, "16": p16}[src][code]
+    pg, title = {"04": p4, "08": p8, "10": p10, "14": p14, "16": p16, "17": p17}[src][code]
     p = P("⏸ 暂停点%s · %s　——课件 %s · p%d" % (code, title, src, pg), 11.5, True, "1A5276", 10, 2)
     if desc: P(desc, 9.5, False, "555555", 0, 3)
     return p
@@ -203,6 +205,25 @@ P("选做（p15）：给循环版再加一问「单价多少？」——让单�
 grid(["我的第二问", "试跑结果"])
 selfcheck("□㉔图纸画了　□㉕先猜再跑　□㉖三行写全　□㉗例子配了　　循环肚子装的是什么：＿＿＿＿＿＿＿＿")
 
+# ───────── 项目三 · 判断＋循环合体（课件 17） ─────────
+sec_head("项目三 · 判断＋循环合体｜课件 17")
+pause("㉘", "17", "没做作业的抽备用卡（打印/奶茶/食堂/开水房，问句印卡上），先猜弹几次再跑；做了的用自己作业。")
+grid(["我抽的卡／我用的作业", "猜／实际"])
+pause("㉙", "17", "演示记圈数：判断块每亮一次画一道「正」字，弹出「攒够了！」对答案。")
+grid(["我画的圈数", "正确答案（5）"])
+pause("㉚", "17", "存钱罐真机四步：建 cunQiGuan-学号→照四行拖（循环不填次数）→先猜转几圈→跑。")
+grid(["我猜转＿圈", "实际＿圈", "翻车三行：我干啥／它说啥／我改了啥"])
+pause("㉛", "17", "项目三收官三句话，各配真机例子。")
+grid(["循环肚子装重复·例子", "判断装肚子会停·例子", "条件循环=财务活·例子"])
+P("📋 老师布置的任务（课件 17）", 12, True, "C0390B", 12, 3)
+P("必做（p16）：存钱罐再跑两个数——每月存 50、每月存 250，先猜转几圈再跑（开头抽查 +2 分；没做的开头领备用卡）。", 10)
+grid(["存 50：猜＿圈／实际＿圈", "存 250：猜＿圈／实际＿圈"])
+P("选做（p16）：把「够 500」改成「够 1000」，猜圈数、跑一遍验证。", 10)
+grid(["1000 我猜＿圈", "实际＿圈"])
+P("🏁 项目三大任务（p15，一周，+5 分）：小卖部省钱计算器四步——①校内抄一样价目（食堂/打印/小卖部）；②写两句：「＿＿?」问人＋「到＿＿就停」；③照存钱罐四行画图纸（问几样→算总价→判断→弹「该收手了」）；④下下周机房课开头拼进软件跑给老师看：能问人＋自己会停＝+5 分；先给同桌跑一遍签字。", 10)
+grid(["我抄的价目", "我的两句", "四行图纸（画在这）", "同桌签字（弹窗对了）", "机房当场跑：结果＋老师签字"])
+selfcheck("□㉘卡或作业跑了　□㉙圈数对上　□㉚先猜再跑　□㉛例子配了　　判断装肚子后机器人多了什么本事：＿＿＿＿＿＿＿＿")
+
 doc.save(os.path.join(RPA, OUT))
 print("生成", OUT)
 print("04:", {k: v[0] for k, v in sorted(p4.items(), key=lambda x: NUM.index(x[0]))})
@@ -210,3 +231,4 @@ print("08:", {k: v[0] for k, v in sorted(p8.items(), key=lambda x: NUM.index(x[0
 print("10:", {k: v[0] for k, v in sorted(p10.items(), key=lambda x: NUM.index(x[0]))})
 print("14:", {k: v[0] for k, v in sorted(p14.items(), key=lambda x: NUM.index(x[0]))})
 print("16:", {k: v[0] for k, v in sorted(p16.items(), key=lambda x: NUM.index(x[0]))})
+print("17:", {k: v[0] for k, v in sorted(p17.items(), key=lambda x: NUM.index(x[0]))})
