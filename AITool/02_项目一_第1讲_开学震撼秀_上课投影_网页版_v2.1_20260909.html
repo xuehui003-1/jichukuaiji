@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>开学第一课 开学震撼秀 上课投影 v2.0</title>
+<title>开学第一课 开学震撼秀 上课投影 v2.1</title>
 <style>
 :root{
   --orange:#bf360c; --green:#2e7d32; --ink:#22170f;
@@ -46,6 +46,16 @@ body.wide .side{display:none}
 .k-warn{background:#ffebee;color:#b71c1c;border:1px solid #ef9a9a}
 .k-recap{background:#fce4ec;color:#880e4f}
 .k-task{background:#e8f5e9;color:#1b5e20}
+.k-probe{background:#e1f5fe;color:#01579b}
+.stamp.st-probe{background:#0277bd;color:#fff}
+.steps{padding:6px 22px 16px;display:grid;gap:10px}
+.steps .st{display:none;border:3px solid #4fc3f7;background:#fff;border-radius:14px;padding:14px 18px}
+.steps .st.on{display:block;animation:pop .4s cubic-bezier(.16,1,.3,1) both}
+.steps .st b{font-size:clamp(17px,2.4vw,29px);color:#01579b;display:block;margin-bottom:6px}
+.steps .st p{font-size:clamp(15px,2.1vw,25px);color:#3e2723;font-weight:700;line-height:1.5;margin:0}
+.steps .snext{border:0;background:#0277bd;color:#fff;font:inherit;font-weight:900;font-size:clamp(16px,2.2vw,24px);padding:12px 28px;border-radius:12px;cursor:pointer;justify-self:center;margin-top:4px;box-shadow:0 6px 0 #014f86}
+.steps .snext:hover{filter:brightness(1.08)}
+.steps .done{display:none;text-align:center;font-weight:900;color:#01579b;font-size:clamp(15px,2vw,22px);background:#e1f5fe;border-radius:12px;padding:10px}
 .head{padding:12px 22px 4px}
 .head h2{font-size:var(--title);line-height:1.25;color:var(--brown);cursor:zoom-in}
 .body{padding:6px 22px 10px;font-size:var(--body);line-height:1.45;font-weight:650}
@@ -157,9 +167,10 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
 <div class="page-flash" id="flash"></div>
 <header class="top">
   <button type="button" id="menuBtn">目录</button>
-  <button type="button" id="fontBig" class="on">大字体</button>
-  <button type="button" id="fontSmall">小字体</button>
-  <h1>AI工具实战应用 开学第一课·开学震撼秀 <small>上课投影网页版 v2.0　2026-09-09</small></h1>
+  <button type="button" id="fontDown">缩小字体</button>
+  <button type="button" id="fontUp">增大字体</button>
+  <span id="fontPct" style="font-size:11px;opacity:.85;min-width:38px;text-align:center">100%</span>
+  <h1>AI工具实战应用 开学第一课·开学震撼秀 <small>上课投影网页版 v2.1　2026-09-09</small></h1>
   <div class="hint">← → 翻页　点字可放大</div>
 </header>
 <div class="layout">
@@ -186,7 +197,7 @@ const SLIDES = [
 {n:4, kind:"collect", title:"开场摸底：你平时让豆包干什么？", body:["喊一个，老师记一个。不评价，全写上来。"], now:"现在你：举手喊。写过作业？聊过天？翻过译？还是只问过它「你是谁」？"},
 {n:5, kind:"setup", title:"震撼①　先听一句", body:["接下来全班做同一件事：问豆包「帮我安排一个正定一日游」。\n\n注意：你平时怎么问，就怎么问。别加任何花样。"], now:"现在你：听老师把任务说完，再动手。"},
 {n:6, kind:"task", title:"现在动手：用你的方式问（3 分钟）", body:["打开手机豆包，发这一句：「帮我安排一个正定一日游」。\n\n看一眼结果，记在心里：几段字？能用吗？敢照着走吗？"], now:"现在你：发出去，看结果。3 分钟后老师换一种问法。"},
-{n:7, kind:"text", title:"老师怎么问——原样发出去看结果", body:["你是正定本地向导。我是石邮院新生，预算 50 元，周六一天。给我时间线，并用表格输出：时间 / 地点 / 花费 / 避坑提醒。隆兴寺要提前预约，把预约方式写清楚。\n\n同一个豆包，一边是一大段正确的废话，一边是能直接照着走的表格。"], now:"现在你：看大屏对比。差在哪，马上问你们。"},
+{n:7, kind:"text", title:"老师怎么问——原样发出去，看它答成什么样", body:["你是正定本地向导。我是石邮院新生，预算 50 元，周六一天。给我时间线，并用表格输出：时间 / 地点 / 花费 / 避坑提醒。隆兴寺要提前预约，把预约方式写清楚。\n\n发出去，看这次出来的东西——跟你刚才那一段，自己比比差在哪。"], now:"现在你：看大屏。差在哪，你先看在眼里，马上要你自己说。"},
 {n:8, kind:"pause", title:"暂停点①　请写 60 秒", body:["两种问法，差在哪？你平时是哪种问法？"], now:"现在你：写在记录册「暂停点①」。写完合上，先别讨论。"},
 {n:9, kind:"key", title:"AI 不笨，<br>是你没说清。", body:["角色、背景、要求、格式——这四样，就是这学期的主线。"], now:"现在你：这一句记在心里。四要素模板，后面正式学。"},
 {n:10, kind:"setup", title:"震撼②　先听一句", body:["AI 不光听得懂话，还看得懂图。\n\n接下来每人拍一张自己的东西，让豆包列清单。"], now:"现在你：听老师把任务说完。"},
@@ -194,9 +205,9 @@ const SLIDES = [
 {n:12, kind:"pause", title:"暂停点②　请写 40 秒", body:["AI 认错了你照片里的什么？你回了一句什么话纠正它？"], now:"现在你：写在记录册「暂停点②」。纠正它的那句话，就是后面要学的「追问」。"},
 {n:13, kind:"setup", title:"震撼③　先听一句", body:["前面两次，AI 是「你问一句它答一句」。\n\n接下来这台电脑，老师一句话都不碰——看它自己干活。"], now:"现在你：看大屏。这是老师的笔记本，装了 WorkBuddy。"},
 {n:14, kind:"task", title:"电脑被附身了：三个任务", body:["① 把桌面上的乱文件，按类型自动归进文件夹。\n\n② 把这份 50 人名单，按专业汇总成一张表。\n\n③ 再做一页欢迎新同学的 PPT。\n\n谁喊「停」，老师当场把鼠标交还给 AI 之外的你。它要删文件？看它怎么被拦住——高危操作自动拦。"], now:"现在你：看。第 9 次课，这个东西装到你的电脑上。"},
-{n:15, kind:"setup", title:"震撼④　先听一句", body:["AI 这么能干，能不能全信？\n\n老师现在问它一个编出来的问题。"], now:"现在你：看大屏，听仔细这个问题。"},
-{n:16, kind:"text", title:"老师问了一个查无此事的问题", body:["「石家庄邮电职业技术学院 2027 年快递运营管理专业的奖学金是多少钱？」\n\n这个数，网上查不到——因为是老师编的。看豆包怎么答：它照样给了一个数，还特别自信。\n\n全班当裁判：这个数，能信吗？去哪核实？"], now:"现在你：当裁判。它说得越像真的，越要小心。"},
-{n:17, kind:"task", title:"发核对卡：4 句话，判真假（5 分钟）", body:["① 2025 年，中国快递业务量超过了 1700 亿件？\n② 石家庄地铁的起步价是 3 元？\n③ 石邮院宿舍电费充值 100 元送 20 元？\n④ 学校驿站快递超过 3 天不取，每天收 1 元保管费？\n\n逐条发给豆包，对照纸卡上的核实依据打 ✓ 或 ✗。"], now:"现在你：四条都问完再举手。抢答：哪几题豆包在说瞎话？"},
+{n:15, kind:"setup", title:"震撼④　先听一句", body:["AI 这么能干，能不能全信？\n\n接下来，老师问它一个问题——这个问题，你们自己也要问、自己也要查。"], now:"现在你：看大屏，听仔细这个问题。"},
+{n:16, kind:"probe", title:"问一问奖学金，答案敢信吗", body:["一步只做一步。老师点「下一步」，才往下走。"], now:"现在你：先问豆包，再自己上网搜。没搜出结果之前，谁也别急着下结论。"},
+{n:17, kind:"task", title:"一道不够，再来四道：发核对卡（5 分钟）", body:["① 2025 年，中国快递业务量超过了 1700 亿件？\n② 石家庄地铁的起步价是 3 元？\n③ 石邮院宿舍电费充值 100 元送 20 元？\n④ 学校驿站快递超过 3 天不取，每天收 1 元保管费？\n\n逐条发给豆包，对照 AI 的回答和你自己的常识打 ✓ 或 ✗；拿不准的，上网搜一搜再定。"], now:"现在你：四条都核完再举手。判不了的先留着，暂停点里说。"},
 {n:18, kind:"pause", title:"暂停点③　请写 60 秒", body:["4 道题，豆包对了几道？逐题打 ✓/✗。\n再写一句：以后你怎么看待 AI 的回答？"], now:"现在你：写在记录册「暂停点③」。核对卡下课收，计入过程分。"},
 {n:19, kind:"reveal", title:"AI 撒谎的三种样子", body:["点开看。对一对刚才那四道题。"], now:"现在你：一条一条点开。"},
 {n:20, kind:"key", title:"AI 说的，不背；<br>要用的，先核。", body:["钱、规则、法律——一律以官方为准。"], now:"现在你：这句话，写进记录册。"},
@@ -224,8 +235,14 @@ const GAME_CMD='用单个 HTML 文件做一个简版「植物大战僵尸」点�
 const REVEAL=[["① 编数字","张口就来，还特别精确——那个「奖学金金额」就是"],["② 编出处","「根据相关规定」——其实根本没这个规定"],["③ 不知道也答","语气比真话还自信。越像真的，越要核"]];
 const RECAP=[["你问一句它答一句，是聊天；你派一件事它办完，才是干活","AI 真正的本事是「把事办完」，这学期就学这个"],["AI 会说瞎话，核实是你的事","核对卡那四道题，回去再看一眼"],["这门课不背、不码、不设计——照模板动手就行","模板都给你，动手的是你"]];
 const VOTES=["🦩 鹈鹕骑自行车","🐊 鳄鱼滑滑板","🕊️ 鸽子买奶茶","📦 快递箱分拣"];
-const KIND={cover:"封面",text:"讲义",setup:"先听一句",task:"动手",pause:"暂停点",key:"金句",reveal:"对答案",vote:"投票",collect:"摸底",warn:"红线",recap:"回看",end:"下课",spare:"备用"};
-const STAMP={cover:"开讲",text:"记",setup:"听",task:"动手",pause:"写！",key:"记住",reveal:"对答案",vote:"投票",collect:"喊",warn:"红线",recap:"回看",end:"下课",spare:"备用"};
+const PROBE_STEPS=[
+ ["① 先问豆包","把这句话原样发给豆包：「石家庄邮电职业技术学院 2027 年快递运营管理专业的奖学金是多少钱？」先别评价，记住它给的答案。"],
+ ["② 换你自己去查","先别信。去百度搜、去学校官网找、去学生服务号翻：这个数，到底有没有？查到什么了？举手说。"],
+ ["③ 真相揭晓","查不到——正常。这道题本身，就是老师编的：2027 年的奖学金标准还没发布，网上根本没有这个数。"],
+ ["④ 但 AI 答了","查无此数，豆包却照样给了一个数，还特别自信。全班当裁判：这样的答案，敢信吗？什么样的答案才敢用？"]
+];
+const KIND={cover:"封面",text:"讲义",setup:"先听一句",task:"动手",probe:"一步步验",pause:"暂停点",key:"金句",reveal:"对答案",vote:"投票",collect:"摸底",warn:"红线",recap:"回看",end:"下课",spare:"备用"};
+const STAMP={cover:"开讲",text:"记",setup:"听",task:"动手",probe:"查！",pause:"写！",key:"记住",reveal:"对答案",vote:"投票",collect:"喊",warn:"红线",recap:"回看",end:"下课",spare:"备用"};
 const KEYS=["四要素","核对","红线","填空","彩蛋","追问","验收","模板","暂停点"];
 let i=0;
 const $=id=>document.getElementById(id);
@@ -243,12 +260,16 @@ function bodyHtml(blocks){
     return lines.map(x=>{ n++; return `<p style="--d:${(0.08+n*0.07).toFixed(2)}s">${mark(x)}</p>`; }).join("");
   }).join("");
 }
-function setFont(big){
-  document.documentElement.style.setProperty("--title", big?"3rem":"2.2rem");
-  document.documentElement.style.setProperty("--body", big?"2rem":"1.45rem");
-  document.documentElement.style.setProperty("--now", big?"1.55rem":"1.25rem");
-  $("fontBig").classList.toggle("on", big);
-  $("fontSmall").classList.toggle("on", !big);
+let fontScale=1.0;
+const FMIN=0.6, FMAX=2.0, FSTEP=0.1;
+function setFontScale(s){
+  fontScale=Math.min(FMAX,Math.max(FMIN,Math.round(s*100)/100));
+  document.documentElement.style.setProperty("--title",(3*fontScale).toFixed(2)+"rem");
+  document.documentElement.style.setProperty("--body",(2*fontScale).toFixed(2)+"rem");
+  document.documentElement.style.setProperty("--now",(1.55*fontScale).toFixed(2)+"rem");
+  const pct=$("fontPct"); if(pct) pct.textContent=Math.round(fontScale*100)+"%";
+  $("fontUp").disabled=fontScale>=FMAX;
+  $("fontDown").disabled=fontScale<=FMIN;
 }
 function renderNav(){
   const q=$("q").value.trim();
@@ -275,7 +296,9 @@ function render(dir){
   const card=$("card");
   card.className="card kind-"+s.kind+" "+(dir==="prev"?"enter-prev":"enter-next");
   let widget="";
-  if(s.kind==="reveal"){
+  if(s.kind==="probe"){
+    widget=`<div class="steps">`+PROBE_STEPS.map((p0,k)=>`<div class="st" data-s="${k}"><b>${esc(p0[0])}</b><p>${mark(p0[1])}</p></div>`).join("")+`<button type="button" class="snext" id="stNext">下一步</button><div class="done" id="stDone">四步都走完了——下一页，一道不够再来四道。</div></div>`;
+  }else if(s.kind==="reveal"){
     widget=`<div class="reveal">`+REVEAL.map((r,k)=>`<div class="r" data-r="${k}"><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div>`).join("")+`</div>`;
   }else if(s.kind==="recap"){
     widget=`<div class="recap">`+RECAP.map((r,k)=>`<div class="r" data-r="${k}"><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div>`).join("")+`</div>`;
@@ -302,6 +325,14 @@ function render(dir){
   $("pg").textContent=(i+1)+" / "+SLIDES.length;
   const prog=$("prog"); if(prog) prog.style.width=((i+1)/SLIDES.length*100).toFixed(2)+"%";
   const fl=$("flash"); if(fl && dir){ fl.classList.remove("go"); void fl.offsetWidth; fl.classList.add("go"); }
+  if(s.kind==="probe"){
+    const stEls=[...card.querySelectorAll(".steps .st")];
+    const btn=$("stNext"); let shown=1;
+    const apply=()=>{ stEls.forEach((el,j)=>el.classList.toggle("on",j<shown));
+      if(shown>=stEls.length){ btn.style.display="none"; const d=$("stDone"); if(d) d.style.display="block"; } };
+    btn.onclick=()=>{ if(shown<stEls.length){shown++; apply();} };
+    apply();
+  }
   card.querySelectorAll(".reveal .r,.recap .r").forEach(el=>el.onclick=()=>el.classList.toggle("on"));
   card.querySelectorAll(".vote button").forEach(b=>b.onclick=()=>{
     card.querySelectorAll(".vote button").forEach(x=>x.classList.remove("picked"));
@@ -324,8 +355,8 @@ $("next").onclick=()=>go(i+1);
 $("nav").onclick=e=>{ const b=e.target.closest("[data-i]"); if(b) go(+b.dataset.i); };
 $("q").oninput=renderNav;
 $("menuBtn").onclick=()=>{ if(window.innerWidth<=860) $("side").classList.toggle("open"); else document.body.classList.toggle("wide"); };
-$("fontBig").onclick=()=>setFont(true);
-$("fontSmall").onclick=()=>setFont(false);
+$("fontUp").onclick=()=>setFontScale(fontScale+FSTEP);
+$("fontDown").onclick=()=>setFontScale(fontScale-FSTEP);
 document.addEventListener("keydown", e=>{
   if(e.key==="ArrowRight"||e.key==="PageDown"||e.key===" "){ e.preventDefault(); go(i+1); }
   if(e.key==="ArrowLeft"||e.key==="PageUp"){ e.preventDefault(); go(i-1); }
@@ -336,7 +367,7 @@ $("card").addEventListener("click", e=>{
 });
 $("nowbar").addEventListener("click", e=>{ if(e.currentTarget.innerHTML) zoomText(e.currentTarget.innerHTML); });
 $("lb").onclick=()=>$("lb").classList.remove("show");
-document.body.classList.add("wide"); setFont(true);
+document.body.classList.add("wide"); setFontScale(1.0);
 const hash=parseInt(location.hash.replace("#",""),10);
 if(hash>=1 && hash<=SLIDES.length) i=hash-1;
 render();
