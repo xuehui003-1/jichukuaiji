@@ -53,8 +53,8 @@ def gen_recordbook():
     para(doc, "这不是作业本，是实验记录。看到课件「⏸ 暂停点N」才动笔：先写你的想法，再听老师讲；"
               "猜错不扣分——猜错的地方，正是你今天要学的地方。", 10.5, color=(0x5D, 0x40, 0x37))
 
-    def pause_block(no, title, page, question):
-        para(doc, f"⏸ 暂停点{no} · {title}　——课件 02 · p{page}", 12.5, True, (0xBF, 0x36, 0x0C), space_after=2)
+    def pause_block(no, title, page, question, deck="02"):
+        para(doc, f"⏸ 暂停点{no} · {title}　——课件 {deck} · p{page}", 12.5, True, (0xBF, 0x36, 0x0C), space_after=2)
         para(doc, question, 11, space_after=4)
         t = doc.add_table(rows=3, cols=2); t.style = "Table Grid"
         for i, lab in enumerate(["我的想法", "思考过程", "老师的讲解"]):
@@ -73,12 +73,22 @@ def gen_recordbook():
                 "AI 认错了你照片里的什么？你回了一句什么话纠正它？")
     pause_block("③", "核对卡结果", 18,
                 "核对卡 4 题，豆包对了几道（逐题打 ✓/✗）？一句话：以后你怎么看待 AI 的回答？")
-    pause_block("④", "今天的两句话", 25,
+    pause_block("④", "今天的两句话", 27,
                 "①今天我最想学会的一招　②这门课我绝不做的事（红线）")
     para(doc, "✅ 下课前自查：□①我写出了两种问法的差别　□②我记下了 AI 认错的地方　"
               "□③我核完了 4 题　□④我写了两句话　　今天最震到我的是：＿＿＿＿＿＿＿＿＿＿＿＿", 11)
 
-    doc.save(os.path.join(OUT_DIR, f"03_我的AI实验记录_全程_v1.1_20260909.docx"))
+    para(doc, "项目一 · 第2讲：把话说清楚（四要素＋追问）｜课件 06", 14, True, (0xBF, 0x36, 0x0C))
+    pause_block("⑤", "热身：我平时怎么问", 4,
+                "把「帮我写一个请假条」发出去后，你发的那句话原样抄下来；再写一句：这次的结果，你最不满意哪里？",
+                deck="06")
+    pause_block("⑥", "重新填好再问：好在哪", 10,
+                "把你按四要素填好的新命令完整抄下来；再写一句：跟热身那次比，具体好在哪？",
+                deck="06")
+    para(doc, "✅ 下课前自查：□⑤我抄下了自己的老问法　□⑥我抄下了新命令、写清好在哪　"
+              "□我记住了追问两条规矩（不换话题／只说要改的）", 11)
+
+    doc.save(os.path.join(OUT_DIR, f"03_我的AI实验记录_全程_v1.2_20260909.docx"))
     print("saved 03")
 
 # ================= ② 核对卡 =================
