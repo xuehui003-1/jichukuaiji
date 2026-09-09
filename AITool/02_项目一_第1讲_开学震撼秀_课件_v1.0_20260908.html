@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>开学第一课 · 开学震撼秀 · AI工具实战应用 v1.0</title>
+<style>
+:root{
+  --bg:#FFF8E1; --card:#FFFFFF; --text:#212121; --muted:#5D4037;
+  --primary:#BF360C; --primary-dark:#BF360C; --primary-soft:#FFCC80;
+  --line:#E0D5C3; --green:#2E7D32; --z:1;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:#241D17;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  font-family:"微软雅黑","Microsoft YaHei","PingFang SC",sans-serif;}
+#stage{position:relative;width:1280px;height:720px;background:var(--bg);overflow:hidden;
+  transform-origin:center center;box-shadow:0 20px 60px rgba(0,0,0,.5);border-radius:6px}
+.slide{position:absolute;inset:0;padding:64px 96px 84px;display:none;flex-direction:column;justify-content:center}
+.slide.active{display:flex}
+.eyebrow{font-size:calc(20px*var(--z));letter-spacing:.24em;color:var(--primary);font-weight:700;margin-bottom:12px}
+h1{font-size:calc(50px*var(--z));color:var(--text);line-height:1.22;margin-bottom:16px;font-weight:800}
+h1 .accent{color:var(--primary)}
+.sub{font-size:calc(26px*var(--z));color:var(--muted);margin-bottom:14px;line-height:1.5}
+ul.items{list-style:none}
+ul.items li{font-size:calc(28px*var(--z));color:var(--text);line-height:1.5;padding:8px 0;
+  border-bottom:1px dashed var(--line)}
+ul.items li:last-child{border-bottom:none}
+ul.items li b{color:var(--primary)}
+.cards{display:flex;gap:30px;margin-top:8px}
+.card{flex:1;background:var(--card);border:2px solid var(--line);border-radius:18px;padding:28px 32px}
+.card h2{font-size:calc(30px*var(--z));margin-bottom:10px;color:var(--primary)}
+.card li{font-size:calc(25px*var(--z));color:var(--text);line-height:1.6;list-style:none;padding:5px 0}
+.steps{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+.step{display:flex;align-items:center;gap:18px;background:var(--card);border:2px solid var(--line);
+  border-radius:16px;padding:14px 24px}
+.step .n{flex:0 0 56px;height:56px;border-radius:50%;background:var(--primary);color:#fff;
+  font-size:calc(30px*var(--z));font-weight:800;display:flex;align-items:center;justify-content:center}
+.step .t{font-size:calc(27px*var(--z));color:var(--text);line-height:1.5}
+.step .t b{color:var(--primary)}
+.big{font-size:calc(54px*var(--z));text-align:center;line-height:1.4;color:var(--text);font-weight:800}
+.big .accent{color:var(--primary)}
+.emoji-row{text-align:center;font-size:70px;letter-spacing:16px;margin-bottom:28px}
+.cover h1{font-size:calc(62px*var(--z))}
+.cover .sub{font-size:calc(27px*var(--z))}
+.meta{position:absolute;left:96px;bottom:34px;font-size:18px;color:var(--muted)}
+/* 暂停点：深红底，文字只用白或琥珀 */
+.slide.pause{background:var(--primary);color:#fff}
+.pause .eyebrow{color:#FFE8D6}
+.pause h1{color:#fff;font-size:calc(52px*var(--z))}
+.pause h1 .accent{color:#FFE082}
+.pause .sub{color:#FFE9D2;font-size:calc(28px*var(--z))}
+.pause .where{margin-top:26px;font-size:calc(24px*var(--z));background:rgba(255,255,255,.18);
+  border-radius:14px;padding:12px 24px;display:inline-block;align-self:flex-start;color:#fff}
+/* 震撼点卡片 */
+.slide.shock{background:var(--bg)}
+.shock .cardtitle{font-size:calc(25px*var(--z));font-weight:800;color:#fff;background:var(--primary);
+  display:inline-block;padding:9px 26px;border-radius:999px;margin-bottom:16px;align-self:flex-start}
+/* 任务卡 */
+.task-card{background:var(--card);border:3px solid var(--primary);border-radius:20px;
+  padding:26px 36px;max-width:1080px}
+.task-card h2{font-size:calc(32px*var(--z));color:var(--primary);margin-bottom:12px}
+.task-card li{font-size:calc(25px*var(--z));color:var(--text);line-height:1.7;list-style:none}
+.task-card li::before{content:"▶ ";color:var(--primary);font-size:18px}
+/* 问法对比 */
+.vs{display:flex;gap:24px;margin-top:6px}
+.vs .col{flex:1;background:var(--card);border:2.5px solid var(--line);border-radius:16px;padding:22px 26px}
+.vs .col h2{font-size:calc(27px*var(--z));margin-bottom:10px}
+.vs .col.bad h2{color:var(--muted)}
+.vs .col.good{border-color:var(--primary)}
+.vs .col.good h2{color:var(--primary)}
+.vs .col .q{font-size:calc(23px*var(--z));line-height:1.65;color:var(--text);background:#FFFDF6;
+  border-radius:10px;padding:12px 16px}
+.vs .col .q b{color:var(--primary)}
+/* 核对卡表格 */
+table.check{border-collapse:collapse;width:100%;margin-top:8px}
+table.check th,table.check td{border:2px solid var(--line);background:var(--card);
+  font-size:calc(23px*var(--z));padding:11px 16px;text-align:left;color:var(--text);line-height:1.45}
+table.check th{background:var(--primary);color:#fff;font-weight:800}
+table.check td.c{text-align:center;width:120px;font-weight:800;color:var(--primary)}
+/* 结束页 */
+.slide.end{background:#2B211B;color:#FFF9F0;align-items:center;text-align:center}
+.end h1{color:#FFF9F0;font-size:calc(48px*var(--z))}
+.end .sub{color:#D8CFC2;font-size:calc(26px*var(--z));line-height:1.7}
+/* 角标 */
+.badges{position:absolute;top:20px;right:28px;display:flex;gap:10px;z-index:5}
+.badge{padding:8px 20px;border-radius:999px;font-size:21px;font-weight:700;white-space:nowrap;
+  background:#fff;border:2.5px solid var(--primary);color:var(--primary)}
+.badge.note{background:var(--primary);color:#fff}
+/* HUD */
+#hud{position:absolute;left:0;right:0;bottom:0;height:56px;background:rgba(43,33,27,.92);
+  display:flex;align-items:center;gap:14px;padding:0 22px;color:#FFF9F0;font-size:19px}
+#hud button{background:none;border:1.5px solid rgba(255,249,240,.4);color:#FFF9F0;
+  font-size:20px;padding:6px 16px;border-radius:10px;cursor:pointer}
+#hud button:hover{background:var(--primary);border-color:var(--primary)}
+#counter{margin-left:auto}
+#bar{position:absolute;left:0;bottom:56px;height:5px;background:var(--primary);width:0;
+  transition:width .25s}
+#notes{position:absolute;left:0;right:0;bottom:56px;background:rgba(255,248,225,.97);
+  border-top:3px solid var(--primary);padding:16px 96px;display:none;font-size:21px;color:var(--text)}
+#notes b{color:var(--primary)}
+#notes.show{display:block}
+.stu{color:var(--green);font-weight:700}
+.cmdline{font-size:calc(26px*var(--z));background:#fff;border:3px solid var(--primary);border-radius:12px;
+  padding:12px 18px;text-align:center;font-weight:700;color:var(--text);line-height:1.5}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="deck"></div>
+  <div id="bar"></div>
+  <div id="notes"></div>
+  <div id="hud">
+    <button id="prev" title="上一页">◀</button>
+    <button id="next" title="下一页">▶</button>
+    <span id="counter">1 / 1</span>
+    <button id="zout" title="缩小字号（快捷键 −）">A−</button>
+    <button id="zin" title="放大字号（快捷键 +）">A+</button>
+    <button id="notesBtn" title="教师提示">📝 教师提示</button>
+    <button id="fsBtn" title="全屏">⛶ 全屏</button>
+  </div>
+</div>
+<div style="position:fixed;bottom:8px;right:12px;color:#999;font-size:13px;z-index:99">
+  翻页：← → 或空格 ｜ 教师提示：N ｜ 全屏：F</div>
+<script>
+const SLIDES = [
+{cls:"cover", html:`
+  <div class="emoji-row">📱 🤖 ✨ 🧾 🎬</div>
+  <h1>AI工具实战应用<br><span class="accent">开学第一课 · 开学震撼秀</span></h1>
+  <div class="sub">你手机里的豆包，你只用明白了 1%<br>不背公式 · 不写代码 · 不搞设计 · 全程动手</div>
+  <div class="meta">02_课件 v1.0 · 2026-09-08</div>`,
+ notes:"课前：投影音响、豆包网页版登录、教师笔记本WorkBuddy已装并登录、Trae SOLO网页版打开备用、核对卡纸卡印好。开场不寒暄，直接进标签页。"},
+
+{cls:"", html:`
+  <div class="eyebrow">课堂公约 · 先认标签</div>
+  <h1>课上看到这些<span class="accent">标签</span>，就照做</h1>
+  <div class="cards">
+    <div class="card"><h2>📒 暂停点</h2>
+      <li>翻到记录册对应的<b>暂停点</b>，动笔写</li>
+      <li>每处三行：<b>①想法 → ②思考过程 → ③老师的讲解</b></li>
+    </div>
+    <div class="card"><h2>🙋 抢答</h2>
+      <li>举手抢答，说就加分</li>
+      <li>答错不扣分</li>
+    </div>
+    <div class="card"><h2>🎲 抽人</h2>
+      <li>随机抽人，答不出——<b>同桌帮</b></li>
+    </div>
+  </div>
+  <div class="sub">✍️ 先写你的 → 🧑🏫 再听老师讲，写错了在「③老师的讲解」那行补记</div>`,
+ notes:"标签页讲慢一点，这是全学期的暗号。今天共4个暂停点。"},
+
+{cls:"", html:`
+  <div class="eyebrow">这门课学什么</div>
+  <h1>一句话（大白话版）</h1>
+  <div class="big">学怎么指挥 AI<br><span class="accent">替你干活</span></div>
+  <ul class="items">
+    <li>不背公式、不写代码、不搞设计——<b>模板给你，你只管动手</b></li>
+    <li>全程动手：手机上的豆包、浏览器里的 AI，全是你的工具</li>
+  </ul>`,
+ notes:"强调『不搞设计』——观察谁松了口气，这些是重点照顾对象。"},
+
+{cls:"", html:`
+  <div class="eyebrow">课程全景</div>
+  <h1>怎么玩 · 怎么考核</h1>
+  <div class="cards">
+    <div class="card"><h2>🎮 六个项目</h2>
+      <li>① 提示词：把话说清楚</li>
+      <li>② 知识库：给 AI 发参考书</li>
+      <li>③ 智能体：指挥 AI 干活</li>
+      <li>④ AI 帮你整理东西</li>
+      <li>⑤ AI 替你干活（装机课）</li>
+      <li>⑥ 安全与结课展</li>
+    </div>
+    <div class="card"><h2>📊 怎么考核</h2>
+      <li>过程 <b>60%</b>：任务卡＋记录册＋抢答积分</li>
+      <li>结课 <b>40%</b>：三栏模板展示（照模板讲）</li>
+      <li>😌 <b>没有死记硬背的卷子</b></li>
+    </div>
+  </div>`,
+ notes:"考核讲1分钟。重点是『没有死记硬背的卷子』和『照模板讲』——不答辩、不自由发挥。"},
+
+{cls:"", badges:[{type:"question", text:"🙋 抢答"}], html:`
+  <div class="eyebrow">开场摸底</div>
+  <h1>你平时用豆包<span class="accent">干什么</span>？</h1>
+  <ul class="items">
+    <li>🙋 举手说：你让豆包干过什么活？</li>
+    <li>写作业？聊天？翻译？识图？还是只问过它『你是谁』？</li>
+  </ul>
+  <div class="sub">说一个 2 分，不评价，只记账</div>`,
+ notes:"老师板书用途排行（作业/聊天/翻译…）。先不评价——这份榜单在震撼①收尾时要拿出来对比。"},
+
+{cls:"shock", html:`
+  <div class="cardtitle">震撼① · 同一个豆包，两种人生</div>
+  <div class="eyebrow">现在 · 当堂做</div>
+  <h1>用你平时的方式，<span class="accent">问豆包一件事</span></h1>
+  <div class="task-card">
+    <h2>📋 任务（3 分钟）</h2>
+    <li>打开手机豆包，问它：<b>「帮我安排一个正定一日游」</b></li>
+    <li>就这一句，<b>你平时怎么问就怎么问</b>，别加任何花样</li>
+    <li>看一眼它给的结果，记在心里：几段字？能用吗？</li>
+  </div>`,
+ notes:"限时3分钟，全场只发这一句。收时间后翻页，看老师怎么问。"},
+
+{cls:"shock", html:`
+  <div class="cardtitle">震撼① · 同一个豆包，两种人生</div>
+  <div class="eyebrow">现在 · 看大屏</div>
+  <h1>老师怎么问</h1>
+  <div class="vs">
+    <div class="col bad"><h2>你们的问法</h2>
+      <div class="q">帮我安排一个正定一日游</div>
+    </div>
+    <div class="col good"><h2>老师的问法</h2>
+      <div class="q">你是<b>正定本地向导</b>。我是石邮院新生，<b>预算 50 元</b>，周六一天。给我时间线，并用表格输出：<b>时间 / 地点 / 花费 / 避坑提醒</b>。隆兴寺要提前预约，把预约方式写清楚。</div>
+    </div>
+  </div>
+  <div class="sub">老师当场原样发出去——全班看结果</div>`,
+ notes:"当场把右边原样发给豆包，投屏结果。对比点：一边是一大段正确的废话，一边是能直接照着走的表格。"},
+
+{cls:"", badges:[{type:"question", text:"🙋 抢答"}], html:`
+  <div class="eyebrow">震撼① · 抢答</div>
+  <h1>两种问法，<span class="accent">差在哪</span>？</h1>
+  <ul class="items">
+    <li>同一个豆包，为什么结果差这么多？</li>
+    <li>抢答：老师的问法里，多说了什么？（抓到一个 2 分）</li>
+  </ul>`,
+ notes:"先抢答，学生说到哪个算哪个，全部接住，不急着公布完整答案。"},
+
+{cls:"", html:`
+  <div class="eyebrow">震撼① · 揭晓</div>
+  <h1>多说了四样东西</h1>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><div class="t"><b>角色</b>——你是正定本地向导</div></div>
+    <div class="step"><div class="n">2</div><div class="t"><b>背景</b>——我是新生，预算 50 元</div></div>
+    <div class="step"><div class="n">3</div><div class="t"><b>要求</b>——隆兴寺预约要写清</div></div>
+    <div class="step"><div class="n">4</div><div class="t"><b>格式</b>——用表格：时间/地点/花费/避坑</div></div>
+  </div>
+  <div class="sub">这就是这学期的主线：<b>把话说清楚，AI 才听得懂</b>——四要素模板，后面正式学</div>`,
+ notes:"板书开场摸底记下的用途排行，对比一句：『你们刚才说的用法，加这四样，全都升级。』"},
+
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点①"}], html:`
+  <div class="eyebrow">⏸ 暂停点① · 两种问法</div>
+  <h1>两种问法，<span class="accent">差在哪</span>？</h1>
+  <div class="sub">写下：①你觉得差在哪 ②你平时是哪种问法。写完合上，先别讨论。</div>
+  <div class="where">✍️ 记录册「暂停点①」：①想法 → ②思考过程 → ③听老师讲</div>`,
+ notes:"90秒安静写。老师巡场看谁写『不知道差在哪』——这些学生后面多盯。"},
+
+{cls:"shock", badges:[{type:"question", text:"🙋 抢答"}], html:`
+  <div class="cardtitle">震撼② · AI 什么都看得懂</div>
+  <div class="eyebrow">现在 · 当堂做</div>
+  <h1>拍一张<span class="accent">你的东西</span>，发给豆包</h1>
+  <div class="task-card">
+    <h2>📋 任务（3 分钟）</h2>
+    <li>第一步：拍一张你的<b>桌面 / 笔袋 / 书包</b>（或老师发的皱笔记照片）</li>
+    <li>第二步：发给豆包，命令照抄：<b>「把图里的东西列成清单，标上数量」</b></li>
+    <li>第三步：核对——它列对了吗？</li>
+    <li>🙋 举手报告：<b>它认错了什么</b>？报一个 2 分</li>
+  </div>`,
+ notes:"老师先演示一遍：拍皱巴巴的手写笔记→豆包整理成表格（铺垫）。学生动手时巡场，收集认错案例，挑最好笑的待会展示。"},
+
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点②"}], html:`
+  <div class="eyebrow">⏸ 暂停点② · AI 看图</div>
+  <h1>AI 认错了什么？<span class="accent">你怎么纠正的</span>？</h1>
+  <div class="sub">写下：①AI 认错了＿＿ ②你回了一句什么话纠正它。</div>
+  <div class="where">✍️ 记录册「暂停点②」：①想法 → ②思考过程 → ③听老师讲</div>`,
+ notes:"落点预告：纠正AI的那句话，就是下一环节要学的『追问』。此处不点破。"},
+
+{cls:"shock", html:`
+  <div class="cardtitle">震撼③ · 电脑被附身了</div>
+  <div class="eyebrow">现在 · 看大屏</div>
+  <h1>AI 开始<span class="accent">操作老师的电脑</span></h1>
+  <div class="task-card">
+    <h2>👀 看老师给 AI 下的三个任务（WorkBuddy，老师的笔记本）</h2>
+    <li>① 把桌面上的乱文件，按类型<b>自动归进文件夹</b></li>
+    <li>② 把这份 50 人名单，<b>按专业汇总成一张表</b></li>
+    <li>③ 再做一页<b>欢迎新同学</b>的 PPT</li>
+  </div>
+  <ul class="items">
+    <li>全程看 AI 自己动鼠标、自己建文件——<b>谁喊「停」，老师当场接管</b></li>
+    <li>它要删文件？看它怎么被拦住（<b>高危操作自动拦截</b>）</li>
+  </ul>`,
+ notes:"本课最强震撼点，全靠教师笔记本（提前装好登录好）。名单就用01_学生名单。收尾钩子：这东西第9次课装到你们电脑上。"},
+
+{cls:"shock", html:`
+  <div class="cardtitle">震撼④ · AI 会一本正经说瞎话</div>
+  <div class="eyebrow">现在 · 看大屏</div>
+  <h1>老师问了一个<span class="accent">编出来的问题</span></h1>
+  <div class="cmdline">「石家庄邮电职业技术学院 2027 年快递运营管理专业的奖学金是多少钱？」</div>
+  <ul class="items">
+    <li>这个问题，<b>网上查不到</b>——因为数字是老师编的</li>
+    <li>看豆包怎么答：<b>它照样给了一个数，还特别自信</b></li>
+    <li>全班当裁判：这个数，能信吗？去哪核实？</li>
+  </ul>`,
+ notes:"当场问、当场投屏。如果豆包这次拒答了（说查不到），反而更好：讲『它有时装懂、有时老实，你永远猜不到』。"},
+
+{cls:"shock", html:`
+  <div class="cardtitle">震撼④ · 核对卡</div>
+  <div class="eyebrow">现在 · 当堂做</div>
+  <h1>发核对卡：<span class="accent">AI 答得对吗</span>？</h1>
+  <table class="check">
+    <tr><th>逐条问豆包，对照右边核实，打 ✓ 或 ✗</th><th>核实依据（老师给）</th></tr>
+    <tr><td>① 2025 年，中国快递业务量超过了 1700 亿件？</td><td class="c">国家邮政局数据</td></tr>
+    <tr><td>② 石家庄地铁起步价是 3 元？</td><td class="c">石家庄地铁官网票价表</td></tr>
+    <tr><td>③ 石邮院宿舍电费充值 100 元送 20 元？</td><td class="c">查无此事</td></tr>
+    <tr><td>④ 学校驿站快递超过 3 天不取，每天收 1 元保管费？</td><td class="c">驿站告示（查无此规定）</td></tr>
+  </table>
+  <div class="sub">5 分钟。写完打勾，🙋 抢答：<b>哪几题豆包在说瞎话</b>？</div>`,
+ notes:"③④是编造的校园信息，AI大概率编得像模像样；②是真陷阱（起步价2元，问法诱导）。核实依据提前印在纸卡背面。"},
+
+{cls:"", html:`
+  <div class="eyebrow">震撼④ · 揭晓</div>
+  <h1>AI 撒谎的三种样子</h1>
+  <ul class="items">
+    <li>① <b>编数字</b>——张口就来，特别精确</li>
+    <li>② <b>编出处</b>——『根据相关规定』，其实没这规定</li>
+    <li>③ <b>不知道也答</b>——语气比真话还自信</li>
+  </ul>
+  <div class="sub">这门课的规矩：<b>AI 说的，不背；要用的，先核</b>。钱、规则、法律，一律以官方为准。</div>`,
+ notes:"收核对卡（计入过程分）。落点句带全班齐读一遍。"},
+
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点③"}], html:`
+  <div class="eyebrow">⏸ 暂停点③ · 核对卡结果</div>
+  <h1>4 道题，<span class="accent">豆包对了几道</span>？</h1>
+  <div class="sub">写下：①四题的 ✓/✗ ②一句话：以后你怎么看待 AI 的回答？</div>
+  <div class="where">✍️ 记录册「暂停点③」：①想法 → ②思考过程 → ③听老师讲</div>`,
+ notes:"90秒。老师报全班错得最多的一题，顺势强调『越像真的越要核』。"},
+
+{cls:"shock", badges:[{type:"question", text:"🙋 抢答"}], html:`
+  <div class="cardtitle">震撼⑤ · 一句话成精</div>
+  <div class="eyebrow">现在 · 看大屏</div>
+  <h1>一句话，现场造一个<span class="accent">班级小网页</span></h1>
+  <ul class="items">
+    <li>老师打开 Trae SOLO 网页版（浏览器，什么都没装）</li>
+    <li>全班 🙋 投票选内容：<b>班级介绍墙 / 抢答小游戏 / 本门课课表</b></li>
+    <li>一句话发出去——看它几十秒交出一个能打开的网页</li>
+  </ul>`,
+ notes:"备选方案：飞象老师现场生成抢答小游戏。哪个网络稳用哪个，提前都试一遍。"},
+
+{cls:"", badges:[{type:"question", text:"🙋 抢答"}], html:`
+  <div class="eyebrow">安全三红线 · 红绿灯</div>
+  <h1>这三种操作，<span class="accent">永远红灯</span></h1>
+  <ul class="items">
+    <li>🚫 把自己的<b>身份证、手机号、家庭住址</b>发给 AI</li>
+    <li>🚫 把<b>同学的个人信息</b>发给 AI（名单、照片、聊天记录）</li>
+    <li>🚫 AI 回答的<b>钱、规则、法律</b>，不核实就用</li>
+  </ul>
+  <div class="sub">🙋 抢答：老师念三个场景，举手判红灯还是绿灯</div>`,
+ notes:"三个场景口播：①把带名字的名单发给AI整理（红）②问AI『正定有什么好吃的』（绿）③问AI『我兼职被欠薪怎么办』并直接照做（红——要先核官方渠道）。"},
+
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点④"}], html:`
+  <div class="eyebrow">⏸ 暂停点④ · 今天的两句话</div>
+  <h1>写两句带不走的</h1>
+  <div class="sub">① 今天，我最想学会的一招：＿＿＿＿<br>② 这门课，我绝不做的事（红线）：＿＿＿＿</div>
+  <div class="where">✍️ 记录册「暂停点④」：写完举记录册，老师检查加分</div>`,
+ notes:"这是全课收尾动笔。举记录册检查，当场加2分。写得具体的（如『学会让AI做表格』）额外+1。"},
+
+{cls:"", badges:[{type:"question", text:"🎲 抽人①"}], html:`
+  <div class="eyebrow">收尾 · 三句话</div>
+  <h1>今天只记三句</h1>
+  <ul class="items">
+    <li>🗣️ 你问一句它答一句，是聊天；<b>你派一件事它办完，才是干活</b></li>
+    <li>🤥 AI 会说瞎话——<b>核实是你的事</b></li>
+    <li>😎 这门课：不背、不码、不设计——<b>照模板动手就行</b></li>
+    <li><span class="stu">现在你：把三句复述给同桌，抽人说给全班</span></li>
+  </ul>`,
+ notes:"抽1–2人复述。紧接着说『接下来』那句，然后放结束页。"},
+
+{cls:"end", html:`
+  <div class="emoji-row" style="font-size:56px">📝 🤖 ✨</div>
+  <h1>接下来的安排</h1>
+  <div class="sub">
+    接下来学：<b>把话说清楚</b>——提示词四要素填空模板（就是今天老师那句问法的同款）<br><br>
+    课后任务（必做）：用 30 秒给室友讲明白『这门课学什么』<br>
+    选做：截一张你自己遇到过的「AI 说瞎话」，带来全班比惨，最离谱的加 5 分
+  </div>`,
+ notes:"课后任务说两遍。记录册收上来翻一遍暂停点④再下课。"},
+];
+
+const deck = document.getElementById("deck");
+const notesEl = document.getElementById("notes");
+const bar = document.getElementById("bar");
+const counter = document.getElementById("counter");
+let cur = 0;
+
+SLIDES.forEach((s) => {
+  const el = document.createElement("section");
+  el.className = "slide " + (s.cls || "");
+  el.innerHTML = s.html;
+  if (s.badges && s.badges.length) {
+    const wrap = document.createElement("div");
+    wrap.className = "badges";
+    s.badges.forEach((bd) => {
+      const b = document.createElement("div");
+      b.className = "badge " + bd.type;
+      b.textContent = bd.text;
+      wrap.appendChild(b);
+    });
+    el.appendChild(wrap);
+  }
+  deck.appendChild(el);
+});
+const slides = deck.querySelectorAll(".slide");
+
+function show(i) {
+  cur = (i + SLIDES.length) % SLIDES.length;
+  slides.forEach((el, k) => el.classList.toggle("active", k === cur));
+  counter.textContent = (cur + 1) + " / " + SLIDES.length;
+  bar.style.width = ((cur + 1) / SLIDES.length * 100) + "%";
+  notesEl.innerHTML = "<b>📝 教师提示：</b>" + (SLIDES[cur].notes || "");
+}
+show(0);
+
+function fit() {
+  const s = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+  document.getElementById("stage").style.transform = "scale(" + s + ")";
+}
+window.addEventListener("resize", fit);
+fit();
+
+document.getElementById("prev").onclick = () => show(cur - 1);
+document.getElementById("next").onclick = () => show(cur + 1);
+document.getElementById("stage").addEventListener("click", (e) => {
+  if (e.target.closest("#hud") || e.target.closest("#notes")) return;
+  show(cur + 1);
+});
+document.getElementById("notesBtn").onclick = () => notesEl.classList.toggle("show");
+document.getElementById("fsBtn").onclick = () => {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+};
+window.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") { e.preventDefault(); show(cur + 1); }
+  else if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); show(cur - 1); }
+  else if (e.key === "Home") show(0);
+  else if (e.key === "End") show(SLIDES.length - 1);
+  else if (e.key === "n" || e.key === "N") notesEl.classList.toggle("show");
+  else if (e.key === "f" || e.key === "F") document.getElementById("fsBtn").click();
+});
+let tx = 0;
+window.addEventListener("touchstart", (e) => tx = e.touches[0].clientX);
+window.addEventListener("touchend", (e) => {
+  const dx = e.changedTouches[0].clientX - tx;
+  if (Math.abs(dx) > 60) show(cur + (dx < 0 ? 1 : -1));
+});
+</script>
+<script>
+(function(){
+  var z = 1;
+  function set(){ document.documentElement.style.setProperty("--z", z); }
+  var zin = document.getElementById("zin"), zout = document.getElementById("zout");
+  if (zin) zin.onclick = function(){ z = Math.min(1.8, Math.round((z+0.1)*10)/10); set(); };
+  if (zout) zout.onclick = function(){ z = Math.max(0.7, Math.round((z-0.1)*10)/10); set(); };
+  window.addEventListener("keydown", function(e){
+    if (e.key === "+" || e.key === "="){ if(zin) zin.click(); }
+    else if (e.key === "-"){ if(zout) zout.click(); }
+  });
+})();
+</script>
+</body>
+</html>
