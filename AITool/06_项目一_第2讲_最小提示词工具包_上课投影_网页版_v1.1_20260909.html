@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第2讲 把话说清楚 上课投影 v1.1</title>
+<style>
+:root{
+  --orange:#bf360c; --green:#2e7d32; --ink:#22170f;
+  --gold:#f9a825; --brown:#3e2723; --paper:#fffdf8; --line:#ead9c6;
+  --title:3rem; --body:2rem; --now:1.55rem;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#efe4d6;color:var(--ink);
+  font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;}
+body{display:flex;flex-direction:column;min-height:100vh;overflow:hidden}
+.top{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--brown);color:#fff;flex-shrink:0}
+.top h1{font-size:14px;font-weight:700}
+.top small{opacity:.75;font-size:11px;margin-left:6px}
+.top .hint{margin-left:auto;font-size:11px;opacity:.85}
+.top button{border:0;background:#efebe9;color:var(--brown);font:inherit;font-weight:800;padding:6px 10px;border-radius:8px;cursor:pointer}
+.top button.on{background:#ffcc80;color:var(--brown)}
+.top button:disabled{opacity:.45;cursor:default}
+.layout{display:grid;grid-template-columns:148px 1fr;flex:1;min-height:0}
+body.wide .layout{grid-template-columns:1fr}
+body.wide .side{display:none}
+.side{background:#f7efe4;border-right:1px solid var(--line);overflow:auto;padding:6px 0}
+.side input{width:calc(100% - 12px);margin:4px 6px 6px;padding:5px 7px;border:1px solid #e6d5c3;border-radius:6px;font:inherit;font-size:11px}
+.nav-item{display:block;width:100%;text-align:left;padding:5px 8px;border:0;background:transparent;font:inherit;cursor:pointer;color:#5a4638;font-size:11px;line-height:1.25}
+.nav-item:hover{background:#f8e8d8}
+.nav-item.on{background:#bf360c;color:#fff}
+.nav-item .k{display:inline-block;min-width:22px;opacity:.7;font-variant-numeric:tabular-nums}
+.main{min-height:0;overflow-y:scroll;padding:8px 14px 8px;display:flex;justify-content:center;align-items:flex-start;scrollbar-gutter:stable;scrollbar-width:none}
+.main::-webkit-scrollbar{width:0}
+.card{width:min(1100px,100%);background:var(--paper);border-radius:14px;box-shadow:0 8px 28px rgba(62,39,35,.08);border:1px solid var(--line);
+  overflow:visible;transform-origin:50% 50%;position:relative}
+.badge{display:inline-block;font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px;margin-bottom:8px}
+.k-cover{background:#3e2723;color:#ffcc80}
+.k-pause{background:#fff3e0;color:#bf360c;border:1px solid #ffcc80}
+.k-setup{background:#eceff1;color:#455a64}
+.k-text{background:#f5f5f5;color:#616161}
+.k-spare{background:#eeeeee;color:#757575}
+.k-key,.k-end{background:#3e2723;color:#ffcc80}
+.k-reveal{background:#f3e5f5;color:#4a148c}
+.k-recap{background:#fce4ec;color:#880e4f}
+.k-task{background:#e8f5e9;color:#1b5e20}
+.head{padding:12px 22px 4px}
+.head h2{font-size:var(--title);line-height:1.25;color:var(--brown);cursor:zoom-in}
+.body{padding:6px 22px 10px;font-size:var(--body);line-height:1.45;font-weight:650}
+.body p{margin:0 0 10px;cursor:zoom-in}
+mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-weight:900}
+.stamp{position:absolute;right:16px;top:16px;z-index:3;font-weight:900;font-size:26px;padding:8px 14px;border-radius:12px;transform:rotate(12deg);box-shadow:4px 4px 0 #3e2723;animation:stamp 1s cubic-bezier(.16,1,.3,1) both;pointer-events:none;letter-spacing:.08em}
+.stamp.st-cover{background:#3e2723;color:#ffcc80}
+.stamp.st-setup{background:#1565c0;color:#fff}
+.stamp.st-pause{background:#ff1744;color:#fff;font-size:30px}
+.stamp.st-text{background:#5d4037;color:#ffe0b2}
+.stamp.st-task{background:#2e7d32;color:#fff}
+.stamp.st-key,.stamp.st-end{background:#ffc400;color:#3e2723}
+.stamp.st-reveal{background:#4a148c;color:#fff}
+.stamp.st-recap{background:#880e4f;color:#fff}
+.stamp.st-spare{background:#607d8b;color:#fff}
+.dock{flex-shrink:0}
+.now{background:var(--green);color:#fff;padding:8px 18px;font-size:var(--now);font-weight:800;line-height:1.35;cursor:zoom-in}
+.bar{display:flex;align-items:center;gap:8px;padding:4px 10px;background:#fff;border-top:1px solid var(--line)}
+.bar button{border:0;background:var(--orange);color:#fff;font:inherit;font-weight:700;padding:5px 12px;border-radius:8px;cursor:pointer;font-size:13px;line-height:1.2}
+.bar button.ghost{background:#efebe9;color:var(--brown)}
+.bar .pg{flex:1;text-align:center;font-variant-numeric:tabular-nums;font-weight:700;color:#6d5648;font-size:13px}
+.lb{position:fixed;inset:0;background:rgba(20,12,8,.9);display:none;align-items:center;justify-content:center;z-index:20;padding:24px}
+.lb.show{display:flex}
+.zoom-text{color:#fff;font-size:clamp(36px,6.5vw,84px);font-weight:900;line-height:1.35;text-align:center;max-width:92vw;text-shadow:0 2px 0 #000}
+
+.ambient{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:radial-gradient(1200px 600px at 10% -10%,#ffcc80 0%,transparent 55%),radial-gradient(900px 500px at 110% 110%,#81c784 0%,transparent 50%),#ead7c0}
+.ambient .blob{position:absolute;border-radius:50%;filter:blur(28px);opacity:.7;animation:float 10s ease-in-out infinite}
+.ambient .b1{width:50vw;height:50vw;left:-12vw;top:-18vh;background:#ff6d00}
+.ambient .b2{width:44vw;height:44vw;right:-14vw;bottom:-12vh;background:#00c853;animation-delay:-4s}
+.ambient .b3{width:32vw;height:32vw;left:38vw;top:38vh;background:#ff1744;opacity:.45;animation-delay:-7s}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(8%,-10%) scale(1.18)}}
+.progress{position:fixed;top:0;left:0;right:0;height:10px;z-index:12;background:#3e2723}
+.progress i{display:block;height:100%;width:0;background:repeating-linear-gradient(90deg,#ff1744 0 18px,#ffea00 18px 36px);box-shadow:0 0 16px #ff1744;transition:width .8s cubic-bezier(.16,1,.3,1)}
+.page-flash{position:fixed;inset:0;z-index:11;pointer-events:none;background:#fff;opacity:0}
+.page-flash.go{animation:flash .55s ease}
+@keyframes flash{0%{opacity:.7}100%{opacity:0}}
+.layout,.dock,.top{position:relative;z-index:2}
+.card.enter-next{animation:inNext 1.05s cubic-bezier(.16,1,.3,1) both}
+.card.enter-prev{animation:inPrev 1.05s cubic-bezier(.16,1,.3,1) both}
+@keyframes inNext{0%{opacity:0;transform:translateX(22vw) rotate(2.5deg) scale(.9)}60%{opacity:1}100%{opacity:1;transform:none}}
+@keyframes inPrev{0%{opacity:0;transform:translateX(-22vw) rotate(-2.5deg) scale(.9)}60%{opacity:1}100%{opacity:1;transform:none}}
+.card .head h2,.card .body p{animation:rise .85s cubic-bezier(.16,1,.3,1) both}
+.card .head h2{animation-delay:.08s}
+.card .body p{animation-delay:var(--d,.2s)}
+@keyframes rise{from{opacity:0;transform:translateY(42px) scale(.96)}to{opacity:1;transform:none}}
+.card.kind-cover{background:linear-gradient(165deg,#fff3e0,#fffdf8 40%,#ffe0b2);box-shadow:0 20px 60px rgba(191,54,12,.22)}
+.card.kind-cover h2{letter-spacing:.06em;animation:coverSlam 1s cubic-bezier(.16,1,.3,1) both}
+@keyframes coverSlam{0%{opacity:0;transform:scale(.6) rotate(-6deg)}70%{transform:scale(1.06) rotate(1deg)}100%{opacity:1;transform:none}}
+.card.kind-pause{background:#fff8e1;border:8px solid #ff1744!important;box-shadow:0 0 0 8px #fffde7, 0 0 40px #ff1744}
+.card.kind-pause::before{content:"";position:absolute;inset:-16px;border-radius:22px;border:8px solid #ff1744;animation:ring 1s ease-out infinite;pointer-events:none}
+@keyframes ring{0%{transform:scale(.96);opacity:1}100%{transform:scale(1.08);opacity:0}}
+.card.kind-pause .badge{background:#ff1744;color:#fff;font-size:16px;padding:6px 14px;animation:pulse .7s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.06)}}
+@keyframes stamp{0%{opacity:0;transform:scale(1.8) rotate(-20deg)}100%{opacity:1;transform:rotate(12deg)}}
+.card.kind-key,.card.kind-end{background:linear-gradient(160deg,#2d1b12,#3e2723 55%,#4e342e);border:0!important;box-shadow:0 24px 70px rgba(0,0,0,.45)}
+.card.kind-key .head h2,.card.kind-end .head h2{color:#ffd54f;font-size:clamp(34px,6.4vw,92px);line-height:1.18;text-align:center;padding:18px 0 6px}
+.card.kind-key .body,.card.kind-end .body{text-align:center}
+.card.kind-key .body p,.card.kind-end .body p{color:#ffe0b2;font-size:clamp(16px,2.2vw,29px);font-weight:650}
+.now{animation:nowIn .7s cubic-bezier(.16,1,.3,1) both;box-shadow:0 -8px 24px rgba(46,125,50,.35)}
+@keyframes nowIn{from{transform:translateY(28px);opacity:0}to{transform:none;opacity:1}}
+
+/* 命令模板 */
+.cmd{margin:6px 22px 14px;background:#fff;border:3px solid var(--green);border-radius:14px;padding:16px 18px;font-size:clamp(16px,2.2vw,26px);font-weight:800;line-height:1.6}
+.cmd .slot{display:inline-block;background:#fff8e1;border:2px dashed #ef6c00;border-radius:8px;padding:2px 12px;color:#e65100;margin:0 2px}
+/* 场景卡 */
+.opts{padding:0 22px 14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.optc{background:#fff;border:3px solid #c8b8a6;border-radius:12px;padding:12px 16px}
+.optc h4{font-size:clamp(16px,2.1vw,23px);color:#bf360c;margin-bottom:8px}
+.optc span{display:block;background:#faf6f0;border:2px solid var(--line);border-radius:10px;padding:6px 12px;margin:5px 0 0;font-size:clamp(13px,1.8vw,18px);font-weight:800;color:#3e2723;line-height:1.4}
+/* 揭示 */
+.reveal{padding:6px 22px 16px;display:grid;gap:10px}
+.reveal .r{border:3px solid #ce93d8;background:#fff;border-radius:14px;padding:14px 18px;cursor:pointer;transition:.25s}
+.reveal .r b{font-size:clamp(17px,2.4vw,29px);color:#4a148c;display:block}
+.reveal .r span{font-size:clamp(14px,1.85vw,21px);color:#6a1b9a;font-weight:700;max-height:0;overflow:hidden;opacity:0;transition:.35s;display:block}
+.reveal .r.on{border-color:#7b1fa2;background:#f3e5f5}
+.reveal .r.on span{max-height:200px;opacity:1;margin-top:6px}
+/* 回看 */
+.recap{padding:6px 22px 18px;display:grid;gap:10px}
+.recap .r{border:3px solid #f8bbd0;background:#fff;border-radius:14px;padding:14px 18px;cursor:pointer;transition:.25s}
+.recap .r b{font-size:clamp(17px,2.3vw,28px);color:#880e4f;display:block}
+.recap .r span{font-size:clamp(14px,1.9vw,22px);color:#ad1457;font-weight:700;max-height:0;overflow:hidden;opacity:0;transition:.35s;display:block}
+.recap .r.on{border-color:#ec407a;background:#fce4ec}
+.recap .r.on span{max-height:120px;opacity:1;margin-top:6px}
+@media (prefers-reduced-motion: reduce){.ambient .blob,.card,.card .head h2,.card .body p,.now,.progress i,.page-flash,.card.kind-pause::before{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="ambient" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+<div class="page-flash" id="flash"></div>
+<header class="top">
+  <button type="button" id="menuBtn">目录</button>
+  <button type="button" id="fontDown">缩小字体</button>
+  <button type="button" id="fontUp">增大字体</button>
+  <span id="fontPct" style="font-size:11px;opacity:.85;min-width:38px;text-align:center">100%</span>
+  <h1>AI工具实战应用 第2讲·最小提示词工具包 <small>上课投影网页版 v1.1　2026-09-09</small></h1>
+  <div class="hint">← → 翻页　点字可放大</div>
+</header>
+<div class="layout">
+  <aside class="side" id="side">
+    <input id="q" placeholder="搜 四要素 / 追问 / 场景卡 / 暂停" />
+    <div id="nav"></div>
+  </aside>
+  <main class="main" id="main"><article class="card" id="card"></article></main>
+</div>
+<div class="dock">
+  <div class="now" id="nowbar"></div>
+  <div class="bar">
+    <button class="ghost" type="button" id="prev">上一页</button>
+    <div class="pg" id="pg"></div>
+    <button type="button" id="next">下一页</button>
+  </div>
+</div>
+<div class="lb" id="lb"></div>
+<script>
+const SLIDES = [
+{n:1, kind:"cover", title:"第2讲　把话说清楚", body:["今天不讲理论，就干一件事：同一个问题，问两遍。\n第一遍按你原来的习惯问，第二遍换新问法。\n看看 AI 对你，会不会两副面孔。"], now:"现在你：打开手机豆包，准备开工。"},
+{n:2, kind:"text", title:"今天怎么跟", body:["① 热身：按老习惯问一遍，把结果记下来。\n② 学一套模板：四要素，照着填。\n③ 填好再问一遍，自己对比。\n④ 格式控制：一句话换排版。⑤ 填好自己的《提示词小抄》存手机。"], now:"现在你：听。下一页就开始热身。"},
+{n:3, kind:"task", title:"热身：按你平时的方式问（3 分钟）", body:["给豆包发这一句：「帮我写一个请假条。」\n一个字都不要多加——你平时怎么问，就怎么问。\n它答完，你记两件事：出来多少字？哪让你不满意？"], now:"现在你：发出去，看结果。两个答案先记在心里。"},
+{n:4, kind:"pause", title:"暂停点⑤　请写 60 秒", body:["把你刚才发的那句话，原样抄进记录册。\n再写一句：这次的结果，你最不满意哪里？"], now:"现在你：写在记录册「暂停点⑤」。写完合上，先别讨论。"},
+{n:5, kind:"setup", title:"先听一句", body:["你托人办事，是不是有四件事要说？少说一件，对方就得猜一件。\nAI 一模一样——只不过它猜得又快又自信，还不告诉你它在猜。"], now:"现在你：听这四件事是什么。"},
+{n:6, kind:"text", title:"四要素：一人一句", body:["① 角色——让它当谁：「你是班主任…」\n② 任务——让它干什么：「写一张请假条…」\n③ 要求——干到什么程度：「150 字以内，语气礼貌…」\n④ 格式——怎么交给你：「分三段：原因、时间、署名」"], now:"现在你：四条读一遍。下一页，全班跟着拼一条。"},
+{n:7, kind:"task", title:"跟着拼一条：老师带着填", body:["模板（原样抄）：「你是【角色】。请【任务】。要求：【要求】。请用【格式】输出。」", "老师在大屏上填：「你是有经验的班主任。请帮我写一张病假请假条。要求：150 字以内，语气礼貌，原因是感冒发烧。请输出三段：原因、请假时间、署名。」\n发出去——看这张请假条，是不是能直接交？"], now:"现在你：看大屏，小声跟读。"},
+{n:8, kind:"task", title:"现在你填：三张场景卡，挑一张", body:["场景卡老师发，内容全给好了——你只做一件事：把四个空填进模板，原样发出去。"], now:"现在你：挑一张卡，填四个空，原样发给豆包。"},
+{n:9, kind:"task", title:"对比：两个结果摆一起", body:["看这个新结果，再回想热身那一个。\n问自己三个问题：还用来回改吗？它瞎猜的地方少了吗？格式是你想要的吗？"], now:"现在你：看自己的结果，三个问题在心里过一遍。"},
+{n:10, kind:"pause", title:"暂停点⑥　请写 60 秒", body:["把你填好的新命令，完整抄进记录册。\n再写一句：跟热身那次比，具体好在哪？"], now:"现在你：写在记录册「暂停点⑥」。"},
+{n:11, kind:"reveal", title:"对照：三张卡的命令样板", body:["点开看。跟你填的对一对——空填的位置对，就算过。"], now:"现在你：一条一条点开，对一对你填的。"},
+{n:12, kind:"key", title:"四要素，少一样，<br>它就猜一样。", body:["角色、任务、要求、格式——你不说，它就编。"], now:"现在你：这一句写在记录册。"},
+{n:13, kind:"task", title:"格式控制：多加一句话（3 分钟）", body:["看刚才的结果——要是一大片文字，一句话就能改。\n在你的命令末尾，加上一句：「请用表格输出」，整条重新发出去。\n看：内容没变，立刻变成表格——这就是格式控制。"], now:"现在你：加一句，重新发。要清单就说「清单格式」，要简短就说「100 字以内」。"},
+{n:14, kind:"task", title:"产出你的《提示词小抄》（5 分钟）", body:["老师发半成品模板，你只填四个空：\n「问 AI 办事，要说四件事：①＿＿＿＿，告诉它当谁；②＿＿＿＿，告诉它干什么；③＿＿＿＿，告诉它干到什么程度；④＿＿＿＿，告诉它怎么交给你。」\n填完，把你今天最满意的那条命令，粘贴在最下面。\n截图保存——这张小抄，跟你走完整门课。"], now:"现在你：填空、贴命令、截图保存。忘了空里填什么，回翻第 6 页。"},
+{n:15, kind:"recap", title:"回看：今天三句", body:["点一下每一条，先自己背出来，再翻开对。"], now:"现在你：三条都看完，再看下一页。"},
+{n:16, kind:"end", title:"下课。", body:["记住一句：你说得清，它才办得对。", "课后任务（必做）：用四要素模板，问豆包一个跟你专业有关的问题，截图发企业微信群。\n选做：给你的命令加一句格式要求（表格 / 清单 / 100字以内），看结果变成什么样。"], now:"现在你：记录册合上带走。下次课：刁难任务卡——拿今天学的去挨刁。"},
+{n:17, kind:"spare", title:"时间够再用：刁难卡", body:["老师报一个刁难场景：「给快递小哥写一条感谢短信」。\n四要素填空，原样发出去。谁的结果最接近「能直接发」，举手展示，+2 分。"], now:"现在你：老师没说用，就不用看这页。"},
+{n:18, kind:"spare", title:"时间够再用：格式大比拼", body:["同一个问题：谁的命令，能让 AI 一次就出表格（不用重问）？\n标准：四要素齐全，格式写清楚。举手展示，+2 分。"], now:"现在你：老师没说用，就不用看这页。"}
+];
+const SCENES=[
+ ["卡A · 请假条","角色：班主任","任务：写一张病假请假条","要求：150 字以内，语气礼貌，原因是感冒发烧","格式：三段——原因、请假时间、署名"],
+ ["卡B · 兼职避坑","角色：干过三年兼职的学长","任务：讲石家庄奶茶店兼职的坑，和开工前要问的话","要求：列 5 条，每条配一个真实例子","格式：表格——坑 / 应对办法"],
+ ["卡C · 石家庄一日游","角色：石家庄本地向导","任务：从石邮院出发一日游，预算 50 元","要求：省钱但不无聊，不安排购物点","格式：表格——时间 / 地点 / 花费 / 避坑提醒"]
+];
+const REVEAL=[
+ ["卡A · 命令样板","「你是有经验的班主任。请帮我写一张病假请假条。要求：150 字以内，语气礼貌，原因是感冒发烧。请输出三段：原因、请假时间、署名。」"],
+ ["卡B · 命令样板","「你是干过三年兼职的学长。请讲石家庄奶茶店兼职有哪些坑，以及开工前该问什么。要求：列 5 条，每条配一个真实例子。请用表格输出：坑 / 应对办法。」"],
+ ["卡C · 命令样板","「你是石家庄本地向导。请给我安排从石邮院出发的一日游，预算 50 元。要求：省钱但不无聊，不安排购物点。请用表格输出：时间 / 地点 / 花费 / 避坑提醒。」"]
+];
+const RECAP=[
+ ["一遍问对很少见，但模板在手","四要素：角色、任务、要求、格式——少一样，它猜一样"],
+ ["想换样子，一句话管格式","「请用表格输出 / 清单格式」——内容不变，排版变"],
+ ["提示词到此为止，往后靠任务学","小抄已存手机。下次课：刁难任务卡"]
+];
+const TPL='你是【角色】。请【任务】。要求：【要求】。请用【格式】输出。';
+const KIND={cover:"封面",text:"讲义",setup:"先听一句",task:"动手",pause:"暂停点",key:"金句",reveal:"对答案",recap:"回看",end:"下课",spare:"备用"};
+const STAMP={cover:"开讲",text:"记",setup:"听",task:"动手",pause:"写！",key:"记住",reveal:"对答案",recap:"回看",end:"下课",spare:"备用"};
+const KEYS=["四要素","角色","任务","要求","格式","追问","模板","场景卡","暂停点"];
+let i=0;
+const $=id=>document.getElementById(id);
+function esc(s){return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function mark(s){
+  let out=esc(s);
+  out=out.replace(/&lt;br\s*\/?&gt;/gi,"<br>");
+  KEYS.forEach(k=>{ out=out.split(esc(k)).join('<mark class="kw">'+esc(k)+'</mark>'); });
+  return out;
+}
+function bodyHtml(blocks){
+  let n=0;
+  return (blocks||[]).map(b=>{
+    const lines=b.split("\n").filter(x=>x.length);
+    return lines.map(x=>{ n++; return `<p style="--d:${(0.08+n*0.07).toFixed(2)}s">${mark(x)}</p>`; }).join("");
+  }).join("");
+}
+let fontScale=1.0;
+const FMIN=0.6, FMAX=2.0, FSTEP=0.1;
+function setFontScale(s){
+  fontScale=Math.min(FMAX,Math.max(FMIN,Math.round(s*100)/100));
+  document.documentElement.style.setProperty("--title",(3*fontScale).toFixed(2)+"rem");
+  document.documentElement.style.setProperty("--body",(2*fontScale).toFixed(2)+"rem");
+  document.documentElement.style.setProperty("--now",(1.55*fontScale).toFixed(2)+"rem");
+  const pct=$("fontPct"); if(pct) pct.textContent=Math.round(fontScale*100)+"%";
+  $("fontUp").disabled=fontScale>=FMAX;
+  $("fontDown").disabled=fontScale<=FMIN;
+}
+function renderNav(){
+  const q=$("q").value.trim();
+  $("nav").innerHTML=SLIDES.map((s,idx)=>{
+    const t=s.title||("第"+s.n+"页");
+    if(q && !t.includes(q) && !String(s.n).includes(q)) return "";
+    const short=t.length>16?t.slice(0,15)+"…":t;
+    return `<button class="nav-item ${idx===i?"on":""}" data-i="${idx}"><span class="k">${s.n}</span>${esc(short)}</button>`;
+  }).join("");
+}
+function fitCard(){
+  const card=$("card"), main=$("main");
+  if(!card||!main) return;
+  main.style.zoom="";
+  const cs=getComputedStyle(main);
+  const pad=parseFloat(cs.paddingTop||0)+parseFloat(cs.paddingBottom||0);
+  const avail=main.clientHeight-pad;
+  const h=card.getBoundingClientRect().height;
+  if(h>avail && avail>60){ main.style.zoom=Math.max(0.55, avail/h); }
+}
+window.addEventListener("resize", ()=>setTimeout(fitCard,60));
+function render(dir){
+  const s=SLIDES[i];
+  const card=$("card");
+  card.className="card kind-"+s.kind+" "+(dir==="prev"?"enter-prev":"enter-next");
+  let widget="";
+  if(s.kind==="reveal"){
+    widget=`<div class="reveal">`+REVEAL.map((r,k)=>`<div class="r" data-r="${k}"><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div>`).join("")+`</div>`;
+  }else if(s.kind==="recap"){
+    widget=`<div class="recap">`+RECAP.map((r,k)=>`<div class="r" data-r="${k}"><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div>`).join("")+`</div>`;
+  }else if(s.n===7){
+    const cmdHtml=esc(TPL).replace(/【(角色|任务|要求|格式)】/g,'<span class="slot">【$1】</span>');
+    widget=`<div class="cmd">${cmdHtml}</div>`;
+  }else if(s.n===8){
+    widget=`<div class="opts">`+SCENES.map(o=>`<div class="optc"><h4>${esc(o[0])}</h4>`+o.slice(1).map(x=>`<span>${esc(x)}</span>`).join("")+`</div>`).join("")+`</div>`;
+  }
+  card.innerHTML=`
+    <div class="stamp st-${esc(s.kind)}">${STAMP[s.kind]||""}</div>
+    <div class="head"><span class="badge k-${esc(s.kind)}">${KIND[s.kind]||s.kind}</span><h2>${mark(s.title||"")}</h2></div>
+    <div class="body">${bodyHtml(s.body||[])}</div>
+    ${widget}`;
+  const nb=$("nowbar");
+  nb.style.animation="none"; void nb.offsetWidth; nb.style.animation="";
+  nb.innerHTML=s.now?mark(s.now):"";
+  nb.style.display=s.now?"block":"none";
+  $("pg").textContent=(i+1)+" / "+SLIDES.length;
+  const prog=$("prog"); if(prog) prog.style.width=((i+1)/SLIDES.length*100).toFixed(2)+"%";
+  const fl=$("flash"); if(fl && dir){ fl.classList.remove("go"); void fl.offsetWidth; fl.classList.add("go"); }
+  card.querySelectorAll(".reveal .r,.recap .r").forEach(el=>el.onclick=()=>el.classList.toggle("on"));
+  renderNav(); history.replaceState(null,"","#"+s.n); $("main").scrollTop=0;
+  setTimeout(fitCard,30); setTimeout(fitCard,420);
+}
+function go(n){ const next=Math.max(0,Math.min(SLIDES.length-1,n)); const dir=next>i?"next":next<i?"prev":"next"; i=next; render(dir); }
+function zoomText(html){ $("lb").innerHTML=`<div class="zoom-text">${html}</div>`; $("lb").classList.add("show"); }
+$("prev").onclick=()=>go(i-1);
+$("next").onclick=()=>go(i+1);
+$("nav").onclick=e=>{ const b=e.target.closest("[data-i]"); if(b) go(+b.dataset.i); };
+$("q").oninput=renderNav;
+$("menuBtn").onclick=()=>{ if(window.innerWidth<=860) $("side").classList.toggle("open"); else document.body.classList.toggle("wide"); };
+$("fontUp").onclick=()=>setFontScale(fontScale+FSTEP);
+$("fontDown").onclick=()=>setFontScale(fontScale-FSTEP);
+document.addEventListener("keydown", e=>{
+  if(e.key==="ArrowRight"||e.key==="PageDown"||e.key===" "){ e.preventDefault(); go(i+1); }
+  if(e.key==="ArrowLeft"||e.key==="PageUp"){ e.preventDefault(); go(i-1); }
+  if(e.key==="Escape") $("lb").classList.remove("show");
+});
+$("card").addEventListener("click", e=>{
+  const p=e.target.closest("p,h2"); if(p) zoomText(p.innerHTML);
+});
+$("nowbar").addEventListener("click", e=>{ if(e.currentTarget.innerHTML) zoomText(e.currentTarget.innerHTML); });
+$("lb").onclick=()=>$("lb").classList.remove("show");
+document.body.classList.add("wide"); setFontScale(1.0);
+const hash=parseInt(location.hash.replace("#",""),10);
+if(hash>=1 && hash<=SLIDES.length) i=hash-1;
+render();
+</script>
+</body>
+</html>
