@@ -16,8 +16,9 @@ F04 = "04_项目一_第1讲_开学第一课_课件_v2.1_20260906.html"
 F08 = "08_项目二_第1-3讲_变量命令流程_纸上篇_课件_v1.2_20260906.html"
 F10 = "10_项目二_第4讲_机器人上岗_课件_v1.2_20260906.html"
 F14 = "14_项目三_第1讲_图纸搬家_课件_v1.0_20260908.html"
-OUT = "05_机器人实验记录册_全程_v2.5_20260908.docx"
-NUM = "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓"
+F16 = "16_项目三_第2讲_循环_课件_v1.0_20260908.html"
+OUT = "05_机器人实验记录册_全程_v2.6_20260908.docx"
+NUM = "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗"
 
 def strip(t):
     t = re.sub(r"<br\s*/?>", " ", t)
@@ -31,18 +32,19 @@ def pauses(fn):
     slides = json.load(io.open(tmp, encoding="utf-8"))
     out = {}
     for pg in slides:
-        m = re.search(r"⏸\s*暂停点([①-⑳㉑㉒㉓])(?:\s*·\s*([^<\n`]{2,16}))?", pg["html"])
+        m = re.search(r"⏸\s*暂停点([①-⑳㉑㉒㉓㉔㉕㉖㉗])(?:\s*·\s*([^<\n`]{2,16}))?", pg["html"])
         if m and m.group(1) not in out:
             h1 = re.search(r"<h1[^>]*>(.*?)</h1>", pg["html"], re.S)
             title = (m.group(2) or "").strip() or (strip(h1.group(1))[:12] if h1 else "")
             out[m.group(1)] = (pg["no"], title)
     return out
 
-p4, p8, p10, p14 = pauses(F04), pauses(F08), pauses(F10), pauses(F14)
+p4, p8, p10, p14, p16 = pauses(F04), pauses(F08), pauses(F10), pauses(F14), pauses(F16)
 assert sorted(p4) == list("①②③④"), p4
 assert sorted(p8, key=NUM.index) == list(NUM[:14]), p8
 assert sorted(p10, key=NUM.index) == list(NUM[14:19]), p10
-assert sorted(p14, key=NUM.index) == list(NUM[19:]), p14
+assert sorted(p14, key=NUM.index) == list(NUM[19:23]), p14
+assert sorted(p16, key=NUM.index) == list(NUM[23:]), p16
 
 doc = Document()
 sec = doc.sections[0]
@@ -63,7 +65,7 @@ def sec_head(t):
     p = P(t, 13, True, "C0390B", 0, 6)
     return p
 def pause(code, src, desc):
-    pg, title = {"04": p4, "08": p8, "10": p10, "14": p14}[src][code]
+    pg, title = {"04": p4, "08": p8, "10": p10, "14": p14, "16": p16}[src][code]
     p = P("⏸ 暂停点%s · %s　——课件 %s · p%d" % (code, title, src, pg), 11.5, True, "1A5276", 10, 2)
     if desc: P(desc, 9.5, False, "555555", 0, 3)
     return p
@@ -184,9 +186,27 @@ P("选做（p18）：另想一个「会问数的小计算器」（食堂套餐/�
 grid(["我的场景", "三行图纸"])
 selfcheck("□⑳一句话写全　□㉑先猜再跑　□㉒三行写全　□㉓例子配了　　今天最难的一步：＿＿＿＿＿＿＿＿＿＿")
 
+# ───────── 项目三 · 循环（课件 16） ─────────
+sec_head("项目三 · 循环｜课件 16")
+pause("㉔", "16", "没做作业的抽备用场景卡（打印/奶茶/食堂/水果，参数印在卡上），照卡画三行图纸再拼；做了的用自己作业。")
+grid(["我抽的卡／我用的作业", "三行图纸（画在这）"])
+pause("㉕", "16", "循环版动手：4 块装进循环肚子、次数填 3、先猜弹几次再跑；然后接输入块「记几笔?」答 5 再验证。")
+grid(["我猜弹＿次／实际＿次", "答 5：我猜／实际", "备用卡同学：我的弹＿次"])
+pause("㉖", "16", "次数 300 翻车救援：改回 3 再跑；把这次写成三行。")
+grid(["第几步卡", "它干了啥", "我改了什么·结果"])
+pause("㉗", "16", "三句话收尾，各配一个今天的真机例子。")
+grid(["重复交循环·例子", "次数=遍数·例子", "改次数不改积木·例子"])
+P("📋 老师布置的任务（课件 16）", 12, True, "C0390B", 12, 3)
+P("必做（p15）：循环版再跑 3 个次数——3、5、10，先猜弹几次再跑（开头抽查 +2 分；没做的开头抽备用场景卡）。", 10)
+grid(["次数 3：猜／实际", "次数 5：猜／实际", "次数 10：猜／实际"])
+P("选做（p15）：给循环版再加一问「单价多少？」——让单价也听人的。", 10)
+grid(["我的第二问", "试跑结果"])
+selfcheck("□㉔图纸画了　□㉕先猜再跑　□㉖三行写全　□㉗例子配了　　循环肚子装的是什么：＿＿＿＿＿＿＿＿")
+
 doc.save(os.path.join(RPA, OUT))
 print("生成", OUT)
 print("04:", {k: v[0] for k, v in sorted(p4.items(), key=lambda x: NUM.index(x[0]))})
 print("08:", {k: v[0] for k, v in sorted(p8.items(), key=lambda x: NUM.index(x[0]))})
 print("10:", {k: v[0] for k, v in sorted(p10.items(), key=lambda x: NUM.index(x[0]))})
 print("14:", {k: v[0] for k, v in sorted(p14.items(), key=lambda x: NUM.index(x[0]))})
+print("16:", {k: v[0] for k, v in sorted(p16.items(), key=lambda x: NUM.index(x[0]))})

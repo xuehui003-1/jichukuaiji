@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>图纸搬家 · 项目三第1讲 · 财务机器人应用与开发</title>
+<title>循环 · 项目三第2讲 · 财务机器人应用与开发</title>
 <style>
 :root{
   --bg:#FFF9F0; --card:#FFFFFF; --text:#2B211B; --muted:#79695e;
@@ -174,180 +174,148 @@ ul.items li b{color:var(--primary)}
 <script>
 const SLIDES = [
 {cls:"cover", html:`
-  <div class="eyebrow">项目三 · 图纸搬家</div>
-  <h1>图纸搬家<span class="accent">——</span>外卖计算器真跑</h1>
-  <div class="sub">《财务机器人应用与开发》· 90 分钟 · 机房课<br>上周画好的图纸，今天进软件拼成真流程——拼完就跑，跑对 75.8 才算数</div>
-  <img class="pic" src="img/ai/14_p01_fengmian.png" alt="封面：小邮抱图纸进机房，大屏积木流程亮起">
-  <div class="meta">第 1 章 · 图纸搬家 · 14_课件 v1.0 ｜ 配套 13_规划 v1.0 · 05_记录册 v2.6 ｜ 会计学院 · 大数据与会计 2501 班</div>`,
- notes:"开场 30 秒：今天不学新词——把三讲攒下的本事拼成第一个真流程。规矩先说：跑错了不扣分，翻车正好用「读→定位→改」。"},
+  <div class="eyebrow">项目三 · 循环</div>
+  <h1>循环<span class="accent">——</span>替你干 30 倍的活</h1>
+  <div class="sub">《财务机器人应用与开发》· 90 分钟 · 机房课<br>上周的流程记 1 笔要拖 4 块；今天一块「循环」积木，记 30 笔也只拖 1 块</div>
+  <img class="pic" src="img/ai/16_p01_fengmian.png" alt="封面：小邮指着屏幕上的循环积木，肚里套着四块小积木">
+  <div class="meta">第 2 章 · 循环 · 16_课件 v1.0 ｜ 配套 05_记录册 v2.6 ｜ 会计学院 · 大数据与会计 2501 班</div>`,
+ notes:"开场 30 秒：今天还是拼积木，不敲代码。只回答一个问题——重复的活怎么偷懒。"},
 
 {cls:"", html:`
   <div class="eyebrow">今天做两件事</div>
   <ul class="items">
-    <li>① 先验收 <b>大任务</b>：本周生活费记账——流水 7 行，进机房<b>当场真跑</b>给老师看（15 分钟）</li>
-    <li>② 再<b>搬家</b>：把外卖计算器的图纸，在智多星里拼成真流程、跑出 75.8（75 分钟）</li>
-    <li>规矩：先猜后跑 ｜ 跑错就写排错三行 ｜ 跑通立刻保存</li>
+    <li>① 先对作业：三个输入 1、3、5，<b>先猜再跑</b>的三个得数（10 分钟）</li>
+    <li>② 再升级：给外卖计算器装上<b>循环</b>——记几笔，它说了算</li>
+    <li>规矩不变：先猜后跑 ｜ 翻车就修 ｜ 跑通保存</li>
   </ul>`,
- notes:"两件事都是动手。大任务没写完的先照同桌流水补三行，课后补交——别卡在门口。"},
+ notes:"作业没做的别慌——下一页有安排，人人有活干。"},
 
-{cls:"challenge", html:`
-  <div class="eyebrow">大任务验收 · 当场跑</div>
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点㉔ · 记录册"}], html:`
+  <div class="eyebrow">⏸ 暂停点㉔ · 每人一张图纸</div>
+  <h1>没做作业？领张卡，照样拼</h1>
   <div class="task-card">
-    <h2>🏁 生活费记账机器人 · 验收</h2>
-    <li>1️⃣ 打开记录册「大任务」页——你的流水 7 行、预算自己定的那份</li>
-    <li>2️⃣ 照图纸拼：设变量 → 每笔算一算 → 低于 100 弹「该省省了」</li>
-    <li>3️⃣ 老师逐排巡回：流水 7 行 ✓ ＋ 当场跑通 ✓ → <b>+5 分登记</b></li>
+    <li>✅ 做了必做的：翻开你的三输入记录，直接进下一页</li>
+    <li>🙋 没做的：老师这里抽一张<b>备用场景卡</b>——打印店／奶茶店／食堂／水果摊，<b>一人一张不一样</b></li>
+    <li>照卡上的价目画三行图纸（参数卡上都印着，不用自己编），10 分钟内拼进软件——<b>照样算分</b></li>
   </div>
-  <div class="rv"><div class="anscard">🙋 没画完／没带？——照同桌的流水补画三行，今天先跑通，记录册课后补齐补交</div></div>`,
- notes:"验收标尺就两条：流水 7 行、当场跑通。跑错的按调试三步陪跑——第一次真修，翻车是素材。15 分钟封顶，到点进正课。"},
-
-{cls:"pause", badges:[{type:"note", text:"📒 暂停点⑳ · 记录册"}], html:`
-  <div class="eyebrow">⏸ 暂停点⑳ · 一句话讲流程</div>
-  <h1>考考你：这一串，先做什么后做什么？</h1>
-  <div class="sub">看屏幕上你刚拼的记账流程，用一句话讲给同桌：<b>先＿＿ → 再＿＿ → 然后＿＿ → 最后＿＿</b><br>讲完把这句话写下来——这是你第一次「说流程」，说清了才好搬家</div>
-  <div class="where">✍️ 记录册「暂停点⑳」｜🎲 抽 2 人念给大家</div>`,
- notes:"验收刚完的热乎劲正好用：把刚拼的东西口语化。写 60 秒，抽 2 人念——别纠用词，顺序对就算过。"},
+  <div class="rv"><div class="anscard"><b>备用卡参数（老师印发用）</b>：①打印 0.3 元/张，满 5 元打 9 折——问打 20 张几元（5.4）②奶茶 8 元/杯，第二杯半价——问买 2 杯几元（12）③食堂套餐 12 元/份——问买 4 份几元（48）④苹果 3 元/斤——问买 4 斤几元（12）</div></div>
+  <div class="where">✍️ 记录册「暂停点㉔」：我抽的卡是＿＿ → 三行图纸画在旁边</div>`,
+ notes:"兜底页：四套参数难度相当、场景不同、一人一卡防互抄。做完备用卡的跟做正课同一套流程，一样给分——课堂不等作业，作业债课后补。"},
 
 {cls:"", html:`
-  <div class="eyebrow">从今天起 · 它有名字了</div>
-  <h1>刚才那一串，正式的名字：<span class="accent">流程</span></h1>
-  <div class="sub">一套<b>按顺序排好的步骤</b>，机器人照着做，就能替人干完一整段活<br>你其实早就会了：余额格是流程、外卖计算器是流程、刚跑通的记账机器人也是流程</div>
+  <div class="eyebrow">回忆 · 上周的流程</div>
+  <h1>记 3 笔账，你上周得拖几块？</h1>
   <ul class="items">
-    <li><span class="stu">现在你：回头看你⑳写的句子——那就是你的第一个流程</span></li>
+    <li>记 1 笔＝4 块组件（变量→算→判→弹）；记 3 笔＝<b>复制粘贴三遍＝12 块</b></li>
+    <li>那记 30 笔呢？——<span class="stu">现在你：先猜，30 笔要拖多少块？说个数</span></li>
+    <li>有更省力的办法吗？——别急着翻页，先猜</li>
   </ul>`,
- notes:"术语最后才给的老规矩：先跑出来，名字后贴。点破即可，不写定义不背。"},
+ notes:"让学生喊出 120 块——喊得越大，下一页越震撼。有学生说「复制粘贴」——收：那也是 120 块，手会断。"},
 
 {cls:"", html:`
-  <div class="eyebrow">搬什么 · 图纸对软件</div>
-  <h1>纸上的三行，对上软件里的四块</h1>
-  <img class="pic" src="img/ai/14_p06_duizhao.png" alt="图纸三行对照软件积木：变量/命令/串法 → 变量/计算/判断/弹出">
-  <div class="rv"><div class="anscard"><b>对一下</b>：第 1 行 变量 → 「变量」块 ｜ 第 2 行 命令 → 「计算」「弹出」块 ｜ 第 3 行 串法 → 「判断」块和先后顺序——三行图纸就是拼装说明书</div></div>`,
- notes:"让学生先自己连，再点揭晓。说破对应关系：纸上怎么画，软件里就怎么拼——今天全程照图纸，不自由发挥。"},
-
-{cls:"", html:`
-  <div class="eyebrow">认识工作台 · 组件</div>
-  <h1>组件四兄弟：今天四个全用上</h1>
-  <img class="pic" src="img/ai/14_p07_zujian.png" alt="组件四宫格：设变量/算一算/如果就/弹出来">
-  <ul class="items">
-    <li>每个组件就是一块积木：<b>拖进画布、摆好顺序、连起来</b>——就这三个动作，没有代码</li>
-    <li><span class="stu">现在你：对照外卖图纸——四兄弟各用在哪一行？心里指一遍</span></li>
-  </ul>`,
- notes:"老师大屏演示拖、摆、连各 10 秒。学生先不开电脑——看懂再动手，少一半事故。"},
+  <div class="eyebrow">答案 · 今天的主角</div>
+  <h1>循环：<span class="accent">把 4 块装进 1 块，次数它来管</span></h1>
+  <div class="sub">一块「循环」积木，<b>肚子</b>里装着要重复的步骤，外面对它说「重复几遍」<br>记 30 笔＝循环里装 4 块 × 次数写 30——<b>还是只拖 1 块</b></div>
+  <div class="rv"><div class="anscard">👀 你已经见过它：第 1 讲你家里那张「变量接力」、跑步绕圈——都是循环。今天把它拖进软件</div></div>`,
+ notes:"术语最后给的老规矩：先喊完 120 块的绝望，再给循环。肚子/次数两个词贯穿全课。"},
 
 {cls:"challenge", html:`
   <div class="eyebrow">老师演示 · 你只管看</div>
-  <h1>全程跟一张图：外卖计算器拼给它看</h1>
+  <h1>演示：把外卖计算器装进循环肚子</h1>
   <div class="steps">
-    <div class="step"><div class="n">1</div><div class="t"><b>新建流程</b>：命名 waimaiJSQ（名字用英文——第 4 讲的规矩）</div></div>
-    <div class="step"><div class="n">2</div><div class="t"><b>照图纸拖</b>：变量 danJia=39.9、fenShu=2 → 计算 danJia×fenShu → 判断 满 25 减 4 → 弹出「应付＿元」</div></div>
-    <div class="step"><div class="n">3</div><div class="t"><b>点运行</b>：先猜弹什么 → 再点——弹 75.8，一起喊出来</div></div>
+    <div class="step"><div class="n">1</div><div class="t"><b>拖循环块</b>：找到循环组件，拖进画布</div></div>
+    <div class="step"><div class="n">2</div><div class="t"><b>装肚子</b>：把每记一笔的 4 块，拖进循环块里面</div></div>
+    <div class="step"><div class="n">3</div><div class="t"><b>写次数</b>：次数框填 3 → 点运行——<b>数一数弹了几次</b></div></div>
   </div>
-  <div class="rv"><div class="anscard">👀 看的时候数着：老师一共拖了几块？——4 块组件＋连线，就这些，没有一行代码</div></div>`,
- notes:"演示 3 分钟全程投屏。只演示不代做：不保存、不输入，留给学生自己。喊 75.8 是仪式感——跑通的声音要大。"},
+  <div class="rv"><div class="anscard">👀 看的时候数：弹窗一共弹了 <b>3 次</b>，每次都是 75.8——次数填几，它干几遍，一块没多拖</div></div>`,
+ notes:"演示 3 分钟投屏。次数填 3 先别填 30——学生先看清「弹 3 次」，后面自己才敢改大。"},
 
-{cls:"pause", badges:[{type:"note", text:"📒 暂停点㉑ · 记录册"}], html:`
-  <div class="eyebrow">⏸ 暂停点㉑ · 搬家三步</div>
-  <h1>轮到你：照你的图纸，拼出来</h1>
-  <img class="pic" src="img/ai/14_p09_banjia.png" alt="搬家三步：建流程→照图纸搭→跑对得数" style="max-height:26vh">
-  <div class="sub">① 新建流程 → ② 照记录册「暂停点⑫」的图纸拖组件 → ③ 跑——<b>先猜弹多少，再点运行</b><br>跑对 75.8 → 举手喊老师看一眼；不对 → 翻页有药方</div>
-  <div class="where">✍️ 记录册「暂停点㉑」：我猜弹＿＿ → 实际弹＿＿</div>
-  <div class="rv"><div class="anscard">🙋 没做课后必做？——抽一张<b>备用场景卡</b>（打印店 0.3 元/张满 5 元 9 折｜奶茶第二杯半价 8 元｜食堂套餐 12 元），照卡画三行图纸再拼——<b>人人有活干，各拼各的</b></div></div>`,
- notes:"全员动手 8 分钟。巡回只问一句「对图纸了吗」——不替学生改。没做作业的抽备用卡（参数印好，每人一张不同场景），照样走全流程——课堂不等作业。"},
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点㉕ · 记录册"}], html:`
+  <div class="eyebrow">⏸ 暂停点㉕ · 你来拼循环版</div>
+  <h1>轮到你：给外卖计算器装上循环</h1>
+  <div class="sub">① 打开上周的 waimaiJSQ → ② 拖一块循环块，把 4 块装进肚子 → ③ 次数填 3 → ④ <b>先猜弹几次，再点运行</b><br>弹对次数 → 举手喊老师；不对 → 下一页有药方</div>
+  <div class="where">✍️ 记录册「暂停点㉕」：我猜弹＿次 → 实际弹＿次</div>`,
+ notes:"全员动手 10 分钟。常见卡点：4 块没全装进肚子（有一块掉外面）——提示「看循环块的肚子装满没」。备用卡的同学拼自己的场景，一样走这四步。"},
 
 {cls:"", html:`
-  <div class="eyebrow">对答案 · 一致才算通</div>
-  <h1>拼对了，应该弹出：<span class="accent">应付 75.8 元</span></h1>
-  <div class="rv"><div class="anscard"><b>① 变量</b>：danJia=39.9（小数）｜fenShu=2（整数）——名字和类型都照图纸</div></div>
-  <div class="rv"><div class="anscard"><b>② 串法</b>：算小计 → 判断 ≥25 → 真减 4 → 弹「应付 75.8 元」——顺序不能乱</div></div>
-  <div class="rv"><div class="anscard"><b>③ 没弹出来？</b>多半连线少一根、组件顺序反了——先按下一页的三步自己找，找不到再举手</div></div>`,
- notes:"点击逐条出。全班口径：弹 75.8＝跑通，⑳下面补一行「实际弹 75.8」。先自诊再举手——调试习惯从第一次就立住。"},
+  <div class="eyebrow">对答案 · 弹对才算通</div>
+  <h1>拼对了：弹 <span class="accent">3 次，每次 75.8</span></h1>
+  <div class="rv"><div class="anscard"><b>① 次数对</b>：循环弹 3 次＝记了 3 笔，一笔不多一笔不少</div></div>
+  <div class="rv"><div class="anscard"><b>② 金额对</b>：每笔都是 75.8——循环只管「重复几遍」，<b>不改里面的算法</b></div></div>
+  <div class="rv"><div class="anscard"><b>③ 只弹了 1 次？</b>——有块组件掉在循环肚子外面了，拖回去再跑</div></div>`,
+ notes:"点击逐条出。金额不变是重点：循环=复读机，算法在肚子里原样重复。"},
 
 {cls:"", html:`
-  <div class="eyebrow">跑错了 · 正常</div>
-  <h1>先自己修：<span class="accent">读 → 定位 → 改</span></h1>
-  <div class="steps">
-    <div class="step"><div class="n">读</div><div class="t">它弹了什么／弹没弹？把现象念出来</div></div>
-    <div class="step"><div class="n">定位</div><div class="t">从不对的那一步，找到画布上那块组件</div></div>
-    <div class="step"><div class="n">改</div><div class="t">一次只改一处，改完<b>马上再跑</b>——别攒一堆一起改</div></div>
-  </div>
-  <ul class="items" style="margin-top:8px">
-    <li>改对一处 +2 分；三步过完还卡 → 举手，老师只提示不代改</li>
-  </ul>`,
- notes:"调试三步第二次登场，这次用在真软件上。「一次只改一处」再重复一遍——学生最爱一口气改五处。"},
-
-{cls:"", html:`
-  <div class="eyebrow">加一步 · 让流程会问</div>
-  <h1>加「输入」组件：它问「买几份？」，人来答</h1>
-  <img class="pic" src="img/ai/14_p13_shuru.png" alt="输入组件：弹出买几份，学生输入3，弹出应付115.7元" style="max-height:26vh">
+  <div class="eyebrow">升级 · 次数听人的</div>
+  <h1>把次数交给输入块：「记几笔？」</h1>
+  <img class="pic" src="img/ai/16_p09_wenji.png" alt="输入块问记几笔，学生输入5，机器人比五跑5遍" style="max-height:24vh">
   <ul class="items">
-    <li>输入组件放<b>最前面</b>：流程一开始先问「买几份？」——答 3 就按 3 算</li>
-    <li><span class="stu">现在你：先猜——3 份应付多少？（记录册㉑下面补一行）再跑验证</span></li>
+    <li>次数框别写死——接上输入块：<b>问一句「记几笔？」，答几遍跑几遍</b></li>
+    <li><span class="stu">现在你：先猜——答 5 会弹几次？（记录册㉕下面补一行）再跑验证</span></li>
   </ul>
-  <div class="rv"><div class="anscard">答：3 份 → 小计 119.7 → 仍满 25 → 减 4 → <b>应付 115.7 元</b>——和第 2 讲纸上算的一字不差</div></div>`,
- notes:"先猜再跑第三次用：115.7 第 2 讲纸上算过，今天机器人替你验算。输入块的连线别断：输入→算→判→弹。"},
+  <div class="rv"><div class="anscard">答：弹 5 次——<b>每个人的次数可以不一样</b>，这才叫替人干活</div></div>`,
+ notes:"先猜再跑第四次使用。接线：输入块→循环的次数。学生最爱把输入块接错位置——提示「次数框连输入」。"},
 
-{cls:"pause", badges:[{type:"note", text:"📒 暂停点㉒ · 记录册"}], html:`
-  <div class="eyebrow">⏸ 暂停点㉒ · 真报错对照</div>
-  <h1>翻车三兄弟，真机上一只不缺</h1>
-  <img class="pic" src="img/ai/14_p14_fanfan.png" alt="翻车三兄弟：名字对不上/文本当数/条件写反" style="max-height:24vh">
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点㉖ · 记录册"}], html:`
+  <div class="eyebrow">⏸ 暂停点㉖ · 翻车对照</div>
+  <h1>次数写错，会怎样？</h1>
+  <img class="pic" src="img/ai/16_p10_fanche.png" alt="次数填成300，机器人被弹出的单据山淹没" style="max-height:24vh">
   <div class="task-card">
-    <li>① <b>名字对不上</b>：建的是 danJia，用成了 danjia——它「查无此人」</li>
-    <li>② <b>文本当数</b>：回看第 4 讲——"A8-2012"+10 当场报错，一个道理</li>
-    <li>③ <b>条件写反</b>：够 25 反而不减——弹出的数一对就知道</li>
-    <li><span class="stu">现在你：把刚才翻的那次写成三行——第几步卡／它说了啥／我改了什么</span></li>
+    <li>想记 3 笔，手滑写成 <b>300</b>——弹窗炸山，想停都停不下</li>
+    <li><span class="stu">现在你：把 300 改回 3，再跑一遍救回来；把这次翻车写成三行</span></li>
+    <li>⭐ 改对 +2 分；三行写全再 +2</li>
   </div>
-  <div class="where">✍️ 记录册「暂停点㉒」｜⭐ 写全三行 +2</div>`,
- notes:"三兄弟就是上节课黑板上那张——今天配上真机。㉒排错三行是第 4 讲⑱的第二次使用，写到「我改了什么·结果」为止。"},
+  <div class="where">✍️ 记录册「暂停点㉖」：第几步卡／它干了啥／我改了什么</div>`,
+ notes:"安全提示顺势立住：跑大次数前先想想——真机器人跑 300 遍是真发 300 条短信。翻车三行继续攒。"},
 
 {cls:"", html:`
-  <div class="eyebrow">跑通的 · 立刻存档</div>
-  <h1>保存 = 给你的作品上货架</h1>
-  <img class="pic" src="img/ai/14_p16_cundang.png" alt="作品货架：小邮把跑通的流程放上标着发布会的货架" style="max-height:24vh">
+  <div class="eyebrow">跑通的 · 上架第二件</div>
+  <h1>保存循环版：<span class="accent">xunHuanJSQ-你的学号</span></h1>
+  <img class="pic" src="img/ai/16_p11_huojia.png" alt="作品货架第二层放上循环版" style="max-height:24vh">
   <ul class="items">
-    <li>点保存 → 命名 <b>waimaiJSQ-你的学号</b>——这台「外卖计算器」就是你的了</li>
-    <li>📅 它是<b>期末发布会的第一件展品</b>——以后每周搬一块，越摞越高</li>
-    <li><span class="stu">现在你：保存完举手，老师登记「已上架」</span></li>
+    <li>挑战一次到位：改成记 <b>5 笔、10 笔</b>各跑一遍——弹的次数跟着变，你的循环就是活的</li>
+    <li><span class="stu">现在你：保存 → 举手登记「第二件上架」</span></li>
   </ul>`,
- notes:"存档是今天的硬验收：没保存＝没跑通。命名带学号，老师登记表打钩即可。"},
+ notes:"货架第二件。命名带学号，登记表打钩。学得快的去帮同桌——小教练照旧加 2 分。"},
 
-{cls:"pause", badges:[{type:"note", text:"📒 暂停点㉓ · 记录册"}], html:`
-  <div class="eyebrow">⏸ 暂停点㉓ · 三句话收尾</div>
+{cls:"pause", badges:[{type:"note", text:"📒 暂停点㉗ · 记录册"}], html:`
+  <div class="eyebrow">⏸ 暂停点㉗ · 三句话收尾</div>
   <h1>今天只记三句</h1>
-  <div class="sub">1️⃣ <b>图纸＝说明书</b>：纸上怎么画，软件里就怎么拼<br>2️⃣ <b>组件＝积木</b>：拖进来、摆顺序、连起来——没有代码<br>3️⃣ <b>先猜再跑</b>：猜 75.8，跑出 75.8——对上了才算真会</div>
-  <div class="where">✍️ 记录册「暂停点㉓」：三句抄下，每句配一个今天的真机例子（组件名／报错词／弹出的数都行）</div>
-  <div class="rv"><div class="anscard">例子备查：变量块 danJia=39.9 ｜「买几份?」输入框 ｜ 弹「应付 115.7 元」 ｜ 排错三行改对一处</div></div>`,
- notes:"写 3 分钟，抽人念例子。报分：大任务验收、搬家跑通、输入挑战、排错三行——今天的分全是动手分。"},
+  <div class="sub">1️⃣ <b>重复的活交给循环</b>：肚子装步骤，外面对次数<br>2️⃣ <b>次数=它替你干的遍数</b>：填 3 干 3 遍，接输入块听人的<br>3️⃣ <b>改次数不用改积木</b>：算法在肚子里原样重复</div>
+  <div class="where">✍️ 记录册「暂停点㉗」：三句抄下，各配一个今天的真机例子（次数框／弹的遍数／300 翻车都行）</div>
+  <div class="rv"><div class="anscard">例子备查：次数填 3 弹 3 次 ｜「记几笔?」答 5 弹 5 次 ｜ 300 翻车改回 3 ｜ 每笔都是 75.8</div></div>`,
+ notes:"写 3 分钟，抽人念例子。报分：备用卡、循环版、次数挑战、300 救援——全是动手分。"},
 
 {cls:"", html:`
   <div class="eyebrow">今天 · 你完成了三件事</div>
-  <h1>从图纸到真流程，你走完了全程</h1>
+  <h1>从记 1 笔到记 N 笔，你只加了 1 块</h1>
   <div class="flow" style="justify-content:center">
-    <span>验收大任务<br>当场真跑</span><span>→ 照图纸搬家<br>跑出 75.8</span><span>→ 加输入块<br>会问人了</span><span>→ 存档上架<br>发布会第 1 件</span>
+    <span>对三输入<br>猜对没</span><span>→ 循环版<br>弹 3 次</span><span>→ 次数接输入<br>听人的</span><span>→ 300 救援<br>上架第二件</span>
   </div>
   <ul class="items" style="margin-top:10px">
-    <li>现在你会的：把任何一个「纸上跑得通」的想法，变成「软件里跑得动」的流程</li>
-    <li><span class="stu">现在你：抽人用一句话讲「今天最难的一步，我是怎么过的」</span></li>
+    <li>现在你会的：让机器人<b>替你重复干活</b>——记 300 笔账也只是一行次数的事（但先想清楚再填）</li>
+    <li><span class="stu">现在你：抽人讲「循环肚子」里装的是什么、外面写的是什么</span></li>
   </ul>`,
- notes:"收束页不引入新东西。学生那句「怎么过的」就是最好的复述——抽 1–2 人。"},
+ notes:"收束不引入新东西。「肚子/次数」两个词让学生自己说出来——说得出就是真懂了。"},
 
 {cls:"", html:`
-  <div class="eyebrow">下一讲 · 流程变聪明</div>
-  <h1>记 30 笔账，只拼 1 块「循环」</h1>
-  <img class="pic" src="img/ai/14_p18_xunhuan.png" alt="循环：小邮沿圆圈跑，每到一处记一笔，下周见" style="max-height:22vh">
+  <div class="eyebrow">下一讲 · 判断＋循环合体</div>
+  <h1>「没记满，就继续记」<span class="accent">——它自己会判断</span></h1>
+  <img class="pic" src="img/ai/16_p14_heti.png" alt="判断和循环合体：岔路口接循环，没记满就继续" style="max-height:22vh">
   <ul class="items">
-    <li>今天拼 4 块才算 1 笔账；记 30 笔要拖 120 块？<b>下节课一块「循环」全解决</b></li>
+    <li>今天的循环要人填次数；下次让它<b>自己判断</b>：钱没记完就继续记——这才能干真财务的活</li>
   </ul>`,
- notes:"钩子只挂「循环」一个词，不展开——下周自己拼出来才算会。"},
+ notes:"钩子：判断(岔路口)+循环(肚子)合体＝条件循环。不展开讲——下周拼出来才算会。"},
 
 {cls:"end", html:`
-  <div class="emoji-row" style="font-size:56px">💾 🐛 📅</div>
+  <div class="emoji-row" style="font-size:56px">🔁 💾 📅</div>
   <h1>课后任务</h1>
   <div class="sub">
-    课后必做：把今天的 waimaiJSQ 再跑 3 遍——分别输入 1、3、5，<b>先猜再跑</b>，三个得数写在记录册大任务页下面（开头抽查 +2 分；<b>没做的开头领备用场景卡照样拼</b>）<br>
-    课后选做：另想一个「会问数的小计算器」（食堂套餐？打印费？）画三行图纸，下周带来拼（+2 分）<br><br>
-    下周：进机房继续——<b>循环</b>让流程替你干 30 倍的活
+    课后必做：循环版再跑 3 个次数——3、5、10，<b>先猜弹几次再跑</b>，写在记录册大任务页下面（开头抽查 +2 分；没做的开头抽备用场景卡）<br>
+    课后选做：给循环版再加一问「单价多少？」——让单价也听人的（+2 分）<br><br>
+    下周：判断＋循环合体——流程开始<b>自己做决定</b>
   </div>`,
- notes:"必做三输入是「先猜再跑」的课后版：先写猜的数再跑，三个都对才算。选做图纸＝下次开场的拼装素材。"},
+ notes:"必做是「先猜再跑」的课后版。选做给学有余力：两个输入块并存。下讲开场照例先收作业——没做的走备用卡通道。"},
 ];
 const deck = document.getElementById("deck");
 const notesEl = document.getElementById("notes");
