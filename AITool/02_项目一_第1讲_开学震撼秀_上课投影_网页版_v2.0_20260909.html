@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>开学第一课 开学震撼秀 上课投影 v2.0</title>
+<style>
+:root{
+  --orange:#bf360c; --green:#2e7d32; --ink:#22170f;
+  --gold:#f9a825; --brown:#3e2723; --paper:#fffdf8; --line:#ead9c6;
+  --title:3rem; --body:2rem; --now:1.55rem;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#efe4d6;color:var(--ink);
+  font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;}
+body{display:flex;flex-direction:column;min-height:100vh;overflow:hidden}
+.top{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--brown);color:#fff;flex-shrink:0}
+.top h1{font-size:14px;font-weight:700}
+.top small{opacity:.75;font-size:11px;margin-left:6px}
+.top .hint{margin-left:auto;font-size:11px;opacity:.85}
+.top button{border:0;background:#efebe9;color:var(--brown);font:inherit;font-weight:800;padding:6px 10px;border-radius:8px;cursor:pointer}
+.top button.on{background:#ffcc80;color:var(--brown)}
+.layout{display:grid;grid-template-columns:148px 1fr;flex:1;min-height:0}
+body.wide .layout{grid-template-columns:1fr}
+body.wide .side{display:none}
+.side{background:#f7efe4;border-right:1px solid var(--line);overflow:auto;padding:6px 0}
+.side input{width:calc(100% - 12px);margin:4px 6px 6px;padding:5px 7px;border:1px solid #e6d5c3;border-radius:6px;font:inherit;font-size:11px}
+.nav-item{display:block;width:100%;text-align:left;padding:5px 8px;border:0;background:transparent;font:inherit;cursor:pointer;color:#5a4638;font-size:11px;line-height:1.25}
+.nav-item:hover{background:#f8e8d8}
+.nav-item.on{background:#bf360c;color:#fff}
+.nav-item .k{display:inline-block;min-width:22px;opacity:.7;font-variant-numeric:tabular-nums}
+.main{min-height:0;overflow-y:scroll;padding:8px 14px 8px;display:flex;justify-content:center;align-items:flex-start;scrollbar-gutter:stable;scrollbar-width:none}
+.main::-webkit-scrollbar{width:0}
+.card{width:min(1100px,100%);background:var(--paper);border-radius:14px;box-shadow:0 8px 28px rgba(62,39,35,.08);border:1px solid var(--line);
+  overflow:visible;transform-origin:50% 50%;position:relative}
+.badge{display:inline-block;font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px;margin-bottom:8px}
+.k-cover{background:#3e2723;color:#ffcc80}
+.k-pause{background:#fff3e0;color:#bf360c;border:1px solid #ffcc80}
+.k-setup{background:#eceff1;color:#455a64}
+.k-text{background:#f5f5f5;color:#616161}
+.k-spare{background:#eeeeee;color:#757575}
+.k-key,.k-end{background:#3e2723;color:#ffcc80}
+.k-reveal{background:#f3e5f5;color:#4a148c}
+.k-vote{background:#ede7f6;color:#4527a0}
+.k-collect{background:#f3e5f5;color:#6a1b9a}
+.k-warn{background:#ffebee;color:#b71c1c;border:1px solid #ef9a9a}
+.k-recap{background:#fce4ec;color:#880e4f}
+.k-task{background:#e8f5e9;color:#1b5e20}
+.head{padding:12px 22px 4px}
+.head h2{font-size:var(--title);line-height:1.25;color:var(--brown);cursor:zoom-in}
+.body{padding:6px 22px 10px;font-size:var(--body);line-height:1.45;font-weight:650}
+.body p{margin:0 0 10px;cursor:zoom-in}
+mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-weight:900}
+.stamp{position:absolute;right:16px;top:16px;z-index:3;font-weight:900;font-size:26px;padding:8px 14px;border-radius:12px;transform:rotate(12deg);box-shadow:4px 4px 0 #3e2723;animation:stamp 1s cubic-bezier(.16,1,.3,1) both;pointer-events:none;letter-spacing:.08em}
+.stamp.st-cover{background:#3e2723;color:#ffcc80}
+.stamp.st-setup{background:#1565c0;color:#fff}
+.stamp.st-pause{background:#ff1744;color:#fff;font-size:30px}
+.stamp.st-text{background:#5d4037;color:#ffe0b2}
+.stamp.st-task{background:#2e7d32;color:#fff}
+.stamp.st-key,.stamp.st-end{background:#ffc400;color:#3e2723}
+.stamp.st-reveal{background:#4a148c;color:#fff}
+.stamp.st-vote{background:#4527a0;color:#fff}
+.stamp.st-collect{background:#6a1b9a;color:#fff}
+.stamp.st-warn{background:#c62828;color:#fff}
+.stamp.st-recap{background:#880e4f;color:#fff}
+.stamp.st-spare{background:#607d8b;color:#fff}
+.dock{flex-shrink:0}
+.now{background:var(--green);color:#fff;padding:8px 18px;font-size:var(--now);font-weight:800;line-height:1.35;cursor:zoom-in}
+.bar{display:flex;align-items:center;gap:8px;padding:4px 10px;background:#fff;border-top:1px solid var(--line)}
+.bar button{border:0;background:var(--orange);color:#fff;font:inherit;font-weight:700;padding:5px 12px;border-radius:8px;cursor:pointer;font-size:13px;line-height:1.2}
+.bar button.ghost{background:#efebe9;color:var(--brown)}
+.bar .pg{flex:1;text-align:center;font-variant-numeric:tabular-nums;font-weight:700;color:#6d5648;font-size:13px}
+.lb{position:fixed;inset:0;background:rgba(20,12,8,.9);display:none;align-items:center;justify-content:center;z-index:20;padding:24px}
+.lb.show{display:flex}
+.zoom-text{color:#fff;font-size:clamp(36px,6.5vw,84px);font-weight:900;line-height:1.35;text-align:center;max-width:92vw;text-shadow:0 2px 0 #000}
+
+/* 动效（同基础会计投影） */
+.ambient{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:radial-gradient(1200px 600px at 10% -10%,#ffcc80 0%,transparent 55%),radial-gradient(900px 500px at 110% 110%,#81c784 0%,transparent 50%),#ead7c0}
+.ambient .blob{position:absolute;border-radius:50%;filter:blur(28px);opacity:.7;animation:float 10s ease-in-out infinite}
+.ambient .b1{width:50vw;height:50vw;left:-12vw;top:-18vh;background:#ff6d00}
+.ambient .b2{width:44vw;height:44vw;right:-14vw;bottom:-12vh;background:#00c853;animation-delay:-4s}
+.ambient .b3{width:32vw;height:32vw;left:38vw;top:38vh;background:#ff1744;opacity:.45;animation-delay:-7s}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(8%,-10%) scale(1.18)}}
+.progress{position:fixed;top:0;left:0;right:0;height:10px;z-index:12;background:#3e2723}
+.progress i{display:block;height:100%;width:0;background:repeating-linear-gradient(90deg,#ff1744 0 18px,#ffea00 18px 36px);box-shadow:0 0 16px #ff1744;transition:width .8s cubic-bezier(.16,1,.3,1)}
+.page-flash{position:fixed;inset:0;z-index:11;pointer-events:none;background:#fff;opacity:0}
+.page-flash.go{animation:flash .55s ease}
+@keyframes flash{0%{opacity:.7}100%{opacity:0}}
+.layout,.dock,.top{position:relative;z-index:2}
+.card.enter-next{animation:inNext 1.05s cubic-bezier(.16,1,.3,1) both}
+.card.enter-prev{animation:inPrev 1.05s cubic-bezier(.16,1,.3,1) both}
+@keyframes inNext{0%{opacity:0;transform:translateX(22vw) rotate(2.5deg) scale(.9)}60%{opacity:1}100%{opacity:1;transform:none}}
+@keyframes inPrev{0%{opacity:0;transform:translateX(-22vw) rotate(-2.5deg) scale(.9)}60%{opacity:1}100%{opacity:1;transform:none}}
+.card .head h2,.card .body p{animation:rise .85s cubic-bezier(.16,1,.3,1) both}
+.card .head h2{animation-delay:.08s}
+.card .body p{animation-delay:var(--d,.2s)}
+@keyframes rise{from{opacity:0;transform:translateY(42px) scale(.96)}to{opacity:1;transform:none}}
+.card.kind-cover{background:linear-gradient(165deg,#fff3e0,#fffdf8 40%,#ffe0b2);box-shadow:0 20px 60px rgba(191,54,12,.22)}
+.card.kind-cover h2{letter-spacing:.06em;animation:coverSlam 1s cubic-bezier(.16,1,.3,1) both}
+@keyframes coverSlam{0%{opacity:0;transform:scale(.6) rotate(-6deg)}70%{transform:scale(1.06) rotate(1deg)}100%{opacity:1;transform:none}}
+.card.kind-pause{background:#fff8e1;border:8px solid #ff1744!important;box-shadow:0 0 0 8px #fffde7, 0 0 40px #ff1744}
+.card.kind-pause::before{content:"";position:absolute;inset:-16px;border-radius:22px;border:8px solid #ff1744;animation:ring 1s ease-out infinite;pointer-events:none}
+@keyframes ring{0%{transform:scale(.96);opacity:1}100%{transform:scale(1.08);opacity:0}}
+.card.kind-pause .badge{background:#ff1744;color:#fff;font-size:16px;padding:6px 14px;animation:pulse .7s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.06)}}
+@keyframes stamp{0%{opacity:0;transform:scale(1.8) rotate(-20deg)}100%{opacity:1;transform:rotate(12deg)}}
+.card.kind-key,.card.kind-end{background:linear-gradient(160deg,#2d1b12,#3e2723 55%,#4e342e);border:0!important;box-shadow:0 24px 70px rgba(0,0,0,.45)}
+.card.kind-key .head h2,.card.kind-end .head h2{color:#ffd54f;font-size:clamp(34px,6.4vw,92px);line-height:1.18;text-align:center;padding:18px 0 6px}
+.card.kind-key .body,.card.kind-end .body{text-align:center}
+.card.kind-key .body p,.card.kind-end .body p{color:#ffe0b2;font-size:clamp(16px,2.2vw,29px);font-weight:650}
+.card.kind-warn{background:#fff5f5;border:6px solid #c62828!important}
+.card.kind-warn .head h2{color:#b71c1c;text-align:center}
+.now{animation:nowIn .7s cubic-bezier(.16,1,.3,1) both;box-shadow:0 -8px 24px rgba(46,125,50,.35)}
+@keyframes nowIn{from{transform:translateY(28px);opacity:0}to{transform:none;opacity:1}}
+
+/* 命令模板 */
+.cmd{margin:6px 22px 14px;background:#fff;border:3px solid var(--green);border-radius:14px;padding:16px 18px;font-size:clamp(16px,2.2vw,26px);font-weight:800;line-height:1.6}
+.cmd .slot{display:inline-block;background:#fff8e1;border:2px dashed #ef6c00;border-radius:8px;padding:2px 12px;color:#e65100;margin:0 2px}
+.opts{padding:0 22px 14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.optc{background:#fff;border:3px solid #c8b8a6;border-radius:12px;padding:10px 14px}
+.optc h4{font-size:clamp(15px,2vw,21px);color:#bf360c;margin-bottom:6px}
+.optc span{display:inline-block;background:#faf6f0;border:2px solid var(--line);border-radius:999px;padding:4px 12px;margin:3px 4px 0 0;font-size:clamp(13px,1.8vw,18px);font-weight:800;color:#3e2723}
+/* 揭示 */
+.reveal{padding:6px 22px 16px;display:grid;gap:10px}
+.reveal .r{border:3px solid #ce93d8;background:#fff;border-radius:14px;padding:14px 18px;cursor:pointer;transition:.25s}
+.reveal .r b{font-size:clamp(17px,2.4vw,29px);color:#4a148c;display:block}
+.reveal .r span{font-size:clamp(14px,1.85vw,21px);color:#6a1b9a;font-weight:700;max-height:0;overflow:hidden;opacity:0;transition:.35s;display:block}
+.reveal .r.on{border-color:#7b1fa2;background:#f3e5f5}
+.reveal .r.on span{max-height:120px;opacity:1;margin-top:6px}
+/* 投票 */
+.vote{padding:6px 22px 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.vote button{border:4px solid #b39ddb;background:#fff;color:#4527a0;font:inherit;font-weight:900;font-size:clamp(19px,2.8vw,34px);padding:20px 12px;border-radius:16px;cursor:pointer;transition:.2s}
+.vote button:hover{border-color:#7e57c2;background:#ede7f6}
+.vote button.picked{border-color:#4527a0;background:#4527a0;color:#fff;transform:scale(1.04)}
+/* 收集 */
+.collect{padding:6px 22px 16px}
+.collect .cin{display:flex;gap:8px;margin-bottom:10px}
+.collect input{flex:1;font:inherit;font-size:clamp(18px,2.4vw,26px);font-weight:800;padding:10px 14px;border:3px solid #ce93d8;border-radius:12px}
+.collect button{border:0;background:#6a1b9a;color:#fff;font:inherit;font-weight:900;font-size:clamp(16px,2vw,22px);padding:10px 22px;border-radius:12px;cursor:pointer}
+.collect .chips2{display:flex;flex-wrap:wrap;gap:10px;min-height:60px}
+.collect .c2{background:#6a1b9a;color:#fff;padding:10px 20px;border-radius:999px;font-weight:900;font-size:clamp(18px,2.6vw,30px);animation:pop .35s cubic-bezier(.16,1,.3,1) both}
+@keyframes pop{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:none}}
+.collect .tip{margin-top:10px;color:#6a1b9a;font-weight:700;font-size:15px}
+/* 回看 */
+.recap{padding:6px 22px 18px;display:grid;gap:10px}
+.recap .r{border:3px solid #f8bbd0;background:#fff;border-radius:14px;padding:14px 18px;cursor:pointer;transition:.25s}
+.recap .r b{font-size:clamp(17px,2.3vw,28px);color:#880e4f;display:block}
+.recap .r span{font-size:clamp(14px,1.9vw,22px);color:#ad1457;font-weight:700;max-height:0;overflow:hidden;opacity:0;transition:.35s;display:block}
+.recap .r.on{border-color:#ec407a;background:#fce4ec}
+.recap .r.on span{max-height:120px;opacity:1;margin-top:6px}
+@media (prefers-reduced-motion: reduce){.ambient .blob,.card,.card .head h2,.card .body p,.now,.progress i,.page-flash,.card.kind-pause::before{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="ambient" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+<div class="page-flash" id="flash"></div>
+<header class="top">
+  <button type="button" id="menuBtn">目录</button>
+  <button type="button" id="fontBig" class="on">大字体</button>
+  <button type="button" id="fontSmall">小字体</button>
+  <h1>AI工具实战应用 开学第一课·开学震撼秀 <small>上课投影网页版 v2.0　2026-09-09</small></h1>
+  <div class="hint">← → 翻页　点字可放大</div>
+</header>
+<div class="layout">
+  <aside class="side" id="side">
+    <input id="q" placeholder="搜 震撼 / 暂停 / 挑战 / 鹈鹕" />
+    <div id="nav"></div>
+  </aside>
+  <main class="main" id="main"><article class="card" id="card"></article></main>
+</div>
+<div class="dock">
+  <div class="now" id="nowbar"></div>
+  <div class="bar">
+    <button class="ghost" type="button" id="prev">上一页</button>
+    <div class="pg" id="pg"></div>
+    <button type="button" id="next">下一页</button>
+  </div>
+</div>
+<div class="lb" id="lb"></div>
+<script>
+const SLIDES = [
+{n:1, kind:"cover", title:"AI工具实战应用　开学第一课", body:["你手机里的豆包，你只用明白了 1%。","这堂课不讲道理，只干一件事：让你亲眼看见 AI 能干什么、会在哪骗你、你怎么指挥它。"], now:"现在你：坐下，把手机放在桌上，豆包先别打开。听老师说今天的规矩。"},
+{n:2, kind:"text", title:"课上只认三种标签", body:["📒 暂停点——翻到记录册，动笔写。先写你的，再听老师讲。\n\n🙋 抢答——举手就说，说就加分，答错不扣分。\n\n🎲 抽人——随机抽，答不出，同桌帮。"], now:"现在你：记住这三个暗号。后面每一页都按它走。"},
+{n:3, kind:"text", title:"这门课怎么上、怎么考", body:["不背公式、不写代码、不搞设计——模板给你，你只管动手。\n\n过程 60%：任务卡＋记录册＋抢答。结课 40%：照模板展示三样东西。\n\n没有死记硬背的卷子。"], now:"现在你：听。重点就一句——这门课全靠动手。"},
+{n:4, kind:"collect", title:"开场摸底：你平时让豆包干什么？", body:["喊一个，老师记一个。不评价，全写上来。"], now:"现在你：举手喊。写过作业？聊过天？翻过译？还是只问过它「你是谁」？"},
+{n:5, kind:"setup", title:"震撼①　先听一句", body:["接下来全班做同一件事：问豆包「帮我安排一个正定一日游」。\n\n注意：你平时怎么问，就怎么问。别加任何花样。"], now:"现在你：听老师把任务说完，再动手。"},
+{n:6, kind:"task", title:"现在动手：用你的方式问（3 分钟）", body:["打开手机豆包，发这一句：「帮我安排一个正定一日游」。\n\n看一眼结果，记在心里：几段字？能用吗？敢照着走吗？"], now:"现在你：发出去，看结果。3 分钟后老师换一种问法。"},
+{n:7, kind:"text", title:"老师怎么问——原样发出去看结果", body:["你是正定本地向导。我是石邮院新生，预算 50 元，周六一天。给我时间线，并用表格输出：时间 / 地点 / 花费 / 避坑提醒。隆兴寺要提前预约，把预约方式写清楚。\n\n同一个豆包，一边是一大段正确的废话，一边是能直接照着走的表格。"], now:"现在你：看大屏对比。差在哪，马上问你们。"},
+{n:8, kind:"pause", title:"暂停点①　请写 60 秒", body:["两种问法，差在哪？你平时是哪种问法？"], now:"现在你：写在记录册「暂停点①」。写完合上，先别讨论。"},
+{n:9, kind:"key", title:"AI 不笨，<br>是你没说清。", body:["角色、背景、要求、格式——这四样，就是这学期的主线。"], now:"现在你：这一句记在心里。四要素模板，后面正式学。"},
+{n:10, kind:"setup", title:"震撼②　先听一句", body:["AI 不光听得懂话，还看得懂图。\n\n接下来每人拍一张自己的东西，让豆包列清单。"], now:"现在你：听老师把任务说完。"},
+{n:11, kind:"task", title:"现在动手：拍一张你的东西（3 分钟）", body:["第一步：拍你的桌面 / 笔袋 / 书包。\n\n第二步：发给豆包，命令照抄：「把图里的东西列成清单，标上数量」。\n\n第三步：核对——它列对了吗？🙋 举手报告它认错了什么，报一个 2 分。"], now:"现在你：拍、发、核对。认错的地方留着一会儿写。"},
+{n:12, kind:"pause", title:"暂停点②　请写 40 秒", body:["AI 认错了你照片里的什么？你回了一句什么话纠正它？"], now:"现在你：写在记录册「暂停点②」。纠正它的那句话，就是后面要学的「追问」。"},
+{n:13, kind:"setup", title:"震撼③　先听一句", body:["前面两次，AI 是「你问一句它答一句」。\n\n接下来这台电脑，老师一句话都不碰——看它自己干活。"], now:"现在你：看大屏。这是老师的笔记本，装了 WorkBuddy。"},
+{n:14, kind:"task", title:"电脑被附身了：三个任务", body:["① 把桌面上的乱文件，按类型自动归进文件夹。\n\n② 把这份 50 人名单，按专业汇总成一张表。\n\n③ 再做一页欢迎新同学的 PPT。\n\n谁喊「停」，老师当场把鼠标交还给 AI 之外的你。它要删文件？看它怎么被拦住——高危操作自动拦。"], now:"现在你：看。第 9 次课，这个东西装到你的电脑上。"},
+{n:15, kind:"setup", title:"震撼④　先听一句", body:["AI 这么能干，能不能全信？\n\n老师现在问它一个编出来的问题。"], now:"现在你：看大屏，听仔细这个问题。"},
+{n:16, kind:"text", title:"老师问了一个查无此事的问题", body:["「石家庄邮电职业技术学院 2027 年快递运营管理专业的奖学金是多少钱？」\n\n这个数，网上查不到——因为是老师编的。看豆包怎么答：它照样给了一个数，还特别自信。\n\n全班当裁判：这个数，能信吗？去哪核实？"], now:"现在你：当裁判。它说得越像真的，越要小心。"},
+{n:17, kind:"task", title:"发核对卡：4 句话，判真假（5 分钟）", body:["① 2025 年，中国快递业务量超过了 1700 亿件？\n② 石家庄地铁的起步价是 3 元？\n③ 石邮院宿舍电费充值 100 元送 20 元？\n④ 学校驿站快递超过 3 天不取，每天收 1 元保管费？\n\n逐条发给豆包，对照纸卡上的核实依据打 ✓ 或 ✗。"], now:"现在你：四条都问完再举手。抢答：哪几题豆包在说瞎话？"},
+{n:18, kind:"pause", title:"暂停点③　请写 60 秒", body:["4 道题，豆包对了几道？逐题打 ✓/✗。\n再写一句：以后你怎么看待 AI 的回答？"], now:"现在你：写在记录册「暂停点③」。核对卡下课收，计入过程分。"},
+{n:19, kind:"reveal", title:"AI 撒谎的三种样子", body:["点开看。对一对刚才那四道题。"], now:"现在你：一条一条点开。"},
+{n:20, kind:"key", title:"AI 说的，不背；<br>要用的，先核。", body:["钱、规则、法律——一律以官方为准。"], now:"现在你：这句话，写进记录册。"},
+{n:21, kind:"setup", title:"震撼⑤　这次轮到你们指挥", body:["「鹈鹕骑自行车」——这是全世界工程师考 AI 的经典考题：画得出来算及格。\n\n今天不考工程师，考你们：全班每人指挥一次 AI，让它把东西画出来。"], now:"现在你：听老师发挑战卡。"},
+{n:22, kind:"vote", title:"全班投票：今天指挥 AI 画什么？", body:["点一个。票多的，全班一起画。"], now:"现在你：上来点一票。"},
+{n:23, kind:"task", title:"挑战命令模板：只许填空，不许自由发挥", body:["把下面这句话填完，原样发给豆包（让它画图）："], now:"现在你：五个空，每个空从下面的选项卡里挑一个填进去。填完发给豆包。"},
+{n:24, kind:"task", title:"挑战执行三步＋加时任务", body:["第一步：打开豆包，把填好的命令发出去，等它画。\n第二步：对清单验收——五个要素都出现了没有？漏一个，追问一句补上。\n第三步：同桌互相看对方的图，找出对方命令里藏的那个「彩蛋细节」。\n\n加时任务（做完的组）：打开浏览器 solo.trae.cn，把老师发的「植物大战僵尸」指令原文粘贴进去——一分钟后你们能玩上自己指挥 AI 做出来的游戏。"], now:"现在你：按三步走。验收标准只有一条——你要的东西，图里都有。"},
+{n:25, kind:"pause", title:"暂停点④　请写 60 秒", body:["① 今天，我最想学会的一招是什么？\n② 这门课，我绝不做的事是什么（红线）？"], now:"现在你：写在记录册「暂停点④」。写完举起记录册，老师检查加分。"},
+{n:26, kind:"warn", title:"三条红线，永远不碰", body:["🚫 自己的身份证、手机号、家庭住址——不发。\n🚫 同学的个人信息、照片、聊天记录——不发。\n🚫 AI 说的钱、规则、法律——不核实，不用。"], now:"现在你：这三条，抄进记录册。"},
+{n:27, kind:"recap", title:"回看：今天只记三句", body:["点一下每一条，先自己背出来，再翻开对。"], now:"现在你：三条都看完，再看下一页。"},
+{n:28, kind:"end", title:"下课。", body:["记住一句：你没说的，AI 替你猜；你说清的，它才照办。", "课后任务（必做）：用 30 秒给室友讲明白这门课学什么。\n选做：截一张你自己遇到的「AI 说瞎话」，带来全班比惨，最离谱的加 5 分。"], now:"现在你：记录册合上带走。下次来，学「把话说清楚」——四要素填空模板。"},
+{n:29, kind:"spare", title:"时间够再用：挑战第二轮", body:["换一个组合再画一张：比如「鳄鱼 滑滑板 水墨画 学校食堂 戴头盔」。\n画完全班举手投票：哪张最像「按命令干活」，哪张是 AI 自由发挥。"], now:"现在你：老师没说用，就不用看这页。"},
+{n:30, kind:"spare", title:"时间够再用：植物大战僵尸完整版", body:["加时组把游戏链接发到企业微信群，全班扫码玩 1 分钟。\n玩完问一句：这游戏是谁做的？——是你指挥的那句话做的。"], now:"现在你：老师没说用，就不用看这页。"}
+];
+/* 挑战命令模板与选项卡（第23页渲染用） */
+const CMD_TPL='你是画画高手。请画一张图：【主体】正在【动作】，画面是【风格】，背景在【场景】，再加一个细节：【彩蛋】。图里必须包含上面全部要素。';
+const CMD_OPTS=[
+ ["主体","🦩 鹈鹕","🐊 鳄鱼","🕊️ 鸽子","📦 快递箱"],
+ ["动作","骑自行车","滑滑板","排队买奶茶","分拣包裹"],
+ ["风格","漫画","像素游戏风","水墨画","3D 卡通"],
+ ["场景","正定南城门","学校食堂","快递分拣中心","月球表面"],
+ ["彩蛋","戴着头盔","图里出现「石家庄」三个字","影子比本人多一个","朝看画的人招手"]
+];
+const GAME_CMD='用单个 HTML 文件做一个简版「植物大战僵尸」点击小游戏：① 5 条跑道，僵尸从右往左慢慢走，越走越快；② 鼠标点中僵尸，僵尸消失，加 1 分；③ 任何一个僵尸走到最左边，游戏结束，显示得分和「再来一局」按钮；④ 画面明快可爱，顶部显示当前得分。做完给我可以直接打开的链接。';
+const REVEAL=[["① 编数字","张口就来，还特别精确——那个「奖学金金额」就是"],["② 编出处","「根据相关规定」——其实根本没这个规定"],["③ 不知道也答","语气比真话还自信。越像真的，越要核"]];
+const RECAP=[["你问一句它答一句，是聊天；你派一件事它办完，才是干活","AI 真正的本事是「把事办完」，这学期就学这个"],["AI 会说瞎话，核实是你的事","核对卡那四道题，回去再看一眼"],["这门课不背、不码、不设计——照模板动手就行","模板都给你，动手的是你"]];
+const VOTES=["🦩 鹈鹕骑自行车","🐊 鳄鱼滑滑板","🕊️ 鸽子买奶茶","📦 快递箱分拣"];
+const KIND={cover:"封面",text:"讲义",setup:"先听一句",task:"动手",pause:"暂停点",key:"金句",reveal:"对答案",vote:"投票",collect:"摸底",warn:"红线",recap:"回看",end:"下课",spare:"备用"};
+const STAMP={cover:"开讲",text:"记",setup:"听",task:"动手",pause:"写！",key:"记住",reveal:"对答案",vote:"投票",collect:"喊",warn:"红线",recap:"回看",end:"下课",spare:"备用"};
+const KEYS=["四要素","核对","红线","填空","彩蛋","追问","验收","模板","暂停点"];
+let i=0;
+const $=id=>document.getElementById(id);
+function esc(s){return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function mark(s){
+  let out=esc(s);
+  out=out.replace(/&lt;br\s*\/?&gt;/gi,"<br>");
+  KEYS.forEach(k=>{ out=out.split(esc(k)).join('<mark class="kw">'+esc(k)+'</mark>'); });
+  return out;
+}
+function bodyHtml(blocks){
+  let n=0;
+  return (blocks||[]).map(b=>{
+    const lines=b.split("\n").filter(x=>x.length);
+    return lines.map(x=>{ n++; return `<p style="--d:${(0.08+n*0.07).toFixed(2)}s">${mark(x)}</p>`; }).join("");
+  }).join("");
+}
+function setFont(big){
+  document.documentElement.style.setProperty("--title", big?"3rem":"2.2rem");
+  document.documentElement.style.setProperty("--body", big?"2rem":"1.45rem");
+  document.documentElement.style.setProperty("--now", big?"1.55rem":"1.25rem");
+  $("fontBig").classList.toggle("on", big);
+  $("fontSmall").classList.toggle("on", !big);
+}
+function renderNav(){
+  const q=$("q").value.trim();
+  $("nav").innerHTML=SLIDES.map((s,idx)=>{
+    const t=s.title||("第"+s.n+"页");
+    if(q && !t.includes(q) && !String(s.n).includes(q)) return "";
+    const short=t.length>16?t.slice(0,15)+"…":t;
+    return `<button class="nav-item ${idx===i?"on":""}" data-i="${idx}"><span class="k">${s.n}</span>${esc(short)}</button>`;
+  }).join("");
+}
+function fitCard(){
+  const card=$("card"), main=$("main");
+  if(!card||!main) return;
+  main.style.zoom="";
+  const cs=getComputedStyle(main);
+  const pad=parseFloat(cs.paddingTop||0)+parseFloat(cs.paddingBottom||0);
+  const avail=main.clientHeight-pad;
+  const h=card.getBoundingClientRect().height;
+  if(h>avail && avail>60){ main.style.zoom=Math.max(0.55, avail/h); }
+}
+window.addEventListener("resize", ()=>setTimeout(fitCard,60));
+function render(dir){
+  const s=SLIDES[i];
+  const card=$("card");
+  card.className="card kind-"+s.kind+" "+(dir==="prev"?"enter-prev":"enter-next");
+  let widget="";
+  if(s.kind==="reveal"){
+    widget=`<div class="reveal">`+REVEAL.map((r,k)=>`<div class="r" data-r="${k}"><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div>`).join("")+`</div>`;
+  }else if(s.kind==="recap"){
+    widget=`<div class="recap">`+RECAP.map((r,k)=>`<div class="r" data-r="${k}"><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div>`).join("")+`</div>`;
+  }else if(s.kind==="vote"){
+    widget=`<div class="vote">`+VOTES.map((v,k)=>`<button type="button" data-v="${k}">${esc(v)}</button>`).join("")+`</div>`;
+  }else if(s.kind==="collect"){
+    widget=`<div class="collect"><div class="cin"><input id="cIn" placeholder="学生喊的用途，回车加一个"><button type="button" id="cAdd">加上</button></div><div class="chips2" id="cWrap"></div><div class="tip">一个都不评价。全写上来——第一页的榜单，震撼①收尾要拿出来对比。</div></div>`;
+  }else if(s.n===23){
+    const slots='【主体】【动作】【风格】【场景】【彩蛋】';
+    const cmdHtml=esc(CMD_TPL).replace(/【(主体|动作|风格|场景|彩蛋)】/g,'<span class="slot">【$1】</span>');
+    widget=`<div class="cmd">${cmdHtml}</div><div class="opts">`+CMD_OPTS.map(o=>`<div class="optc"><h4>${esc(o[0])}卡</h4>`+o.slice(1).map(x=>`<span>${esc(x)}</span>`).join("")+`</div>`).join("")+`</div>`;
+  }else if(s.n===24){
+    widget=`<div class="cmd">${esc(GAME_CMD)}</div>`;
+  }
+  card.innerHTML=`
+    <div class="stamp st-${esc(s.kind)}">${STAMP[s.kind]||""}</div>
+    <div class="head"><span class="badge k-${esc(s.kind)}">${KIND[s.kind]||s.kind}</span><h2>${mark(s.title||"")}</h2></div>
+    <div class="body">${bodyHtml(s.body||[])}</div>
+    ${widget}`;
+  const nb=$("nowbar");
+  nb.style.animation="none"; void nb.offsetWidth; nb.style.animation="";
+  nb.innerHTML=s.now?mark(s.now):"";
+  nb.style.display=s.now?"block":"none";
+  $("pg").textContent=(i+1)+" / "+SLIDES.length;
+  const prog=$("prog"); if(prog) prog.style.width=((i+1)/SLIDES.length*100).toFixed(2)+"%";
+  const fl=$("flash"); if(fl && dir){ fl.classList.remove("go"); void fl.offsetWidth; fl.classList.add("go"); }
+  card.querySelectorAll(".reveal .r,.recap .r").forEach(el=>el.onclick=()=>el.classList.toggle("on"));
+  card.querySelectorAll(".vote button").forEach(b=>b.onclick=()=>{
+    card.querySelectorAll(".vote button").forEach(x=>x.classList.remove("picked"));
+    b.classList.add("picked");
+  });
+  const cAdd=$("cAdd"), cIn=$("cIn"), cWrap=$("cWrap");
+  if(cAdd&&cIn&&cWrap){
+    const push=()=>{const v=cIn.value.trim(); if(!v)return;
+      const d=document.createElement("span"); d.className="c2"; d.textContent=v; cWrap.appendChild(d);
+      cIn.value=""; cIn.focus();};
+    cAdd.onclick=push; cIn.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();push();}};
+  }
+  renderNav(); history.replaceState(null,"","#"+s.n); $("main").scrollTop=0;
+  setTimeout(fitCard,30); setTimeout(fitCard,420);
+}
+function go(n){ const next=Math.max(0,Math.min(SLIDES.length-1,n)); const dir=next>i?"next":next<i?"prev":"next"; i=next; render(dir); }
+function zoomText(html){ $("lb").innerHTML=`<div class="zoom-text">${html}</div>`; $("lb").classList.add("show"); }
+$("prev").onclick=()=>go(i-1);
+$("next").onclick=()=>go(i+1);
+$("nav").onclick=e=>{ const b=e.target.closest("[data-i]"); if(b) go(+b.dataset.i); };
+$("q").oninput=renderNav;
+$("menuBtn").onclick=()=>{ if(window.innerWidth<=860) $("side").classList.toggle("open"); else document.body.classList.toggle("wide"); };
+$("fontBig").onclick=()=>setFont(true);
+$("fontSmall").onclick=()=>setFont(false);
+document.addEventListener("keydown", e=>{
+  if(e.key==="ArrowRight"||e.key==="PageDown"||e.key===" "){ e.preventDefault(); go(i+1); }
+  if(e.key==="ArrowLeft"||e.key==="PageUp"){ e.preventDefault(); go(i-1); }
+  if(e.key==="Escape") $("lb").classList.remove("show");
+});
+$("card").addEventListener("click", e=>{
+  const p=e.target.closest("p,h2"); if(p) zoomText(p.innerHTML);
+});
+$("nowbar").addEventListener("click", e=>{ if(e.currentTarget.innerHTML) zoomText(e.currentTarget.innerHTML); });
+$("lb").onclick=()=>$("lb").classList.remove("show");
+document.body.classList.add("wide"); setFont(true);
+const hash=parseInt(location.hash.replace("#",""),10);
+if(hash>=1 && hash<=SLIDES.length) i=hash-1;
+render();
+</script>
+</body>
+</html>
