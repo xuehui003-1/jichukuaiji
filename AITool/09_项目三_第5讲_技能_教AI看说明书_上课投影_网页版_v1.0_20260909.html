@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第5讲 教AI看说明书·技能 上课投影 v1.0</title>
+<style>
+:root{
+  --orange:#bf360c; --green:#2e7d32; --ink:#22170f;
+  --gold:#f9a825; --brown:#3e2723; --paper:#fffdf8; --line:#ead9c6;
+  --title:3rem; --body:2rem; --now:1.55rem;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#efe4d6;color:var(--ink);
+  font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;}
+body{display:flex;flex-direction:column;min-height:100vh;overflow:hidden}
+.top{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--brown);color:#fff;flex-shrink:0}
+.top h1{font-size:14px;font-weight:700}
+.top small{opacity:.75;font-size:11px;margin-left:6px}
+.top .hint{margin-left:auto;font-size:11px;opacity:.85}
+.top button{border:0;background:#efebe9;color:var(--brown);font:inherit;font-weight:800;padding:6px 10px;border-radius:8px;cursor:pointer}
+.top button.on{background:#ffcc80;color:var(--brown)}
+.top button:disabled{opacity:.45;cursor:default}
+.layout{display:grid;grid-template-columns:148px 1fr;flex:1;min-height:0}
+body.wide .layout{grid-template-columns:1fr}
+body.wide .side{display:none}
+.side{background:#f7efe4;border-right:1px solid var(--line);overflow:auto;padding:6px 0}
+.side input{width:calc(100% - 12px);margin:4px 6px 6px;padding:5px 7px;border:1px solid #e6d5c3;border-radius:6px;font:inherit;font-size:11px}
+.nav-item{display:block;width:100%;text-align:left;padding:5px 8px;border:0;background:transparent;font:inherit;cursor:pointer;color:#5a4638;font-size:11px;line-height:1.25}
+.nav-item:hover{background:#f8e8d8}
+.nav-item.on{background:#bf360c;color:#fff}
+.nav-item .k{display:inline-block;min-width:22px;opacity:.7;font-variant-numeric:tabular-nums}
+.main{min-height:0;overflow-y:scroll;padding:8px 14px 8px;display:flex;justify-content:center;align-items:flex-start;scrollbar-gutter:stable;scrollbar-width:none}
+.main::-webkit-scrollbar{width:0}
+.card{width:min(1100px,100%);background:var(--paper);border-radius:14px;box-shadow:0 8px 28px rgba(62,39,35,.08);border:1px solid var(--line);
+  overflow:visible;transform-origin:50% 50%;position:relative}
+.badge{display:inline-block;font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px;margin-bottom:8px}
+.k-cover{background:#3e2723;color:#ffcc80}
+.k-pause{background:#fff3e0;color:#bf360c;border:1px solid #ffcc80}
+.k-setup{background:#eceff1;color:#455a64}
+.k-text{background:#f5f5f5;color:#616161}
+.k-spare{background:#eeeeee;color:#757575}
+.k-key,.k-end{background:#3e2723;color:#ffcc80}
+.k-reveal{background:#f3e5f5;color:#4a148c}
+.k-recap{background:#fce4ec;color:#880e4f}
+.k-task{background:#e8f5e9;color:#1b5e20}
+.k-warn{background:#ffebee;color:#b71c1c;border:1px solid #ef9a9a}
+.head{padding:12px 22px 4px}
+.head h2{font-size:var(--title);line-height:1.25;color:var(--brown);cursor:zoom-in}
+.body{padding:6px 22px 10px;font-size:var(--body);line-height:1.45;font-weight:650}
+.body p{margin:0 0 10px;cursor:zoom-in}
+mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-weight:900}
+.stamp{position:absolute;right:16px;top:16px;z-index:3;font-weight:900;font-size:26px;padding:8px 14px;border-radius:12px;transform:rotate(12deg);box-shadow:4px 4px 0 #3e2723;animation:stamp 1s cubic-bezier(.16,1,.3,1) both;pointer-events:none;letter-spacing:.08em}
+.stamp.st-cover{background:#3e2723;color:#ffcc80}
+.stamp.st-setup{background:#1565c0;color:#fff}
+.stamp.st-pause{background:#ff1744;color:#fff;font-size:30px}
+.stamp.st-text{background:#5d4037;color:#ffe0b2}
+.stamp.st-task{background:#2e7d32;color:#fff}
+.stamp.st-key,.stamp.st-end{background:#ffc400;color:#3e2723}
+.stamp.st-reveal{background:#4a148c;color:#fff}
+.stamp.st-recap{background:#880e4f;color:#fff}
+.stamp.st-spare{background:#607d8b;color:#fff}
+.stamp.st-warn{background:#c62828;color:#fff}
+.dock{flex-shrink:0}
+.now{background:var(--green);color:#fff;padding:8px 18px;font-size:var(--now);font-weight:800;line-height:1.35;cursor:zoom-in}
+.bar{display:flex;align-items:center;gap:8px;padding:4px 10px;background:#fff;border-top:1px solid var(--line)}
+.bar button{border:0;background:var(--orange);color:#fff;font:inherit;font-weight:700;padding:5px 12px;border-radius:8px;cursor:pointer;font-size:13px;line-height:1.2}
+.bar button.ghost{background:#efebe9;color:var(--brown)}
+.bar .pg{flex:1;text-align:center;font-variant-numeric:tabular-nums;font-weight:700;color:#6d5648;font-size:13px}
+.lb{position:fixed;inset:0;background:rgba(20,12,8,.9);display:none;align-items:center;justify-content:center;z-index:20;padding:24px}
+.lb.show{display:flex}
+.zoom-text{color:#fff;font-size:clamp(36px,6.5vw,84px);font-weight:900;line-height:1.35;text-align:center;max-width:92vw;text-shadow:0 2px 0 #000}
+
+.ambient{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:radial-gradient(1200px 600px at 10% -10%,#ffcc80 0%,transparent 55%),radial-gradient(900px 500px at 110% 110%,#81c784 0%,transparent 50%),#ead7c0}
+.ambient .blob{position:absolute;border-radius:50%;filter:blur(28px);opacity:.7;animation:float 10s ease-in-out infinite}
+.ambient .b1{width:50vw;height:50vw;left:-12vw;top:-18vh;background:#ff6d00}
+.ambient .b2{width:44vw;height:44vw;right:-14vw;bottom:-12vh;background:#00c853;animation-delay:-4s}
+.ambient .b3{width:32vw;height:32vw;left:38vw;top:38vh;background:#ff1744;opacity:.45;animation-delay:-7s}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(8%,-10%) scale(1.18)}}
+.progress{position:fixed;top:0;left:0;right:0;height:10px;z-index:12;background:#3e2723}
+.progress i{display:block;height:100%;width:0;background:repeating-linear-gradient(90deg,#ff1744 0 18px,#ffea00 18px 36px);box-shadow:0 0 16px #ff1744;transition:width .8s cubic-bezier(.16,1,.3,1)}
+.page-flash{position:fixed;inset:0;z-index:11;pointer-events:none;background:#fff;opacity:0}
+.page-flash.go{animation:flash .55s ease}
+@keyframes flash{0%{opacity:.7}100%{opacity:0}}
+.layout,.dock,.top{position:relative;z-index:2}
+.card.enter-next{animation:inNext 1.05s cubic-bezier(.16,1,.3,1) both}
+.card.enter-prev{animation:inPrev 1.05s cubic-bezier(.16,1,.3,1) both}
+@keyframes inNext{0%{opacity:0;transform:translateX(22vw) rotate(2.5deg) scale(.9)}60%{opacity:1}100%{opacity:1;transform:none}}
+@keyframes inPrev{0%{opacity:0;transform:translateX(-22vw) rotate(-2.5deg) scale(.9)}60%{opacity:1}100%{opacity:1;transform:none}}
+.card .head h2,.card .body p{animation:rise .85s cubic-bezier(.16,1,.3,1) both}
+.card .head h2{animation-delay:.08s}
+.card .body p{animation-delay:var(--d,.2s)}
+@keyframes rise{from{opacity:0;transform:translateY(42px) scale(.96)}to{opacity:1;transform:none}}
+.card.kind-cover{background:linear-gradient(165deg,#fff3e0,#fffdf8 40%,#ffe0b2);box-shadow:0 20px 60px rgba(191,54,12,.22)}
+.card.kind-cover h2{letter-spacing:.06em;animation:coverSlam 1s cubic-bezier(.16,1,.3,1) both}
+@keyframes coverSlam{0%{opacity:0;transform:scale(.6) rotate(-6deg)}70%{transform:scale(1.06) rotate(1deg)}100%{opacity:1;transform:none}}
+.card.kind-pause{background:#fff8e1;border:8px solid #ff1744!important;box-shadow:0 0 0 8px #fffde7, 0 0 40px #ff1744}
+.card.kind-pause::before{content:"";position:absolute;inset:-16px;border-radius:22px;border:8px solid #ff1744;animation:ring 1s ease-out infinite;pointer-events:none}
+@keyframes ring{0%{transform:scale(.96);opacity:1}100%{transform:scale(1.08);opacity:0}}
+.card.kind-pause .badge{background:#ff1744;color:#fff;font-size:16px;padding:6px 14px;animation:pulse .7s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.06)}}
+@keyframes stamp{0%{opacity:0;transform:scale(1.8) rotate(-20deg)}100%{opacity:1;transform:rotate(12deg)}}
+.card.kind-key,.card.kind-end{background:linear-gradient(160deg,#2d1b12,#3e2723 55%,#4e342e);border:0!important;box-shadow:0 24px 70px rgba(0,0,0,.45)}
+.card.kind-key .head h2,.card.kind-end .head h2{color:#ffd54f;font-size:clamp(34px,6.4vw,92px);line-height:1.18;text-align:center;padding:18px 0 6px}
+.card.kind-key .body,.card.kind-end .body{text-align:center}
+.card.kind-key .body p,.card.kind-end .body p{color:#ffe0b2;font-size:clamp(16px,2.2vw,29px);font-weight:650}
+.card.kind-warn{background:#fff5f5;border:6px solid #c62828!important}
+.card.kind-warn .head h2{color:#b71c1c;text-align:center}
+.now{animation:nowIn .7s cubic-bezier(.16,1,.3,1) both;box-shadow:0 -8px 24px rgba(46,125,50,.35)}
+@keyframes nowIn{from{transform:translateY(28px);opacity:0}to{transform:none;opacity:1}}
+
+/* 指令选项卡 */
+.opts{padding:0 22px 14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.optc{background:#fff;border:3px solid #c8b8a6;border-radius:12px;padding:10px 14px}
+.optc h4{font-size:clamp(15px,2vw,21px);color:#bf360c;margin-bottom:6px}
+.optc span{display:inline-block;background:#faf6f0;border:2px solid var(--line);border-radius:999px;padding:4px 12px;margin:3px 4px 0 0;font-size:clamp(13px,1.8vw,18px);font-weight:800;color:#3e2723}
+/* 回看 */
+.recap{padding:6px 22px 18px;display:grid;gap:10px}
+.recap .r{border:3px solid #f8bbd0;background:#fff;border-radius:14px;padding:14px 18px;cursor:pointer;transition:.25s}
+.recap .r b{font-size:clamp(17px,2.3vw,28px);color:#880e4f;display:block}
+.recap .r span{font-size:clamp(14px,1.9vw,22px);color:#ad1457;font-weight:700;max-height:0;overflow:hidden;opacity:0;transition:.35s;display:block}
+.recap .r.on{border-color:#ec407a;background:#fce4ec}
+.recap .r.on span{max-height:120px;opacity:1;margin-top:6px}
+@media (prefers-reduced-motion: reduce){.ambient .blob,.card,.card .head h2,.card .body p,.now,.progress i,.page-flash,.card.kind-pause::before{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="ambient" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+<div class="page-flash" id="flash"></div>
+<header class="top">
+  <button type="button" id="menuBtn">目录</button>
+  <button type="button" id="fontDown">缩小字体</button>
+  <button type="button" id="fontUp">增大字体</button>
+  <span id="fontPct" style="font-size:11px;opacity:.85;min-width:38px;text-align:center">100%</span>
+  <h1>AI工具实战应用 第5讲·教AI看说明书（技能） <small>上课投影网页版 v1.0　2026-09-09</small></h1>
+  <div class="hint">← → 翻页　点字可放大</div>
+</header>
+<div class="layout">
+  <aside class="side" id="side">
+    <input id="q" placeholder="搜 P图 / 视频 / 即梦 / 暂停" />
+    <div id="nav"></div>
+  </aside>
+  <main class="main" id="main"><article class="card" id="card"></article></main>
+</div>
+<div class="dock">
+  <div class="now" id="nowbar"></div>
+  <div class="bar">
+    <button class="ghost" type="button" id="prev">上一页</button>
+    <div class="pg" id="pg"></div>
+    <button type="button" id="next">下一页</button>
+  </div>
+</div>
+<div class="lb" id="lb"></div>
+<script>
+const SLIDES = [
+{n:1, kind:"cover", title:"第5讲　教 AI 看说明书", body:["前四次课，你在「跟 AI 说话」。\n从今天起换个玩法：不跟它聊——指挥现成的智能体，把一整件事干完。\n今天先拿第一件武器：<b>技能</b>。"], now:"现在你：坐好，电脑打开浏览器。看下一页规矩。"},
+{n:2, kind:"text", title:"今天的规矩", body:["① 零新理论。技能就是给 AI 发的一本说明书，仅此而已。\n② 任务① 裸测 +2、任务② 装技能＋调用 +3、任务③ 前后对照 +3，全过额外 +2。\n③ 只装老师清单上的技能。来路不明的技能，一律不装。"], now:"现在你：听清分值和那条红线。"},
+{n:3, kind:"warn", title:"开工前，一条红线", body:["🚫 只装老师清单上的技能——清单外的，再诱人也不点安装。\n🚫 技能要你填账号密码、身份证、银行卡？立刻停手举手。\n技能是别人写的「说明书」，先过老师这一关，才进你的电脑。"], now:"现在你：记住——清单外不装。"},
+{n:4, kind:"task", title:"开场：看老师指挥两个 AI 干同一件事", body:["同一句话，发给两个 AI：\n「把这份乱名单整理成表格，数出每个社团几个人，给我一个能下载的文件。」", "第一个：普通聊天。它回你一大段文字——看着像表格，下载不了，数还得你自己数。\n第二个：带技能的智能体。它自己拆开任务、动手做、最后递给你一个真文件。"], now:"现在你：盯着看，等下抢答——两个 AI 差在哪？答对 +2。"},
+{n:5, kind:"setup", title:"先听三句，就三句", body:["这种「听得懂→自己想→调工具→交结果」的 AI，就叫智能体。\n它不用你搭——平台上现成的，你只管指挥。\n（顺嘴一句：豆包以前有个智能体广场，2026年7月新规之后关了。所以这门课不教你造，只教你指挥。）"], now:"现在你：记住一个词：智能体。下一句听它的武器。"},
+{n:6, kind:"setup", title:"智能体的武器，三档", body:["<b>技能</b>＝发给 AI 的一本说明书：装了它，AI 才会干某件事。最便宜，先用它。\n<b>专家</b>＝能力＋经验：懂某个领域的 AI 角色，一个问题问它。\n<b>专家团</b>＝好几个专家一起上：任务复杂才用，费积分。", "今天只练第一档：技能。"], now:"现在你：打开电脑上的 WorkBuddy 网页版，登录。"},
+{n:7, kind:"task", title:"任务①　裸测：没说明书的 AI 干活（验收过 +2 分）", body:["把老师发的「乱社团名单」文字，原样粘进左边对话框，再发下面这句：", "看着它答。验收：它给的是「文字」还是「文件」？数的人数跟你肉眼数的一样吗？\n一样不一样都先记着——等下要对照。"], now:"现在你：粘文字、发命令、看结果。看完举手 +2。"},
+{n:8, kind:"task", title:"任务②　装上说明书，再干一遍（验收过 +3 分）", body:["四步装技能：\n① 点左边的「技能」，进技能市场；\n② 在下面「推荐技能」里找到 <b>xlsx</b>（老师清单第一个），点安装；\n③ 回到对话框，打一个 <b>/</b>——技能列表弹出来，选 xlsx；\n④ 把同一份乱名单再发一遍，命令换成技能版（见指令卡）。"], now:"现在你：装→打/→重发。这次验收：它递给你的是不是能下载的文件？"},
+{n:9, kind:"pause", title:"暂停点⑫　请写 60 秒", body:["你调用技能的那句命令，原样抄下来。\n技能名也写上：＿＿＿＿。"], now:"现在你：写在记录册「暂停点⑫」。"},
+{n:10, kind:"task", title:"任务③　前后对照（验收过 +3 分）", body:["同一个活儿，干了两遍。现在对三条：\n① 没技能：给的是文字还是文件？\n② 有技能：给的是文字还是文件？\n③ 人数，两次一样吗？哪次你信？", "对完验收：你能一句话说清「技能改变了什么」。说不清就再对一遍。"], now:"现在你：三条逐一对照，心里有答案了举手 +3。"},
+{n:11, kind:"pause", title:"暂停点⑬　请写 60 秒", body:["没技能的 AI 和有技能的 AI，差在哪？\n一句话，写下来。"], now:"现在你：写在记录册「暂停点⑬」。"},
+{n:12, kind:"key", title:"技能，就是发给 AI 的说明书。", body:["说明书在手，它才按章办事；没说明书，它全靠猜。\n你不用会写说明书——你会装、会调用、会对照，就够了。"], now:"现在你：这一句，写进记录册。"},
+{n:13, kind:"recap", title:"回看：今天三招", body:["点一下每一条，先自己说出来，再翻开对。"], now:"现在你：三条都看完，再看下一页。"},
+{n:14, kind:"end", title:"下课。", body:["记住一句：智能体不用你造，说明书不用你写——你会指挥就行。", "课后任务（必做）：把「技能干完活的那个文件」截图，发到企业微信群。\n选做：技能市场里挑一个老师清单上的别的技能（docx 或 canvas-design），装上用一句话试试。"], now:"现在你：截图发群。下次课：专家团＋让智能体按时上班。"},
+{n:15, kind:"spare", title:"时间够再用：换 Trae SOLO 走一遍", body:["WorkBuddy 登不上、或积分见底时：打开 solo.trae.cn（全免费）。\n「设置 → 规则和技能 → 技能」里建一个或装一个，再回对话里让它干活。\n两条路同一个道理：装说明书→调用→对照。"], now:"现在你：老师没说用，就不用看这页。"},
+{n:16, kind:"spare", title:"时间够再用：技能不听使唤急救", body:["打了 / 不弹列表？——技能没启用，回技能页打开开关。\n它装傻不用技能？——命令里把技能名点出来：「用 xlsx 技能，把……」。\n还不行？——换个对话重开一次，别恋战，举手。"], now:"现在你：老师没说用，就不用看这页。"}
+];
+
+const CMD_OPTS=[
+["裸测命令（没技能）", "「请把下面这份名单整理成表格，数出每个社团几个人：（这里粘老师发的乱名单）」", "注意：一字不改，原样发。"],
+["技能版命令（装了 xlsx 之后）", "「用 xlsx 技能，把这份名单整理成表格：列名 姓名/社团/报名时间，数出每个社团人数，给我一个能下载的 Excel 文件。」", "对照用：同一份名单，只换命令。"]
+];
+const RECAP=[
+ ["智能体：听得懂→自己想→调工具→交结果", "不用你造，平台现成的，你只管指挥"],
+ ["技能＝发给 AI 的说明书", "技能市场一键装，清单外不装"],
+ ["打 / 调用，前后一对照", "没技能给文字，有技能交文件——差在这"]
+];
+const KIND={cover:"封面",text:"讲义",setup:"先听一句",task:"动手",pause:"暂停点",key:"金句",reveal:"对答案",recap:"回看",end:"下课",spare:"备用",warn:"红线"};
+const STAMP={cover:"开讲",text:"记",setup:"听",task:"动手",pause:"写！",key:"记住",reveal:"对答案",recap:"回看",end:"下课",spare:"备用",warn:"红线"};
+const KEYS=["智能体","技能","说明书","调用","一键安装","前后对照","红线","暂停点"];
+let i=0;
+const $=id=>document.getElementById(id);
+function esc(s){return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function mark(s){
+  let out=esc(s);
+  out=out.replace(/&lt;br\s*\/?&gt;/gi,"<br>");
+  KEYS.forEach(k=>{ out=out.split(esc(k)).join('<mark class="kw">'+esc(k)+'</mark>'); });
+  return out;
+}
+function bodyHtml(blocks){
+  let n=0;
+  return (blocks||[]).map(b=>{
+    const lines=b.split("\n").filter(x=>x.length);
+    return lines.map(x=>{ n++; return `<p style="--d:${(0.08+n*0.07).toFixed(2)}s">${mark(x)}</p>`; }).join("");
+  }).join("");
+}
+let fontScale=1.0;
+const FMIN=0.6, FMAX=2.0, FSTEP=0.1;
+function setFontScale(s){
+  fontScale=Math.min(FMAX,Math.max(FMIN,Math.round(s*100)/100));
+  document.documentElement.style.setProperty("--title",(3*fontScale).toFixed(2)+"rem");
+  document.documentElement.style.setProperty("--body",(2*fontScale).toFixed(2)+"rem");
+  document.documentElement.style.setProperty("--now",(1.55*fontScale).toFixed(2)+"rem");
+  const pct=$("fontPct"); if(pct) pct.textContent=Math.round(fontScale*100)+"%";
+  $("fontUp").disabled=fontScale>=FMAX;
+  $("fontDown").disabled=fontScale<=FMIN;
+}
+function renderNav(){
+  const q=$("q").value.trim();
+  $("nav").innerHTML=SLIDES.map((s,idx)=>{
+    const t=s.title||("第"+s.n+"页");
+    if(q && !t.includes(q) && !String(s.n).includes(q)) return "";
+    const short=t.length>16?t.slice(0,15)+"…":t;
+    return `<button class="nav-item ${idx===i?"on":""}" data-i="${idx}"><span class="k">${s.n}</span>${esc(short)}</button>`;
+  }).join("");
+}
+function fitCard(){
+  const card=$("card"), main=$("main");
+  if(!card||!main) return;
+  main.style.zoom="";
+  const cs=getComputedStyle(main);
+  const pad=parseFloat(cs.paddingTop||0)+parseFloat(cs.paddingBottom||0);
+  const avail=main.clientHeight-pad;
+  const h=card.getBoundingClientRect().height;
+  if(h>avail && avail>60){ main.style.zoom=Math.max(0.55, avail/h); }
+}
+window.addEventListener("resize", ()=>setTimeout(fitCard,60));
+function render(dir){
+  const s=SLIDES[i];
+  const card=$("card");
+  card.className="card kind-"+s.kind+" "+(dir==="prev"?"enter-prev":"enter-next");
+  let widget="";
+  if(s.kind==="recap"){
+    widget=`<div class="recap">`+RECAP.map((r,k)=>`<div class="r" data-r="${k}"><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div>`).join("")+`</div>`;
+  }else if(s.n===7){
+    widget=`<div class="opts">`+CMD_OPTS.map(o=>`<div class="optc"><h4>${esc(o[0])}卡</h4>`+o.slice(1).map(x=>`<span>${esc(x)}</span>`).join("")+`</div>`).join("")+`</div>`;
+  }
+  card.innerHTML=`
+    <div class="stamp st-${esc(s.kind)}">${STAMP[s.kind]||""}</div>
+    <div class="head"><span class="badge k-${esc(s.kind)}">${KIND[s.kind]||s.kind}</span><h2>${mark(s.title||"")}</h2></div>
+    <div class="body">${bodyHtml(s.body||[])}</div>
+    ${widget}`;
+  const nb=$("nowbar");
+  nb.style.animation="none"; void nb.offsetWidth; nb.style.animation="";
+  nb.innerHTML=s.now?mark(s.now):"";
+  nb.style.display=s.now?"block":"none";
+  $("pg").textContent=(i+1)+" / "+SLIDES.length;
+  const prog=$("prog"); if(prog) prog.style.width=((i+1)/SLIDES.length*100).toFixed(2)+"%";
+  const fl=$("flash"); if(fl && dir){ fl.classList.remove("go"); void fl.offsetWidth; fl.classList.add("go"); }
+  card.querySelectorAll(".recap .r").forEach(el=>el.onclick=()=>el.classList.toggle("on"));
+  renderNav(); history.replaceState(null,"","#"+s.n); $("main").scrollTop=0;
+  setTimeout(fitCard,30); setTimeout(fitCard,420);
+}
+function go(n){ const next=Math.max(0,Math.min(SLIDES.length-1,n)); const dir=next>i?"next":next<i?"prev":"next"; i=next; render(dir); }
+function zoomText(html){ $("lb").innerHTML=`<div class="zoom-text">${html}</div>`; $("lb").classList.add("show"); }
+$("prev").onclick=()=>go(i-1);
+$("next").onclick=()=>go(i+1);
+$("nav").onclick=e=>{ const b=e.target.closest("[data-i]"); if(b) go(+b.dataset.i); };
+$("q").oninput=renderNav;
+$("menuBtn").onclick=()=>{ if(window.innerWidth<=860) $("side").classList.toggle("open"); else document.body.classList.toggle("wide"); };
+$("fontUp").onclick=()=>setFontScale(fontScale+FSTEP);
+$("fontDown").onclick=()=>setFontScale(fontScale-FSTEP);
+document.addEventListener("keydown", e=>{
+  if(e.key==="ArrowRight"||e.key==="PageDown"||e.key===" "){ e.preventDefault(); go(i+1); }
+  if(e.key==="ArrowLeft"||e.key==="PageUp"){ e.preventDefault(); go(i-1); }
+  if(e.key==="Escape") $("lb").classList.remove("show");
+});
+$("card").addEventListener("click", e=>{
+  const p=e.target.closest("p,h2"); if(p) zoomText(p.innerHTML);
+});
+$("nowbar").addEventListener("click", e=>{ if(e.currentTarget.innerHTML) zoomText(e.currentTarget.innerHTML); });
+$("lb").onclick=()=>$("lb").classList.remove("show");
+document.body.classList.add("wide"); setFontScale(1.0);
+const hash=parseInt(location.hash.replace("#",""),10);
+if(hash>=1 && hash<=SLIDES.length) i=hash-1;
+render();
+</script>
+</body>
+</html>
