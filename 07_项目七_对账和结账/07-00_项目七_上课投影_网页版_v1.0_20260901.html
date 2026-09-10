@@ -750,6 +750,10 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
 #card{transform-origin:top center}
 .main{scrollbar-width:none}
 .main::-webkit-scrollbar{width:0}
+
+.top button:disabled{opacity:.38;cursor:not-allowed}
+#fontLab{font-size:12px;font-weight:800;color:#fff;opacity:.85;min-width:3.2em;text-align:center;
+  background:rgba(255,255,255,.14);border-radius:7px;padding:4px 6px}
 </style>
 </head>
 <body>
@@ -758,8 +762,9 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
 <div class="page-flash" id="flash"></div>
 <header class="top">
   <button type="button" id="menuBtn">目录</button>
-  <button type="button" id="fontBig" class="on">大字体</button>
-  <button type="button" id="fontSmall">小字体</button>
+  <button type="button" id="fontSmall" title="缩小字体">缩小字体</button>
+  <span id="fontLab">100%</span>
+  <button type="button" id="fontBig" title="增大字体">增大字体</button>
   <h1>项目七　对账和结账 <small>上课投影网页版 v1.0　2026-09-01</small></h1>
   <div class="hint">← → 翻页　点图或点字可放大</div>
 </header>
@@ -796,8 +801,13 @@ const KEYS = ["待处理财产损溢","中转站","账实核对","账账核对",
 let i=0;
 const $=id=>document.getElementById(id);
 function esc(s){return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));}
+function esc2(t){
+  return esc(t).replace(/\*\*([^*]+)\*\*/g, '<mark class="kw">$1</mark>')
+                .replace(/&lt;br\s*\/?&gt;/gi, "<br>");
+}
 function mark(s){
   let out=esc(s);
+  out = out.replace(/\*\*([^*]+)\*\*/g, '<mark class="kw">$1</mark>');
   out=out.replace(/&lt;br\s*\/?&gt;/gi,"<br>");
   KEYS.forEach(k=>{ out=out.split(esc(k)).join('<mark class="kw">'+esc(k)+'</mark>'); });
   return out;
@@ -812,12 +822,40 @@ function bodyHtml(blocks){
     }).join("")+`</div>`;
   }).join("");
 }
-function setFont(big){
-  document.documentElement.style.setProperty("--title", big?"3rem":"2.2rem");
-  document.documentElement.style.setProperty("--body", big?"2rem":"1.45rem");
-  document.documentElement.style.setProperty("--now", big?"1.55rem":"1.25rem");
-  $("fontBig").classList.toggle("on", big);
-  $("fontSmall").classList.toggle("on", !big);
+// 字号档位：[标题, 正文, 绿条, 显示百分比]　共 9 档，第 5 档=原「大字体」
+const FONT_STEPS=[
+  [1.70,1.10,0.95,0.55],
+  [2.00,1.30,1.08,0.65],
+  [2.20,1.45,1.25,0.75],
+  [2.60,1.72,1.40,0.87],
+  [3.00,2.00,1.55,1.00],
+  [3.45,2.30,1.72,1.15],
+  [3.95,2.62,1.90,1.32],
+  [4.50,3.00,2.10,1.50],
+  [5.10,3.40,2.32,1.70]
+];
+const FONT_KEY="slide-font-idx";
+let fontIdx=(function(){
+  try{ const v=parseInt(localStorage.getItem(FONT_KEY),10);
+       if(isFinite(v)&&v>=0&&v<=8) return v; }catch(e){}
+  return 4;   // 默认＝原来的「大字体」
+})();
+function setFont(){
+  const S=FONT_STEPS[fontIdx];
+  document.documentElement.style.setProperty("--title", S[0]+"rem");
+  document.documentElement.style.setProperty("--body",  S[1]+"rem");
+  document.documentElement.style.setProperty("--now",   S[2]+"rem");
+  const lab=$("fontLab"); if(lab) lab.textContent=Math.round(S[3]*100)+"%";
+  const bu=$("fontBig"), bd=$("fontSmall");
+  if(bu) bu.disabled = fontIdx>=FONT_STEPS.length-1;
+  if(bd) bd.disabled = fontIdx<=0;
+  try{ localStorage.setItem(FONT_KEY, String(fontIdx)); }catch(e){}
+  if(typeof fitCard==="function"){ setTimeout(fitCard,30); setTimeout(fitCard,320); }
+}
+function stepFont(d){
+  const n=Math.max(0, Math.min(FONT_STEPS.length-1, fontIdx+d));
+  if(n===fontIdx) return;
+  fontIdx=n; setFont();
 }
 function renderNav(){
   const q=$("q").value.trim();
@@ -859,53 +897,53 @@ function render(dir){
   if(s.adjust){ const aj=s.adjust;
     widget=`<div class="adj">
       <div class="adjhead">
-        <div>${esc(aj.base[0])}<b id="ajF">${esc(aj.base[2])}</b></div>
-        <div>${esc(aj.base[1])}<b id="ajB">${esc(aj.base[3])}</b></div>
+        <div>${esc2(aj.base[0])}<b id="ajF">${esc2(aj.base[2])}</b></div>
+        <div>${esc2(aj.base[1])}<b id="ajB">${esc2(aj.base[3])}</b></div>
       </div>
       ${aj.items.map((it,k)=>`<div class="adjrow" data-a="${k}">
-        <div class="t">${esc(it.t)}</div>
+        <div class="t">${esc2(it.t)}</div>
         <div class="adjbtns">
           <button type="button" data-s="firm" data-g="+">企业＋</button>
           <button type="button" data-s="firm" data-g="-">企业－</button>
           <button type="button" data-s="bank" data-g="+">银行＋</button>
           <button type="button" data-s="bank" data-g="-">银行－</button>
-        </div></div><div class="adjwhy" data-w="${k}">${esc(it.why)}</div>`).join("")}
+        </div></div><div class="adjwhy" data-w="${k}">${esc2(it.why)}</div>`).join("")}
       <div class="adjsum"><div id="ajFS">企业调节后 —</div><div id="ajBS">银行调节后 —</div></div>
       <div class="adjmsg" id="ajMsg">点每一笔，判断该调哪一边、加还是减</div></div>`; }
   else   if(s.dialog){ const names=[...new Set(s.dialog.map(d=>d[0]))];
     widget=`<div class="dialog">`+s.dialog.map((d,k)=>{
       const wi=names.indexOf(d[0])%4, st=d[1].indexOf("★")===0?" star":"";
-      return `<div class="dl who${wi}${st}" data-d="${k}"><b>${esc(d[0])}</b><p>${mark(d[1])}</p></div>`;
+      return `<div class="dl who${wi}${st}" data-d="${k}"><b>${esc2(d[0])}</b><p>${mark(d[1])}</p></div>`;
     }).join("")+`</div>
     <div class="dbtn"><button type="button" id="dNext">下一句</button>
       <button type="button" class="ghost" id="dAll">全部展开</button></div>`; }
   else if(s.reveal2){ widget=`<div class="reveal2">
-      <button type="button" id="r2Btn">${esc(s.reveal2.btn)}</button>
+      <button type="button" id="r2Btn">${esc2(s.reveal2.btn)}</button>
       <div class="rv" id="r2Box">${mark(s.reveal2.text)}</div></div>`; }
   else if(s.findlist){ widget=`<div class="findlist">`+s.findlist.map((f,k)=>
       `<div class="fl" data-f="${k}"><b>${mark(f[0])}</b><span>${mark(f[1])}</span></div>`).join("")+
       `</div><div class="flbtn"><button type="button" id="flNext">下一处</button>
        <button type="button" class="ghost" id="flAll">全部展开</button></div>`; }
-  else if(s.tool){ widget=`<div class="tool"><a href="${esc(s.tool.href)}" target="_blank">${esc(s.tool.label)}</a></div>`; }
+  else if(s.tool){ widget=`<div class="tool"><a href="${esc2(s.tool.href)}" target="_blank">${esc2(s.tool.label)}</a></div>`; }
   else if(s.compare){ widget=`<div class="compare">`+s.compare.map(c=>
-      `<div class="cmp"><h4>${esc(c[0])}</h4><div class="big">${esc(c[1])}</div><p>${esc(c[2])}</p></div>`).join("")+`</div>`; }
-  else if(s.twopic){ widget=`<div class="twopic">`+s.twopic.map(p=>`<img src="${esc(p)}" alt="">`).join("")+`</div>`; }
+      `<div class="cmp"><h4>${esc2(c[0])}</h4><div class="big">${esc2(c[1])}</div><p>${esc2(c[2])}</p></div>`).join("")+`</div>`; }
+  else if(s.twopic){ widget=`<div class="twopic">`+s.twopic.map(p=>`<img src="${esc2(p)}" alt="">`).join("")+`</div>`; }
   else if(s.fillentry2){ const fe=s.fillentry2;
     widget=`<div class="fe2">
-      <div class="biz">${esc(fe.biz)}</div>
+      <div class="biz">${esc2(fe.biz)}</div>
       <table>${fe.rows.map((r,k)=>`<tr>
         <td class="dc"><select id="d${k}"><option></option><option>借</option><option>贷</option></select></td>
-        <td><select id="s${k}">${fe.subs.map(o=>`<option>${esc(o)}</option>`).join("")}</select></td>
+        <td><select id="s${k}">${fe.subs.map(o=>`<option>${esc2(o)}</option>`).join("")}</select></td>
         <td class="amt"><input id="m${k}" inputmode="numeric" placeholder="金额"></td></tr>`).join("")}</table>
       <div class="bal" id="feBal">借贷还没填</div>
       <div class="fbtn2"><button type="button" id="feChk">检查</button>
         <button type="button" class="ghost" id="feClr">清空</button></div>
       <div class="msg" id="feMsg"></div>
-      <div class="tip" id="feTip">${esc(fe.tip||"")}</div></div>`; }
+      <div class="tip" id="feTip">${esc2(fe.tip||"")}</div></div>`; }
   else   if(s.fillentry){ const fe=s.fillentry;
-    const opt=v=>fe.subs.map(o=>`<option${o===v?"":""}>${esc(o)}</option>`).join("");
+    const opt=v=>fe.subs.map(o=>`<option${o===v?"":""}>${esc2(o)}</option>`).join("");
     widget=`<div class="fe2">
-      <div class="biz">${esc(fe.biz)}</div>
+      <div class="biz">${esc2(fe.biz)}</div>
       <table>${fe.rows.map((r,k)=>`<tr>
         <td class="dc"><select id="d${k}"><option></option><option>借</option><option>贷</option></select></td>
         <td><select id="s${k}">${opt("")}</select></td>
@@ -914,54 +952,54 @@ function render(dir){
       <div class="fbtn2"><button type="button" id="feChk">检查</button>
         <button type="button" class="ghost" id="feClr">清空</button></div>
       <div class="msg" id="feMsg"></div>
-      <div class="tip" id="feTip">${esc(fe.tip||"")}</div></div>`; }
+      <div class="tip" id="feTip">${esc2(fe.tip||"")}</div></div>`; }
   else   if(s.entries){ widget=s.entries.map((e,ei)=>`
       <div class="entrybox" data-e="${ei}">
-        <div class="biz">${esc(e.biz)}</div>
+        <div class="biz">${esc2(e.biz)}</div>
         <table class="jtab">${e.rows.map((r,ri)=>
-          `<tr data-r="${ri}" class="${r[0]==='贷'?'cr':'dr'}"><td class="dc">${esc(r[0])}</td>
-           <td class="acc">${esc(r[1])}</td><td class="amt">${esc(r[2])}</td></tr>`).join("")}</table>
-        <div class="note">${esc(e.note||"")}</div>
+          `<tr data-r="${ri}" class="${r[0]==='贷'?'cr':'dr'}"><td class="dc">${esc2(r[0])}</td>
+           <td class="acc">${esc2(r[1])}</td><td class="amt">${esc2(r[2])}</td></tr>`).join("")}</table>
+        <div class="note">${esc2(e.note||"")}</div>
       </div>`).join("")+
       `<div class="ebtn"><button type="button" id="eNext">看下一笔</button>
        <button type="button" class="ghost" id="eAll">全部展开</button></div>`; }
   else if(s.buckets){ widget=`<div class="buckets">`+s.buckets.map((b,k)=>
-      `<div class="bk" data-b="${k}"><b>${esc(b[0])}</b><div class="d">${esc(b[1])}</div>
-       <div class="t">${esc(b[2])}</div></div>`).join("")+`</div>`; }
+      `<div class="bk" data-b="${k}"><b>${esc2(b[0])}</b><div class="d">${esc2(b[1])}</div>
+       <div class="t">${esc2(b[2])}</div></div>`).join("")+`</div>`; }
   else if(s.sortbin){ const sb=s.sortbin;
     widget=`<div class="sortbin">
-      <div class="sbitems">${sb.items.map((it,k)=>`<span class="sbi" data-i="${k}">${esc(it[0])}</span>`).join("")}</div>
-      <div class="sbbins">${sb.bins.map((b,k)=>`<div class="sbb" data-b="${k}"><h4>${esc(b)}</h4><div class="in"></div></div>`).join("")}</div>
+      <div class="sbitems">${sb.items.map((it,k)=>`<span class="sbi" data-i="${k}">${esc2(it[0])}</span>`).join("")}</div>
+      <div class="sbbins">${sb.bins.map((b,k)=>`<div class="sbb" data-b="${k}"><h4>${esc2(b)}</h4><div class="in"></div></div>`).join("")}</div>
       <div class="sbmsg" id="sbMsg">先点一笔支出，再点一个桶</div></div>`; }
   else if(s.calc){ widget=`<div class="calc"><table>`+s.calc.map((r,k)=>
-      `<tr data-r="${k}"><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join("")+
+      `<tr data-r="${k}"><td>${esc2(r[0])}</td><td>${esc2(r[1])}</td></tr>`).join("")+
       `</table><div class="cbtn"><button type="button" id="cNext">下一步</button>
        <button type="button" class="ghost" id="cAll">全部展开</button></div></div>`; }
   else if(s.answer){ const a=s.answer;
     widget=`<div class="drill2"><button type="button" id="aShow">看答案</button>
       <div class="ans" id="aAns"><table>${a.rows.map(r=>
-        `<tr class="${r[0]==='贷'?'cr':'dr'}"><td class="dc">${esc(r[0])}</td>
-         <td class="acc">${esc(r[1])}</td><td class="amt">${esc(r[2])}</td></tr>`).join("")}</table>
-      <div class="tip">${esc(a.tip||"")}</div></div></div>`; }
+        `<tr class="${r[0]==='贷'?'cr':'dr'}"><td class="dc">${esc2(r[0])}</td>
+         <td class="acc">${esc2(r[1])}</td><td class="amt">${esc2(r[2])}</td></tr>`).join("")}</table>
+      <div class="tip">${esc2(a.tip||"")}</div></div></div>`; }
   else if(s.errfind){ widget=`<div class="errfind">`+s.errfind.map((e,ei)=>`
       <div class="ef" data-f="${ei}">
-        <div class="biz">${esc(e.biz)}</div>
+        <div class="biz">${esc2(e.biz)}</div>
         <table>${e.rows.map((r,ri)=>
-          `<tr data-r="${ri}" class="${r[0]==='贷'?'cr':'dr'}"><td class="dc">${esc(r[0])}</td>
-           <td class="acc">${esc(r[1])}</td><td class="amt">${esc(r[2])}</td></tr>`).join("")}</table>
+          `<tr data-r="${ri}" class="${r[0]==='贷'?'cr':'dr'}"><td class="dc">${esc2(r[0])}</td>
+           <td class="acc">${esc2(r[1])}</td><td class="amt">${esc2(r[2])}</td></tr>`).join("")}</table>
         ${e.bad<0?`<div class="miss">这三行都没错——点这里</div>`:""}
-        <div class="why">${esc(e.why)}</div>
+        <div class="why">${esc2(e.why)}</div>
       </div>`).join("")+`</div>`; }
 
   if(s.guess){ const g=s.guess;
-    widget=`<div class="guess"><img src="${esc(g.pic)}" alt="">
+    widget=`<div class="guess"><img src="${esc2(g.pic)}" alt="">
       <div class="gs">`+g.items.map((it,k)=>
-        `<div class="g" data-g="${k}"><b>${esc(it[0])}</b><span>${esc(it[1])}</span></div>`).join("")+`</div>
+        `<div class="g" data-g="${k}"><b>${esc2(it[0])}</b><span>${esc2(it[1])}</span></div>`).join("")+`</div>
       <div style="text-align:center"><button type="button" class="gbtn" id="gAll">公布全部</button></div>
-      <div class="gn">${esc(g.note)}</div></div>`; }
+      <div class="gn">${esc2(g.note)}</div></div>`; }
   else if(s.seven){
     widget=`<div class="seven">`+s.seven.map((x,k)=>
-      `<div class="s ${x[2]==="half"?"half":""}" data-s="${k}"><b>${esc(x[0])}</b><span>${esc(x[1])}</span></div>`).join("")+
+      `<div class="s ${x[2]==="half"?"half":""}" data-s="${k}"><b>${esc2(x[0])}</b><span>${esc2(x[1])}</span></div>`).join("")+
       `<div class="seven-sum" id="sevenSum">七项里，它只有「多少钱」沾一点边——所以这张纸条入不了账。</div></div>`; }
   else if(s.fillinv){
     widget=`<div class="fillbox">
@@ -986,7 +1024,7 @@ function render(dir){
     const opts=["","库存现金","银行存款","原材料","应付账款","管理费用","实收资本","短期借款"];
     const sel=id=>`<select id="${id}">`+opts.map(o=>`<option>${o}</option>`).join("")+`</select>`;
     widget=`<div class="fillbox">
-      <div class="biz">${esc(biz)}</div>
+      <div class="biz">${esc2(biz)}</div>
       <table class="ftab">
         <tr><th>日期</th><td><input id="v1" placeholder="如 3月15日"><div class="hintline">写业务发生那天</div></td></tr>
         <tr><th>摘要</th><td><input id="v2" placeholder="一句话说清这笔业务"><div class="hintline">${two?"如「支付本月电费」":"如「赊购珍珠原料」"}</div></td></tr>
@@ -1002,70 +1040,70 @@ function render(dir){
       <div class="fmsg" id="vMsg"></div></div>`; }
   else if(s.bigmoney){
     widget=`<div class="bigm">`+s.bigmoney.map((b,k)=>
-      `<div class="b" data-b="${k}"><div class="sm">¥ ${esc(b[0])}</div>
-       <button type="button">看答案</button><div class="bg">${esc(b[1])}</div></div>`).join("")+`</div>`; }
+      `<div class="b" data-b="${k}"><div class="sm">¥ ${esc2(b[0])}</div>
+       <button type="button">看答案</button><div class="bg">${esc2(b[1])}</div></div>`).join("")+`</div>`; }
   else if(s.reveal){
     widget=`<div class="reveal">`+s.reveal.map((r,k)=>
-      `<div class="r" data-r="${k}"><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div>`).join("")+`</div>`; }
+      `<div class="r" data-r="${k}"><b>${esc2(r[0])}</b><span>${esc2(r[1])}</span></div>`).join("")+`</div>`; }
   else if(s.match){ const m=s.match;
     widget=`<div class="match">`+m.left.map((l,k)=>
-      `<div class="mrow"><div class="mleft">${esc(l[0])}</div>
-       <div class="mpick" data-k="${k}" data-ans="${esc(l[1])}">`+
-       m.right.map(r=>`<button type="button" data-v="${esc(r)}">${esc(r)}</button>`).join("")+
+      `<div class="mrow"><div class="mleft">${esc2(l[0])}</div>
+       <div class="mpick" data-k="${k}" data-ans="${esc2(l[1])}">`+
+       m.right.map(r=>`<button type="button" data-v="${esc2(r)}">${esc2(r)}</button>`).join("")+
        `</div></div>`).join("")+`</div>`; }
 
   if(s.hand){ const h=s.hand;
     widget=`<div class="handbox">
-      <div class="expect">${esc(h.expect||"")}</div>
+      <div class="expect">${esc2(h.expect||"")}</div>
       <div class="counter">
         <button type="button" class="minus" id="hMinus">−</button>
         <div><div class="num" id="hNum">0</div><div class="unit">人举手</div></div>
         <button type="button" id="hPlus">＋</button>
       </div>
-      <div class="probe" id="probe"><b>${esc(h.probe||"")}</b>
+      <div class="probe" id="probe"><b>${esc2(h.probe||"")}</b>
         <button type="button" class="pbtn" id="pBtn">他答完了，看提示</button>
-        <div class="pn">${esc(h.probeNote||"")}</div></div>
+        <div class="pn">${esc2(h.probeNote||"")}</div></div>
     </div>`; }
   else if(s.tally){
     widget=`<div class="tally" id="tally"></div><div class="tally-note" id="tnote"></div>`; }
   else if(s.rules){ widget=`<div class="rules">`+s.rules.map((r,k)=>
-      `<div class="r"><i>${k+1}</i><div><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div></div>`).join("")+`</div>`; }
+      `<div class="r"><i>${k+1}</i><div><b>${esc2(r[0])}</b><span>${esc2(r[1])}</span></div></div>`).join("")+`</div>`; }
   else if(s.story){ const st=s.story;
     widget=`<div class="story">
-      <div class="stage">`+st.actors.map((a,k)=>`<div class="actor" data-a="${k}">${esc(a)}</div>`).join("")+`</div>
+      <div class="stage">`+st.actors.map((a,k)=>`<div class="actor" data-a="${k}">${esc2(a)}</div>`).join("")+`</div>
       <div class="flowline" id="fline">点「下一步」开始</div>
       <div class="slist">`+st.steps.map((x,k)=>
-        `<div class="s" data-s="${k}"><i>${k+1}</i><div>${esc(x.t)}<br><small style="opacity:.75">${esc(x.note||"")}</small></div></div>`).join("")+`</div>
+        `<div class="s" data-s="${k}"><i>${k+1}</i><div>${esc2(x.t)}<br><small style="opacity:.75">${esc2(x.note||"")}</small></div></div>`).join("")+`</div>
       <div class="sbtn"><button type="button" id="sNext">下一步</button>
         <button type="button" class="ghost" id="sReset">重来</button></div></div>`; }
   else if(s.twopath){ widget=`<div class="twopath">`+s.twopath.map(p=>
-      `<div class="pathc"><h4>${esc(p.name)}</h4><div class="g">${esc(p.get)}</div>
-       <div class="c">${esc(p.cost)}</div><div class="n">${esc(p.note)}</div></div>`).join("")+`</div>`; }
+      `<div class="pathc"><h4>${esc2(p.name)}</h4><div class="g">${esc2(p.get)}</div>
+       <div class="c">${esc2(p.cost)}</div><div class="n">${esc2(p.note)}</div></div>`).join("")+`</div>`; }
   else if(s.hw){ const h=s.hw;
     widget=`<div class="hw">`+h.fields.map(f=>
-      `<div class="f"><b>${esc(f[0])}</b><span>${esc(f[1])}</span></div>`).join("")+
-      `<div class="chk">怎么算合格：${esc(h.check)}</div>
-       <div class="why">${esc(h.why)}</div></div>`; }
+      `<div class="f"><b>${esc2(f[0])}</b><span>${esc2(f[1])}</span></div>`).join("")+
+      `<div class="chk">怎么算合格：${esc2(h.check)}</div>
+       <div class="why">${esc2(h.why)}</div></div>`; }
 
   if(s.hands){ widget=`<div class="hands">`+s.hands.map((h,k)=>
-      `<div class="hand-item" data-h="${k}"><div class="hq"><i class="num">${k+1}</i>${esc(h.q)}</div><div class="hh">${esc(h.hint)}</div></div>`
+      `<div class="hand-item" data-h="${k}"><div class="hq"><i class="num">${k+1}</i>${esc2(h.q)}</div><div class="hh">${esc2(h.hint)}</div></div>`
     ).join("")+`</div>`; }
   else if(s.collect){ widget=`<div class="collect">
       <div class="cin"><input id="cIn" placeholder="学生报的答案，回车加一个"><button type="button" id="cAdd">加上</button></div>
       <div class="chips2" id="cWrap"></div>
       <div class="tip">一个都不评价。全部写上来，让他们自己吵。</div></div>`; }
-  else if(s.wall){ widget=`<div class="wall">`+s.wall.map(w=>`<span>${esc(w)}</span>`).join("")+`</div>`; }
+  else if(s.wall){ widget=`<div class="wall">`+s.wall.map(w=>`<span>${esc2(w)}</span>`).join("")+`</div>`; }
   else if(s.ledger){ widget=`<div class="ledger"><table>`+
-      s.ledger.map((r,k)=>`<tr data-r="${k}"><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join("")+
-      `<tr class="sum" data-r="${s.ledger.length}"><td>合计</td><td>${esc(s.total||"")}</td></tr>`+
+      s.ledger.map((r,k)=>`<tr data-r="${k}"><td>${esc2(r[0])}</td><td>${esc2(r[1])}</td></tr>`).join("")+
+      `<tr class="sum" data-r="${s.ledger.length}"><td>合计</td><td>${esc2(s.total||"")}</td></tr>`+
       `</table><div class="lbtn"><button type="button" id="lNext">下一笔</button><button type="button" id="lAll">全部展开</button></div></div>`; }
   else if(s.drill){ widget=`<div class="drill"><button type="button" id="dShow">看答案</button>
-      <div class="ans" id="dAns">${esc(s.drill.ans)}<small>${esc(s.drill.tip)}</small></div></div>`; }
+      <div class="ans" id="dAns">${esc2(s.drill.ans)}<small>${esc2(s.drill.tip)}</small></div></div>`; }
   else if(s.vote){ widget=`<div class="vote">`+s.vote.map((v,k)=>
-      `<button type="button" data-v="${k}">${esc(v)}</button>`).join("")+`</div>
-      <div class="vote-after" id="vAfter">${esc(s.after||"")}</div>`; }
+      `<button type="button" data-v="${k}">${esc2(v)}</button>`).join("")+`</div>
+      <div class="vote-after" id="vAfter">${esc2(s.after||"")}</div>`; }
   else if(s.recap){ widget=`<div class="recap">`+s.recap.map((r,k)=>
-      `<div class="r" data-r="${k}"><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div>`).join("")+`</div>`; }
+      `<div class="r" data-r="${k}"><b>${esc2(r[0])}</b><span>${esc2(r[1])}</span></div>`).join("")+`</div>`; }
 
   card.innerHTML=`
     <div class="stamp st-${esc(s.kind)}">${STAMP[s.kind]||""}</div>
@@ -1429,8 +1467,8 @@ $("next").onclick=()=>go(i+1);
 $("nav").onclick=e=>{ const b=e.target.closest("[data-i]"); if(b) go(+b.dataset.i); };
 $("q").oninput=renderNav;
 $("menuBtn").onclick=()=>{ if(window.innerWidth<=860) $("side").classList.toggle("open"); else document.body.classList.toggle("wide"); };
-$("fontBig").onclick=()=>setFont(true);
-$("fontSmall").onclick=()=>setFont(false);
+$("fontBig").onclick=()=>stepFont(1);
+$("fontSmall").onclick=()=>stepFont(-1);
 document.addEventListener("keydown", e=>{
   if(e.key==="ArrowRight"||e.key==="PageDown"||e.key===" "){ e.preventDefault(); go(i+1); }
   if(e.key==="ArrowLeft"||e.key==="PageUp"){ e.preventDefault(); go(i-1); }
@@ -1443,7 +1481,7 @@ $("card").addEventListener("click", e=>{
 });
 $("nowbar").addEventListener("click", e=>{ if(e.currentTarget.innerHTML) zoomText(e.currentTarget.innerHTML); });
 $("lb").onclick=()=>$("lb").classList.remove("show");
-document.body.classList.add("wide"); setFont(true);
+document.body.classList.add("wide"); setFont();
 const hash=parseInt(location.hash.replace("#",""),10);
 if(hash>=1 && hash<=SLIDES.length) i=hash-1;
 render();

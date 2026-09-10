@@ -399,6 +399,10 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
 #card{transform-origin:top center}
 .main{scrollbar-width:none}
 .main::-webkit-scrollbar{width:0}
+
+.top button:disabled{opacity:.38;cursor:not-allowed}
+#fontLab{font-size:12px;font-weight:800;color:#fff;opacity:.85;min-width:3.2em;text-align:center;
+  background:rgba(255,255,255,.14);border-radius:7px;padding:4px 6px}
 </style>
 </head>
 <body>
@@ -407,8 +411,9 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
 <div class="page-flash" id="flash"></div>
 <header class="top">
   <button type="button" id="menuBtn">目录</button>
-  <button type="button" id="fontBig" class="on">大字体</button>
-  <button type="button" id="fontSmall">小字体</button>
+  <button type="button" id="fontSmall" title="缩小字体">缩小字体</button>
+  <span id="fontLab">100%</span>
+  <button type="button" id="fontBig" title="增大字体">增大字体</button>
   <h1>第一课　算不清的账 <small>上课投影网页版 v3.0　2026-09-01</small></h1>
   <div class="hint">← → 翻页　点图或点字可放大</div>
 </header>
@@ -446,6 +451,10 @@ const KEYS = ["换个位置","谁拿走了什么","总盘子","多退少补","�
 let i=0;
 const $=id=>document.getElementById(id);
 function esc(s){return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));}
+function esc2(t){
+  return esc(t).replace(/\*\*([^*]+)\*\*/g, '<mark class="kw">$1</mark>')
+                .replace(/&lt;br\s*\/?&gt;/gi, "<br>");
+}
 function mark(s){
   let out=esc(s);
   out=out.replace(/&lt;br\s*\/?&gt;/gi,"<br>");
@@ -463,12 +472,40 @@ function bodyHtml(blocks){
     }).join("")+`</div>`;
   }).join("");
 }
-function setFont(big){
-  document.documentElement.style.setProperty("--title", big?"3rem":"2.2rem");
-  document.documentElement.style.setProperty("--body", big?"2rem":"1.45rem");
-  document.documentElement.style.setProperty("--now", big?"1.55rem":"1.25rem");
-  $("fontBig").classList.toggle("on", big);
-  $("fontSmall").classList.toggle("on", !big);
+// 字号档位：[标题, 正文, 绿条, 显示百分比]　共 9 档，第 5 档=原「大字体」
+const FONT_STEPS=[
+  [1.70,1.10,0.95,0.55],
+  [2.00,1.30,1.08,0.65],
+  [2.20,1.45,1.25,0.75],
+  [2.60,1.72,1.40,0.87],
+  [3.00,2.00,1.55,1.00],
+  [3.45,2.30,1.72,1.15],
+  [3.95,2.62,1.90,1.32],
+  [4.50,3.00,2.10,1.50],
+  [5.10,3.40,2.32,1.70]
+];
+const FONT_KEY="slide-font-idx";
+let fontIdx=(function(){
+  try{ const v=parseInt(localStorage.getItem(FONT_KEY),10);
+       if(isFinite(v)&&v>=0&&v<=8) return v; }catch(e){}
+  return 4;   // 默认＝原来的「大字体」
+})();
+function setFont(){
+  const S=FONT_STEPS[fontIdx];
+  document.documentElement.style.setProperty("--title", S[0]+"rem");
+  document.documentElement.style.setProperty("--body",  S[1]+"rem");
+  document.documentElement.style.setProperty("--now",   S[2]+"rem");
+  const lab=$("fontLab"); if(lab) lab.textContent=Math.round(S[3]*100)+"%";
+  const bu=$("fontBig"), bd=$("fontSmall");
+  if(bu) bu.disabled = fontIdx>=FONT_STEPS.length-1;
+  if(bd) bd.disabled = fontIdx<=0;
+  try{ localStorage.setItem(FONT_KEY, String(fontIdx)); }catch(e){}
+  if(typeof fitCard==="function"){ setTimeout(fitCard,30); setTimeout(fitCard,320); }
+}
+function stepFont(d){
+  const n=Math.max(0, Math.min(FONT_STEPS.length-1, fontIdx+d));
+  if(n===fontIdx) return;
+  fontIdx=n; setFont();
 }
 function renderNav(){
   const q=$("q").value.trim();
@@ -510,56 +547,56 @@ function render(dir){
   let widget="";
   if(s.hand){ const h=s.hand;
     widget=`<div class="handbox">
-      <div class="expect">${esc(h.expect||"")}</div>
+      <div class="expect">${esc2(h.expect||"")}</div>
       <div class="counter">
         <button type="button" class="minus" id="hMinus">−</button>
         <div><div class="num" id="hNum">0</div><div class="unit">人举手</div></div>
         <button type="button" id="hPlus">＋</button>
       </div>
-      <div class="probe" id="probe"><b>${esc(h.probe||"")}</b>
+      <div class="probe" id="probe"><b>${esc2(h.probe||"")}</b>
         <button type="button" class="pbtn" id="pBtn">他答完了，看提示</button>
-        <div class="pn">${esc(h.probeNote||"")}</div></div>
+        <div class="pn">${esc2(h.probeNote||"")}</div></div>
     </div>`; }
   else if(s.tally){
     widget=`<div class="tally" id="tally"></div><div class="tally-note" id="tnote"></div>`; }
   else if(s.rules){ widget=`<div class="rules">`+s.rules.map((r,k)=>
-      `<div class="r"><i>${k+1}</i><div><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div></div>`).join("")+`</div>`; }
+      `<div class="r"><i>${k+1}</i><div><b>${esc2(r[0])}</b><span>${esc2(r[1])}</span></div></div>`).join("")+`</div>`; }
   else if(s.story){ const st=s.story;
     widget=`<div class="story">
-      <div class="stage">`+st.actors.map((a,k)=>`<div class="actor" data-a="${k}">${esc(a)}</div>`).join("")+`</div>
+      <div class="stage">`+st.actors.map((a,k)=>`<div class="actor" data-a="${k}">${esc2(a)}</div>`).join("")+`</div>
       <div class="flowline" id="fline">点「下一步」开始</div>
       <div class="slist">`+st.steps.map((x,k)=>
-        `<div class="s" data-s="${k}"><i>${k+1}</i><div>${esc(x.t)}<br><small style="opacity:.75">${esc(x.note||"")}</small></div></div>`).join("")+`</div>
+        `<div class="s" data-s="${k}"><i>${k+1}</i><div>${esc2(x.t)}<br><small style="opacity:.75">${esc2(x.note||"")}</small></div></div>`).join("")+`</div>
       <div class="sbtn"><button type="button" id="sNext">下一步</button>
         <button type="button" class="ghost" id="sReset">重来</button></div></div>`; }
   else if(s.twopath){ widget=`<div class="twopath">`+s.twopath.map(p=>
-      `<div class="pathc"><h4>${esc(p.name)}</h4><div class="g">${esc(p.get)}</div>
-       <div class="c">${esc(p.cost)}</div><div class="n">${esc(p.note)}</div></div>`).join("")+`</div>`; }
+      `<div class="pathc"><h4>${esc2(p.name)}</h4><div class="g">${esc2(p.get)}</div>
+       <div class="c">${esc2(p.cost)}</div><div class="n">${esc2(p.note)}</div></div>`).join("")+`</div>`; }
   else if(s.hw){ const h=s.hw;
     widget=`<div class="hw">`+h.fields.map(f=>
-      `<div class="f"><b>${esc(f[0])}</b><span>${esc(f[1])}</span></div>`).join("")+
-      `<div class="chk">怎么算合格：${esc(h.check)}</div>
-       <div class="why">${esc(h.why)}</div></div>`; }
+      `<div class="f"><b>${esc2(f[0])}</b><span>${esc2(f[1])}</span></div>`).join("")+
+      `<div class="chk">怎么算合格：${esc2(h.check)}</div>
+       <div class="why">${esc2(h.why)}</div></div>`; }
 
   if(s.hands){ widget=`<div class="hands">`+s.hands.map((h,k)=>
-      `<div class="hand-item" data-h="${k}"><div class="hq"><i class="num">${k+1}</i>${esc(h.q)}</div><div class="hh">${esc(h.hint)}</div></div>`
+      `<div class="hand-item" data-h="${k}"><div class="hq"><i class="num">${k+1}</i>${esc2(h.q)}</div><div class="hh">${esc2(h.hint)}</div></div>`
     ).join("")+`</div>`; }
   else if(s.collect){ widget=`<div class="collect">
       <div class="cin"><input id="cIn" placeholder="学生报的答案，回车加一个"><button type="button" id="cAdd">加上</button></div>
       <div class="chips2" id="cWrap"></div>
       <div class="tip">一个都不评价。全部写上来，让他们自己吵。</div></div>`; }
-  else if(s.wall){ widget=`<div class="wall">`+s.wall.map(w=>`<span>${esc(w)}</span>`).join("")+`</div>`; }
+  else if(s.wall){ widget=`<div class="wall">`+s.wall.map(w=>`<span>${esc2(w)}</span>`).join("")+`</div>`; }
   else if(s.ledger){ widget=`<div class="ledger"><table>`+
-      s.ledger.map((r,k)=>`<tr data-r="${k}"><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join("")+
-      `<tr class="sum" data-r="${s.ledger.length}"><td>合计</td><td>${esc(s.total||"")}</td></tr>`+
+      s.ledger.map((r,k)=>`<tr data-r="${k}"><td>${esc2(r[0])}</td><td>${esc2(r[1])}</td></tr>`).join("")+
+      `<tr class="sum" data-r="${s.ledger.length}"><td>合计</td><td>${esc2(s.total||"")}</td></tr>`+
       `</table><div class="lbtn"><button type="button" id="lNext">下一笔</button><button type="button" id="lAll">全部展开</button></div></div>`; }
   else if(s.drill){ widget=`<div class="drill"><button type="button" id="dShow">看答案</button>
-      <div class="ans" id="dAns">${esc(s.drill.ans)}<small>${esc(s.drill.tip)}</small></div></div>`; }
+      <div class="ans" id="dAns">${esc2(s.drill.ans)}<small>${esc2(s.drill.tip)}</small></div></div>`; }
   else if(s.vote){ widget=`<div class="vote">`+s.vote.map((v,k)=>
-      `<button type="button" data-v="${k}">${esc(v)}</button>`).join("")+`</div>
-      <div class="vote-after" id="vAfter">${esc(s.after||"")}</div>`; }
+      `<button type="button" data-v="${k}">${esc2(v)}</button>`).join("")+`</div>
+      <div class="vote-after" id="vAfter">${esc2(s.after||"")}</div>`; }
   else if(s.recap){ widget=`<div class="recap">`+s.recap.map((r,k)=>
-      `<div class="r" data-r="${k}"><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div>`).join("")+`</div>`; }
+      `<div class="r" data-r="${k}"><b>${esc2(r[0])}</b><span>${esc2(r[1])}</span></div>`).join("")+`</div>`; }
 
   card.innerHTML=`
     <div class="stamp st-${esc(s.kind)}">${STAMP[s.kind]||""}</div>
@@ -659,8 +696,8 @@ $("next").onclick=()=>go(i+1);
 $("nav").onclick=e=>{ const b=e.target.closest("[data-i]"); if(b) go(+b.dataset.i); };
 $("q").oninput=renderNav;
 $("menuBtn").onclick=()=>{ if(window.innerWidth<=860) $("side").classList.toggle("open"); else document.body.classList.toggle("wide"); };
-$("fontBig").onclick=()=>setFont(true);
-$("fontSmall").onclick=()=>setFont(false);
+$("fontBig").onclick=()=>stepFont(1);
+$("fontSmall").onclick=()=>stepFont(-1);
 document.addEventListener("keydown", e=>{
   if(e.key==="ArrowRight"||e.key==="PageDown"||e.key===" "){ e.preventDefault(); go(i+1); }
   if(e.key==="ArrowLeft"||e.key==="PageUp"){ e.preventDefault(); go(i-1); }
@@ -673,7 +710,7 @@ $("card").addEventListener("click", e=>{
 });
 $("nowbar").addEventListener("click", e=>{ if(e.currentTarget.innerHTML) zoomText(e.currentTarget.innerHTML); });
 $("lb").onclick=()=>$("lb").classList.remove("show");
-document.body.classList.add("wide"); setFont(true);
+document.body.classList.add("wide"); setFont();
 const hash=parseInt(location.hash.replace("#",""),10);
 if(hash>=1 && hash<=SLIDES.length) i=hash-1;
 render();
