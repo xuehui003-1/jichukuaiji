@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>第5讲 教AI看说明书·技能 上课投影 v2.1</title>
+<title>第2讲 刁难任务卡·第一轮 上课投影 v2.1</title>
 <style>
 :root{
   --orange:#bf360c; --green:#2e7d32; --ink:#22170f;
@@ -44,7 +44,6 @@ body.wide .side{display:none}
 .k-reveal{background:#f3e5f5;color:#4a148c}
 .k-recap{background:#fce4ec;color:#880e4f}
 .k-task{background:#e8f5e9;color:#1b5e20}
-.k-warn{background:#ffebee;color:#b71c1c;border:1px solid #ef9a9a}
 .head{padding:12px 22px 4px}
 .head h2{font-size:var(--title);line-height:1.25;color:var(--brown);cursor:zoom-in}
 .body{padding:6px 22px 10px;font-size:var(--body);line-height:1.45;font-weight:650}
@@ -60,7 +59,6 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
 .stamp.st-reveal{background:#4a148c;color:#fff}
 .stamp.st-recap{background:#880e4f;color:#fff}
 .stamp.st-spare{background:#607d8b;color:#fff}
-.stamp.st-warn{background:#c62828;color:#fff}
 .dock{flex-shrink:0}
 .now{background:var(--green);color:#fff;padding:8px 18px;font-size:var(--now);font-weight:800;line-height:1.35;cursor:zoom-in}
 .bar{display:flex;align-items:center;gap:8px;padding:4px 10px;background:#fff;border-top:1px solid var(--line)}
@@ -104,16 +102,11 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
 .card.kind-key .head h2,.card.kind-end .head h2{color:#ffd54f;font-size:clamp(34px,6.4vw,92px);line-height:1.18;text-align:center;padding:18px 0 6px}
 .card.kind-key .body,.card.kind-end .body{text-align:center}
 .card.kind-key .body p,.card.kind-end .body p{color:#ffe0b2;font-size:clamp(16px,2.2vw,29px);font-weight:650}
-.card.kind-warn{background:#fff5f5;border:6px solid #c62828!important}
-.card.kind-warn .head h2{color:#b71c1c;text-align:center}
 .now{animation:nowIn .7s cubic-bezier(.16,1,.3,1) both;box-shadow:0 -8px 24px rgba(46,125,50,.35)}
 @keyframes nowIn{from{transform:translateY(28px);opacity:0}to{transform:none;opacity:1}}
 
-/* 指令选项卡 */
-.opts{padding:0 22px 14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
-.optc{background:#fff;border:3px solid #c8b8a6;border-radius:12px;padding:10px 14px}
-.optc h4{font-size:clamp(15px,2vw,21px);color:#bf360c;margin-bottom:6px}
-.optc span{display:inline-block;background:#faf6f0;border:2px solid var(--line);border-radius:999px;padding:4px 12px;margin:3px 4px 0 0;font-size:clamp(13px,1.8vw,18px);font-weight:800;color:#3e2723}
+/* 乱通知原文块 */
+.raw{margin:6px 22px 14px;background:#fffbe6;border:3px dashed #ef6c00;border-radius:14px;padding:16px 18px;font-size:clamp(15px,2vw,23px);font-weight:700;line-height:1.7;color:#5d4037}
 /* 回看 */
 .recap{padding:6px 22px 18px;display:grid;gap:10px}
 .recap .r{border:3px solid #f8bbd0;background:#fff;border-radius:14px;padding:14px 18px;cursor:pointer;transition:.25s}
@@ -133,12 +126,12 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
   <button type="button" id="fontDown">缩小字体</button>
   <button type="button" id="fontUp">增大字体</button>
   <span id="fontPct" style="font-size:11px;opacity:.85;min-width:38px;text-align:center">100%</span>
-  <h1>AI工具实战应用 第5讲·教AI看说明书（技能） <small>上课投影网页版 v2.1　2026-09-09</small></h1>
+  <h1>AI工具实战应用 第2讲·刁难任务卡第一轮 <small>上课投影网页版 v2.1　2026-09-09</small></h1>
   <div class="hint">← → 翻页　点字可放大</div>
 </header>
 <div class="layout">
   <aside class="side" id="side">
-    <input id="q" placeholder="搜 P图 / 视频 / 即梦 / 暂停" />
+    <input id="q" placeholder="搜 刁难卡 / 模板 / 追问 / 暂停" />
     <div id="nav"></div>
   </aside>
   <main class="main" id="main"><article class="card" id="card"></article></main>
@@ -154,38 +147,27 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
 <div class="lb" id="lb"></div>
 <script>
 const SLIDES = [
-{n:1, kind:"cover", title:"第5讲　教 AI 看说明书", body:["前四次课，AI 已经会写、会画、会拍视频。\n今天给它加一本「说明书」——装上技能，它就按你的标准干活，次次一样。"], now:"现在你：电脑打开浏览器。看规矩。"},
-{n:2, kind:"text", title:"今天的规矩", body:["① 今天把「技能」两个字彻底说透：它能干嘛、怎么装、怎么调用。\n② 任务① 裸测 +2、任务② 装技能＋调用 +3、任务③ 标准对照 +3，全过额外 +2。\n③ 只装老师清单上的技能；来路不明的，一律不装。"], now:"现在你：听清分值。先看技能到底能干嘛。"},
-{n:3, kind:"setup", title:"技能到底能干嘛：三个真例子", body:["技能（Skill）＝发给 AI 的一本<b>专业说明书</b>：规则、步骤、工具打包好，装上随时调用。", "<b>xlsx 技能</b>：会做真 Excel——表头带格式、末行带统计公式，交的是能下载的文件，不是贴的纯文字。\n<b>canvas-design 技能</b>：会画原创海报、明信片，构图配色按手册来。\n<b>data-analysis 技能</b>：丢给它一张表，它用 SQL 查完给你结论，不反问你「这是什么」。", "还有第四种：<b>自己写的说明书</b>——老师写了一个「社团名单处理」技能，里面是咱们学校的规矩（官方社团名、写错要改正、表末要签字栏）。AI 装上它，就懂咱们的规矩。\nAI 本身已经挺能干；技能＝把「你的标准、你的工具」打包给它。"], now:"现在你：记住一个比方——说明书。下一页看真实对照。"},
-{n:4, kind:"setup", title:"同一句话，两个 AI", body:["同一句命令：「把这份报名名单整理成表格，按社团统计人数，给我一个文件。」", "<b>裸聊的 AI</b>：也交得出文件——但学生写「篮球队」，它就照抄「篮球队」；没有百分比，没有签字栏。它不认识咱们学校。\n<b>装上「社团名单处理」技能的 AI</b>：自动把「篮球队」改成官方名「篮球社」，统计带百分比，表末还有「指导教师签字」栏——因为说明书里写着咱们的规矩。", "所以：今天的 AI 「会不会」早就不是问题；技能决定的是——它知不知道、守不守<b>你的规矩</b>，次次都按你的方式来。"], now:"现在你：懂了这层，开始动手。打开 WorkBuddy 网页版。"},
-{n:5, kind:"warn", title:"开工前，一条红线", body:["🚫 只装老师清单上的技能——清单外的，再诱人也不点安装。\n🚫 技能要你填账号密码、身份证、银行卡？立刻停手举手。\n技能是别人写的说明书，先过老师这一关，才进你的账号。"], now:"现在你：记住——清单外不装。"},
-{n:6, kind:"task", title:"任务①　裸测：没说明书的 AI（验收过 +2 分）", body:["平台：浏览器打开 <b>workbuddy.cn/app</b>（WorkBuddy 网页版），按老师给的方式登录。\n把老师发的「乱社团名单」原样粘进对话框，再发指令卡第 1 句。", "验收：它把表格做出来了吗？——做出来了，对，现在的 AI 裸着也会。\n记住这个结果的样子，等下要对照。"], now:"现在你：粘名单、发命令、看结果。做完举手 +2。"},
-{n:7, kind:"task", title:"任务②　装上说明书，同一句话再发（+3 分）", body:["四步，一步别跳：\n① 收好老师发群里的技能包「社团名单处理」；\n② WorkBuddy 左栏「<b>专家·技能</b>」→「<b>上传技能</b>」，把技能包拖进去——导入后自动配置，在列表里把开关打开；\n③ 回到对话框，打一个 <b>/</b>——弹出技能列表，选「社团名单处理」；\n④ 同一份乱名单再粘一遍，命令换成指令卡第 2 句。"], now:"现在你：装→打 /→重发。"},
-{n:8, kind:"task", title:"任务②　验收：看它交了什么", body:["对着结果查三件事：\n① 「篮球队」是不是被改成了「篮球社」？\n② 统计是不是带了百分比？\n③ 表末是不是有「指导教师签字」栏？", "三件事都「是」，举手 +3。有一个「不是」，追问一句：「按技能的规矩，重新做一遍。」"], now:"现在你：查两件事。都过了举手。"},
-{n:9, kind:"pause", title:"暂停点⑫　请写 60 秒", body:["你调用技能的那句命令，原样抄下来。\n技能名也写上：＿＿＿＿。"], now:"现在你：写在记录册「暂停点⑫」。"},
-{n:10, kind:"task", title:"任务③　标准对照：跑两遍才懂（+3 分）", body:["现在做对照实验，各再跑一遍：\n· 开着技能，把任务②的命令再发一次；\n· 关掉技能（技能页把开关关上），回裸聊，把任务①的命令再发一次。", "摆一起看：裸聊那次，「篮球队」改了吗？带技能那次，改了吗？再换一份名单试，还一样吗？\n验收：你能一句话说清「技能把什么固定下来了」。"], now:"现在你：跑两遍，摆一起看。说清了举手 +3。"},
-{n:11, kind:"pause", title:"暂停点⑬　请写 60 秒", body:["技能把什么固定下来了？\n一句话，写下来。"], now:"现在你：写在记录册「暂停点⑬」。"},
-{n:12, kind:"key", title:"AI 早就会了；<br>技能让它守你的规矩。", body:["会不会，AI 自己说了算；守不守你的规矩，说明书说了算。\n你不用会写说明书——会装、会 /、会对照，就够。"], now:"现在你：这两句，写进记录册。"},
-{n:13, kind:"recap", title:"回看：今天四招", body:["点一下每一条，先自己说出来，再翻开对。"], now:"现在你：四条都看完，再看下一页。"},
-{n:14, kind:"end", title:"下课。", body:["记住一句：智能体不用你造，说明书不用你写——你会指挥就行。", "课后任务（必做）：把技能干完活的那个文件截图，发企业微信群。\n选做：装老师清单上的 canvas-design，让它给《社团一览》里任意社团画一张招新海报。"], now:"现在你：截图发群。下次课：专家团＋让智能体按时上班。"},
-{n:15, kind:"spare", title:"时间够再用：换 Trae SOLO 走一遍", body:["WorkBuddy 登不上或积分见底：打开 <b>solo.trae.cn</b>（全免费）。\n「设置 → 规则和技能 → 技能」里装一个，回对话里让它干活。\n两条路同一个道理：装说明书 → / 调用 → 对照。"], now:"现在你：老师没说用，就不用看这页。"},
-{n:16, kind:"spare", title:"时间够再用：WorkBuddy 全家桶与急救", body:["见过全貌再走：WorkBuddy 还有<b>专家、专家团、定时任务、资料库</b>，最新版「发现应用」能连通美图等外部应用——下两节课和第 9 讲装机课再见它们。\n技能不听使唤？打了 / 不弹列表＝没启用，回技能页开开关；它装傻＝命令里点出技能名；还不行＝重开对话，别恋战，举手。"], now:"现在你：老师没说用，就不用看这页。"}
+{n:1, kind:"cover", title:"第2讲　刁难任务卡·第一轮", body:["今天不讲提示词课。\n五张刁难卡，一张比一张刁——你卡壳的那一刻，老师才发工具。\n每张卡做完，都要「四看验收」；修的过程，才是真学习。"], now:"现在你：打开豆包。今天的分，全靠验收挣。"},
+{n:2, kind:"text", title:"今天的规矩", body:["① 卡片全是老师给的：原文、步骤、话术、验收标准——你只管照着做。\n② 验收过了才举手报分：卡① +2、卡② +3、卡③ +3、卡④ +2、卡⑤ +2，五张全过额外 +2。\n③ 每张卡做完，过「四看验收」：看真实（数字日期是不是它编的）、看完整（漏没漏项）、看准确（跟原文/要求对不对得上）、看合理（真能照做吗）。不合格的，用追问六句修到合格——修的过程，才是学得最多的地方。\n④ 卡壳了别慌——卡壳的地方，正是要发工具的地方。"], now:"现在你：听清楚：验收过了才举手，虚报的不算。"},
+{n:3, kind:"task", title:"热身 3 分钟：按你平时的方式问", body:["给豆包发这一句：「帮我写一个请假条。」一个字都不要多加。\n它答完，看一眼结果，记在心里：能用吗？差在哪？"], now:"现在你：发出去。这个结果先留着，一会儿要用。"},
+{n:4, kind:"task", title:"刁难卡①　辅导员的乱通知：先自己试", body:["辅导员在群里甩了这么一段（原文已发群里，长按复制）：", "任务：让豆包把这段乱通知整理成要点清单。\n怎么问，用你自己的方式。\n验收预告：时间 / 地点 / 带什么 / 请假制度 / 截止——五条，一条都不能漏。"], now:"现在你：先用自己的问法试。数一数：五条你能问出几条？"},
+{n:5, kind:"text", title:"卡壳了？现在发工具：四要素模板", body:["刚才漏了项、问出一堆废话的——多半是这四样里少说了哪样：\n「你是【角色】。请【任务】。要求：【要求】。请用【格式】输出。」\n① 角色——让它当谁；② 任务——让它干什么；③ 要求——干到什么程度；④ 格式——怎么交给你。\n你不说的那一样，它就替你编一样。"], now:"现在你：对着四个空想一想——刚才你漏的是哪一样？"},
+{n:6, kind:"text", title:"追问六句：模板一遍不行，就接着问", body:["① 漏了项：「你漏了【缺的内容】，补上重来，其他别动」\n② 太长了：「压缩成 3 句话」\n③ 太笼统：「给具体步骤，至少 5 步」\n④ 格式不对：「改成表格 / 改成清单」\n⑤ 猜错了：「我没说要 XX，按我说的重新来」\n⑥ 不放心：「你这个说法，依据是什么？」\n两条规矩：不换话题；只说要改的。"], now:"现在你：读一遍。下一页，用它把乱通知修到过。"},
+{n:7, kind:"task", title:"卡①修到过（验收过 +2 分）", body:["第一步：把乱通知粘进四要素模板——角色填「辅导员助理」，要求里写明「时间、地点、带什么、请假制度、截止，一条都不能漏」——重新发。\n第二步：对着五条验收。漏了哪条，用追问六句修到齐。\n看真实：时间、日期是不是都来自原文？打开原文对一眼——AI 自编的数字，一票否决。\n第三步：再发一句变形——「把上面的要点，改写成一条家长能看懂的短信，80 字以内。」"], now:"现在你：填模板、重问、验收。全过举手报 +2。"},
+{n:8, kind:"pause", title:"暂停点⑤　请写 60 秒", body:["比一比两种问法：你原来的问法，和填了模板的问法，差在哪？\n刚才修漏项，你用的是哪一句？"], now:"现在你：写在记录册「暂停点⑤」。"},
+{n:9, kind:"task", title:"刁难卡②　带限制的 50 元一日游（验收过 +3 分）", body:["任务：石邮院出发，石家庄一日游，预算 50 元。限制三条：\n① 不许打车，只准公交 / 地铁 / 共享单车；② 午饭总共不超过 15 元；③ 下午 6 点前必须回到学校。\n第一步：四要素模板问——角色：石家庄本地向导；任务：一日游方案；要求：预算 50 元＋三条限制原样粘进去；格式：表格（时间 / 地点 / 花费 / 交通方式）。\n第二步（看真实）：方案里的公交几路、景点、饭馆，挑一样用手机搜一下——真存在吗？编的一票否决。\n第三步：AI 出方案后，原样粘这句自查话术——「对照上面三条限制，逐条检查这个方案：每一条回答『满足』还是『违反』，违反了指出在方案哪一站。」\n第三步：有违反，追问修，再让它自查，直到三条全过。"], now:"现在你：三步做完举手。报分时说清楚：AI 第一次在哪条上翻了车。"},
+{n:10, kind:"task", title:"刁难卡③　自相矛盾的需求（验收过 +3 分）", body:["第一步：把这句原样发给豆包——「给我写一张社团招新海报的文案。要求：醒目，但要克制；内容尽量丰富，但要短小；有趣，但要严肃。」看它怎么和稀泥。\n第二步：取舍二选一（老师给定，你只选）：\nA——优先醒目、有趣，内容可以精简；B——优先内容丰富，设计可以普通。\n第三步：追问加一句——「取舍：优先【你选的】，可以牺牲【另一头】，重新写。」\n第四步·四看验收：看准确——文案是不是照你选的取舍写的；看合理——不再两头讨好；看真实——没编社团根本不做的事。"], now:"现在你：三步做完，把结果再读一遍——自己不打架了，才算过。"},
+{n:11, kind:"pause", title:"暂停点⑥　请写 60 秒", body:["今天，你是用哪一步让 AI 听话的？一句话写下来。"], now:"现在你：写在记录册「暂停点⑥」。"},
+{n:12, kind:"task", title:"刁难卡④　长话压三句（验收过 +2 分）", body:["老师发的「乱长文」已在群里（06_附件，整份复制）：粘进去，发一句——「压缩成 3 句话＋1 张表格。」", "四看验收：看完整——数字、时间、截止事项，一个没丢；看真实——表里每个数都跟原文对得上；看准确——3 句话里没掺原文没有的事；看合理——读一遍，别人听得懂。\n不合格就修：「你漏了【X】，补上重来，其他别动。」"], now:"现在你：压完四看，不合格就修。全过举手 +2。"},
+{n:13, kind:"task", title:"刁难卡⑤　社团自我介绍（验收过 +2 分）", body:["把你自己的自我介绍原样发豆包，再发：「润色这段自我介绍：真诚、不夸张、150 字以内。」", "四看验收：看真实——它没给你加你没写过的奖项、技能（编了就是不合格）；看准确——150 字以内；看完整——名字、系、爱好还在不在；看合理——读一遍，像人话、没吹牛。\n不像话就修：「这句太假，改口语一点：【原句】。」"], now:"现在你：润色完四看。全过举手 +2。"},
+{n:14, kind:"task", title:"收个尾：《提示词小抄》（5 分钟）", body:["老师发半成品模板，你只填四个空：\n「问 AI 办事，要说四件事：①＿＿＿＿，告诉它当谁；②＿＿＿＿，告诉它干什么；③＿＿＿＿，告诉它干到什么程度；④＿＿＿＿，告诉它怎么交给你。」\n填完，把今天你修好的那条命令粘在最下面，截图保存。\n这是这门课唯一的提示词讲义——往后，全靠任务里练。"], now:"现在你：填空、贴命令、截图。忘了空里填什么，回翻第 5 页。"},
+{n:15, kind:"key", title:"不用刻意学提示词，<br>任务会教你。", body:["卡壳填模板，漏了就追问，多了列限制，矛盾就取舍——全用上了。"], now:"现在你：这四招记在心里。"},
+{n:16, kind:"end", title:"下课。", body:["记住一句：AI 听得懂人话——只要你说清楚要什么、怎么算完。", "课后任务（必做）：写下一件「你想让 AI 查得准、答得准的事」，发企业微信群——第 4 次课，我们给 AI 发一本参考书。"], now:"现在你：记录册合上带走。下次课：刁难卡第二轮，任务更复杂。"},
 ];
-
-
-const CMD_OPTS=[
-["指令1·裸测（没技能）", "「请把下面这份名单整理成表格，数出每个社团几个人：（这里粘老师发的乱名单）」", "一字不改，原样发；做完记住样子。"],
-["指令2·技能版（装了 xlsx）", "「用『社团名单处理』技能，整理这份名单：写错的社团名改成官方名，按社团统计人数和百分比，表末加指导教师签字栏，给我能下载的文件。」", "同一份名单，只换命令。"]
-];
-const RECAP=[
- ["技能＝发给 AI 的专业说明书", "规则、步骤、工具打包；装上随时 / 调用"],
- ["裸 AI 也会干，但它不认识你", "「篮球队」照抄，没百分比，没签字栏"],
- ["技能固定的是「你的规矩」", "装上说明书：改官方名、带百分比、有签字栏，次次一样"],
- ["红线：清单外不装", "要密码证件号的，停手举手"]
-];
-const KIND={cover:"封面",text:"讲义",setup:"先听一句",task:"动手",pause:"暂停点",key:"金句",reveal:"对答案",recap:"回看",end:"下课",spare:"备用",warn:"红线"};
-const STAMP={cover:"开讲",text:"记",setup:"听",task:"动手",pause:"写！",key:"记住",reveal:"对答案",recap:"回看",end:"下课",spare:"备用",warn:"红线"};
-const KEYS=["技能","说明书","SkillHub","/调用","xlsx","标准","红线","暂停点"];
+const RAW_NOTICE="通知：这周六就是9月13日各班要把宿舍卫生区打扫一遍8点半楼下集合带清洁工具扫帚拖把抹布都带上不能来的提前跟我报备当天还要检查用电安全宿舍里不许用大功率电器班长把清洁工具统计一下周五中午之前报给我别忘了";
+const KIND={cover:"封面",text:"讲义",setup:"先听一句",task:"动手",pause:"暂停点",key:"金句",reveal:"对答案",recap:"回看",end:"下课",spare:"备用"};
+const STAMP={cover:"开讲",text:"发工具",setup:"听",task:"动手",pause:"写！",key:"记住",reveal:"对答案",recap:"回看",end:"下课",spare:"备用"};
+const KEYS=["模板","追问","限制","自查","取舍","验收","四要素","暂停点"];
 let i=0;
 const $=id=>document.getElementById(id);
 function esc(s){return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
@@ -239,10 +221,8 @@ function render(dir){
   const card=$("card");
   card.className="card kind-"+s.kind+" "+(dir==="prev"?"enter-prev":"enter-next");
   let widget="";
-  if(s.kind==="recap"){
-    widget=`<div class="recap">`+RECAP.map((r,k)=>`<div class="r" data-r="${k}"><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div>`).join("")+`</div>`;
-  }else if(s.n===7){
-    widget=`<div class="opts">`+CMD_OPTS.map(o=>`<div class="optc"><h4>${esc(o[0])}卡</h4>`+o.slice(1).map(x=>`<span>${esc(x)}</span>`).join("")+`</div>`).join("")+`</div>`;
+  if(s.n===4){
+    widget=`<div class="raw">${esc(RAW_NOTICE)}</div>`;
   }
   card.innerHTML=`
     <div class="stamp st-${esc(s.kind)}">${STAMP[s.kind]||""}</div>
@@ -256,7 +236,6 @@ function render(dir){
   $("pg").textContent=(i+1)+" / "+SLIDES.length;
   const prog=$("prog"); if(prog) prog.style.width=((i+1)/SLIDES.length*100).toFixed(2)+"%";
   const fl=$("flash"); if(fl && dir){ fl.classList.remove("go"); void fl.offsetWidth; fl.classList.add("go"); }
-  card.querySelectorAll(".recap .r").forEach(el=>el.onclick=()=>el.classList.toggle("on"));
   renderNav(); history.replaceState(null,"","#"+s.n); $("main").scrollTop=0;
   setTimeout(fitCard,30); setTimeout(fitCard,420);
 }
