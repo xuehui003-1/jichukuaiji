@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>项目三 第3讲　判断＋循环　上课投影（基础会计风格 v1.0）</title>
+<style>
+:root{
+  --orange:#bf360c; --green:#2e7d32; --ink:#22170f;
+  --gold:#f9a825; --brown:#3e2723; --paper:#fffdf8; --line:#ead9c6;
+  --title:3rem; --body:2rem; --now:1.55rem;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#efe4d6;color:var(--ink);
+  font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif}
+body{display:flex;flex-direction:column;min-height:100vh;overflow:hidden}
+.ambient{position:fixed;inset:0;pointer-events:none;z-index:0}
+.ambient .b1,.ambient .b2,.ambient .b3{position:absolute;border-radius:50%;filter:blur(70px);opacity:.16}
+.ambient .b1{width:44vw;height:44vw;background:var(--gold);top:-14vw;left:-10vw}
+.ambient .b2{width:36vw;height:36vw;background:var(--orange);bottom:-12vw;right:-8vw}
+.ambient .b3{width:26vw;height:26vw;background:#7cb342;top:36vh;right:22vw}
+.progress{height:4px;background:rgba(62,39,35,.12);flex-shrink:0;z-index:2}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--orange));transition:width .25s}
+.page-flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:60;transition:opacity .18s}
+.top{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--brown);color:#fff;flex-shrink:0;z-index:2;position:relative}
+.top h1{font-size:14px;font-weight:700}
+.top small{opacity:.75;font-size:11px;margin-left:6px}
+.top button{border:1px solid rgba(255,255,255,.35);background:transparent;color:#fff;border-radius:8px;padding:4px 10px;font:inherit;font-size:12px;cursor:pointer;white-space:nowrap}
+.top button:hover{background:rgba(255,255,255,.12)}
+.top button.on{background:var(--orange);border-color:var(--orange)}
+.top button:disabled{opacity:.38;cursor:default}
+.top .hint{margin-left:auto;font-size:11px;opacity:.85}
+.fz-lab{font-size:11px;opacity:.9;min-width:44px;text-align:center}
+.layout{flex:1;display:flex;min-height:0;z-index:1;position:relative}
+.side{width:232px;background:#f6ead9;border-right:1px solid var(--line);overflow-y:auto;flex-shrink:0}
+.side input{width:calc(100% - 12px);margin:4px 6px 6px;padding:5px 7px;border:1px solid #e6d5c3;border-radius:6px;font:inherit;font-size:11px;background:#fffdf8}
+.nav-item{display:block;width:100%;text-align:left;padding:5px 8px;border:0;background:transparent;font:inherit;cursor:pointer;color:#5a4638;font-size:11px;line-height:1.25}
+.nav-item:hover{background:#efe0cd}
+.nav-item.on{background:var(--orange);color:#fff;font-weight:700}
+.nav-item .k{display:inline-block;min-width:20px;opacity:.65;font-weight:800}
+.main{flex:1;overflow:auto;display:flex;padding:16px 18px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 30px rgba(62,39,35,.10);padding:20px 26px;margin:auto;width:100%;max-width:1180px}
+.card.enter-next{animation:inN .28s ease-out}
+.card.enter-prev{animation:inP .28s ease-out}
+@keyframes inN{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}
+@keyframes inP{from{opacity:0;transform:translateX(-26px)}to{opacity:1;transform:none}}
+.stamp{display:inline-block;font-size:.85em;font-weight:800;padding:3px 12px;border-radius:999px;margin-bottom:8px;background:var(--orange);color:#fff}
+.kind-pause .stamp{background:var(--green)}
+.kind-key .stamp,.kind-recap .stamp{background:#6d4c41}
+.kind-end .stamp{background:#455a64}
+.card h2{font-size:var(--title);line-height:1.25;color:var(--brown);margin-bottom:10px;cursor:zoom-in}
+.bd p{font-size:var(--body);line-height:1.5;font-weight:650;margin:10px 0;opacity:0;transform:translateY(8px);animation:lin .45s forwards;animation-delay:var(--d)}
+@keyframes lin{to{opacity:1;transform:none}}
+.bd b{color:var(--orange)}
+mark.kw{background:#ffe9b8;padding:0 4px;border-radius:6px}
+.pics{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin:8px 0 4px}
+.pics img{max-width:100%;max-height:36vh;border-radius:12px;border:1px solid var(--line);cursor:zoom-in;box-shadow:0 6px 18px rgba(62,39,35,.14)}
+.pic-hint{text-align:center;font-size:13px;color:#8d6e63;padding:2px 0 6px}
+.reveal .r,.recap .rc{border:2px solid var(--line);background:#fff;border-radius:12px;padding:12px 16px;margin:9px 0;cursor:pointer;position:relative;transition:border-color .15s}
+.reveal .r b,.recap .rc b{font-size:var(--body);line-height:1.35;display:block;padding-right:86px}
+.reveal .r span,.recap .rc span{display:none;font-size:calc(var(--body)*.92);line-height:1.45;color:var(--brown);margin-top:8px;font-weight:600}
+.reveal .r.open,.recap .rc.open{border-color:var(--green);background:#f4faf4}
+.reveal .r.open span,.recap .rc.open span{display:block}
+.reveal .r:not(.open)::after,.recap .rc:not(.open)::after{content:"👆 点开看";position:absolute;right:14px;top:12px;font-size:.75em;color:var(--orange);font-weight:800;background:#fff3e6;border:1px solid #f3d9b0;border-radius:999px;padding:3px 10px}
+.rv-hint{font-size:13px;color:#8d6e63;margin:2px 0 4px}
+.dock{flex-shrink:0;background:#f6ead9;border-top:1px solid var(--line);padding:8px 12px;display:flex;flex-direction:column;gap:6px;z-index:2;position:relative}
+.now{background:var(--green);color:#fff;padding:8px 18px;font-size:var(--now);font-weight:800;line-height:1.35;border-radius:12px}
+.now b{color:#ffe082}
+.bar{display:flex;align-items:center;gap:10px;justify-content:center}
+.bar button{border:0;background:var(--orange);color:#fff;font:inherit;font-weight:700;padding:5px 16px;border-radius:8px;cursor:pointer;font-size:13px;line-height:1.2}
+.bar button:hover{filter:brightness(1.08)}
+.bar .ghost{background:transparent;color:var(--brown);border:1px solid #d7c4b0}
+.pg{font-size:12px;color:#7a5c48;min-width:76px;text-align:center}
+.lb{position:fixed;inset:0;background:rgba(28,8,6,.92);display:none;align-items:center;justify-content:center;z-index:50;cursor:zoom-out;flex-direction:column}
+.lb.show{display:flex}
+.lb img{max-width:96vw;max-height:92vh;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.lb .cap{margin-top:10px;color:#fff;font-size:15px;opacity:.9}
+</style>
+</head>
+<body>
+<div class="ambient" aria-hidden="true"><div class="b1"></div><div class="b2"></div><div class="b3"></div></div>
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+<div class="page-flash" id="flash"></div>
+<header class="top">
+  <button type="button" id="menuBtn">目录</button>
+  <button type="button" id="fontInc" title="点一次增大一点，可多次点击">增大字体 ＋</button>
+  <span class="fz-lab" id="fzLab">100%</span>
+  <button type="button" id="fontDec" title="点一次缩小一点，可多次点击">缩小字体 －</button>
+  <h1>项目三 第3讲　判断＋循环 <small>上课投影 · 基础会计风格 v1.0 · 2026-09-10</small></h1>
+  <div class="hint">← → 翻页　点图或点字可放大</div>
+</header>
+<div class="layout">
+  <aside class="side" id="side">
+    <input id="q" placeholder="搜 循环 / 判断 / 存钱罐 / 备用卡 / 大任务" />
+    <div id="nav"></div>
+  </aside>
+  <main class="main" id="main"><article class="card" id="card"></article></main>
+</div>
+<div class="dock">
+  <div class="now" id="nowbar"></div>
+  <div class="bar">
+    <button class="ghost" type="button" id="prev">上一页</button>
+    <div class="pg" id="pg"></div>
+    <button type="button" id="next">下一页</button>
+  </div>
+</div>
+<div class="lb" id="lb"></div>
+<script>
+const SLIDES = [
+{n:1,kind:"cover",title:"判断＋循环——流程自己会停",body:["《财务机器人应用与开发》· 90 分钟 · 机房课","上周的循环靠人填次数；今天加个岔路口——没攒够就继续，攒够了自动停","配套：15_规划 v1.0 · 05_记录册 v2.8 · 12_手册 v1.9"],
+ now:"现在你：翻到记录册「项目三」章。这堂课带着，下课带走，不用交。",pics:["img/ai/17_p01_fengmian.png"]},
+
+{n:2,kind:"text",title:"今天做两件事",body:["① 先对作业：3、5、10 三个次数，先猜再跑对上没（10 分钟）","② 再收官：给循环装上判断——存钱罐「满 500 自动停」（80 分钟）","规矩不变：先猜后跑 ｜ 翻车就修 ｜ 跑通保存"],
+ now:"现在你：听老师。没做作业的别慌——下一页领卡，人人有活干。",pics:[]},
+
+{n:3,kind:"pause",title:"⏸ 暂停点㉘　没做作业？领张卡，照样拼",body:["做了必做的：翻开你的三次数记录，直接进下一页","没做的：抽一张备用场景卡——打印店／奶茶／食堂／开水房，一人一张不一样","照卡把循环拼进软件、先猜弹几次再跑，10 分钟内跑通——照样算分"],
+ now:"现在你：写在「暂停点㉘」——我抽的卡是＿＿ → 猜/实际填在旁边。",pics:[],
+ reveal:[["备用卡参数（老师印发，问句印在卡上）","① 打印 0.3 元/张满 5 元 9 折——跑 3 次，每次问「打几张?」　② 奶茶 8 元/杯第二杯半价——每次问「买几杯?」　③ 食堂套餐 12 元/份——每次问「买几份?」　④ 开水房 0.1 元/壶——每次问「打几壶?」"]]},
+
+{n:4,kind:"text",title:"3、5、10 对上了吗？",body:["次数框填几，它干几遍——一块没多拖。三对全中 +2 分"],
+ now:"现在你：抽人念一句「我最意外的一次」——猜错的那次最有价值。没做作业的用备用卡的弹窗次数念。",pics:[],
+ reveal:[["对答案","次数 3 弹 3 次 ｜ 5 弹 5 次 ｜ 10 弹 10 次"]],
+
+ hint:"先自己对自己，再点开。"},
+{n:5,kind:"pic",title:"循环敢填 10000 吗？——存钱罐不答应",body:["每月存 100，攒够 500 就买鞋——存到第几个月该停？你不敢乱填","填 6 次：万一某月多存了呢？填 100 次：它会一直存下去不收手"],
+ now:"现在你：抢答——上次的「次数填死」，毛病在哪？",pics:["img/ai/17_p05_cunqian.png"]},
+
+{n:6,kind:"key",title:"判断装进循环肚子：没攒够→继续；攒够→自动停",body:["循环块外面不填次数——停不停，肚子里那块判断说了算","一句口诀：没到就继续，到了就停"],
+ now:"现在你：齐读口诀一遍。",pics:["img/ai/17_p06_jiegou.png"]},
+
+{n:7,kind:"text",title:"图纸四行，抄下来就能拼",body:["① 存钱罐＝0（开局一格）","② 存一次：存钱罐＝存钱罐＋100","③ 判断：够 500 了吗？——没够 → 回到第 2 行；够了 → 走第 4 行","④ 弹出「攒够了！」"],
+ now:"现在你：四行抄在「暂停点㉙」旁边。抄完抢答：转一圈是哪几行在重复？",pics:[]},
+
+{n:8,kind:"pause",title:"⏸ 暂停点㉙　演示：它自己一圈圈转，自己停",body:["老师点运行——你看屏幕：判断块每圈亮一次","每亮一次，在记录册画一道「正」字笔画","弹出「攒够了！」→ 你画了几道？对答案"],
+ now:"现在你：写在「暂停点㉙」——我画的圈数＿＿ → 正确答案＿＿。",pics:["img/ai/17_p08_yanshi.png"],
+ reveal:[["答案","5 圈：0→100→200→300→400→500，第 5 圈判断成立跳出"]]},
+
+{n:9,kind:"pause",title:"⏸ 暂停点㉚　轮到你：存钱罐真机四步",body:["① 新建流程 cunQiGuan-你的学号","② 照图纸四行拖积木（循环不填次数、判断「存钱罐＜500 继续转」）","③ 先猜转几圈，再点运行","④ 弹出「攒够了！」→ 举手喊老师；不对 → 下一页药方"],
+ now:"现在你：写在「暂停点㉚」——我猜转＿圈 → 实际＿圈。",pics:[]},
+
+{n:10,kind:"reveal",title:"转个不停？——判断块没装进肚子",body:["安全规矩：跑之前先想怎么停——真机器人转不停，是真发 300 条短信"],
+ now:"现在你：翻车的写排错三行——我在干什么／它说了啥／我改了什么。",pics:["img/ai/17_p11_sixunhuan.png"],
+ reveal:[["① 弹「攒够了！」＝ 5 圈","0→100→…→500，第 5 圈判断成立跳出——对上了"],["② 只转 1 圈就停","判断写反了——「够了才转」改成「没够就转」"],["③ 转个不停","判断块掉在肚子外——按住「停止」按钮，把它拖回肚子里再跑"]]},
+
+{n:11,kind:"text",title:"加个输入块：「下个月存多少?」",body:["把「＋100」换成「＋你答的数」——存多少听人的"],
+ now:"现在你：先猜几圈、再跑验证——猜中举手。写在㉚下面补一行：输入 200 我猜＿圈／实际＿圈。",pics:[],
+ reveal:[["试跑参考","每月存 200 → 3 圈就停（0→200→400→600）。判断是「够没够」，不要求正好 500"]]},
+
+{n:12,kind:"recap",title:"⏸ 暂停点㉛　项目三收官，只记三句",body:["点一下每一条，先自己想想再翻开。"],
+ now:"现在你：三句抄下，各配一个今天的真机例子，写在「暂停点㉛」。",pics:[],
+ recap:[["1️⃣ 循环肚子装重复","次数填死，或者交给判断——例：次数 3 弹 3 次"],["2️⃣ 判断装肚子会自己停","没到就继续，到了就停——例：0→500 转 5 圈"],["3️⃣ 条件循环＝真财务的活","没录完继续录，录完自动停——例：死循环救援"]]},
+
+{n:13,kind:"text",title:"项目三三件作品，全在架上",body:["waimaiJSQ → xunHuanJSQ → cunQiGuan——从记 1 笔到替你干整段活","现在你会的：重复的活交出去——还带验收条件"],
+ now:"现在你：抽人讲——判断装进肚子之后，机器人多了什么本事？",pics:[]},
+
+{n:14,kind:"pic",title:"存钱罐上架第三件——下一讲它走出画布",body:["保存 cunQiGuan-你的学号 → 举手登记「第三件上架」（没保存＝没跑通）","下一讲预告：你的流程要离开画布——去操作 Excel 表格、开网页、发邮件，真正替你干办公室的活"],
+ now:"现在你：保存、登记，然后收拾工位。",pics:["img/ai/17_p14_huojia.png"]},
+
+{n:15,kind:"text",title:"🏁 项目三大任务　小卖部省钱计算器——四步，照抄就能做",body:["① 抄价目：校内选一样（食堂套餐／打印／小卖部），把单价抄在记录册「大任务」页","② 写两句：一句「＿＿?」让软件问人（买几样?）＋ 一句「到＿＿就停」（例：满 50 停）","③ 画图纸：照存钱罐四行——问几样 → 算总价 → 判断「够 50 了吗」→ 弹「该收手了」","④ 验收：下下周机房课开头，拼进软件跑给老师看——能问人＋自己会停＝+5 分；先给同桌跑一遍：他答一个数、弹窗对了他签字"],
+ now:"现在你：当堂起草 15 分钟——价目、两句、四行图纸全落在记录册「大任务」页。",pics:[],
+ reveal:[["参考答案（备查）","打印店单面 0.3 元/张——「打几张?」答 200 → 60 元：满 50 → 弹「该收手了」"]]},
+
+{n:16,kind:"end",title:"下课。",body:["课后必做（开头抽查 +2 分；没做的开头领备用卡）：把存钱罐再跑两个数——每月存 50、每月存 250，先猜转几圈再跑，得数写在记录册大任务页下","课后选做（+2 分）：把「够 500」改成「够 1000」，猜圈数、跑一遍验证（照四行图纸只改一行数）","下下讲：机器人走出画布——去操作 Excel 和网页"],
+ now:"现在你：合上记录册带走。不用交。",pics:[]}
+];
+const KIND = {cover:"开讲",pause:"暂停点",pic:"看图",text:"讲义",key:"金句",reveal:"对答案",recap:"回看",end:"下课"};
+const STAMP = {cover:"开讲",pause:"写！",pic:"看",text:"记",key:"记住",reveal:"对答案",recap:"回看",end:"下课"};
+const KEYS = ["死循环","存钱罐","该收手了","攒够了","备用卡","大任务","先猜","判断","循环","肚子","次数"];
+let i=0, lbOpen=false;
+const $=id=>document.getElementById(id);
+function esc(s){return String(s).replace(/[&<>\"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));}
+function mark(s){
+  let out=esc(s);
+  out=out.replace(/&lt;br\s*\/?&gt;/gi,"<br>");
+  KEYS.forEach(k=>{ out=out.split(esc(k)).join('<mark class="kw">'+esc(k)+'</mark>'); });
+  return out;
+}
+function bodyHtml(blocks){
+  let n=0;
+  return (blocks||[]).map(b=>{
+    const lines=b.split("\n").filter(x=>x.length);
+    return lines.map(x=>{ n++; return `<p style="--d:${(0.06+n*0.07).toFixed(2)}s">${mark(x)}</p>`; }).join("");
+  }).join("");
+}
+function renderNav(){
+  const q=$("q").value.trim();
+  $("nav").innerHTML=SLIDES.map((s,idx)=>{
+    const t=s.title||("第"+s.n+"页");
+    if(q && !t.includes(q) && !String(s.n).includes(q)) return "";
+    const short=t.length>16?t.slice(0,15)+"…":t;
+    return `<button class="nav-item ${idx===i?"on":""}" data-i="${idx}"><span class="k">${s.n}</span>${esc(short)}</button>`;
+  }).join("");
+}
+function fitCard(){
+  const card=document.getElementById("card"), main=document.getElementById("main");
+  if(!card||!main) return;
+  main.style.zoom="";
+  const cs=getComputedStyle(main);
+  const pad=parseFloat(cs.paddingTop||0)+parseFloat(cs.paddingBottom||0);
+  const avail=main.clientHeight-pad;
+  const h=card.getBoundingClientRect().height;
+  if(h>avail && avail>60){ main.style.zoom=Math.max(0.55, avail/h); }
+}
+window.addEventListener("resize",()=>setTimeout(fitCard,60));
+function render(dir){
+  const s=SLIDES[i];
+  const card=$("card");
+  card.className="card kind-"+s.kind+" "+(dir==="prev"?"enter-prev":"enter-next");
+  let h=`<span class="stamp">${STAMP[s.kind]||"记"}　${KIND[s.kind]||""}</span>
+    <h2>${s.title}</h2>`;
+  h+=`<div class="bd">${bodyHtml(s.body)}</div>`;
+  if((s.pics||[]).length){
+    h+=`<div class="pics">${s.pics.map(p=>`<img src="${esc(p)}" alt="">`).join("")}</div>
+        <div class="pic-hint">🔎 点图放大</div>`;
+  }
+  if(s.reveal){
+    h+=`<div class="rv-hint">${esc(s.hint||"答案藏起来了——先说你的，再点开对。")}</div>
+        <div class="reveal">${s.reveal.map((r,k)=>`<div class="r" data-r="${k}"><b>${mark(r[0])}</b><span>${mark(r[1])}</span></div>`).join("")}</div>`;
+  }
+  if(s.recap){
+    h+=`<div class="recap">${s.recap.map((r,k)=>`<div class="rc" data-c="${k}"><b>${mark(r[0])}</b><span>${mark(r[1])}</span></div>`).join("")}</div>`;
+  }
+  card.innerHTML=h;
+  $("nowbar").innerHTML="<b>现在你</b>："+esc((s.now||"").replace(/^现在你：?/,""));
+  $("pg").textContent=(i+1)+" / "+SLIDES.length;
+  $("prog").style.width=((i+1)/SLIDES.length*100)+"%";
+  renderNav();
+  setTimeout(fitCard,30);
+}
+function go(d){
+  if(lbOpen){ lbClose(); return; }
+  const ni=Math.min(SLIDES.length-1,Math.max(0,i+d));
+  if(ni===i) return;
+  const f=$("flash"); f.style.opacity=.55; setTimeout(()=>f.style.opacity=0,90);
+  i=ni; render(d<0?"prev":"next");
+  if(location.hash!=="#"+SLIDES[i].n) history.replaceState(null,"","#"+SLIDES[i].n);
+}
+function lbOpenFn(src,alt){ lbOpen=true; const lb=$("lb"); lb.innerHTML=`<img src="${esc(src)}" alt=""><div class="cap">${esc(alt||"点任意处关闭")}　·　按 Esc 或 ← → 也可关</div>`; lb.classList.add("show"); }
+function lbClose(){ lbOpen=false; $("lb").classList.remove("show"); }
+$("lb").addEventListener("click",lbClose);
+document.addEventListener("keydown",e=>{
+  if(lbOpen){ if(["Escape","ArrowLeft","ArrowRight"," ","Enter"].includes(e.key)){ e.preventDefault(); lbClose(); } return; }
+  if(e.key==="ArrowRight"||e.key==="PageDown"||e.key===" ") { e.preventDefault(); go(1); }
+  else if(e.key==="ArrowLeft"||e.key==="PageUp"){ e.preventDefault(); go(-1); }
+  else if(e.key==="Home"){ i=0; render(); }
+  else if(e.key==="End"){ i=SLIDES.length-1; render("prev"); }
+});
+$("card").addEventListener("click",e=>{
+  const r=e.target.closest(".r,.rc");
+  if(r){ r.classList.toggle("open"); setTimeout(fitCard,30); return; }
+  if(e.target.tagName==="IMG"){ lbOpenFn(e.target.src,e.target.alt); }
+});
+$("prev").addEventListener("click",()=>go(-1));
+$("next").addEventListener("click",()=>go(1));
+$("nav").addEventListener("click",e=>{
+  const b=e.target.closest(".nav-item"); if(!b) return;
+  const ni=+b.dataset.i; if(ni===i) return;
+  const d=ni>i?1:-1; i=ni; render(d>0?"next":"prev");
+});
+$("q").addEventListener("input",renderNav);
+$("menuBtn").addEventListener("click",()=>{ const s=$("side"); s.style.display=(s.style.display==="none")?"block":"none"; setTimeout(fitCard,30); });
+
+/* ── 字号：步进式增大/缩小，可连点 ── */
+let fz=0; const FZ_MIN=-3, FZ_MAX=5;
+function applyFont(){
+  const k=Math.pow(1.1,fz);
+  const r=document.documentElement.style;
+  r.setProperty("--title",(3*k).toFixed(2)+"rem");
+  r.setProperty("--body",(2*k).toFixed(2)+"rem");
+  r.setProperty("--now",(1.55*k).toFixed(2)+"rem");
+  $("fzLab").textContent=Math.round(k*100)+"%";
+  $("fontInc").disabled = fz>=FZ_MAX;
+  $("fontDec").disabled = fz<=FZ_MIN;
+  setTimeout(fitCard,30);
+}
+$("fontInc").addEventListener("click",()=>{ if(fz<FZ_MAX){ fz++; applyFont(); } });
+$("fontDec").addEventListener("click",()=>{ if(fz>FZ_MIN){ fz--; applyFont(); } });
+
+/* 启动：支持 #页码 直达 */
+(function(){
+  const h=parseInt((location.hash||"").replace("#",""),10);
+  if(h>=1&&h<=SLIDES.length){ const idx=SLIDES.findIndex(s=>s.n===h); if(idx>=0) i=idx; }
+  applyFont(); render();
+})();
+</script>
+</body>
+</html>
