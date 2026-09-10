@@ -154,7 +154,7 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
 <div class="lb" id="lb"></div>
 <script>
 const SLIDES = [
-{n:1, kind:"cover", title:"第3讲　让AI给你画画拍视频", body:["第一讲，你们已经指挥 AI 画出了鹈鹕骑自行车。\n今天升一级：改你的照片，再让你做出来的图——动起来，还要配上声音。"], now:"现在你：手机里准备好一张照片。看下一页的规矩。"},
+{n:1, kind:"cover", title:"第3讲　让AI给你画画拍视频", body:["第一讲，你们已经指挥 AI 做出了会动的「鹈鹕骑自行车」网页。\n今天升一级：改你的照片，再让你做出来的图——动起来，还要配上声音。"], now:"现在你：手机里准备好一张照片。看下一页的规矩。"},
 {n:2, kind:"text", title:"今天的规矩", body:["① 零新理论。武器还是那些：命令说清楚，不行就追问。\n② 任务① P图 +2、任务② 图变视频 +3、任务③ 刁难视频 +3、任务④ 加声音 +2、任务⑤ 连环画 +3，全过额外 +2。\n④ 展示：做好的作品，老师抽人上台展示，被抽到 +1，评上优秀 +2。\n③ 今天做出来的图和视频，发群里——结课展要用。"], now:"现在你：听清分值。先领一条红线。"},
 {n:3, kind:"warn", title:"开工前，一条红线", body:["🚫 别人的照片，未经同意，一律不传不P。\n🚫 身份证、学生证、宿舍门牌——不出现在图里。\n今天只P：风景、物品、自己的照片。"], now:"现在你：换好一张能用的照片。"},
 {n:4, kind:"task", title:"任务①　一句话P图（验收过 +2 分）", body:["用豆包：发一张你的照片，加一句指令——「请把这张图改成：＿＿」。\n指令不知道说什么？从下面的指令卡里挑一句，原样用：", "出来之后验收：你让改的地方改了吗？没让动的地方，是不是原样？\n不满意，接着调：「颜色再深一点」「人物别动，只改背景」——调到满意为止。"], now:"现在你：挑一句指令卡，发出去。调到满意，举手报 +2。"},
@@ -194,6 +194,7 @@ function esc(s){return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",
 function mark(s){
   let out=esc(s);
   out=out.replace(/&lt;br\s*\/?&gt;/gi,"<br>");
+  out=out.replace(/&lt;(\/?)b&gt;/gi,"<$1b>").replace(/&lt;(\/?)strong&gt;/gi,"<$1strong>");
   KEYS.forEach(k=>{ out=out.split(esc(k)).join('<mark class="kw">'+esc(k)+'</mark>'); });
   return out;
 }
