@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>第5讲 教AI看说明书·技能 上课投影 v1.0</title>
+<title>第4讲 给AI发一本参考书 上课投影 v1.0</title>
 <style>
 :root{
   --orange:#bf360c; --green:#2e7d32; --ink:#22170f;
@@ -44,7 +44,6 @@ body.wide .side{display:none}
 .k-reveal{background:#f3e5f5;color:#4a148c}
 .k-recap{background:#fce4ec;color:#880e4f}
 .k-task{background:#e8f5e9;color:#1b5e20}
-.k-warn{background:#ffebee;color:#b71c1c;border:1px solid #ef9a9a}
 .head{padding:12px 22px 4px}
 .head h2{font-size:var(--title);line-height:1.25;color:var(--brown);cursor:zoom-in}
 .body{padding:6px 22px 10px;font-size:var(--body);line-height:1.45;font-weight:650}
@@ -60,7 +59,6 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
 .stamp.st-reveal{background:#4a148c;color:#fff}
 .stamp.st-recap{background:#880e4f;color:#fff}
 .stamp.st-spare{background:#607d8b;color:#fff}
-.stamp.st-warn{background:#c62828;color:#fff}
 .dock{flex-shrink:0}
 .now{background:var(--green);color:#fff;padding:8px 18px;font-size:var(--now);font-weight:800;line-height:1.35;cursor:zoom-in}
 .bar{display:flex;align-items:center;gap:8px;padding:4px 10px;background:#fff;border-top:1px solid var(--line)}
@@ -104,16 +102,9 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
 .card.kind-key .head h2,.card.kind-end .head h2{color:#ffd54f;font-size:clamp(34px,6.4vw,92px);line-height:1.18;text-align:center;padding:18px 0 6px}
 .card.kind-key .body,.card.kind-end .body{text-align:center}
 .card.kind-key .body p,.card.kind-end .body p{color:#ffe0b2;font-size:clamp(16px,2.2vw,29px);font-weight:650}
-.card.kind-warn{background:#fff5f5;border:6px solid #c62828!important}
-.card.kind-warn .head h2{color:#b71c1c;text-align:center}
 .now{animation:nowIn .7s cubic-bezier(.16,1,.3,1) both;box-shadow:0 -8px 24px rgba(46,125,50,.35)}
 @keyframes nowIn{from{transform:translateY(28px);opacity:0}to{transform:none;opacity:1}}
 
-/* 指令选项卡 */
-.opts{padding:0 22px 14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
-.optc{background:#fff;border:3px solid #c8b8a6;border-radius:12px;padding:10px 14px}
-.optc h4{font-size:clamp(15px,2vw,21px);color:#bf360c;margin-bottom:6px}
-.optc span{display:inline-block;background:#faf6f0;border:2px solid var(--line);border-radius:999px;padding:4px 12px;margin:3px 4px 0 0;font-size:clamp(13px,1.8vw,18px);font-weight:800;color:#3e2723}
 /* 回看 */
 .recap{padding:6px 22px 18px;display:grid;gap:10px}
 .recap .r{border:3px solid #f8bbd0;background:#fff;border-radius:14px;padding:14px 18px;cursor:pointer;transition:.25s}
@@ -133,12 +124,12 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
   <button type="button" id="fontDown">缩小字体</button>
   <button type="button" id="fontUp">增大字体</button>
   <span id="fontPct" style="font-size:11px;opacity:.85;min-width:38px;text-align:center">100%</span>
-  <h1>AI工具实战应用 第5讲·教AI看说明书（技能） <small>上课投影网页版 v1.0　2026-09-09</small></h1>
+  <h1>AI工具实战应用 第4讲·给AI发一本参考书 <small>上课投影网页版 v1.0　2026-09-09</small></h1>
   <div class="hint">← → 翻页　点字可放大</div>
 </header>
 <div class="layout">
   <aside class="side" id="side">
-    <input id="q" placeholder="搜 P图 / 视频 / 即梦 / 暂停" />
+    <input id="q" placeholder="搜 知识库 / 参考书 / 测试题 / 暂停" />
     <div id="nav"></div>
   </aside>
   <main class="main" id="main"><article class="card" id="card"></article></main>
@@ -154,36 +145,33 @@ mark.kw{background:#fff176;color:#22170f;padding:0 .12em;border-radius:4px;font-
 <div class="lb" id="lb"></div>
 <script>
 const SLIDES = [
-{n:1, kind:"cover", title:"第5讲　教 AI 看说明书", body:["前四次课，你在「跟 AI 说话」。\n从今天起换个玩法：不跟它聊——指挥现成的智能体，把一整件事干完。\n今天先拿第一件武器：<b>技能</b>。"], now:"现在你：坐好，电脑打开浏览器。看下一页规矩。"},
-{n:2, kind:"text", title:"今天的规矩", body:["① 零新理论。技能就是给 AI 发的一本说明书，仅此而已。\n② 任务① 裸测 +2、任务② 装技能＋调用 +3、任务③ 前后对照 +3，全过额外 +2。\n③ 只装老师清单上的技能。来路不明的技能，一律不装。"], now:"现在你：听清分值和那条红线。"},
-{n:3, kind:"warn", title:"开工前，一条红线", body:["🚫 只装老师清单上的技能——清单外的，再诱人也不点安装。\n🚫 技能要你填账号密码、身份证、银行卡？立刻停手举手。\n技能是别人写的「说明书」，先过老师这一关，才进你的电脑。"], now:"现在你：记住——清单外不装。"},
-{n:4, kind:"task", title:"开场：看老师指挥两个 AI 干同一件事", body:["同一句话，发给两个 AI：\n「把这份乱名单整理成表格，数出每个社团几个人，给我一个能下载的文件。」", "第一个：普通聊天。它回你一大段文字——看着像表格，下载不了，数还得你自己数。\n第二个：带技能的智能体。它自己拆开任务、动手做、最后递给你一个真文件。"], now:"现在你：盯着看，等下抢答——两个 AI 差在哪？答对 +2。"},
-{n:5, kind:"setup", title:"先听三句，就三句", body:["这种「听得懂→自己想→调工具→交结果」的 AI，就叫智能体。\n它不用你搭——平台上现成的，你只管指挥。\n（顺嘴一句：豆包以前有个智能体广场，2026年7月新规之后关了。所以这门课不教你造，只教你指挥。）"], now:"现在你：记住一个词：智能体。下一句听它的武器。"},
-{n:6, kind:"setup", title:"智能体的武器，三档", body:["<b>技能</b>＝发给 AI 的一本说明书：装了它，AI 才会干某件事。最便宜，先用它。\n<b>专家</b>＝能力＋经验：懂某个领域的 AI 角色，一个问题问它。\n<b>专家团</b>＝好几个专家一起上：任务复杂才用，费积分。", "今天只练第一档：技能。"], now:"现在你：打开电脑上的 WorkBuddy 网页版，登录。"},
-{n:7, kind:"task", title:"任务①　裸测：没说明书的 AI 干活（验收过 +2 分）", body:["把老师发的「乱社团名单」文字，原样粘进左边对话框，再发下面这句：", "看着它答。验收：它给的是「文字」还是「文件」？数的人数跟你肉眼数的一样吗？\n一样不一样都先记着——等下要对照。"], now:"现在你：粘文字、发命令、看结果。看完举手 +2。"},
-{n:8, kind:"task", title:"任务②　装上说明书，再干一遍（验收过 +3 分）", body:["四步装技能：\n① 点左边的「技能」，进技能市场；\n② 在下面「推荐技能」里找到 <b>xlsx</b>（老师清单第一个），点安装；\n③ 回到对话框，打一个 <b>/</b>——技能列表弹出来，选 xlsx；\n④ 把同一份乱名单再发一遍，命令换成技能版（见指令卡）。"], now:"现在你：装→打/→重发。这次验收：它递给你的是不是能下载的文件？"},
-{n:9, kind:"pause", title:"暂停点⑫　请写 60 秒", body:["你调用技能的那句命令，原样抄下来。\n技能名也写上：＿＿＿＿。"], now:"现在你：写在记录册「暂停点⑫」。"},
-{n:10, kind:"task", title:"任务③　前后对照（验收过 +3 分）", body:["同一个活儿，干了两遍。现在对三条：\n① 没技能：给的是文字还是文件？\n② 有技能：给的是文字还是文件？\n③ 人数，两次一样吗？哪次你信？", "对完验收：你能一句话说清「技能改变了什么」。说不清就再对一遍。"], now:"现在你：三条逐一对照，心里有答案了举手 +3。"},
-{n:11, kind:"pause", title:"暂停点⑬　请写 60 秒", body:["没技能的 AI 和有技能的 AI，差在哪？\n一句话，写下来。"], now:"现在你：写在记录册「暂停点⑬」。"},
-{n:12, kind:"key", title:"技能，就是发给 AI 的说明书。", body:["说明书在手，它才按章办事；没说明书，它全靠猜。\n你不用会写说明书——你会装、会调用、会对照，就够了。"], now:"现在你：这一句，写进记录册。"},
-{n:13, kind:"recap", title:"回看：今天三招", body:["点一下每一条，先自己说出来，再翻开对。"], now:"现在你：三条都看完，再看下一页。"},
-{n:14, kind:"end", title:"下课。", body:["记住一句：智能体不用你造，说明书不用你写——你会指挥就行。", "课后任务（必做）：把「技能干完活的那个文件」截图，发到企业微信群。\n选做：技能市场里挑一个老师清单上的别的技能（docx 或 canvas-design），装上用一句话试试。"], now:"现在你：截图发群。下次课：专家团＋让智能体按时上班。"},
-{n:15, kind:"spare", title:"时间够再用：换 Trae SOLO 走一遍", body:["WorkBuddy 登不上、或积分见底时：打开 solo.trae.cn（全免费）。\n「设置 → 规则和技能 → 技能」里建一个或装一个，再回对话里让它干活。\n两条路同一个道理：装说明书→调用→对照。"], now:"现在你：老师没说用，就不用看这页。"},
-{n:16, kind:"spare", title:"时间够再用：技能不听使唤急救", body:["打了 / 不弹列表？——技能没启用，回技能页打开开关。\n它装傻不用技能？——命令里把技能名点出来：「用 xlsx 技能，把……」。\n还不行？——换个对话重开一次，别恋战，举手。"], now:"现在你：老师没说用，就不用看这页。"}
-];
-
-const CMD_OPTS=[
-["裸测命令（没技能）", "「请把下面这份名单整理成表格，数出每个社团几个人：（这里粘老师发的乱名单）」", "注意：一字不改，原样发。"],
-["技能版命令（装了 xlsx 之后）", "「用 xlsx 技能，把这份名单整理成表格：列名 姓名/社团/报名时间，数出每个社团人数，给我一个能下载的 Excel 文件。」", "对照用：同一份名单，只换命令。"]
+{n:1, kind:"cover", title:"第4讲　给AI发一本参考书", body:["上节课你们交了作业：一件「想让 AI 查得准、答得准的事」。\n今天就把这件事办成——让 AI 查得准。"], now:"现在你：打开电脑浏览器。今天用的工具，不用安装。"},
+{n:2, kind:"text", title:"今天的规矩", body:["① 工具是腾讯 ima，网页版 ima.qq.com——不用装，微信扫码就能登；手机上也能用小程序。\n② 文档老师已经发群里：《校园生活指南》《社团一览》两份——食堂、快递、社团，全是你们天天碰的事，你只管上传、只管问。\n③ 验收过了才举手报分。"], now:"现在你：先把群里的两份文档存到桌面。"},
+{n:3, kind:"task", title:"热身 3 分钟：先问一遍豆包", body:["给豆包发这一句：「我们学校西食堂的砂锅饭多少钱一份？电竞社周几开例会？」\n看它怎么答——是答得出来，还是张口就编？"], now:"现在你：发出去。这个答案先记着，一会儿要比。"},
+{n:4, kind:"text", title:"一课一词：知识库", body:["豆包为什么答不准？它没见过咱们学校的文件——它只知道全国大概的政策。\n办法很简单：把文件发给它，让它照着答。\n知识库，就是你发给 AI 的一本参考书。没参考书，它编；有参考书，它照着查。\n原理不展开，今天只管把参考书发过去。"], now:"现在你：记住这个比方。下一页开始建库。"},
+{n:5, kind:"task", title:"第一步：登录 ima（3 分钟）", body:["浏览器打开 ima.qq.com，点登录——用微信扫码。\n登进去，找到「知识库」。\n卡住的举手，老师过去；登录不上网页版的，用手机微信里的 ima 小程序。"], now:"现在你：登录进去，看到知识库页面，坐好。"},
+{n:6, kind:"task", title:"第二步：建库＋上传（5 分钟）", body:["跟着做，四步：\n① 新建一个知识库，名字叫「我的参考书」；\n② 上传老师发的两份文档：《校园生活指南》《社团一览》；\n③ 等它解析完——看见文档变成可提问的状态；\n④ 先别急着问，下一页有问题。"], now:"现在你：一步一步跟。解析要等一会儿，正常的。"},
+{n:7, kind:"task", title:"第三步：同一个问题，再问一遍", body:["在你的知识库里，把热身那个问题原样再问一遍：\n「我们学校西食堂的砂锅饭多少钱一份？电竞社周几开例会？」\n对比热身那次：这次的答案，是不是照着咱们学校的文件答的？\n验收：答案后面带着出处——它告诉你这句话来自哪份文档。带出处，举手 +2。"], now:"现在你：问完对答案。重点看：有没有出处。"},
+{n:8, kind:"pause", title:"暂停点⑨　请写 60 秒", body:["ima 的答案，跟热身时豆包的答案，差在哪？\n这个答案是从哪来的？"], now:"现在你：写在记录册「暂停点⑨」。"},
+{n:9, kind:"task", title:"测试题清单：5 道题，逐条验（10 分钟）", body:["这 5 题老师给定，一题一题问 ima，在草稿纸上记：答没答出来、带没带出处：\n① 东食堂晚餐，几点到几点？\n② 3号楼菜鸟驿站，几点关门？\n③ 图书馆自习室的座位，怎么约？\n④ 电竞社在哪开例会？一学期多少钱？\n⑤ 街舞社的招牌活动是什么？\n问完别急着信——打开原文档，找到那一条，对一对。"], now:"现在你：一题一问，问完对原文。全对完举手。"},
+{n:10, kind:"pause", title:"暂停点⑩　请写 60 秒", body:["5 题，ima 答出来几题？\n哪一题的答案，你差点就信了，结果跟原文对不上？"], now:"现在你：写在记录册「暂停点⑩」。"},
+{n:11, kind:"task", title:"全班共建一个库：扫码加入", body:["大屏上是老师建好的班级共享库——「AI工具课·班级参考书库」。\n用 ima 扫码加入。\n进去你能看到老师传的资料；以后你自己的文档，也能往里加。\n验收：加入成功、能看见库里的文档，举手 +1。"], now:"现在你：扫大屏上的码。加不进的喊老师。"},
+{n:12, kind:"task", title:"AI 的三个花活：挑一个做完（+2 分）", body:["ima 能拿参考书变出三样东西，三样挨个体验，一样别落：\n① AI 知识小测验——让它照着《校园生活指南》出 5 道题，你答，再回原文判卷；\n② 思维导图——把《社团一览》变成一张图，五个社团一个都不许少；\n③ 双人播客——让 AI 照参考书写一段 30 秒「相声式」对话脚本（主题：社团怎么选），你和同桌一人配一个角色，录下来。\n提醒：出题的是 AI，判卷的是你——它出的题、写的脚本要是有错，记下来，抓一个错 +1。\n展示：配音录完的，老师抽两组当场放，被抽到 +1。"], now:"现在你：挑一个做。做完举手。"},
+{n:13, kind:"pause", title:"暂停点⑪　请写 60 秒", body:["三个花活都体验了吗？\nAI 生成的东西里，你抓到错了吗？写一个错。"], now:"现在你：写在记录册「暂停点⑪」。"},
+{n:14, kind:"key", title:"AI 没见过的事，别直接问；<br>先给它发参考书。", body:["有参考书，它照着查；但用的时候，还是要回原文对一眼。"], now:"现在你：这两句，写进记录册。"},
+{n:15, kind:"recap", title:"回看：今天三句", body:["点一下每一条，先自己说出来，再翻开对。"], now:"现在你：三条都看完，再看下一页。"},
+{n:16, kind:"end", title:"下课。", body:["记住一句：让 AI 答得准的，不是话术，是资料。", "课后任务（必做）：找一份你自己的资料——兼职启事、比赛通知、专业介绍都行——传进你的知识库，问它一个问题，把「带出处的回答」截图发企业微信群。"], now:"现在你：记录册合上带走。下次课：智能体——不用你搭，要你会指挥。"},
+{n:17, kind:"spare", title:"时间够再用：提问快手", body:["同一个知识库，3 分钟里谁问出的问题最多、还都带出处。\n举手报数，最多的 +2。"], now:"现在你：老师没说用，就不用看这页。"},
+{n:18, kind:"spare", title:"时间够再用：两张文档对一对", body:["给 ima 发一句：「对照这两份文档，把《校园生活指南》里最重要的 5 条列出来。」\n验收：5 条都能回到原文找到。+2 分。"], now:"现在你：老师没说用，就不用看这页。"}
 ];
 const RECAP=[
- ["智能体：听得懂→自己想→调工具→交结果", "不用你造，平台现成的，你只管指挥"],
- ["技能＝发给 AI 的说明书", "技能市场一键装，清单外不装"],
- ["打 / 调用，前后一对照", "没技能给文字，有技能交文件——差在这"]
+ ["AI 说瞎话，是因为它没见过", "知识库＝发给 AI 的参考书；没书它编，有书它查"],
+ ["答案带出处，才敢用", "用的时候，回原文档对一眼"],
+ ["全班共建一个库", "扫码加入，自己的资料也能往里加"]
 ];
-const KIND={cover:"封面",text:"讲义",setup:"先听一句",task:"动手",pause:"暂停点",key:"金句",reveal:"对答案",recap:"回看",end:"下课",spare:"备用",warn:"红线"};
-const STAMP={cover:"开讲",text:"记",setup:"听",task:"动手",pause:"写！",key:"记住",reveal:"对答案",recap:"回看",end:"下课",spare:"备用",warn:"红线"};
-const KEYS=["智能体","技能","说明书","调用","一键安装","前后对照","红线","暂停点"];
+const KIND={cover:"封面",text:"讲义",setup:"先听一句",task:"动手",pause:"暂停点",key:"金句",reveal:"对答案",recap:"回看",end:"下课",spare:"备用"};
+const STAMP={cover:"开讲",text:"记",setup:"听",task:"动手",pause:"写！",key:"记住",reveal:"对答案",recap:"回看",end:"下课",spare:"备用"};
+const KEYS=["知识库","参考书","出处","核实","共享库","暂停点","ima"];
 let i=0;
 const $=id=>document.getElementById(id);
 function esc(s){return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
@@ -238,8 +226,6 @@ function render(dir){
   let widget="";
   if(s.kind==="recap"){
     widget=`<div class="recap">`+RECAP.map((r,k)=>`<div class="r" data-r="${k}"><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div>`).join("")+`</div>`;
-  }else if(s.n===7){
-    widget=`<div class="opts">`+CMD_OPTS.map(o=>`<div class="optc"><h4>${esc(o[0])}卡</h4>`+o.slice(1).map(x=>`<span>${esc(x)}</span>`).join("")+`</div>`).join("")+`</div>`;
   }
   card.innerHTML=`
     <div class="stamp st-${esc(s.kind)}">${STAMP[s.kind]||""}</div>
