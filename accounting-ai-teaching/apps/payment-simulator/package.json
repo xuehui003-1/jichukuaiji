@@ -1,0 +1,22 @@
+{
+  "name": "payment-simulator",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -H 0.0.0.0 -p 3001",
+    "build": "next build",
+    "start": "next start -H 0.0.0.0 -p 3001"
+  },
+  "dependencies": {
+    "@prisma/client": "6.19.3",
+    "next": "^16.2.11",
+    "react": "^19.2.2",
+    "react-dom": "^19.2.2"
+  },
+  "devDependencies": {
+    "@types/node": "20.17.30",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "5.7.3"
+  }
+}

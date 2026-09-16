@@ -1,0 +1,10 @@
+请将最终人物视频复制到当前文件夹，并严格命名为：
+case-introduction-30s.mp4
+
+完整源代码路径：
+D:\Downloads\accounting-ai-teaching\apps\ai-finance-hub\public\videos\case-introduction-30s.mp4
+
+复制完成后再运行Windows整合打包脚本：
+make-integrated-portable-windows-package.cmd
+
+建议格式：MP4（H.264视频＋AAC音频），16:9，1280×720。

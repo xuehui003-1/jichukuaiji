@@ -1,0 +1,266 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(cuid())
+  username     String        @unique
+  displayName  String
+  role         String
+  passwordHash String
+  forcePasswordChange Boolean @default(false)
+  lastLoginAt DateTime?
+  sessions     Session[]
+  memberships  ClassMember[]
+  lifeEvents   LifeEvent[]
+  literacyAttempts AILiteracyAttempt[]
+  managementAttempts ManagementProjectAttempt[]
+  diagnosticAssessments DiagnosticAssessment[]
+  createdAt    DateTime      @default(now())
+}
+
+model Course {
+  id          String      @id @default(cuid())
+  name        String
+  textbook    String?
+  classrooms Classroom[]
+}
+
+model Classroom {
+  id          String        @id @default(cuid())
+  name        String
+  term        String
+  inviteCode  String        @unique
+  courseId    String
+  course      Course        @relation(fields: [courseId], references: [id])
+  members     ClassMember[]
+  cycles      LearningCycle[]
+}
+
+model ClassMember {
+  id          String    @id @default(cuid())
+  classroomId String
+  userId      String
+  memberRole  String
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([classroomId, userId])
+}
+
+model LearningCycle {
+  id             String    @id @default(cuid())
+  classroomId    String
+  name           String
+  stage          Int
+  startsAt       DateTime
+  endsAt         DateTime
+  suggestedCount Int       @default(3)
+  maxScoredCount Int       @default(5)
+  classroom      Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+}
+
+model LifeEvent {
+  id             String   @id @default(cuid())
+  studentId      String
+  classroomId    String?
+  cycleId        String?
+  mode           String
+  participation  String
+  category       String
+  eventDate      DateTime
+  amount         String?
+  amountMode     String
+  payment        String?
+  fundFlow       String
+  rawDescription String
+  redactedSummary String
+  analysisType   String
+  analysisFlow   String
+  diagnosisTag   String?
+  choicesJson    String
+  firstReason    String
+  revisedReason  String?
+  variationText  String?
+  status         String   @default("SUBMITTED")
+  score          Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  student        User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+model SimulationRecord {
+  id              String   @id @default(cuid())
+  studentId       String
+  classroomId     String?
+  cycleId         String?
+  scenarioId      String
+  scenarioTitle   String
+  stepIndex       Int
+  relationsJson   String
+  elementsJson    String
+  firstChoice     String
+  firstReason     String
+  revisedJson     String?
+  status          String   @default("SUBMITTED")
+  score           Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AIRequestLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  app         String
+  requestType String
+  provider    String
+  model       String
+  durationMs  Int
+  status      String
+  errorCode   String?
+  createdAt   DateTime @default(now())
+}
+
+model TeacherReview {
+  id           String   @id @default(cuid())
+  app          String
+  reviewType   String
+  title        String
+  detail       String?
+  targetId     String?
+  studentLabel String?
+  confidence   Float?
+  status       String   @default("PENDING")
+  teacherId    String?
+  teacherNote  String?
+  studentResponse String?
+  resubmittedAt DateTime?
+  reviewedAt   DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model LessonPlan {
+  id             String   @id @default(cuid())
+  classroomId    String
+  teacherId      String
+  topic          String
+  lessonType     String
+  diagnosisJson  String
+  resourcesJson  String
+  contentJson    String
+  source         String
+  model          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model GestureAttempt {
+  id            String   @id @default(cuid())
+  studentId     String
+  classroomId   String?
+  score         Int
+  attemptsJson  String
+  durationMs    Int
+  completedAt   DateTime @default(now())
+}
+
+model LifeGameAttempt {
+  id           String   @id @default(cuid())
+  studentId    String
+  classroomId  String?
+  gameType     String
+  score        Int
+  total        Int
+  correct      Int
+  durationMs   Int
+  detailsJson  String
+  completedAt  DateTime @default(now())
+}
+
+model EquationAttempt {
+  id            String   @id @default(cuid())
+  studentId     String
+  classroomId   String?
+  score         Int
+  completedJson String
+  errorsJson    String
+  durationMs    Int
+  completedAt   DateTime @default(now())
+}
+
+model RelationshipAttempt {
+  id            String   @id @default(cuid())
+  studentId     String
+  classroomId   String?
+  scenario      String
+  score         Int
+  completedJson String
+  errorsJson    String
+  durationMs    Int
+  completedAt   DateTime @default(now())
+}
+
+model AILiteracyAttempt {
+  id              String   @id @default(cuid())
+  studentId       String
+  taskType        String
+  title           String
+  firstAnswerJson String
+  firstScore      Int
+  diagnosisJson   String
+  revisedAnswerJson String?
+  revisedScore    Int?
+  revisionNote    String?
+  status          String   @default("FIRST_SUBMITTED")
+  teacherNote     String?
+  reviewedAt      DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  student         User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+model ManagementProjectAttempt {
+  id String @id @default(cuid())
+  studentId String
+  projectCode String
+  projectTitle String
+  firstPrediction String
+  firstAnswer Float
+  revisedAnswer Float?
+  diagnosisTag String?
+  status String @default("SUBMITTED")
+  score Int @default(0)
+  teacherNote String?
+  reviewedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  student User @relation(fields:[studentId],references:[id],onDelete:Cascade)
+}
+
+model DiagnosticAssessment {
+  id String @id @default(cuid())
+  studentId String
+  title String
+  answersJson String
+  resultJson String
+  score Int
+  correctCount Int
+  totalCount Int
+  status String @default("SUBMITTED")
+  createdAt DateTime @default(now())
+  student User @relation(fields:[studentId],references:[id],onDelete:Cascade)
+}

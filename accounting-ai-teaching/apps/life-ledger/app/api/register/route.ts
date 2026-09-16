@@ -1,0 +1,6 @@
+import { NextResponse } from 'next/server';
+import crypto from 'node:crypto';
+import { prisma } from '../../../lib/prisma';
+export async function POST(request:Request){
+ try{const b=await request.json();if(!/^[a-zA-Z0-9_]{4,24}$/.test(b.username||''))return NextResponse.json({ok:false,error:'用户名需为4—24位字母、数字或下划线'},{status:400});if(String(b.password||'').length<6)return NextResponse.json({ok:false,error:'密码至少6位'},{status:400});const classroom=await prisma.classroom.findUnique({where:{inviteCode:String(b.inviteCode||'').trim().toUpperCase()}});if(!classroom)return NextResponse.json({ok:false,error:'班级邀请码无效'},{status:404});const exists=await prisma.user.findUnique({where:{username:b.username}});if(exists)return NextResponse.json({ok:false,error:'用户名已存在'},{status:409});const passwordHash=crypto.createHash('sha256').update(b.password).digest('hex');const user=await prisma.user.create({data:{username:b.username,displayName:b.displayName||b.username,role:'STUDENT',passwordHash,memberships:{create:{classroomId:classroom.id,memberRole:'STUDENT'}}}});return NextResponse.json({ok:true,user:{username:user.username,displayName:user.displayName},classroom:classroom.name})}catch{return NextResponse.json({ok:false,error:'注册失败'},{status:500})}
+}

@@ -1,0 +1,2 @@
+import {spawnSync} from 'node:child_process';
+const tasks=[['UI按钮审计',['run','audit:ui']],['生产构建',['run','build']]];let failed=false;for(const [name,args] of tasks){console.log(`\n=== ${name} ===`);const r=spawnSync('npm',args,{stdio:'inherit',shell:true});if(r.status!==0){failed=true;console.error(`${name}失败`)}}if(failed){console.error('\n发布检查未通过');process.exit(1)}console.log('\n发布检查通过：按钮审计、类型检查和两个应用生产构建均成功。');

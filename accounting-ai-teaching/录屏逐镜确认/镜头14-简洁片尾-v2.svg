@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#13233e"/>
+    <stop offset="0.55" stop-color="#304895"/>
+    <stop offset="1" stop-color="#176f63"/>
+  </linearGradient>
+  <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%">
+    <feDropShadow dx="0" dy="15" stdDeviation="18" flood-color="#07101f" flood-opacity="0.32"/>
+  </filter>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto">
+    <path d="M0,0 L10,5 L0,10 Z" fill="#dce4ff"/>
+  </marker>
+</defs>
+
+<rect width="1920" height="1080" fill="url(#bg)"/>
+<circle cx="1700" cy="135" r="400" fill="#ffffff" opacity="0.045"/>
+<circle cx="170" cy="980" r="450" fill="#ffffff" opacity="0.04"/>
+
+<text x="960" y="106" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="28" font-weight="700" fill="#c3ceff" letter-spacing="5">大学生生活记账与会计AI伴学软件</text>
+<text x="960" y="195" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="60" font-weight="900" fill="#ffffff">从生活事项到教学决策</text>
+<text x="960" y="255" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="27" font-weight="600" fill="#8fe4c3">一条可判断、可诊断、可订正、可追踪的学习闭环</text>
+
+<g font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" filter="url(#shadow)">
+  <g transform="translate(105 360)">
+    <rect width="280" height="185" rx="28" fill="#334f9f" stroke="#91a3ff" stroke-width="4"/>
+    <circle cx="52" cy="48" r="27" fill="#ffffff" opacity="0.18"/>
+    <text x="52" y="58" text-anchor="middle" font-size="26" font-weight="900" fill="#ffffff">1</text>
+    <text x="140" y="104" text-anchor="middle" font-size="30" font-weight="900" fill="#ffffff">生活事项</text>
+    <text x="140" y="146" text-anchor="middle" font-size="19" font-weight="600" fill="#e2e8ff">真实 · 模糊 · 模拟</text>
+  </g>
+  <path d="M405 452 H475" stroke="#dce4ff" stroke-width="7" marker-end="url(#arrow)"/>
+
+  <g transform="translate(495 360)">
+    <rect width="280" height="185" rx="28" fill="#4f64c8" stroke="#9baaff" stroke-width="4"/>
+    <circle cx="52" cy="48" r="27" fill="#ffffff" opacity="0.18"/>
+    <text x="52" y="58" text-anchor="middle" font-size="26" font-weight="900" fill="#ffffff">2</text>
+    <text x="140" y="104" text-anchor="middle" font-size="30" font-weight="900" fill="#ffffff">首次判断</text>
+    <text x="140" y="146" text-anchor="middle" font-size="19" font-weight="600" fill="#e5e9ff">学生独立思考</text>
+  </g>
+  <path d="M795 452 H865" stroke="#dce4ff" stroke-width="7" marker-end="url(#arrow)"/>
+
+  <g transform="translate(885 360)">
+    <rect width="280" height="185" rx="28" fill="#7353ae" stroke="#b99aee" stroke-width="4"/>
+    <circle cx="52" cy="48" r="27" fill="#ffffff" opacity="0.18"/>
+    <text x="52" y="58" text-anchor="middle" font-size="26" font-weight="900" fill="#ffffff">3</text>
+    <text x="140" y="95" text-anchor="middle" font-size="28" font-weight="900" fill="#ffffff">诊断与</text>
+    <text x="140" y="132" text-anchor="middle" font-size="28" font-weight="900" fill="#ffffff">专项训练</text>
+    <text x="140" y="163" text-anchor="middle" font-size="17" font-weight="600" fill="#efe6ff">规则＋AI＋知识模型</text>
+  </g>
+  <path d="M1185 452 H1255" stroke="#dce4ff" stroke-width="7" marker-end="url(#arrow)"/>
+
+  <g transform="translate(1275 360)">
+    <rect width="280" height="185" rx="28" fill="#238371" stroke="#7ce0bb" stroke-width="4"/>
+    <circle cx="52" cy="48" r="27" fill="#ffffff" opacity="0.18"/>
+    <text x="52" y="58" text-anchor="middle" font-size="26" font-weight="900" fill="#ffffff">4</text>
+    <text x="140" y="104" text-anchor="middle" font-size="30" font-weight="900" fill="#ffffff">订正迁移</text>
+    <text x="140" y="146" text-anchor="middle" font-size="19" font-weight="600" fill="#dcf8ed">返回原题再验证</text>
+  </g>
+  <path d="M1575 452 H1645" stroke="#dce4ff" stroke-width="7" marker-end="url(#arrow)"/>
+
+  <g transform="translate(1665 360)">
+    <rect width="190" height="185" rx="28" fill="#c77335" stroke="#f1b26d" stroke-width="4"/>
+    <circle cx="48" cy="48" r="27" fill="#ffffff" opacity="0.18"/>
+    <text x="48" y="58" text-anchor="middle" font-size="26" font-weight="900" fill="#ffffff">5</text>
+    <text x="95" y="100" text-anchor="middle" font-size="29" font-weight="900" fill="#ffffff">教师</text>
+    <text x="95" y="139" text-anchor="middle" font-size="29" font-weight="900" fill="#ffffff">决策</text>
+    <text x="95" y="168" text-anchor="middle" font-size="17" fill="#fff0e5">复核与备课</text>
+  </g>
+</g>
+
+<g font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" filter="url(#shadow)">
+  <rect x="225" y="665" width="1470" height="118" rx="59" fill="#ffffff" fill-opacity="0.13" stroke="#ffffff" stroke-opacity="0.28" stroke-width="2"/>
+  <text x="520" y="737" text-anchor="middle" font-size="31" font-weight="900" fill="#ffffff">学生先判断</text>
+  <text x="800" y="737" text-anchor="middle" font-size="31" font-weight="900" fill="#ffffff">AI做辅助</text>
+  <text x="1085" y="737" text-anchor="middle" font-size="31" font-weight="900" fill="#ffffff">教师终审</text>
+  <text x="1435" y="737" text-anchor="middle" font-size="25" font-weight="700" fill="#a5ebd2">隐私数据最小化</text>
+  <line x1="660" y1="704" x2="660" y2="748" stroke="#cdd7ff" stroke-width="2" opacity="0.65"/>
+  <line x1="940" y1="704" x2="940" y2="748" stroke="#cdd7ff" stroke-width="2" opacity="0.65"/>
+  <line x1="1230" y1="704" x2="1230" y2="748" stroke="#cdd7ff" stroke-width="2" opacity="0.65"/>
+</g>
+
+<text x="960" y="885" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="48" font-weight="900" fill="#ffffff">让学生从生活里看见会计</text>
+<text x="960" y="952" text-anchor="middle" font-family="Noto Sans CJK SC, Microsoft YaHei, sans-serif" font-size="36" font-weight="800" fill="#91e4c5">让教师从数据中看见学习</text>
+</svg>

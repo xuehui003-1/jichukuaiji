@@ -1,0 +1,6 @@
+import { NextResponse } from 'next/server';
+import { prisma } from '../../../../lib/prisma';
+import { currentUser } from '../../../../lib/auth';
+export async function GET(){
+ const user=await currentUser();if(!user)return NextResponse.json({ok:false,error:'请先登录'},{status:401});const app=process.env.NEXT_PUBLIC_APP_ID||'';const where=app?{app}:{};const logs=await prisma.aIRequestLog.findMany({where,orderBy:{createdAt:'desc'},take:200});const success=logs.filter(x=>x.status==='SUCCESS').length,failed=logs.length-success,avg=logs.length?Math.round(logs.reduce((a,b)=>a+b.durationMs,0)/logs.length):0;const errors:Record<string,number>={};logs.forEach(x=>{if(x.errorCode)errors[x.errorCode]=(errors[x.errorCode]||0)+1});return NextResponse.json({ok:true,status:{mode:process.env.AI_MODE||'mock',provider:'DeepSeek',model:process.env.AI_MODEL||'deepseek-v4-flash',configured:Boolean(process.env.AI_API_KEY),baseUrl:process.env.AI_BASE_URL||'https://api.deepseek.com',total:logs.length,success,failed,successRate:logs.length?Math.round(success/logs.length*100):0,averageDurationMs:avg,errors,recent:logs.slice(0,8).map(x=>({requestType:x.requestType,status:x.status,durationMs:x.durationMs,errorCode:x.errorCode,createdAt:x.createdAt}))}})
+}
