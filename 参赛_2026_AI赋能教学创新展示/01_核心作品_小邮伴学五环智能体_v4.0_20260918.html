@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>小邮伴学·五环财务机器人｜教育教学智能体</title>
+<title>小邮伴学 · 财务机器人课堂智能体｜教育教学智能体</title>
 <style>:root{--ink:#3B2B20;--mut:#8A7663;--acc:#E65100;--acc2:#BF360C;--ok:#2E7D32;--warn:#B26A00;--bg:#F6EFE3;--card:#FFFFFF;--line:#E7DAC4;--amber:#FFE082}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;background:
@@ -145,15 +145,15 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:15px 18px;tex
     <rect x="14" y="46" width="36" height="12" rx="6" fill="#E65100"/><circle cx="32" cy="52" r="4.6" fill="#FFE082" stroke="#BF360C" stroke-width="1.4"/>
   </svg>
   <div style="flex:1">
-    <h1 id="appName">小邮伴学·五环财务机器人</h1>
-    <div class="sub" id="appSub">高职会计教育教学智能体 · 辨 · 演 · 训 · 评 · 导 五环贯通</div>
+    <h1 id="appName">小邮伴学 · 财务机器人课堂智能体</h1>
+    <div class="sub" id="appSub">高职会计课堂的伴学智能体 · 学生先判断 · AI 只辅助 · 教师做终审</div>
   </div>
   <span class="badge" id="modeBadge">演示模式（离线内置）</span>
   <button class="gear" onclick="openSettings()">⚙ 设置</button>
 </div></header>
 
 <nav><div class="nin">
-  <button id="tb-home" class="on" onclick="showTab('home')">🏠 五环导览</button>
+  <button id="tb-home" class="on" onclick="showTab('home')">🏠 首页</button>
   <button id="tb-class" onclick="showTab('class')">🏫 课堂同步</button>
   <button id="tb-bot" onclick="showTab('bot')">🤖 机器人车间</button>
   <button id="tb-gest" onclick="showTab('gest')">🙌 手势闯关</button>
@@ -172,17 +172,16 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:15px 18px;tex
       <rect x="14" y="46" width="36" height="12" rx="6" fill="#FFE082"/><circle cx="32" cy="52" r="4.6" fill="#BF360C"/>
     </svg>
     <div class="heroTxt">
-      <h2>小邮伴学 · 五环财务机器人</h2>
-      <p>课堂上用课件玩的活动，这里<b>课件真页重玩</b>；机器人真能跑；判断先你来、AI 只复核、教师来终审。<br><b>辨 · 演 · 训 · 评 · 导</b> 五环贯通 —— 高职《财务机器人应用与开发》教学智能体</p>
+      <h2>小邮伴学 · 财务机器人课堂智能体</h2>
+      <p>我是小邮——从校园快递站跑进课堂的助教机器人。课上玩的课件在我这儿<b>原页重玩</b>，机器人<b>真能跑</b>，问题<b>我陪你拆</b>。铁律只有一条：<b>学生先判断 · AI 只辅助 · 教师做终审</b>。</p>
       <div class="heroBtns"><button class="hbtn" onclick="showTab('class')">🏫 进课堂同步（课件真页）</button><button class="hbtn o" onclick="showTab('bot')">🤖 机器人车间</button></div>
     </div>
   </div>
   <div class="rings">
-    <div class="ring" onclick="showTab('class')"><b>训</b><div class="t">课堂同步</div><div class="d">课件真页搬进来：开场任务 / 十二货分类 / 认命令 / 暂停点⑦</div></div>
-    <div class="ring" onclick="showTab('bot')"><b>演</b><div class="t">机器人车间</div><div class="d">真能跑的财务机器人＋课件原页（17 课 p6–9）</div></div>
-    <div class="ring" onclick="showTab('gest')"><b>演＋</b><div class="t">手势闯关</div><div class="d">摄像头本地手势识别：☝✌👍✊，视频不上传</div></div>
-    <div class="ring" onclick="showTab('teach')"><b>辨·评</b><div class="t">教师台</div><div class="d">认知地图＋可信评价闭环＋AI 备课预演</div></div>
-    <div class="ring" onclick="showTab('teach')"><b>导</b><div class="t">导学建议</div><div class="d">哪里薄弱补哪里，一键生成下节课建议</div></div>
+    <div class="ring" onclick="showTab('class')"><b>📖</b><div class="t">陪你练 · 课堂同步</div><div class="d">本节课 19 页课件真页原样入住，逐层揭晓和课堂一模一样</div></div>
+    <div class="ring" onclick="showTab('bot')"><b>🤖</b><div class="t">带你造 · 机器人车间</div><div class="d">财务机器人真能跑：改参数、先猜再跑，旁边就是课件原页</div></div>
+    <div class="ring" onclick="showTab('gest')"><b>🙌</b><div class="t">用手答 · 手势闯关</div><div class="d">☝✌👍✊ 本地手势识别五关：主体、债权、义务、收入边界</div></div>
+    <div class="ring" onclick="showTab('teach')"><b>🧑‍🏫</b><div class="t">帮你评 · 教师台</div><div class="d">低置信自动进终审队列，裁定回执直达学生；备课预演＋导学建议</div></div>
   </div>
   <div class="card"><h3>🧣 评环试一试 · 生活费判断<span class="pb">可信协同 · 30 秒体验</span></h3>
     <div class="note">先自己判断 → 规则复核给置信度 → 低置信自动进教师终审——课堂名题「父母转生活费」。</div>
@@ -207,6 +206,8 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:15px 18px;tex
 
 
 
+
+
 <!-- ═══════ 课堂同步 ═══════ -->
 <section id="tab-class">
   <div class="dkToolbar">
@@ -222,6 +223,8 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:15px 18px;tex
   </div>
   <div class="stage" id="clsStage"></div>
 </section>
+
+
 
 
 
@@ -321,17 +324,20 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:15px 18px;tex
 
 <!-- ═══════ 关于 ═══════ -->
 <section id="tab-about">
-  <div class="card"><h3>五环是什么（每环一句话）</h3>
-    <table><tr><th>环</th><th>做什么</th><th>在本页哪里</th></tr>
-    <tr><td><b>辨</b></td><td>学情诊断：作业 + 课堂数据 → 班级认知地图、AI 备课预演</td><td>教师台</td></tr>
-    <tr><td><b>演</b></td><td>情境演练：课件活动同款＋机器人车间＋手势闯关</td><td>课堂同步 · 机器人车间 · 手势闯关</td></tr>
-    <tr><td><b>训</b></td><td>先判断后揭晓：课件活动课后重玩，错回原页重学</td><td>课堂同步</td></tr>
-    <tr><td><b>评</b></td><td>规则优先复核 + 置信度 + 低置信度进教师终审</td><td>课堂同步 → 教师台队列</td></tr>
-    <tr><td><b>导</b></td><td>按薄弱点生成导学建议</td><td>教师台 · 导学建议</td></tr></table>
+  <div class="card"><h3>🧩 这个智能体是怎么设计的（说给评委听）</h3>
+    <table><tr><th>设计要素</th><th>本作品的做法</th></tr>
+    <tr><td><b>人设</b></td><td>小邮：校园快递站出身的助教机器人——「搬包裹按单子一件件来」＝循环天赋；口语化、只启发不代答</td></tr>
+    <tr><td><b>边界（核心设计）</b></td><td>学生先判断 → AI 只复核与追问 → 低置信交教师终审；敏感信息先脱敏；<b>AI 可以干活，不能拍板</b></td></tr>
+    <tr><td><b>双端协同</b></td><td>学生端（练习＋对话）与教师台（终审队列/备课预演/导学建议）同一作品闭环，裁定回执直达学生</td></tr>
+    <tr><td><b>本地优先</b></td><td>规则引擎与手势识别全在本机，断网可用；大模型可选接入、失败自动回退；数据不出浏览器</td></tr>
+    <tr><td><b>课件共生</b></td><td>与自研课件同一套页面（19 页真页内嵌），课上课件、课后智能体，互为镜像</td></tr></table>
+    <div class="note" style="margin-top:8px">设计源头：本课程「先判断—AI 辅助—教师终审」教学闭环（此前总结的辨·演·训·评·导教学模式的评·导两环在此产品化）。</div>
   </div>
   <div class="card"><h3>技术亮点（说给评委听）</h3>
     <ul style="margin-left:20px;font-size:.93em">
       <li><b>课件真页内嵌</b>：直接把课件原页搬进智能体（08 纸上篇 9 页＋17 课 4 页，用课件自身引擎渲染，逐层揭晓/翻面/图片灯箱原样保留），外加 <b>🔦 探照灯模式</b>（光圈跟随、滚轮调大小、揭晓自动聚焦）——不是仿制，是原页</li>
+      <li><b>课件真页内嵌</b>：直接把课件原页搬进智能体（08 本节课 19 页＋17 课 4 页＋任务卡 3 页，用课件自身引擎渲染，逐层揭晓/翻面/图片灯箱原样保留），外加 <b>🔦 探照灯模式</b>（光圈跟随、滚轮调大小、揭晓自动聚焦）——不是仿制，是原页</li>
+      <li><b>课件真页内嵌</b>：直接把课件原页搬进智能体（08 本节课 19 页＋17 课 4 页＋任务卡 3 页，用课件自身引擎渲染，逐层揭晓/翻面/图片灯箱原样保留），外加 <b>🔦 探照灯模式</b>（光圈跟随、滚轮调大小、揭晓自动聚焦）——不是仿制，是原页</li>
       <li><b>课件真页内嵌</b>：直接把课件原页搬进智能体（08 本节课 19 页＋17 课 4 页＋任务卡 3 页，用课件自身引擎渲染，逐层揭晓/翻面/图片灯箱原样保留），外加 <b>🔦 探照灯模式</b>（光圈跟随、滚轮调大小、揭晓自动聚焦）——不是仿制，是原页</li>
       <li><b>课件真页内嵌</b>：直接把课件原页搬进智能体（08 本节课 19 页＋17 课 4 页＋任务卡 3 页，用课件自身引擎渲染，逐层揭晓/翻面/图片灯箱原样保留），外加 <b>🔦 探照灯模式</b>（光圈跟随、滚轮调大小、揭晓自动聚焦）——不是仿制，是原页</li>
       <li><b>课件真页内嵌</b>：直接把课件原页搬进智能体（08 本节课 19 页＋17 课 4 页＋任务卡 3 页，用课件自身引擎渲染，逐层揭晓/翻面/图片灯箱原样保留），外加 <b>🔦 探照灯模式</b>（光圈跟随、滚轮调大小、揭晓自动聚焦）——不是仿制，是原页</li>
@@ -390,8 +396,8 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:15px 18px;tex
 <script>
 /* ═══════ 作品信息（可改） ═══════ */
 const CONFIG={
-  name:"小邮伴学·五环财务机器人",
-  sub:"高职会计教育教学智能体 · 辨 · 演 · 训 · 评 · 导 五环贯通",
+  name:"小邮伴学 · 财务机器人课堂智能体",
+  sub:"高职会计课堂的伴学智能体 · 学生先判断 · AI 只辅助 · 教师做终审",
   school:"石家庄邮电职业技术学院",
   cls:"大数据与会计 2501 班 · 32 课时教学试点",
   video:"https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/repo/KWTHRZmRympu2GBMUdNjAg.mp4",
@@ -737,7 +743,7 @@ function aSend(){
 }
 function aBrain(q,short){
   const has=(...ws)=>ws.some(w=>q.includes(w));
-  if(has("五环","这是什么","这是什么软件","介绍"))return "「小邮伴学」用五个环包住会计学习：<b>辨</b>（学情地图）、<b>演</b>（机器人车间＋手势闯关）、<b>训</b>（课堂同步）、<b>评</b>（规则复核＋教师终审）、<b>导</b>（导学建议）。你在哪个页，就在哪个环里。";
+  if(has("五环","这是什么","这是什么软件","介绍","设计"))return "我是<b>小邮</b>，财务机器人课堂的伴学智能体 🤖 学生端陪你练（课件真页/机器人/手势），教师台帮老师评（终审队列/备课预演）。我的铁律：<b>学生先判断、AI 只辅助、教师做终审</b>——我可以干活，不能拍板。";
   if(has("生活费","收入"))return "好问题——但我<b>不直接给答案</b> 😤 去「课堂同步」的「评环·生活费判断」，先选一个你的判断，提交后规则复核会告诉你为什么。提示只给一句：钱到账 ≠ 你赚的。";
   if(has("十二","分类","货"))return "口诀：能加减乘除的<b>数值</b>；带字母/文字的<b>字符</b>；年月日＝日期；几点几分＝时间；照片＝文件。地铁票价是特例——它是「常量」。去「课堂同步」翻课件 15–18 真页，点屏逐类对答案。";
   if(has("借贷","借方","贷方","方向"))return "借贷方向速记：<b>资产·费用增加→借</b>；<b>负债·权益·收入增加→贷</b>。想练肌肉记忆？「手势闯关」第 2、3 关就是债权和义务的方向题。";
