@@ -17,13 +17,14 @@ header{background:linear-gradient(135deg,#FFF3E3,#FAF5EC);border-bottom:2px soli
 .gear{margin-left:auto;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:6px 12px;cursor:pointer;font-size:.85em;color:var(--ink)}
 nav{position:sticky;top:0;z-index:9;background:#FFFDF8;border-bottom:2px solid var(--line);overflow-x:auto}
 nav .nin{max-width:1060px;margin:0 auto;display:flex}
-nav button{flex:1;min-width:104px;border:0;background:none;padding:12px 8px;font-size:.93em;color:var(--mut);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;font-family:inherit}
+nav button{flex:1;min-width:100px;border:0;background:none;padding:12px 6px;font-size:.92em;color:var(--mut);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;font-family:inherit}
 nav button.on{color:var(--acc2);border-bottom-color:var(--acc);font-weight:700}
 main{max-width:1060px;margin:0 auto;padding:16px 16px 40px}
 section{display:none}section.on{display:block}
 .card{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;margin:12px 0;box-shadow:0 1px 3px rgba(90,60,20,.06)}
 .card h3{font-size:1.02em;margin-bottom:8px;color:var(--acc2)}
 .eyebrow{font-size:.78em;color:var(--mut);letter-spacing:1px;margin-bottom:4px}
+.pb{display:inline-block;background:#E8F5E9;color:var(--ok);border-radius:999px;padding:1px 9px;font-size:.7em;margin-left:6px;vertical-align:2px}
 .rings{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
 .ring{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:12px;cursor:pointer;transition:.15s}
 .ring:hover{border-color:var(--acc);transform:translateY(-2px)}
@@ -59,12 +60,9 @@ textarea{resize:vertical;min-height:52px}
 .basis{background:#F7FBF7;border:1.5px solid #C8E6C9;border-radius:10px;padding:10px 12px;margin:8px 0;font-size:.9em}
 .basis li{margin:4px 0 4px 18px}
 .badd{background:#FFF3E3;border:1.5px solid var(--amber);border-radius:10px;padding:10px 12px;margin:8px 0;font-size:.9em}
-.qcard{border:1.5px solid var(--line);border-radius:14px;background:#fff;padding:14px 16px;margin:12px 0}
-.qcard .tag{display:inline-block;background:#BF360C;color:#fff;border-radius:999px;padding:2px 12px;font-size:.72em;margin-bottom:8px}
 .verd{border-radius:10px;padding:10px 12px;margin:8px 0;font-weight:700}
 .verd.ok{background:#E8F5E9;color:var(--ok)}.verd.no{background:#FBE9E7;color:#C62828}
-.qi{min-width:30px;height:30px;border-radius:50%;background:var(--line);color:var(--mut);display:inline-flex;align-items:center;justify-content:center;font-size:.85em;margin-right:4px}
-.qi.on{background:var(--acc);color:#fff}.qi.ok{background:var(--ok);color:#fff}.qi.no{background:#C62828;color:#fff}
+.tag{display:inline-block;background:#BF360C;color:#fff;border-radius:999px;padding:2px 12px;font-size:.72em;margin-bottom:8px}
 .bar{display:flex;align-items:center;gap:10px;margin:7px 0;font-size:.9em}
 .bar .nm{width:9em;color:var(--mut)}
 .bar .tr{flex:1;height:16px;background:#F1E7D8;border-radius:8px;overflow:hidden}
@@ -79,22 +77,20 @@ textarea{resize:vertical;min-height:52px}
 .mcard h3{color:var(--acc2);margin-bottom:10px}
 .mcard label{display:block;font-size:.85em;color:var(--mut);margin:10px 0 4px}
 .note{font-size:.8em;color:var(--mut)}
-/* 手势闯关 */
+/* 手势 */
 .gwrap{display:grid;grid-template-columns:minmax(280px,1fr) minmax(300px,1.2fr);gap:14px}
 @media (max-width:760px){.gwrap{grid-template-columns:1fr}}
 .gcam{position:relative;background:#17323A;border-radius:14px;overflow:hidden;min-height:230px;display:flex;align-items:center;justify-content:center}
 .gcam video,.gcam canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
 .gcam .off{color:#BFE8E2;font-size:.9em;text-align:center;padding:20px}
 .gbadge{position:absolute;left:8px;bottom:8px;background:rgba(0,0,0,.55);color:#65e6d1;font-size:.75em;border-radius:999px;padding:3px 10px}
-.gcur{margin-top:8px;font-size:.9em}
-.gcur b{color:var(--acc2)}
+.gcur{margin-top:8px;font-size:.9em}.gcur b{color:var(--acc2)}
 .gprog{height:10px;background:#F1E7D8;border-radius:5px;overflow:hidden;margin:5px 0}
 .gprog i{display:block;height:100%;background:#65e6d1;width:0}
 .gmap{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
 .gmap div{border:1.5px solid var(--line);border-radius:10px;padding:6px 9px;font-size:.8em}
 .gmap div.active{border-color:var(--acc);background:#FFF3E3;font-weight:700}
 .gq{font-size:.95em}
-.gq h3{font-size:1.05em;margin:6px 0}
 .gopts{display:flex;gap:8px}
 .gopts div{flex:1;background:#FFFDF8;border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;font-size:.9em;text-align:center}
 .gopts div em{display:block;font-style:normal;color:var(--mut);font-size:.78em;margin-top:3px}
@@ -102,13 +98,32 @@ textarea{resize:vertical;min-height:52px}
 .gfb button{font-size:.85em}
 .gneed{color:#C62828;font-weight:700}
 .grel{background:#E8F5E9;border-radius:10px;padding:8px 12px;margin:8px 0;font-size:.88em}
-/* 关系链动画 */
+/* 关系链 */
 .chain{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;margin:10px 0}
 .node{background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px 12px;font-size:.85em;text-align:center;min-width:74px;transition:.4s}
 .node b{display:block;font-size:1.25em}
 .node.lit{border-color:var(--acc);background:#FFF3E3;transform:translateY(-3px);box-shadow:0 3px 8px rgba(230,81,0,.25)}
 .hop{color:var(--mut);font-size:1em;transition:.4s}
 .hop.lit{color:var(--acc);font-weight:700}
+/* 课堂同步 */
+.pvrow{display:flex;gap:6px;align-items:center;margin:6px 0;flex-wrap:wrap}
+.pvrow code{width:8em;flex:0 0 auto;font-size:.88em}
+.pvrow span.lb{width:6.5em;flex:0 0 auto;font-size:.85em;color:var(--mut)}
+.pvrow select{flex:0 0 78px;font-family:inherit;border:1.5px solid var(--line);border-radius:8px;padding:7px;background:#FFFDF8;color:var(--ink)}
+.pvrow input{flex:2;min-width:110px}
+.pvf{font-size:.85em;margin:3px 0 3px 2px}
+.pvf.b{color:var(--ok)}.pvf.w{color:#C62828}
+.cut{text-decoration:line-through;opacity:.45}
+.gchip{display:inline-block;background:#E8F5E9;border:1.5px solid #C8E6C9;border-radius:999px;padding:5px 14px;margin:6px 0;font-size:.9em}
+.goodq{font-size:1.05em;font-weight:700;margin:6px 0}
+.catbtns{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.gdone{display:inline-flex;min-width:26px;height:26px;border-radius:50%;background:var(--line);color:var(--mut);align-items:center;justify-content:center;font-size:.85em;margin-right:3px}
+.gdone.on{background:var(--acc);color:#fff}.gdone.ok{background:var(--ok);color:#fff}.gdone.no{background:#C62828;color:#fff}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:8px}
+.fcard{background:#FFFDF8;border:1.5px solid var(--line);border-radius:12px;padding:10px;font-size:.86em;cursor:pointer}
+.fcard .back{display:none;margin-top:6px;border-top:1px dashed var(--line);padding-top:6px}
+.fcard.open .back{display:block}
+.fcard .hint{color:var(--mut);font-size:.78em;margin-top:4px}
 /* 侧边助手 */
 .fab{position:fixed;right:18px;bottom:18px;z-index:60;width:58px;height:58px;border-radius:50%;background:var(--acc);color:#fff;border:0;font-size:1.6em;cursor:pointer;box-shadow:0 4px 14px rgba(191,54,12,.4)}
 .fab:hover{transform:scale(1.06)}
@@ -149,21 +164,21 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:14px 18px;tex
 
 <nav><div class="nin">
   <button id="tb-home" class="on" onclick="showTab('home')">🏠 五环导览</button>
+  <button id="tb-class" onclick="showTab('class')">🏫 课堂同步</button>
   <button id="tb-bot" onclick="showTab('bot')">🤖 机器人车间</button>
   <button id="tb-gest" onclick="showTab('gest')">🙌 手势闯关</button>
-  <button id="tb-quiz" onclick="showTab('quiz')">🧠 判断练习</button>
   <button id="tb-teach" onclick="showTab('teach')">📋 教师台</button>
-  <button id="tb-about" onclick="showTab('about')">ℹ️ 关于</button</button>
+  <button id="tb-about" onclick="showTab('about')">ℹ️ 关于</button>
 </div></nav>
 
 <main>
 <!-- ═══════ 首页 ═══════ -->
 <section id="tab-home" class="on">
-  <div class="say">👋 我是<b>小邮</b>——从校园快递站跑进财务机器人课堂的分拣小机器人（搬包裹天生「按单子一件件来」，这就是循环的天赋）。左边挑一环，咱们开始。</div>
+  <div class="say">👋 我是<b>小邮</b>——从校园快递站跑进财务机器人课堂的分拣小机器人（搬包裹天生「按单子一件件来」，这就是循环的天赋）。<b>「课堂同步」里的每个活动都和上课课件一页页对得上</b>——课上玩过的，回来重玩；错了的，回那页重学。</div>
   <div class="rings">
-    <div class="ring" onclick="showTab('bot')"><b>演</b><div class="t">机器人车间</div><div class="d">动手造一台财务机器人：变量、命令、判断、循环，先猜再跑</div></div>
-    <div class="ring" onclick="showTab('gest')"><b>演＋</b><div class="t">手势闯关</div><div class="d">摄像头本地手势识别：☝✌👍✊ 答会计主体与收入边界，视频不上传</div></div>
-    <div class="ring" onclick="showTab('quiz')"><b>训</b><div class="t">判断练习</div><div class="d">先自己判断，再看规则复核——答案永远最后出现</div></div>
+    <div class="ring" onclick="showTab('class')"><b>训</b><div class="t">课堂同步</div><div class="d">和课件逐页对应：开场任务 / 十二货分类 / 认命令 / 生活费判断</div></div>
+    <div class="ring" onclick="showTab('bot')"><b>演</b><div class="t">机器人车间</div><div class="d">造一台财务机器人：变量、命令、判断、循环，先猜再跑</div></div>
+    <div class="ring" onclick="showTab('gest')"><b>演＋</b><div class="t">手势闯关</div><div class="d">摄像头本地手势识别：☝✌👍✊ 答主体与收入边界，视频不上传</div></div>
     <div class="ring" onclick="showTab('teach')"><b>辨·评</b><div class="t">教师台</div><div class="d">认知地图＋可信评价闭环＋AI 备课预演：AI 只建议，教师终审</div></div>
     <div class="ring" onclick="showTab('teach')"><b>导</b><div class="t">导学建议</div><div class="d">哪里薄弱补哪里，一键生成下节课建议</div></div>
   </div>
@@ -171,15 +186,50 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:14px 18px;tex
     <div class="stats" id="statsBox"></div>
     <div class="note" style="margin-top:6px">数据来源：石家庄邮电职业技术学院 大数据与会计 2501 班教学试点；姓名不出浏览器，公开页仅展示聚合数。</div>
   </div>
-  <div class="card"><h3>🎬 作品视频导览</h3>
-    <video id="demoVid" controls preload="metadata" style="width:100%;border-radius:12px;background:#000;max-height:340px" src="https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/repo/KWTHRZmRympu2GBMUdNjAg.mp4"></video>
-    <div class="note" id="vidNote" style="margin-top:6px">视频为外链播放；若你的网络加载失败，演示可改用仓库内离线视频文件。</div>
+  <div class="card"><h3>🎬 30 秒案例导览（教师形象 · 在线播放）</h3>
+    <video id="demoVid" controls preload="metadata" style="width:100%;border-radius:12px;background:#000;max-height:320px" src="https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/repo/KWTHRZmRympu2GBMUdNjAg.mp4"></video>
+    <div class="note" id="vidNote" style="margin-top:6px">视频为外链在线播放；演示现场网络不稳时，可改播仓库内离线视频文件。</div>
   </div>
-  <div class="card"><h3>🔗 数字支付关系链（动画演示 · 关系先于记账）</h3>
+  <div class="card"><h3>🔗 数字支付关系链（动画 · 关系先于记账）</h3>
     <div class="chain" id="chainBox"></div>
-    <div class="note">一笔花呗购物，钱、货、权利、义务在四方之间流动——看清关系，再决定记什么。这串关系正是「手势闯关」和「判断练习」的出题底座。</div>
+    <div class="note">一笔花呗购物，钱、货、权利、义务在四方之间流动——看清关系，再决定记什么。这串关系正是「手势闯关」和「生活费判断」的出题底座。</div>
   </div>
-  <div class="say">🧭 用法一句话：<b>学生在「机器人车间」造机器人、在「手势闯关」和「判断练习」先判断</b>；AI 只做规则复核和追问，<b>拿不准的自动交老师终审</b>——教师台看得见每一笔。右下角 🤖 随时问我。</div>
+</section>
+
+<!-- ═══════ 课堂同步 ═══════ -->
+<section id="tab-class">
+  <div class="eyebrow">训 · 评 · 和上课课件一页页对上（课后重玩 · 错了回对应页重学）</div>
+
+  <div class="card"><h3>🎯 开场任务 · 把「你自己」装进变量面板<span class="pb">课件08 · p26 同款</span></h3>
+    <div class="note">课堂规矩原样搬：5 个变量全是<b>你自己</b>——考题写在你身上，抄同桌没用。全部建对 → 消名字（课堂上老师点名器也是这么消的）。</div>
+    <div id="pvBox"></div>
+    <div style="margin-top:6px"><button class="btn" onclick="pvCheck()">检查我的 5 个变量</button>
+    <span id="pvDoneArea"></span></div>
+    <div id="pvMsg"></div>
+  </div>
+
+  <div class="card"><h3>📦 十二货分类<span class="pb">课件08 · p15–18 同款</span></h3>
+    <div id="gdDots"></div>
+    <div class="goodq" id="gdQ"></div>
+    <div class="catbtns" id="gdBtns"></div>
+    <div id="gdMsg"></div>
+  </div>
+
+  <div class="card"><h3>🖨 看图认命令 · 点开翻面<span class="pb">课件08 · p32 同款</span></h3>
+    <div class="note">抢答过的新玩法：先心里说「动作／参数／输出」，再点卡片翻面对答案。翻一张亮一盏灯。</div>
+    <div class="fgrid" id="flipBox"></div>
+    <div class="note" id="flipCnt" style="margin-top:6px"></div>
+  </div>
+
+  <div class="card"><h3>🧣 评环 · 生活费判断<span class="pb">可信协同 · 申报同款案例</span></h3>
+    <div class="note">先自己判断 → 规则复核给置信度 → 低置信自动进教师终审。课堂讲过「父母转生活费」——看你忘没忘。</div>
+    <div id="shfBox"></div>
+  </div>
+
+  <div class="card"><h3>📒 我的练习记录条（电子记录册 · 只存本机）</h3>
+    <div id="recStrip"></div>
+    <div class="note">对应纸面《机器人实验记录册》：课上写册子，课下看这条。错得多的，回对应页课件重学。</div>
+  </div>
 </section>
 
 <!-- ═══════ 机器人车间 ═══════ -->
@@ -236,13 +286,6 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:14px 18px;tex
   </div>
 </section>
 
-<!-- ═══════ 判断练习 ═══════ -->
-<section id="tab-quiz">
-  <div class="eyebrow">辨 · 训 · 生活里的会计判断题（先判断 → 规则复核 → 答案最后出）</div>
-  <div id="quizDots" style="margin:10px 0"></div>
-  <div id="quizBox"></div>
-</section>
-
 <!-- ═══════ 教师台 ═══════ -->
 <section id="tab-teach">
   <div class="eyebrow">辨 · 评 · 导 · 教师视角（演示数据 + 本机产生的真实操作记录）</div>
@@ -273,13 +316,14 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:14px 18px;tex
   <div class="card"><h3>五环是什么（每环一句话）</h3>
     <table><tr><th>环</th><th>做什么</th><th>在本页哪里</th></tr>
     <tr><td><b>辨</b></td><td>学情诊断：作业 + 课堂数据 → 班级认知地图、AI 备课预演</td><td>教师台</td></tr>
-    <tr><td><b>演</b></td><td>情境演练：动手造机器人＋手势闯关答主体/权利/义务</td><td>机器人车间 · 手势闯关</td></tr>
-    <tr><td><b>训</b></td><td>先判断后揭晓的判断练习</td><td>判断练习</td></tr>
-    <tr><td><b>评</b></td><td>规则优先复核 + 置信度 + 低置信度进教师终审</td><td>判断练习 → 教师台队列</td></tr>
+    <tr><td><b>演</b></td><td>情境演练：课件活动同款＋机器人车间＋手势闯关</td><td>课堂同步 · 机器人车间 · 手势闯关</td></tr>
+    <tr><td><b>训</b></td><td>先判断后揭晓：课件活动课后重玩，错回原页重学</td><td>课堂同步</td></tr>
+    <tr><td><b>评</b></td><td>规则优先复核 + 置信度 + 低置信度进教师终审</td><td>课堂同步 → 教师台队列</td></tr>
     <tr><td><b>导</b></td><td>按薄弱点生成导学建议</td><td>教师台 · 导学建议</td></tr></table>
   </div>
   <div class="card"><h3>技术亮点（说给评委听）</h3>
     <ul style="margin-left:20px;font-size:.93em">
+      <li><b>课件共生</b>：与自研《财务机器人应用与开发》课件逐页对应（开场任务 p26 / 十二货分类 p15–18 / 看图认命令 p32 / 存钱罐判断＋循环 p6–9），课堂用课件、课后用智能体重玩订正——一套内容两条腿</li>
       <li><b>手势本地识别</b>：MediaPipe GestureRecognizer，21 点手部骨架实时绘制，四手势（☝✌👍✊）保持 0.5 秒防误触；视频只在本机处理、不上传；模型支持同目录离线加载；无摄像头自动按钮兜底</li>
       <li><b>规则引擎本地优先</b>：会计判断先走内置规则表，秒回、可解释、零成本；8 类典型错误标签（多事并记/现金流等同收入/忽略债权债务/主体混淆…）本地分析器</li>
       <li><b>大模型可选接入</b>：OpenAI 兼容接口（DeepSeek / 豆包等），系统提示词沿用原工程约束——「不替学生作答，只做结构化与启发式追问」；密钥只存本机，失败自动回退演示模式</li>
@@ -345,16 +389,16 @@ const CONFIG={
 let _mem={};
 function load(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return _mem[k]!==undefined?_mem[k]:d}}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){_mem[k]=v}}
-let state=load("xy_state",{queue:[],verdicts:{},quiz:{},prep:{},settings:{mode:"demo",url:"https://api.deepseek.com/v1/chat/completions",model:"deepseek-chat",key:""}});
+let state=load("xy_state",{queue:[],verdicts:{},class:{pv:{},g:{i:0,score:0},f:{},shf:{},wmj:{}},prep:{},settings:{mode:"demo",url:"https://api.deepseek.com/v1/chat/completions",model:"deepseek-chat",key:""}});
+if(!state.class)state.class={pv:{},g:{i:0,score:0},f:{},shf:{},wmj:{}};
 function persist(){save("xy_state",state)}
 
 /* ═══════ 路由 ═══════ */
-let curTab="home";
 function showTab(t){document.querySelectorAll("main section").forEach(s=>s.classList.remove("on"));
  document.getElementById("tab-"+t).classList.add("on");
  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("on"));
- document.getElementById("tb-"+t).classList.add("on");curTab=t;
- if(t==="bot")renderBot();if(t==="quiz")renderQuiz();if(t==="teach")renderTeach();if(t==="home")renderStats();
+ document.getElementById("tb-"+t).classList.add("on");
+ if(t==="class")renderClass();if(t==="bot")renderBot();if(t==="teach")renderTeach();if(t==="home")renderStats();
  if(t==="gest")renderGest();
  window.scrollTo(0,0);}
 
@@ -373,9 +417,130 @@ function renderChain(){
   },700);
 }
 
+/* ═══════ 课堂同步 ①：开场任务（课件08 p26 同款） ═══════ */
+const PV=[["xingMing","你的名字","字符"],["xueHao","你的学号","字符"],["nianLing","你的年龄","数值"],["yiFuYanSe","上衣颜色","字符"],["daiYanJing","是否戴眼镜","字符"]];
+const PVWHY={xueHao:"学号全是数字也<b>不选数值</b>——它不参加算术，存成数值还会弄丢前导零。字符！",nianLing:"年龄要参加算术（比如算出生年），选数值。"};
+function renderPV(){
+  if(state.class.pv.done){
+    document.getElementById("pvBox").innerHTML=`<div class="gchip">🧑 ${state.class.pv.name} <b class="cut">名字已消 ✓</b></div>
+      <div class="pvf b">✓ 开场任务完成（${state.class.pv.date}）——课堂上，老师点名器里你的名字也是这么消掉的：完成了才消，抽人就抽不到没完成的同学。</div>
+      <div class="note" style="margin-top:4px">想重玩？<a href="javascript:void(0)" onclick="state.class.pv={};persist();renderPV()">重置</a></div>`;
+    document.getElementById("pvDoneArea").innerHTML="";document.getElementById("pvMsg").innerHTML="";
+    return;}
+  document.getElementById("pvBox").innerHTML=PV.map((v,i)=>`<div class="pvrow"><code>${v[0]}</code><span class="lb">${v[1]}</span>
+    <select id="pvT${i}"><option value="">类型?</option><option${state.class.pv["t"+i]==="数值"?" selected":""}>数值</option><option${state.class.pv["t"+i]==="字符"?" selected":""}>字符</option></select>
+    <input id="pvV${i}" placeholder="值" value="${state.class.pv["v"+i]||""}"></div>`).join("")
+    +`<div class="note">新建变量三件套：见名知义的拼音名 ＋ 类型 ＋ 值。类型拿不准就想想：它参加加减乘除吗？</div>`;
+  document.getElementById("pvDoneArea").innerHTML="";
+}
+function pvCheck(){
+  let allOk=true,msgs=[];
+  PV.forEach((v,i)=>{
+    const t=document.getElementById("pvT"+i).value,val=document.getElementById("pvV"+i).value.trim();
+    state.class.pv["t"+i]=t;state.class.pv["v"+i]=val;
+    if(!val){msgs.push(`<div class="pvf w">✗ <code>${v[0]}</code>：值还没填</div>`);allOk=false;return}
+    if(!t){msgs.push(`<div class="pvf w">✗ <code>${v[0]}</code>：类型还没选</div>`);allOk=false;return}
+    if(t!==v[2]){msgs.push(`<div class="pvf w">✗ <code>${v[0]}</code>＝${val}（${t}）：${PVWHY[v[0]]||"再想想：它参加加减乘除吗？不参加的是字符。"}</div>`);allOk=false;return}
+    msgs.push(`<div class="pvf b">✓ <code>${v[0]}</code>（${t}＝${val}）建对了</div>`);});
+  persist();
+  if(allOk){
+    const nm=state.class.pv.v0||"同学";
+    state.class.pv.done=true;state.class.pv.name=nm;state.class.pv.date=new Date().toLocaleDateString("zh-CN");persist();
+    renderPV();renderRec();
+  }else document.getElementById("pvMsg").innerHTML=msgs.join("");
+}
+
+/* ═══════ 课堂同步 ②：十二货分类（课件08 p15–18 同款） ═══════ */
+const GOODS=[["饭卡余额 35.5 元","数值"],["今天气温 26℃","数值"],["隆兴寺预约号 A08-15","字符"],["地铁票价 2 元","数值"],["骑手位置（实时文字）","字符"],["借书到期日 2026-10-01","日期"],["取件码 A8-2012","字符"],["到站时间 14:30","时间"],["学生证照片 studentID.jpg","文件"],["快递状态「运输中」","字符"],["大锅菜 6 元","数值"],["微信步数 18326","数值"]];
+const CATS=["数值","字符","日期","时间","文件"];
+function renderGD(){
+  const g=state.class.g;
+  document.getElementById("gdDots").innerHTML=GOODS.map((x,i)=>`<span class="gdone ${i<g.i?(g.rights&&g.rights[i]?"ok":"no"):(i===g.i?"on":"")}">${i+1}</span>`).join("");
+  if(g.i>=GOODS.length){
+    document.getElementById("gdQ").textContent=`分类完成：${g.score} / 12`;
+    document.getElementById("gdBtns").innerHTML=`<button class="btn" onclick="gResetGD()">再来一遍</button>`;
+    document.getElementById("gdMsg").innerHTML=g.score>=9?`<div class="verd ok">✓ 过关（≥9 个）！分错的那些，回课件 08 p15–18 五类表重看一眼。</div>`
+      :`<div class="verd no">✗ 还差些（过关线 9 个）。口诀：能算的数值、带字的是字符、年月日日期、几点几分时间、照片文件——回课件 08 p15–18 重学再来。</div>`;
+    return;}
+  document.getElementById("gdQ").textContent=`第 ${g.i+1} 件：${GOODS[g.i][0]} —— 归哪类？`;
+  document.getElementById("gdBtns").innerHTML=CATS.map(c=>`<button class="chip" onclick="gdPick('${c}')">${c}</button>`).join("");
+  document.getElementById("gdMsg").innerHTML=g.last||"";
+}
+function gdPick(cat){
+  const g=state.class.g,item=GOODS[g.i];
+  g.rights=g.rights||{};
+  if(cat===item[1]){g.score++;g.rights[g.i]=true;
+    g.last=`<div class="pvf b">✓ 对——${item[0]} 是${item[1]}。${item[0].includes("地铁票价")?"🤔 数值没错，但更准的说法是「<b>常量</b>」：票价定了就不变（课件 p18 的④号货梗）。":""}</div>`;}
+  else{g.rights[g.i]=false;g.last=`<div class="pvf w">✗ 不是${cat}。口诀：<b>能加减乘除的才是数值；带字母/文字的是字符</b>；年月日＝日期、几点几分＝时间、照片＝文件。再试。</div>`;return;}
+  g.i++;state.class.g=g;persist();renderGD();renderRec();
+}
+function gResetGD(){state.class.g={i:0,score:0,rights:{},last:""};persist();renderGD()}
+
+/* ═══════ 课堂同步 ③：看图认命令·翻牌（课件08 p32 同款） ═══════ */
+const FLIPS=[["🖨","打印店","打印，10 份，单面","打印","10 份、单面","10 张讲义"],
+["🍜","食堂","叫号，3 号","弹出提示","「3 号，你的麻辣烫好了」","大屏弹话"],
+["🚲","共享单车","扫码，开锁","开锁","你扫的码","锁弹开"],
+["🏧","取款机","取款，500 元","吐钞","500 元、你的卡","500 元现金"],
+["🗺","导航","导航，回石邮院","规划路线","目的地「回石邮院」","开始语音播报"]];
+function renderFL(){
+  document.getElementById("flipBox").innerHTML=FLIPS.map((f,i)=>`<div class="fcard ${state.class.f[i]?"open":""}" onclick="flip(${i})">
+    <div>${f[0]} <b>${f[1]}</b><br>「${f[2]}」<div class="hint">→ ？（点开翻面）</div></div>
+    <div class="back">动作＝<b>${f[3]}</b><br>参数＝${f[4]}<br>输出＝${f[5]}</div></div>`).join("");
+  const n=Object.keys(state.class.f).length;
+  document.getElementById("flipCnt").textContent=`已翻对 ${n}/5 张——翻完去课件 08 p33「暂停点⑦」挑 2 条写进记录册。`;
+}
+function flip(i){state.class.f[i]=true;persist();renderFL()}
+
+/* ═══════ 课堂同步 ④：评环·生活费判断（申报「可信协同」同款） ═══════ */
+const SHF={q:"月中，爸妈给你转来 1500 元生活费。记账时，它能直接记成「本月收入」吗？",
+ opts:["能，钱到账就是收入","不能，要先分清钱的来源","说不准"],right:1,
+ basis:["生活来源 ≠ 经营所得：生活费是家庭给的转移支出，不是你「赚」的","直接记收入会虚增结余，「收入 − 支出」月末全走形","正确姿势：先记「转入·生活费」，月末汇总时再按规则归类"],
+ conf:0.62,low:true,ask:"追问：如果你靠代取快递赚了 80 元，这笔算收入吗？它和生活费的区别在哪？"};
+function renderSHF(){
+  const a=state.class.shf;let h=`<div style="font-size:.98em;margin:4px 0 8px">${SHF.q}</div>`;
+  if(!a.done){h+=SHF.opts.map((o,i)=>`<button class="opt${a.pick===i?" sel":""}" onclick="shfPick(${i})">${"ABC"[i]}. ${o}</button>`).join("")
+    +`<textarea id="shfWhy" placeholder="写一句你的理由（写不写都行，写了教师台看得见）">${a.why||""}</textarea>
+      <button class="btn" id="shfBtn" ${a.pick<0?"disabled":""} onclick="shfSubmit()">提交判断</button>
+      <span class="note">先判断——评判提交后才出现。</span>`;
+  }else{
+    h+=`<div class="note">你的判断：${SHF.opts[a.pick]}${a.why?`｜理由：${a.why}`:""}</div>`;
+    h+=a.ok?`<div class="verd ok">✓ 判断正确</div>`:`<div class="verd no">✗ 这题不对——看下面的规则复核</div>`;
+    h+=`<div class="basis"><b>📖 规则复核（本地规则引擎，可解释）</b><ul>${SHF.basis.map(b=>`<li>${b}</li>`).join("")}</ul></div>`;
+    const vd=state.verdicts["case-shf"];
+    h+=`<div class="confbar"><i style="width:${SHF.conf*100}%;background:#EF6C00"></i></div>
+        <div class="note">规则引擎置信度 ${(SHF.conf*100).toFixed(0)}% → <b>低于阈值，已自动提交教师终审</b>（教师台可见）</div>`;
+    h+=`<div class="badd">🧑‍🏫 教师裁定状态：${vd?`<b>${vd.pass?"通过 ✓":"退回重判"}</b>${vd.cmt?`｜意见：${vd.cmt}`:""}`:"待教师复核（稍后再来看）"}</div>`;
+    h+=`<div class="say">💬 ${SHF.ask}</div>`;
+    h+=`<div style="margin-top:8px"><button class="btn o" onclick="state.class.shf={};state.queue=state.queue.filter(q=>q.caseId!=='shf'||q.status!=='待复核');delete state.verdicts['case-shf'];persist();renderSHF();renderRec()">重做</button></div>`;
+  }
+  document.getElementById("shfBox").innerHTML=h;
+}
+function shfPick(i){state.class.shf.pick=i;persist();renderSHF()}
+function shfSubmit(){
+  const a=state.class.shf;const w=(document.getElementById("shfWhy")||{}).value||"";
+  a.why=w;a.ok=a.pick===SHF.right;a.done=true;persist();
+  state.queue=state.queue.filter(q=>!(q.caseId==="shf"&&q.status==="待复核"));
+  state.queue.unshift({id:Date.now(),who:"学生（本机）",type:"课堂同步·生活费",caseId:"shf",
+    title:SHF.q.slice(0,30)+"…",detail:`学生先判断：选「${SHF.opts[a.pick]}」${w?`｜理由：${w}`:"｜未写理由"}`,
+    ai:`规则复核：${SHF.basis[0]}｜正确参考：${SHF.opts[SHF.right]}`,conf:SHF.conf,status:"待复核"});
+  persist();renderSHF();renderRec();
+}
+
+/* ═══════ 课堂同步：记录条 ═══════ */
+function renderRec(){
+  const c=state.class;
+  document.getElementById("recStrip").innerHTML=
+   `<div class="stats">
+    <div class="stat"><b>${c.pv.done?"✓":"—"}</b><span>开场任务${c.pv.done?"·名已消":""}</span></div>
+    <div class="stat"><b>${c.g.i>=GOODS.length?c.g.score+"/12":(c.g.score?c.g.score+"题":"—")}</b><span>十二货分类</span></div>
+    <div class="stat"><b>${Object.keys(c.f).length+"/5"}</b><span>认命令翻牌</span></div>
+    <div class="stat"><b>${c.shf.done?(c.shf.ok?"✓":"✗"):"—"}</b><span>生活费判断</span></div></div>`;
+}
+function renderClass(){renderPV();renderGD();renderFL();renderSHF();renderRec()}
+
 /* ═══════ 机器人车间 ═══════ */
 const PROJS={
- tank:{name:"存钱罐 500（判断＋循环）",hint:"课堂同款：存一次查一眼，满了就停。试试把 meiCi 改成 500、或把条件换成 ≤——圈数立刻变。",
+ tank:{name:"存钱罐 500",ref:"课件17 · p6–9 同款",hint:"课堂同款：存一次查一眼，满了就停。试试把 meiCi 改成 500、或把条件换成 ≤——圈数立刻变。",
   vars:[["guanLi","数值",0],["mubiao","数值",500],["meiCi","数值",50]],
   rows:c=>[`开始：guanLi = ${c.guanLi??0}`,`循环体：guanLi + ${c.meiCi} → 存一次`,`判断：guanLi < ${c.mubiao} ？`,`　是 → 回到「存一次」`,`　否 → 弹窗「攒够了！」`],
   guessLabel:"猜：要存几圈才停？",guessKey:"laps",
@@ -384,7 +549,7 @@ const PROJS={
     while(v<goal&&laps<2000){v+=per;laps++;if(laps<=6)logs.push(`第 ${laps} 圈：存 ${per}，罐里 ${v} —— ${v<goal?`没到 ${goal}，继续`:"到了！"}`)}
     if(laps>6)logs.push(`……（中间 ${laps-6} 圈略）`);logs.push(`⏹ 停在第 ${laps} 圈：guanLi = ${v} ≥ ${goal}，弹「攒够了！」`);
     return{laps,result:`${laps} 圈（guanLi=${v}）`,logs}}},
- waimai:{name:"外卖满减（顺序＋条件）",hint:"课堂同款：先算总价，再过岔路口。试试把 fenShu 改成 1——不满 25 机器一分不减。",
+ waimai:{name:"外卖满减",ref:"课件08 · p49 同款",hint:"课堂同款：先算总价，再过岔路口。试试把 fenShu 改成 1——不满 25 机器一分不减。",
   vars:[["danJia","数值",13.3],["fenShu","数值",12],["manJian","数值",25],["jian","数值",4]],
   rows:c=>[`开始：输入 fenShu = ${c.fenShu}`,`算：zongJia = ${c.danJia} × ${c.fenShu}`,`判断：zongJia ≥ ${c.manJian} ？`,`　是 → zongJia − ${c.jian}`,`　否 → 原价`,`弹窗：应付 zongJia 元`],
   guessLabel:"猜：12 份要付多少元？",guessKey:"pay",
@@ -392,7 +557,7 @@ const PROJS={
     const pay=z>=m?z-j:z;const logs=[`zongJia = ${c.danJia} × ${c.fenShu} = ${z.toFixed(2)} 元`,
       z>=m?`${z.toFixed(2)} ≥ ${m}，满足 → 减 ${j}`:`${z.toFixed(2)} < ${m}，不满足 → 原价（差一点也不减，参数是规矩）`,
       `弹窗：应付 ${pay.toFixed(2)} 元`];return{laps:1,pay,result:`${pay.toFixed(2)} 元`,logs}}},
- banfei:{name:"班费记账（顺序）",hint:"一步接一步，顺序乱一步，钱就错一步。",
+ banfei:{name:"班费记账",ref:"课件08 · p50 同款",hint:"一步接一步，顺序乱一步，钱就错一步。",
   vars:[["banFei","数值",200],["maiHengFu","数值",50],["maiFeiZhi","数值",30]],
   rows:c=>[`开始：banFei = ${c.banFei}`,`买横幅：banFei − ${c.maiHengFu}`,`卖废纸：banFei + ${c.maiFeiZhi}`,`弹窗：班费还剩多少`],
   guessLabel:"猜：最后剩多少元？",guessKey:"left",
@@ -405,7 +570,7 @@ function botCfg(){const p=PROJS[bot.proj];const c={};p.vars.forEach(v=>{c[v[0]]=
 function renderBot(){
   const chips=document.getElementById("projChips");chips.innerHTML="";
   Object.keys(PROJS).forEach(k=>{const b=document.createElement("button");b.className="chip"+(bot.proj===k?" on":"");
-    b.textContent=PROJS[k].name;b.onclick=()=>{bot={proj:k,vars:{},last:null};renderBot()};chips.appendChild(b)});
+    b.textContent=PROJS[k].name+" · "+PROJS[k].ref;b.onclick=()=>{bot={proj:k,vars:{},last:null};renderBot()};chips.appendChild(b)});
   const p=PROJS[bot.proj],c=botCfg();
   document.getElementById("varTable").innerHTML="<table><tr><th>变量名</th><th>类型</th><th>值（可改，机器人用你改的跑）</th></tr>"+
     p.vars.map(v=>`<tr><td><code>${v[0]}</code></td><td>${v[1]}</td><td><input value="${c[v[0]]}" oninput="bot.vars['${v[0]}']=this.value"></td></tr>`).join("")+"</table>"+
@@ -428,7 +593,7 @@ function runBot(){const p=PROJS[bot.proj],c=botCfg();const r=p.run(c);bot.last={
 function addVar(){const n=document.getElementById("nvName").value.trim(),t=document.getElementById("nvType").value,v=document.getElementById("nvVal").value;
   const msg=document.getElementById("nvMsg");
   if(!/^[A-Za-z_][A-Za-z0-9_]*$/.test(n)){msg.innerHTML="⚠ 变量名要用拼音/字母开头（见名知义），比如 <code>fanka</code>——课堂智多星同款规矩";return}
-  bot.vars[n]=(t==="数值"?(+v||0):v);msg.innerHTML=`✓ 已新建 <code>${n}</code>（${t}＝${bot.vars[n]}）。类型拿不准？回课件 08 五类表。`;
+  bot.vars[n]=(t==="数值"?(+v||0):v);msg.innerHTML=`✓ 已新建 <code>${n}</code>（${t}＝${bot.vars[n]}）。类型拿不准？回「课堂同步」玩十二货分类。`;
   document.getElementById("nvName").value="";document.getElementById("nvVal").value="";}
 function submitBot(){const p=PROJS[bot.proj],r=bot.last;
   state.queue.unshift({id:Date.now(),who:"学生（本机）",type:"机器人车间",title:`${p.name}｜先猜再跑`,
@@ -469,7 +634,7 @@ function gSubmit(name){
     fb.innerHTML=`<div class="verd no">✗ 这是${GLBL[name]}；本题需要「${GLBL[q.exp]}」。看懂知识含义再试。</div>`;return}
   g.lock=true;g.awaitRel=true;g.score+=20;
   fb.innerHTML=`<div class="verd ok">✓ ${q.know}：${q.ans}（+20 分）</div>`;
-  document.getElementById("gNext").innerHTML=`<div class="grel">${g.on&&!gRel? "请先把手上放下，避免同一手势连触发下一题。" : "看清反馈后进入下一题。"}<br><button class="btn" id="gNextBtn" onclick="gNextQ()" ${g.on&&!gRel?"disabled":""}>${g.i===GQ.length-1?"完成闯关":"确认，下一题"}</button></div>`;
+  document.getElementById("gNext").innerHTML=`<div class="grel">看清反馈后进入下一题。<br><button class="btn" id="gNextBtn" onclick="gNextQ()" ${g.on&&!gRel?"disabled":""}>${g.i===GQ.length-1?"完成闯关":"确认，下一题"}</button></div>`;
   updateGRelease();
 }
 let gRel=true;function updateGRelease(){const b=document.getElementById("gNextBtn");if(b){b.disabled=g.on&&!gRel;b.textContent=g.on&&!gRel?"等待手势释放…":(g.i===GQ.length-1?"完成闯关":"确认，下一题")}}
@@ -489,7 +654,8 @@ async function gToggle(){
     document.getElementById("gBadge").style.display="";document.getElementById("gOff").style.display="none";
     document.getElementById("gName").textContent="请做手势…";gLoop();
   }catch(e){btn.disabled=false;err.textContent="";
-    const m=(e&&e.name)==="NotAllowedError"?"摄像头权限被拒绝——用下面的按钮完成相同任务。":(document.getElementById("gName").textContent="未启用","手势模型或摄像头启动失败（可能网络加载不了模型）——按钮模式功能完全相同。");
+    const m=(e&&e.name)==="NotAllowedError"?"摄像头权限被拒绝——用下面的按钮完成相同任务。":"手势模型或摄像头启动失败（可能网络加载不了模型）——按钮模式功能完全相同。";
+    document.getElementById("gName").textContent="未启用";
     err.innerHTML=`<span class="gneed">${m}</span>`;gStop();}
 }
 async function gLoadModel(){
@@ -538,64 +704,6 @@ function gStop(){
   updateGRelease();
 }
 
-/* ═══════ 判断练习 ═══════ */
-const CASES=[
- {id:"shf",tag:"评环案例 · 生活记账",q:"月中，爸妈给你转来 1500 元生活费。记账时，它能直接记成「本月收入」吗？",
-  opts:["能，钱到账就是收入","不能，要先分清钱的来源","说不准"],right:1,
-  basis:["生活来源 ≠ 经营所得：生活费是家庭给的转移支出，不是你「赚」的","直接记收入会虚增结余，「收入 − 支出」月末全走形","正确姿势：先记「转入·生活费」，月末汇总时再按规则归类"],
-  conf:0.62,low:true,ask:"追问：如果你靠代取快递赚了 80 元，这笔算收入吗？它和生活费的区别在哪？"},
- {id:"qvm",tag:"训环 · 类型判断",q:"取件码 A8-2012 存成数值类型，能参与加减乘除吗？",
-  opts:["能，它带数字","不能，它是字符","看情况"],right:1,
-  basis:["带字母和连字符的不是数——机器第一步就报错","就算长得像数（手机号、学号），也不该参与算术：「像数」和「是数」是两回事","回课件五类表：它归「字符」"],
-  conf:0.9,low:false,ask:"追问：手机号该存数值还是字符？为什么？"},
- {id:"dt",tag:"训环 · 变量辨析",q:"地铁票价 2 元，一学期没变过。它是「变量」吗？",
-  opts:["是，跟钱有关都是变量","不是，它是不变的量——常量","说不准"],right:1,
-  basis:["变量三件套：有名字、会变、只留最新","票价定了就不变——它是常量","课堂「常量」梗：④号货的答案"],
-  conf:0.88,low:false,ask:"追问：说出你生活里一个「定死不变的量」和一个「天天变的量」。"},
- {id:"wm",tag:"训环 · 边界判断",q:"外卖「满 25 减 4」：你点了 24.5 元，该不该减？",
-  opts:["差一点点，差不多该减","不该，24.5 < 25 不满足条件","让商家看着办"],right:1,
-  basis:["判断条件是「总价 ≥ 25」，24.5 不满足——机器一分不减","「差不多」是人情，参数是规矩：差 0.5 也不行","这就是课堂的「先猜再跑」：猜完让机器人跑给你看"],
-  conf:0.85,low:false,ask:"追问：条件若写成「> 25」，恰好 25 元减不减？"}
-];
-let qi=0,pick=-1;
-function renderQuiz(){
-  document.getElementById("quizDots").innerHTML=CASES.map((c,i)=>{const a=state.quiz[c.id];
-    const cls=a?(a.ok?"ok":"no"):(i===qi?"on":"");return `<span class="qi ${cls}">${i+1}</span>`}).join("");
-  const c=CASES[qi],a=state.quiz[c.id];
-  let h=`<div class="qcard"><span class="tag">${c.tag}</span><h3 style="font-size:1.08em;margin:4px 0 10px">${c.q}</h3>`;
-  if(!a){h+=c.opts.map((o,i)=>`<button class="opt${pick===i?" sel":""}" onclick="pickOpt(${i})">${"ABC"[i]}. ${o}</button>`).join("")
-    +`<textarea id="whyBox" placeholder="写一句你的理由（写不写都行，写了教师台看得见）"></textarea>
-      <button class="btn" id="submitBtn" ${pick<0?"disabled":""} onclick="submitJudge()">提交判断</button>
-      <span class="note">先判断，再提交——评判提交后才出现。</span>`;
-  }else{
-    h+=`<div class="note">你的判断：${c.opts[a.pick]}${a.why?`｜理由：${a.why}`:""}</div>`;
-    h+=a.ok?`<div class="verd ok">✓ 判断正确</div>`:`<div class="verd no">✗ 这题不对——看下面的规则复核</div>`;
-    h+=`<div class="basis"><b>📖 规则复核（本地规则引擎，可解释）</b><ul>${c.basis.map(b=>`<li>${b}</li>`).join("")}</ul></div>`;
-    const vd=state.verdicts["case-"+c.id];
-    h+=`<div class="confbar"><i style="width:${c.conf*100}%;background:${c.low?"#EF6C00":"#2E7D32"}"></i></div>
-        <div class="note">规则引擎置信度 ${(c.conf*100).toFixed(0)}%${c.low?"　→ <b>低于阈值，已自动提交教师终审</b>（教师台可见）":"　→ 高置信度，自动归档"}</div>`;
-    if(c.low)h+=`<div class="badd">🧑‍🏫 教师台裁定状态：${vd?`<b>${vd.pass?"通过 ✓":"退回重判"}</b>${vd.cmt?`｜意见：${vd.cmt}`:""}`:"待教师复核（稍后再来看）"}</div>`;
-    h+=`<div class="say">💬 ${c.ask}</div>`;
-    if(state.settings.mode==="llm"&&state.settings.key)h+=`<button class="btn o" onclick="aiFollow(${qi})">让 AI 再追问一句</button><div id="aiOut"></div>`;
-    h+=`<div style="margin-top:8px">${qi<CASES.length-1?`<button class="btn" onclick="qi++;pick=-1;renderQuiz()">下一题 →</button>`:`<button class="btn" onclick="showTab('teach')">做完了 → 去看教师台怎么评</button>`}
-        <button class="btn o" onclick="delete state.quiz['${c.id}'];delete state.verdicts['case-${c.id}'];pick=-1;persist();renderQuiz()">重做这题</button></div>`;
-  }
-  h+="</div>";document.getElementById("quizBox").innerHTML=h;
-}
-function pickOpt(i){pick=i;
-  document.querySelectorAll("#quizBox .opt").forEach((b,j)=>b.classList.toggle("sel",j===i));
-  const b=document.getElementById("submitBtn");if(b)b.disabled=false}
-function submitJudge(){const c=CASES[qi];const why=(document.getElementById("whyBox")||{}).value||"";
-  state.quiz[c.id]={pick,why,ok:pick===c.right};persist();
-  if(c.low){state.queue=state.queue.filter(q=>!(q.caseId===c.id&&q.status==="待复核"));
-    state.queue.unshift({id:Date.now(),who:"学生（本机）",type:"判断练习",caseId:c.id,
-      title:c.q.slice(0,34)+"…",detail:`学生先判断：选「${c.opts[pick]}」${why?`｜理由：${why}`:"｜未写理由"}`,
-      ai:`规则复核：${c.basis[0]}｜正确参考：${c.opts[c.right]}`,conf:c.conf,status:"待复核"});persist();}
-  pick=-1;renderQuiz()}
-async function aiFollow(i){const c=CASES[i],out=document.getElementById("aiOut");out.textContent="AI 思考中…";
-  const r=await llm(`学生刚回答完判断题：「${c.q}」。请用不超过60字，顺着这条追问再深挖一句，逼学生把来源和证据说清：${c.ask}。语气口语化，不直接给答案。`);
-  out.innerHTML=r?`<div class="badd">🤖 AI：${r}</div>`:`<div class="note">连接失败（CORS 或密钥），已保持演示模式。</div>`;}
-
 /* ═══════ 教师台 ═══════ */
 const KNOW=[["变量与类型",85],["命令三要素",72],["顺序与条件",74],["判断与循环",58],["借贷方向规则",66]];
 const PREP_DEMO=[
@@ -605,7 +713,7 @@ const PREP_DEMO=[
 ];
 function renderTeach(){
   const q=document.getElementById("queueBox");
-  if(!state.queue.length)q.innerHTML=`<div class="note">队列空。去「判断练习」提交一个低置信度判断，或在「机器人车间」交一次成绩，这里就有活了。</div>`;
+  if(!state.queue.length)q.innerHTML=`<div class="note">队列空。去「课堂同步」做生活费判断（低置信自动进队列），或在「机器人车间」交一次成绩，这里就有活了。</div>`;
   else q.innerHTML=state.queue.map(it=>{
     const vd=state.verdicts["q"+it.id];
     return `<div class="qitem ${vd?"done":""}"><span class="who">${it.who}｜${it.type}</span>　${it.title}<br>
@@ -619,13 +727,14 @@ function renderTeach(){
 }
 function renderPrep(){
   const box=document.getElementById("prepBox");
+  const dn=Object.keys(state.prep).filter(k=>/^d\d+$/.test(k)).length;
   box.innerHTML=PREP_DEMO.map((p,i)=>{
     const d=state.prep["d"+i];
     return `<div class="qitem ${d?"done":""}"><b>作业原行：</b><code style="font-size:.85em">${p.raw}</code><br>
       <span class="note">🤖 AI 处理：${p.ai}｜风险标签：<b>${p.tag}</b></span><br>
       ${d?`<span style="color:${d.ok?"var(--ok)":"#C62828"};font-weight:700">教师${d.ok?"采纳 ✓（按建议修正）":"驳回 ✗（保持原样并要求 AI 说明依据）"}</span>`
       :`<div style="margin-top:6px"><button class="btn g" onclick="prepRule(${i},1)">采纳建议</button><button class="btn r" onclick="prepRule(${i},0)">驳回，让 AI 说依据</button></div>`}</div>`}).join("")
-  +`<div class="badd">${Object.keys(state.prep).filter(k=>/^d\d+$/.test(k)).length}/3 个「主」已经教师把关——<b>AI 可以替你干活，不能替你拍板</b>。${Object.keys(state.prep).filter(k=>/^d\d+$/.test(k)).length===3?"<b>三个主全部摆上台面，一个都没漏。</b>":""}</div>`;
+  +`<div class="badd">${dn}/3 个「主」已经教师把关——<b>AI 可以替你干活，不能替你拍板</b>。${dn===3?"<b>三个主全部摆上台面，一个都没漏。</b>":""}</div>`;
 }
 function prepDemo(){state.prep={done:true};persist();renderPrep()}
 function prepRule(i,ok){state.prep["d"+i]={ok};persist();renderPrep()}
@@ -634,15 +743,16 @@ function rule(pass,id){const it=state.queue.find(x=>x.id===id);const cmt=(docume
   if(it.caseId)state.verdicts["case-"+it.caseId]={pass,cmt};
   persist();renderTeach();}
 function genAdvice(){
-  const wrongs=CASES.filter(c=>state.quiz[c.id]&&!state.quiz[c.id].ok);
   const low=KNOW.slice().sort((a,b)=>a[1]-b[1]).slice(0,2);
   let h="<ul style='margin-left:20px;font-size:.92em'>";
   low.forEach((k,ix)=>h+=`<li><b>${k[0]}</b> 全班均值 ${k[1]}% —— 下节课开场用 3 分钟热身重讲${ix===0?"（建议回「记圈数」活动）":"（建议用借贷打地鼠抢答热场）"}</li>`);
-  wrongs.forEach(c=>h+=`<li>本机判断题答错：<b>${c.tag}</b> —— 个别辅导时用「${c.q.slice(0,18)}…」重新追问</li>`);
+  const c=state.class;
+  if(c.g.i>=GOODS.length&&c.g.score<9)h+=`<li>本机十二货分类 ${c.g.score}/12 —— 建议把五类表投屏再带一遍（课件 08 p15–18）</li>`;
+  if(c.shf.done&&!c.shf.ok)h+=`<li>本机生活费判断答错 —— 个别辅导用「这笔钱从哪来」重新追问</li>`;
   const pend=state.queue.filter(q=>q.status==="待复核").length;
   if(pend)h+=`<li>复核队列还有 <b>${pend}</b> 件待裁——课前 2 分钟清完</li>`;
   if(!state.prep.done)h+=`<li>备课预演还没跑——建议用「AI 备课预演」检查 AI 替你做了几个主</li>`;
-  h+="</ul><div class='note'>建议由本地规则按「认知地图最低两项 + 本机错题 + 队列积压」生成；接入真实数据后按同样规则全班适用。</div>";
+  h+="</ul><div class='note'>建议由本地规则按「认知地图最低两项 + 本机练习表现 + 队列积压」生成；接入真实数据后按同样规则全班适用。</div>";
   document.getElementById("adviceBox").innerHTML=h;}
 
 /* ═══════ 本地事项分析器（8 类错误标签 · 原工程标签体系） ═══════ */
@@ -664,10 +774,9 @@ function toggleAip(){const p=document.getElementById("aip");p.classList.toggle("
   if(p.classList.contains("on")&&!aOpened){aOpened=true;
     amsg("ai",`我是小邮 🤖 三个用法：<br>① 直接问（试试下面的快捷问题）<br>② 输入「<b>分析：</b>＋一件事的描述」，我用 8 类错误标签帮你找茬<br>③ 我<b>从不直接给答案</b>——先判断是我的规矩`);
     aquickRender();}}
-function amenu(t){const d=document.createElement("div");d.className="m "+t;d.innerHTML="";return d}
 function amsg(t,txt){const box=document.getElementById("aMsgs");const d=document.createElement("div");
   d.className="m "+t;d.innerHTML=txt;box.appendChild(d);box.scrollTop=box.scrollHeight;return d}
-const AQUICK=["生活费是收入吗？","借贷方向怎么记？","存钱罐怎么改圈数？","手势闯关怎么玩？","分析：打车去吃饭一共58元记餐饮"];
+const AQUICK=["生活费是收入吗？","十二个货怎么分？","借贷方向怎么记？","存钱罐怎么改圈数？","分析：打车去吃饭一共58元记餐饮"];
 function aquickRender(){document.getElementById("aQuick").innerHTML=AQUICK.map(q=>`<button onclick="aAsk('${q}')">${q}</button>`).join("")}
 function aAsk(q){document.getElementById("aInput").value=q;aSend()}
 function aSend(){
@@ -689,15 +798,16 @@ function aSend(){
 }
 function aBrain(q,short){
   const has=(...ws)=>ws.some(w=>q.includes(w));
-  if(has("五环","这是什么","这是什么软件","介绍"))return "「小邮伴学」用五个环包住会计学习：<b>辨</b>（学情地图）、<b>演</b>（机器人车间＋手势闯关）、<b>训</b>（判断练习）、<b>评</b>（规则复核＋教师终审）、<b>导</b>（导学建议）。你在哪个页，就在哪个环里。";
-  if(has("生活费","收入"))return "好问题——但我<b>不直接给答案</b> 😤 去「判断练习」第 1 题，先选一个你的判断，提交后规则复核会告诉你为什么。提示只给一句：钱到账 ≠ 你赚的。";
+  if(has("五环","这是什么","这是什么软件","介绍"))return "「小邮伴学」用五个环包住会计学习：<b>辨</b>（学情地图）、<b>演</b>（机器人车间＋手势闯关）、<b>训</b>（课堂同步）、<b>评</b>（规则复核＋教师终审）、<b>导</b>（导学建议）。你在哪个页，就在哪个环里。";
+  if(has("生活费","收入"))return "好问题——但我<b>不直接给答案</b> 😤 去「课堂同步」的「评环·生活费判断」，先选一个你的判断，提交后规则复核会告诉你为什么。提示只给一句：钱到账 ≠ 你赚的。";
+  if(has("十二","分类","货"))return "口诀：能加减乘除的<b>数值</b>；带字母/文字的<b>字符</b>；年月日＝日期；几点几分＝时间；照片＝文件。地铁票价是特例——它是「常量」。去「课堂同步」玩一遍十二货分类，玩两遍就熟。";
   if(has("借贷","借方","贷方","方向"))return "借贷方向速记：<b>资产·费用增加→借</b>；<b>负债·权益·收入增加→贷</b>。想练肌肉记忆？「手势闯关」第 2、3 关就是债权和义务的方向题。";
-  if(has("存钱罐","圈数","循环"))return "去「机器人车间」选「存钱罐 500」：改 <code>meiCi</code>（每次存的数）圈数就变——meiCi=100 是 5 圈，meiCi=500 是 1 圈。规律自己找：<b>圈数 = 目标 ÷ 每次，向上取整</b>。";
+  if(has("存钱罐","圈数","循环"))return "去「机器人车间」选「存钱罐 500」：改 <code>meiCi</code>（每次存的数）圈数就变——meiCi=100 是 5 圈，meiCi=500 是 1 圈。规律自己找：<b>圈数 = 目标 ÷ 每次，向上取整</b>。这正是课堂第 8 页「记圈数」那一步。";
   if(has("手势","摄像头","闯关"))return "「手势闯关」用四种手势：☝ 选左、✌ 选右、👍 是、✊ 否，保持半秒就提交。摄像头视频<b>只在你电脑里识别</b>，不上传；没摄像头就用按钮，题目一模一样。";
   if(has("变量","类型"))return "变量＝贴了标签的储物格：有名字、会变、只留最新。名字用拼音见名知义（fanka）；类型选错机器人当场翻脸——带字母的（取件码 A8-2012）是字符，能算账的才是数值。";
   if(has("置信","终审","教师","评价"))return "评环三步：你先判断 → 规则引擎复核并给置信度 → <b>低于 70% 自动进教师终审队列</b>。AI 只出意见，教师拍板——这就是「可信协同」。";
   if(has("备课","名单","作业"))return "教师台里有「AI 备课预演」：把企业微信导出的作业喂给 AI，它会替你做「方便的小决定」（合并重名、拆事件、照单记收入）——每个「主」都摆上台面由教师采纳或驳回。";
-  if(has("隐私","数据","上传"))return "隐私三原则：①摄像头视频本机识别不上传 ②判断记录只存你的浏览器 ③公开页的学生数据全部匿名聚合。";
+  if(has("隐私","数据","上传"))return "隐私三原则：①摄像头视频本机识别不上传 ②练习记录只存你的浏览器 ③公开页的学生数据全部匿名聚合。";
   if(has("满减","外卖"))return "满 25 减 4，24.5 该不该减？我不说——去「机器人车间」跑「外卖满减」，把 fenShu 改小试试。参数是规矩，差 0.5 也不行。";
   return short?"":null;
 }
@@ -743,7 +853,7 @@ function applyMode(){const b=document.getElementById("modeBadge");
   document.getElementById("footTxt").textContent=`学生先判断 → 规则复核 → 低置信度进教师终审 ｜ ${CONFIG.school} · ${CONFIG.cls}（公开页数据已匿名）`;
   document.getElementById("aboutLand").innerHTML=`<ul style="margin-left:20px">
     <li><b>落地</b>：${CONFIG.school} ${CONFIG.cls}；围绕「生活记账」真实作业运转，教师备课、课堂互动、课后订正三处日常使用</li>
-    <li><b>声明</b>：AI 只生成辅助意见，一切评价由教师终审；学生端先判断、后揭晓；页面不含学生姓名，摄像头视频与判断数据均不离开本机</li>
+    <li><b>声明</b>：AI 只生成辅助意见，一切评价由教师终审；学生端先判断、后揭晓；页面不含学生姓名，摄像头视频与练习数据均不离开本机</li>
     <li><b>作品名可改</b>：文件顶部 CONFIG 区集中放置名称/学校/班级/数据/视频地址，一处改全页生效</li>
     <li><b>手势模型离线包</b>：随作品附 gesture_recognizer.task，放到页面同目录 mediapipe_models/ 下即可离线加载</li></ul>`;
   renderStats();renderChain();applyMode();
