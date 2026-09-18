@@ -125,6 +125,7 @@ textarea::placeholder{color:rgba(255,255,255,.35)}
         <button class="o" onclick="rollOne()">再补抽 1 个</button>
         <button class="o" onclick="clearQueue()">清空这一轮</button>
         <button class="o" onclick="resetAsked()">重置「已抽」标记</button>
+        <button class="o" id="btnDone" onclick="toggleDoneMode()" title="开场任务用：完成的同学点一下名字消掉；抽人永远只抽没消的">✂️ 完成任务消名字：关</button>
       </div>
 
       <div class="say" id="sayLine"><b>您说：</b>「这三位，册子举起来。」　然后走过去扫一眼，三秒钟一个人。</div>
@@ -260,7 +261,7 @@ function rollOne(){ if(rolling)return; pickN(1) }
 function pickN(n){
   if(!students.length){alert('请先载入名单');return}
   const p=pool();
-  if(!p.length){alert('没有可抽的人了。可以点「重置「已抽」标记」。');return}
+  if(!p.length){alert('没有可抽的人了：名字全消完了。点「重置「已抽」标记」全部恢复，或开「✂️ 完成任务消名字」点名字恢复个别同学。');return}
   rolling=true; $('btnRoll').disabled=true;
   $('picked').classList.add('rolling');
   let t=0; const total=16+Math.floor(Math.random()*8);
@@ -285,6 +286,14 @@ function pickN(n){
 }
 function clearQueue(){queue=[];renderAll()}
 function resetAsked(){asked=new Set();renderAll()}
+let doneMode=false;
+function toggleDoneMode(){
+  doneMode=!doneMode;
+  $('btnDone').textContent='✂️ 完成任务消名字：'+(doneMode?'开（点名字＝消／恢复）':'关');
+  $('btnDone').style.fontWeight=doneMode?'700':'';
+  $('pmeta').innerHTML=doneMode?'消名模式：点名单里的名字＝消掉／恢复；抽人只抽没消的':'先在右侧载入名单';
+}
+function chipClick(i){ if(doneMode){ if(asked.has(i)){asked.delete(i)}else{asked.add(i)}; renderAll(); } else { manual(i); } }
 
 function give(qi,val,label){
   const q=queue[qi], s=students[q.i];
@@ -342,7 +351,7 @@ function renderQueue(){
 }
 function renderRoster(){
   $('roster').innerHTML=students.map((s,i)=>
-    `<span class="st ${asked.has(i)?'used':''}" onclick="manual(${i})">${s.name}${s.group?`<span class="g">${s.group}组</span>`:''}${s.card?'<span class="card">🎫</span>':''}${s.score?`<b>+${s.score}</b>`:''}</span>`
+    `<span class="st ${asked.has(i)?'used':''}" onclick="chipClick(${i})" title="${doneMode?'点一下＝消名／恢复':'单击＝手动加分；开「✂️消名字」后点名字＝消名'}">${s.name}${s.group?`<span class="g">${s.group}组</span>`:''}${s.card?'<span class="card">🎫</span>':''}${s.score?`<b>+${s.score}</b>`:''}</span>`
   ).join('')||'<span style="color:#888;font-size:12.5px">未载入名单</span>';
   $('hAsked').textContent=asked.size;
   $('hTotal').textContent=students.length;
