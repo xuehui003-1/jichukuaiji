@@ -13,7 +13,7 @@ from docx.oxml.ns import qn
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RPA = os.path.join(ROOT, "RPA")
 REFS = os.path.join(ROOT, "_refs")
-F08 = "08_项目二_第1-3讲_变量命令流程_纸上篇_课件_v1.3_20260918.html"
+F08 = "08_项目二_第1-3讲_变量命令流程_纸上篇_课件_v1.4_参赛融合版_20260918.html"
 F10 = "10_项目二_第4讲_机器人上岗_课件_v1.2_20260906.html"
 F14 = "14_项目三_第1讲_图纸搬家_课件_v1.0_20260908.html"
 F16 = "16_项目三_第2讲_循环_课件_v1.0_20260908.html"
