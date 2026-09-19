@@ -24,11 +24,17 @@ try{
   // 首页五卡+评环卡
   ok("首页课件馆卡",d.body.textContent.includes("任你翻 · 课件馆"));
   ok("6份课件口径",d.body.textContent.includes("全部 6 份课件 154 页"));
-  ok("评环卡改名",d.body.textContent.includes("先判断，AI 复核，教师拍板"));
+  ok("评环卡改名",d.body.textContent.includes("30 秒体验这个智能体的核心规矩"));
   ok("首页无关系链卡",!d.querySelector("#tab-home .chain"));
   // 课件馆
   w.showTab("lib");
   ok("lib tab on",d.getElementById("tab-lib").classList.contains("on"));
+  ok("标签气泡触发",!!d.getElementById("fabNudge")&&d.getElementById("fabNudge").classList.contains("on"));
+  w.showTab("home");
+  ok("首页使用地图",!!d.querySelector("#tab-home .mapBar")&&d.querySelectorAll("#tab-home .mg").length===5);
+  ok("首页角标×5",d.querySelectorAll("#tab-home .rb").length===5);
+  w.showTab("bot");
+  ok("车间变量说明列",!!d.querySelector("#varTable .vdesc"));
   ok("默认载入08轨58钮",d.getElementById("libRail").querySelectorAll("button").length===58);
   ok("deck chips 6门",d.getElementById("libDeckRail").querySelectorAll("button").length===6);
   ok("libStage 有页",!!d.querySelector("#libStage .dkPage"));
@@ -55,9 +61,8 @@ try{
   ok("手势hero横幅",!!d.querySelector("#tab-gest .gestHero"));
   ok("手势大按钮×2",d.querySelectorAll("#tab-gest .gans").length===2);
   ok("手势得分牌",!!d.getElementById("gScore"));
-  ok("车间三步玩",d.body.textContent.includes("三步玩："));
-  w.showTab("bot");
-  ok("车间变量说明列",d.querySelector("#varTable .vdesc")&&d.querySelector("#varTable .vdesc").textContent.includes("罐里"));
+  ok("车间装配线四步",d.body.textContent.includes("这一页是一条装配线，共四步")&&d.querySelectorAll("#tab-bot .stepH").length===4);
+  ok("车间进阶折叠",d.body.textContent.includes("新建你自己的变量"));
   w.showTab("about");
   ok("关于页无元文字",!d.getElementById("tab-about").textContent.includes("说给评委"));
   ok("技术亮点无重复",d.querySelectorAll("#tab-about li").length<=10&&!Array.from(d.querySelectorAll("#tab-about li")).some((li,i,a)=>a.findIndex(x=>x.textContent===li.textContent)<i));
