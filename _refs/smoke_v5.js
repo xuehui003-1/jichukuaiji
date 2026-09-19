@@ -19,6 +19,7 @@ const T=[];const ok=(n,c)=>T.push([c?"✓":"✗",n])||(!c&&errors.push("断言:"
 setTimeout(()=>{
 try{
   ok("标题=小邮伴学",d.getElementById("appName").textContent==="小邮伴学");
+  ok("首页评环自动渲染(不用点标签)",d.querySelectorAll("#shfBox .opt").length===3);
   ok("副题含课程全称+铁律",(d.getElementById("appSub").textContent||"").includes("财务机器人应用与开发")&&d.getElementById("appSub").textContent.includes("教师做终审"));
   ok("导航七项",["home","class","lib","bot","gest","teach","about"].every(t=>d.getElementById("tb-"+t)));
   // 首页五卡+评环卡
@@ -36,6 +37,9 @@ try{
   ok("气泡无冷却·内容随标签更新",n2!==n1&&n2.includes("装配线")===false&&n2.includes("②"));
   ok("评环审账题",w.eval('SHF.q.includes("机器人记的账")&&SHF.right===1'));
   ok("五题覆盖四手势",w.eval('new Set(GQ.map(q=>q.exp)).size===4'));
+  ok("打印题手势一致",w.eval('const q3=GQ[2];(q3.exp==="Thumb_Up")===([q3.opts[0],q3.opts[1]].some(o=>q3.ans.startsWith(o)||o==="对"))'));
+  ok("问答引擎·手势FAQ",w.eval('aBrain("怎么用手答题？").includes("四种手势")'));
+  ok("问答引擎·学号FAQ",w.eval('aBrain("学号为什么存字符？").includes("编号")'));
   ok("refreshFlow/clsAsk",typeof w.refreshFlow==="function"&&typeof w.clsAsk==="function");
   w.showTab("home");
   ok("首页使用地图",!!d.querySelector("#tab-home .mapBar")&&d.querySelectorAll("#tab-home .mg").length===5);
@@ -70,6 +74,9 @@ try{
   ok("gMap静态图例不剧透",d.getElementById("gMap").textContent.includes("选项一")&&!d.getElementById("gMap").innerHTML.includes("on"));
   ok("手势得分牌",!!d.getElementById("gScore"));
   ok("车间互动指引",d.body.textContent.includes("和小邮怎么互动"));
+  d.getElementById("guessVal").value="10";w.runBot();
+  ok("跑完小邮进对话面板",d.getElementById("aMsgs").textContent.includes("陪跑了一台"));
+  ok("未读红点亮起",d.getElementById("fabDot").style.display==="flex");
   ok("车间命名说明",d.body.textContent.includes("变量名＝拼音、见名知义"));
   ok("车间装配线四步",d.body.textContent.includes("这一页你只做 3 个动作")&&d.querySelectorAll("#tab-bot .stepH").length===4);
   ok("车间进阶折叠",d.body.textContent.includes("新建你自己的变量"));
