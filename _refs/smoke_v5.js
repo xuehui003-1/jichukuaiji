@@ -53,6 +53,14 @@ try{
   w.showTab("gest");
   ok("关系链已撤出手势页",!d.querySelector("#tab-gest #chainBox"));
   ok("手势hero横幅",!!d.querySelector("#tab-gest .gestHero"));
+  ok("手势大按钮×2",d.querySelectorAll("#tab-gest .gans").length===2);
+  ok("手势得分牌",!!d.getElementById("gScore"));
+  ok("车间三步玩",d.body.textContent.includes("三步玩："));
+  w.showTab("bot");
+  ok("车间变量说明列",d.querySelector("#varTable .vdesc")&&d.querySelector("#varTable .vdesc").textContent.includes("罐里"));
+  w.showTab("about");
+  ok("关于页无元文字",!d.getElementById("tab-about").textContent.includes("说给评委"));
+  ok("技术亮点无重复",d.querySelectorAll("#tab-about li").length<=10&&!Array.from(d.querySelectorAll("#tab-about li")).some((li,i,a)=>a.findIndex(x=>x.textContent===li.textContent)<i));
   ok("新题库·出自课件",w.eval('GQ.length===5&&GQ[0].t.includes("学号")&&GQ[4].t.includes("67")&&GQ.every(q=>q.back)'));
   ok("fabNudge组件",typeof w.fabNudge==="function"&&typeof w.gBack==="function");
   // 揭晓层可见提示
