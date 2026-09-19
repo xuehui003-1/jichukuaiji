@@ -182,16 +182,16 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:15px 18px;tex
     <div class="ring" onclick="showTab('class')"><b>📖</b><div class="t">陪你练 · 课堂同步</div><div class="d">本节课 19 页课件真页原样入住，逐层揭晓和课堂一模一样</div></div>
     <div class="ring" onclick="showTab('lib')"><b>📚</b><div class="t">任你翻 · 课件馆</div><div class="d">全部 6 门课件 154 页整馆入住：想翻哪页翻哪页</div></div>
     <div class="ring" onclick="showTab('bot')"><b>🤖</b><div class="t">带你造 · 机器人车间</div><div class="d">财务机器人真能跑：改参数、先猜再跑，旁边就是课件原页</div></div>
-    <div class="ring" onclick="showTab('gest')"><b>🙌</b><div class="t">用手答 · 手势闯关</div><div class="d">☝✌👍✊ 本地手势识别五关：主体、债权、义务、收入边界</div></div>
+    <div class="ring" onclick="showTab('gest')"><b>🙌</b><div class="t">用手答 · 手势闯关</div><div class="d">☝✌👍✊ 用手答题——手势本地识别，视频只在本机处理</div></div>
     <div class="ring" onclick="showTab('teach')"><b>🧑‍🏫</b><div class="t">帮你评 · 教师台</div><div class="d">低置信自动进终审队列，裁定回执直达学生；备课预演＋导学建议</div></div>
   </div>
   <div class="card"><h3>🙋 先判断，AI 复核，教师拍板——30 秒试一试<span class="pb">本智能体的核心机制</span></h3>
-    <div class="note">这是课堂名题「父母转的生活费能不能直接记收入」：你先选判断，AI 只做规则复核并给出置信度，拿不准的自动等老师终审。</div>
+    <div class="note">题目出自本班 <b>67 份生活记账作业</b>——「父母转的生活费能不能直接记收入」是 AI 复核拿不准的真实高频场景：你先判断，AI 只做规则复核给置信度，拿不准的自动等老师终审。</div>
     <div id="shfBox"></div>
   </div>
   <div class="card"><h3>🛰 试点班级真实数据（已匿名聚合）</h3>
     <div class="stats" id="statsBox"></div>
-    <div class="note" style="margin-top:6px">数据来源：石家庄邮电职业技术学院 大数据与会计 2501 班教学试点；姓名不出浏览器，公开页仅展示聚合数。</div>
+    <div class="note" style="margin-top:6px">数据来源：《财务机器人应用与开发》2501 班教学试点——67 份生活记账作业是本课「让机器人干会计的活」的真实业务素材；姓名不出浏览器，公开页仅展示聚合数。</div>
   </div>
   <div class="card"><h3>🎬 30 秒案例导览（教师形象 · 在线播放）</h3>
     <video controls preload="metadata" style="width:100%;border-radius:12px;background:#000;max-height:320px" src="https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/repo/KWTHRZmRympu2GBMUdNjAg.mp4"></video>
@@ -210,17 +210,18 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:15px 18px;tex
 <!-- ═══════ 课堂同步 ═══════ -->
 <section id="tab-class">
   <div class="dkToolbar">
-    <div class="dkTitle">🏫 课堂同步 · <b>本节课（命令）</b></div>
+    <div class="dkTitle">🏫 课堂同步 · <b>本节课（命令）19 页</b></div>
     <div class="rail" id="clsRail"></div>
     <div class="dkBtns">
       <button class="tbtn" onclick="dkPrev()">‹ 上一页</button>
       <span class="pageNo" id="clsPageNo"></span>
       <button class="tbtn" onclick="dkNext()">下一页 ›</button>
-      <button class="tbtn amber" onclick="dkRevealCur('cls')">✓ 揭晓下一层</button>
+      <button class="tbtn amber" title="课件答案默认先藏：先自己想，再点逐层揭晓" onclick="dkRevealCur('cls')">✓ 揭晓下一层</button>
       <button class="tbtn spot" id="clsSpotBtn" onclick="dkSpot('cls')">🔦 探照灯</button>
       <button class="tbtn" onclick="showTab('lib')">📚 全部课件 →</button>
     </div>
   </div>
+  <div class="note" style="margin:6px 0 0">这里只放这节课正在讲的 19 页，和课件逐页同源；全部 6 门 154 页去「课件馆」。答案先藏后揭：先自己想，再点「✓ 揭晓下一层」。</div>
   <div class="stage" id="clsStage"></div>
 </section>
 
@@ -233,7 +234,7 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:15px 18px;tex
       <button class="tbtn" onclick="dkPrev()">‹ 上一页</button>
       <span class="pageNo" id="libPageNo"></span>
       <button class="tbtn" onclick="dkNext()">下一页 ›</button>
-      <button class="tbtn amber" onclick="dkRevealCur('lib')">✓ 揭晓下一层</button>
+      <button class="tbtn amber" title="课件答案默认先藏：先自己想，再点逐层揭晓" onclick="dkRevealCur('lib')">✓ 揭晓下一层</button>
       <button class="tbtn spot" id="libSpotBtn" onclick="dkSpot('lib')">🔦 探照灯</button>
       <input id="libJump" class="sel" style="width:86px" inputmode="numeric" placeholder="页码" onkeydown="if(event.key==='Enter')libJumpGo()">
       <button class="tbtn" onclick="libJumpGo()">跳转</button>
@@ -252,7 +253,8 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:15px 18px;tex
 
 <!-- ═══════ 机器人车间 ═══════ -->
 <section id="tab-bot">
-  <div class="eyebrow">演 · 造一台属于你的财务机器人（课堂「智多星」同款玩法）</div>
+  <div class="eyebrow">演 · 造一台属于你的财务机器人</div>
+  <div class="note" style="margin:6px 0 10px">这里不是复刻智多星软件：课件里在纸上推演的任务，在这里<b>真的跑起来</b>——改参数、先猜、再揭晓；每个任务旁边就是课件原页。</div>
   <div class="chips" id="projChips"></div>
   <div class="card"><h3>📦 变量面板（智多星同款：见名知义 · 选对类型）</h3>
     <div id="varTable"></div>
@@ -598,7 +600,7 @@ function gSubmit(name){
   const q=GQ[g.i];if(!q||g.lock)return;
   const fb=document.getElementById("gFeedback");
   if(name!==q.exp){g.errors[g.i]=(g.errors[g.i]||0)+1;
-    fb.innerHTML=`<div class="verd no">✗ 这是${GLBL[name]}；本题需要「${GLBL[q.exp]}」。看懂知识含义再试。</div>`;return}
+    fb.innerHTML=`<div class="verd no">✗ 这是${GLBL[name]}；本题需要「${GLBL[q.exp]}」。看懂知识含义再试——卡住了就问右下角 🤖 小邮。</div>`;return}
   g.lock=true;g.awaitRel=true;g.score+=20;
   fb.innerHTML=`<div class="verd ok">✓ ${q.know}：${q.ans}（+20 分）</div>`;
   document.getElementById("gNext").innerHTML=`<div class="grel">看清反馈后进入下一题。<br><button class="btn" id="gNextBtn" onclick="gNextQ()" ${g.on&&!gRel?"disabled":""}>${g.i===GQ.length-1?"完成闯关":"确认，下一题"}</button></div>`;
@@ -739,7 +741,7 @@ function analyze(text){for(const t of TAGS){if(t[0].test(text))return{tag:t[1],n
 let aOpened=false;
 function toggleAip(){const p=document.getElementById("aip");p.classList.toggle("on");
   if(p.classList.contains("on")&&!aOpened){aOpened=true;
-    amsg("ai",`我是小邮 🤖 三个用法：<br>① 直接问（试试下面的快捷问题）<br>② 输入「<b>分析：</b>＋一件事的描述」，我用 8 类错误标签帮你找茬<br>③ 我<b>从不直接给答案</b>——先判断是我的规矩`);
+    amsg("ai",`我是小邮 🤖 <b>什么时候找我：</b>任务卡住了、答错想知道为什么、想让我帮你查一件事——直接问。<br>输入「<b>分析：</b>＋一件事的描述」，我用 8 类错误标签帮你找茬；我<b>从不直接给答案</b>，先让你自己判断；老师备课请用「教师台」。`);
     aquickRender();}}
 function amsg(t,txt){const box=document.getElementById("aMsgs");const d=document.createElement("div");
   d.className="m "+t;d.innerHTML=txt;box.appendChild(d);box.scrollTop=box.scrollHeight;return d}
@@ -1048,7 +1050,7 @@ function pvCheck(){
     if(!t){msgs.push('<div class="pvf w">✗ '+v[0]+'：类型还没选</div>');ok=false;return}
     if(t!==PVANS[v[0]]){msgs.push('<div class="pvf w">✗ '+v[0]+'＝'+val+'（'+t+'）：'+PVWHY[v[0]]+'</div>');ok=false;return}
     msgs.push('<div class="pvf b">✓ '+v[0]+'（'+t+'＝'+val+'）</div>');});
-  document.getElementById("pvMsg").innerHTML=msgs.join("");
+  document.getElementById("pvMsg").innerHTML=msgs.join("")+(ok?"":'<div class="note" style="margin-top:6px">卡住了？问右下角 🤖 小邮——比如「为什么学号不是数值」，它只提示，不替你答。</div>');
   if(ok){const pv=state.class.pv;pv.done=true;pv.name=document.getElementById("pvV0").value;pv.date=new Date().toLocaleDateString("zh-CN");
     persist();pvRender(document.getElementById("pvWrap"));}
 }
