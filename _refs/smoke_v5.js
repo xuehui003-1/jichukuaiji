@@ -24,12 +24,19 @@ try{
   // 首页五卡+评环卡
   ok("首页课件馆卡",d.body.textContent.includes("任你翻 · 课件馆"));
   ok("6份课件口径",d.body.textContent.includes("全部 6 份课件 154 页"));
-  ok("评环卡改名",d.body.textContent.includes("30 秒体验这个智能体的核心规矩"));
+  ok("评环卡改名",d.body.textContent.includes("30 秒体验：你判断，AI 复核，老师拍板"));
   ok("首页无关系链卡",!d.querySelector("#tab-home .chain"));
   // 课件馆
   w.showTab("lib");
   ok("lib tab on",d.getElementById("tab-lib").classList.contains("on"));
   ok("标签气泡触发",!!d.getElementById("fabNudge")&&d.getElementById("fabNudge").classList.contains("on"));
+  const n1=d.getElementById("fabNudge").textContent;
+  w.showTab("bot");
+  const n2=d.getElementById("fabNudge").textContent;
+  ok("气泡无冷却·内容随标签更新",n2!==n1&&n2.includes("装配线")===false&&n2.includes("②"));
+  ok("评环审账题",w.eval('SHF.q.includes("机器人记的账")&&SHF.right===1'));
+  ok("五题覆盖四手势",w.eval('new Set(GQ.map(q=>q.exp)).size===4'));
+  ok("refreshFlow/clsAsk",typeof w.refreshFlow==="function"&&typeof w.clsAsk==="function");
   w.showTab("home");
   ok("首页使用地图",!!d.querySelector("#tab-home .mapBar")&&d.querySelectorAll("#tab-home .mg").length===5);
   ok("首页角标×5",d.querySelectorAll("#tab-home .rb").length===5);
@@ -60,13 +67,16 @@ try{
   ok("关系链已撤出手势页",!d.querySelector("#tab-gest #chainBox"));
   ok("手势hero横幅",!!d.querySelector("#tab-gest .gestHero"));
   ok("手势大按钮×2",d.querySelectorAll("#tab-gest .gans").length===2);
+  ok("gMap静态图例不剧透",d.getElementById("gMap").textContent.includes("选项一")&&!d.getElementById("gMap").innerHTML.includes("on"));
   ok("手势得分牌",!!d.getElementById("gScore"));
-  ok("车间装配线四步",d.body.textContent.includes("这一页是一条装配线，共四步")&&d.querySelectorAll("#tab-bot .stepH").length===4);
+  ok("车间互动指引",d.body.textContent.includes("和小邮怎么互动"));
+  ok("车间命名说明",d.body.textContent.includes("变量名＝拼音、见名知义"));
+  ok("车间装配线四步",d.body.textContent.includes("这一页你只做 3 个动作")&&d.querySelectorAll("#tab-bot .stepH").length===4);
   ok("车间进阶折叠",d.body.textContent.includes("新建你自己的变量"));
   w.showTab("about");
   ok("关于页无元文字",!d.getElementById("tab-about").textContent.includes("说给评委"));
   ok("技术亮点无重复",d.querySelectorAll("#tab-about li").length<=10&&!Array.from(d.querySelectorAll("#tab-about li")).some((li,i,a)=>a.findIndex(x=>x.textContent===li.textContent)<i));
-  ok("新题库·出自课件",w.eval('GQ.length===5&&GQ[0].t.includes("学号")&&GQ[4].t.includes("67")&&GQ.every(q=>q.back)'));
+  ok("新题库·出自课件",w.eval('GQ.length===5&&GQ[0].t.includes("学号")&&GQ[4].q.includes("67")&&GQ.every(q=>q.back)'));
   ok("fabNudge组件",typeof w.fabNudge==="function"&&typeof w.gBack==="function");
   // 揭晓层可见提示
   w.showTab("class");
@@ -77,6 +87,10 @@ try{
     ok("揭晓提示条出现(页"+rvPages[0]+")",hints>0);
     const h=d.querySelector("#clsStage .rvHint");if(h){h.click();ok("点提示即揭晓",d.querySelectorAll("#clsStage .rvshow").length>=1&&d.querySelectorAll("#clsStage .rvHint").length<hints+1)}}
   else ok("揭晓提示条出现",false);
+  // 17 页灯箱（无 .pic 类的图也要可点放大）
+  w.showTab("lib");w.libDeck("17");
+  const im17=d.querySelector("#libStage img");
+  ok("17页图可点放大",im17&&im17.style.cursor==="zoom-in");
   // 教师台
   w.showTab("teach");
   const tx=d.getElementById("tab-teach").textContent;
