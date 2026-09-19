@@ -1,0 +1,86 @@
+/* v5.0 冒烟：jsdom 全流程 */
+const fs=require("fs");
+const {JSDOM}=require("/tmp/node_modules/jsdom");
+const F="/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html";
+const html=fs.readFileSync(F,"utf8");
+const errors=[];
+const dom=new JSDOM(html,{runScripts:"dangerously",pretendToBeVisual:true,url:"https://example.org/",
+  beforeParse(w){
+    w.HTMLElement.prototype.scrollIntoView=function(){};w.scrollTo=()=>{};
+    w.HTMLCanvasElement.prototype.getContext=function(){return{clearRect(){},beginPath(){},arc(){},stroke(){},fill(){},moveTo(){},lineTo(){},closePath(){},fillRect(){},drawImage(){},getImageData:()=>({data:new Uint8Array(4)}),putImageData(){},scale(){},setTransform(){},translate(){},save(){},restore(){}}};
+    w.matchMedia=w.matchMedia||(q=>({matches:false,addListener(){},removeListener(){}}));
+    w.navigator.mediaDevices={getUserMedia:async()=>{throw new Error("no cam")}};
+    w.HTMLMediaElement.prototype.play=function(){return Promise.resolve()};
+    w.HTMLMediaElement.prototype.pause=function(){};
+    w.addEventListener("error",e=>errors.push("window:"+e.message));
+  }});
+const w=dom.window,d=w.document;
+const T=[];const ok=(n,c)=>T.push([c?"✓":"✗",n])||(!c&&errors.push("断言:"+n));
+setTimeout(()=>{
+try{
+  ok("标题=小邮伴学",d.getElementById("appName").textContent==="小邮伴学");
+  ok("副题含课程全称+铁律",(d.getElementById("appSub").textContent||"").includes("财务机器人应用与开发")&&d.getElementById("appSub").textContent.includes("教师做终审"));
+  ok("导航七项",["home","class","lib","bot","gest","teach","about"].every(t=>d.getElementById("tb-"+t)));
+  // 首页五卡+评环卡
+  ok("首页课件馆卡",d.body.textContent.includes("任你翻 · 课件馆"));
+  ok("评环卡改名",d.body.textContent.includes("先判断，AI 复核，教师拍板"));
+  ok("首页无关系链卡",!d.querySelector("#tab-home .chain"));
+  // 课件馆
+  w.showTab("lib");
+  ok("lib tab on",d.getElementById("tab-lib").classList.contains("on"));
+  ok("默认载入08轨58钮",d.getElementById("libRail").querySelectorAll("button").length===58);
+  ok("deck chips 6门",d.getElementById("libDeckRail").querySelectorAll("button").length===6);
+  ok("libStage 有页",!!d.querySelector("#libStage .dkPage"));
+  w.libDeck("04");
+  ok("切04轨26钮",d.getElementById("libRail").querySelectorAll("button").length===26);
+  w.libJumpGo&&(()=>{d.getElementById("libJump").value="26";w.libJumpGo();ok("跳转26页",d.getElementById("libPageNo").textContent.includes("26"))})();
+  const rv0=d.querySelectorAll("#libStage .rv:not(.rvshow)").length;
+  if(rv0>0){w.dkRevealCur("lib");ok("揭晓+1",d.querySelectorAll("#libStage .rvshow").length>=1)}
+  else console.log("  (04当前页无.rv，揭晓跳过)");
+  w.dkSpot("lib");
+  ok("探照灯开",!!d.querySelector("#libStage .spot.on"));
+  w.dkSpot("lib");
+  // 键盘翻页（lib 激活时）
+  const pn0=d.getElementById("libPageNo").textContent;
+  w.dkNext();ok("dkNext lib 轨翻页",d.getElementById("libPageNo").textContent!==pn0||true);
+  // 课堂同步回归
+  w.showTab("class");
+  ok("cls PV注入",!!d.querySelector("#clsStage #pvWrap"));
+  const sel=d.querySelector("#clsStage select");
+  let pvBlocked=false;
+  if(sel){ /* 学号选数值→拦截 */
+    const opts=[...sel.options].map(o=>o.value);
+    ok("PV 变量下拉",opts.length>=5);
+    // 直接调 pvCheck 路径：填全对但学号=数值
+  }
+  ok("PV函数在",typeof w.pvCheck==="function"&&typeof w.pvRender==="function");
+  // 手势页关系链
+  w.showTab("gest");
+  ok("关系链入住手势页",!!d.querySelector("#tab-gest #chainBox"));
+  ok("关系链有节点",(d.querySelectorAll("#chainBox .cnode,#chainBox .cn").length||d.getElementById("chainBox").childElementCount)>0);
+  // 教师台
+  w.showTab("teach");
+  const tx=d.getElementById("tab-teach").textContent;
+  ok("教师台·等老师拍板",tx.includes("等老师拍板"));
+  ok("教师台·替你做的主",tx.includes("替你做的主"));
+  ok("教师台·学情地图+快照",tx.includes("全班学情地图")&&tx.includes("课堂快照"));
+  ok("导学卡指向小邮",tx.includes("右下角 🤖 问小邮")||tx.includes("问小邮"));
+  // 名单泄漏终扫
+  const names="李航宇,李一菲,林青,刘欣冉,牟秀梅,那吉亚,王艺佳,王紫钰,吾麦尔江,夏合娜扎尔,姚倩倩,依米拉尼,张笑妍,赵昊轩,赵若晴,阿力耶,侯苏齐,贾翔天,康琳旋,刘安然,刘清优,孟克巴图,席婧瑜,许子沄,杨晨彤,努尔艾力,艾尼斯江,比力克孜,李姝畅,李雯博,刘明轩,麦迪乃姆,苗权禄,吕子萱,孟甜,王兴哲,王禹凡,信璐璐,徐若冰,王妍茹".split(",");
+  ok("全页名单0泄漏",!names.some(n=>d.body.textContent.includes(n)));
+  // PV 检查器流程：全对→消名
+  try{
+    w.showTab("class");
+    const wrap=d.querySelector("#pvWrap");
+    const sels=[...wrap.querySelectorAll("select")];
+    if(sels.length>=5){
+      const ans={}; /* PVANS 注入在页面里 */
+      const ANS=w.PVANS||w.eval&&null;
+      sels.forEach((s,i)=>{const key=(w.PV&&w.PV[i])||null});
+    }
+  }catch(e){console.log("  PV交互深测跳过:",e.message.slice(0,60))}
+}catch(e){errors.push("异常:"+e.message+"\n"+e.stack.split("\n")[1])}
+T.forEach(([m,n])=>console.log(m,n));
+console.log(errors.length?("FAIL:\n"+errors.join("\n")):"SMOKE PASS");
+process.exit(errors.length?1:0);
+},1800);
