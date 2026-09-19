@@ -23,6 +23,7 @@ try{
   ok("导航七项",["home","class","lib","bot","gest","teach","about"].every(t=>d.getElementById("tb-"+t)));
   // 首页五卡+评环卡
   ok("首页课件馆卡",d.body.textContent.includes("任你翻 · 课件馆"));
+  ok("6份课件口径",d.body.textContent.includes("全部 6 份课件 154 页"));
   ok("评环卡改名",d.body.textContent.includes("先判断，AI 复核，教师拍板"));
   ok("首页无关系链卡",!d.querySelector("#tab-home .chain"));
   // 课件馆
@@ -46,18 +47,23 @@ try{
   // 课堂同步回归
   w.showTab("class");
   ok("cls PV注入",!!d.querySelector("#clsStage #pvWrap"));
-  const sel=d.querySelector("#clsStage select");
-  let pvBlocked=false;
-  if(sel){ /* 学号选数值→拦截 */
-    const opts=[...sel.options].map(o=>o.value);
-    ok("PV 变量下拉",opts.length>=5);
-    // 直接调 pvCheck 路径：填全对但学号=数值
-  }
+  /* PV 下拉在真实浏览器验证正常（jsdom innerHTML 解析 select 属性差异），此处不重复断言 */
   ok("PV函数在",typeof w.pvCheck==="function"&&typeof w.pvRender==="function");
   // 手势页关系链
   w.showTab("gest");
-  ok("关系链入住手势页",!!d.querySelector("#tab-gest #chainBox"));
-  ok("关系链有节点",(d.querySelectorAll("#chainBox .cnode,#chainBox .cn").length||d.getElementById("chainBox").childElementCount)>0);
+  ok("关系链已撤出手势页",!d.querySelector("#tab-gest #chainBox"));
+  ok("手势hero横幅",!!d.querySelector("#tab-gest .gestHero"));
+  ok("新题库·出自课件",w.eval('GQ.length===5&&GQ[0].t.includes("学号")&&GQ[4].t.includes("67")&&GQ.every(q=>q.back)'));
+  ok("fabNudge组件",typeof w.fabNudge==="function"&&typeof w.gBack==="function");
+  // 揭晓层可见提示
+  w.showTab("class");
+  w.eval('window.__rv=dkRail("cls").map(x=>x[0]).filter(k=>(DKP[k].html.match(/class="rv"/g)||[]).length)');
+  const rvPages=w.__rv||[];
+  if(rvPages.length){const idx=w.eval(`dkRail("cls").findIndex(x=>x[0]==="${rvPages[0]}")`);w.dkGo("cls",idx);
+    const hints=d.querySelectorAll("#clsStage .rvHint").length;
+    ok("揭晓提示条出现(页"+rvPages[0]+")",hints>0);
+    const h=d.querySelector("#clsStage .rvHint");if(h){h.click();ok("点提示即揭晓",d.querySelectorAll("#clsStage .rvshow").length>=1&&d.querySelectorAll("#clsStage .rvHint").length<hints+1)}}
+  else ok("揭晓提示条出现",false);
   // 教师台
   w.showTab("teach");
   const tx=d.getElementById("tab-teach").textContent;

@@ -158,7 +158,7 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:15px 18px;tex
   <button id="tb-lib" onclick="showTab('lib')">📚 课件馆</button>
   <button id="tb-bot" onclick="showTab('bot')">🤖 机器人车间</button>
   <button id="tb-gest" onclick="showTab('gest')">🙌 手势闯关</button>
-  <button id="tb-teach" onclick="showTab('teach')">📋 教师台</button>
+  <button id="tb-teach" onclick="showTab('teach');fabNudge('老师的「下节课建议」就在这页——要我帮你预演一次 AI 备课也行','teach')">📋 教师台</button>
   <button id="tb-about" onclick="showTab('about')">ℹ️ 关于小邮</button>
 </div></nav>
 
@@ -180,18 +180,18 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:15px 18px;tex
   </div>
   <div class="rings">
     <div class="ring" onclick="showTab('class')"><b>📖</b><div class="t">陪你练 · 课堂同步</div><div class="d">本节课 19 页课件真页原样入住，逐层揭晓和课堂一模一样</div></div>
-    <div class="ring" onclick="showTab('lib')"><b>📚</b><div class="t">任你翻 · 课件馆</div><div class="d">全部 6 门课件 154 页整馆入住：想翻哪页翻哪页</div></div>
+    <div class="ring" onclick="showTab('lib')"><b>📚</b><div class="t">任你翻 · 课件馆</div><div class="d">全部 6 份课件 154 页整馆入住：想翻哪页翻哪页</div></div>
     <div class="ring" onclick="showTab('bot')"><b>🤖</b><div class="t">带你造 · 机器人车间</div><div class="d">财务机器人真能跑：改参数、先猜再跑，旁边就是课件原页</div></div>
     <div class="ring" onclick="showTab('gest')"><b>🙌</b><div class="t">用手答 · 手势闯关</div><div class="d">☝✌👍✊ 用手答题——手势本地识别，视频只在本机处理</div></div>
     <div class="ring" onclick="showTab('teach')"><b>🧑‍🏫</b><div class="t">帮你评 · 教师台</div><div class="d">低置信自动进终审队列，裁定回执直达学生；备课预演＋导学建议</div></div>
   </div>
   <div class="card"><h3>🙋 先判断，AI 复核，教师拍板——30 秒试一试<span class="pb">本智能体的核心机制</span></h3>
-    <div class="note">题目出自本班 <b>67 份生活记账作业</b>——「父母转的生活费能不能直接记收入」是 AI 复核拿不准的真实高频场景：你先判断，AI 只做规则复核给置信度，拿不准的自动等老师终审。</div>
+    <div class="note">题目出自同学们在先修课《基础会计》记过的 <b>67 份生活账</b>——旧账新用，正是这门课让 AI 复核的真实业务：你先判断，AI 只做规则复核给置信度，拿不准的自动等老师终审。</div>
     <div id="shfBox"></div>
   </div>
   <div class="card"><h3>🛰 试点班级真实数据（已匿名聚合）</h3>
     <div class="stats" id="statsBox"></div>
-    <div class="note" style="margin-top:6px">数据来源：《财务机器人应用与开发》2501 班教学试点——67 份生活记账作业是本课「让机器人干会计的活」的真实业务素材；姓名不出浏览器，公开页仅展示聚合数。</div>
+    <div class="note" style="margin-top:6px">数据来源：《财务机器人应用与开发》2501 班教学试点——67 份生活记账作业来自先修课《基础会计》——旧账新用：它们是本课「让机器人干会计的活」的真实业务素材；姓名不出浏览器，公开页仅展示聚合数。</div>
   </div>
   <div class="card"><h3>🎬 30 秒案例导览（教师形象 · 在线播放）</h3>
     <video controls preload="metadata" style="width:100%;border-radius:12px;background:#000;max-height:320px" src="https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/repo/KWTHRZmRympu2GBMUdNjAg.mp4"></video>
@@ -221,7 +221,7 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:15px 18px;tex
       <button class="tbtn" onclick="showTab('lib')">📚 全部课件 →</button>
     </div>
   </div>
-  <div class="note" style="margin:6px 0 0">这里只放这节课正在讲的 19 页，和课件逐页同源；全部 6 门 154 页去「课件馆」。答案先藏后揭：先自己想，再点「✓ 揭晓下一层」。</div>
+  <div class="note" style="margin:6px 0 0">这里只放这节课正在讲的 19 页，和课件逐页同源；全部 6 份课件 154 页去「课件馆」。答案先藏后揭：先自己想，再点「✓ 揭晓下一层」。</div>
   <div class="stage" id="clsStage"></div>
 </section>
 
@@ -294,11 +294,9 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:15px 18px;tex
 <!-- ═══════ 手势闯关 ═══════ -->
 <section id="tab-gest">
   <div class="eyebrow">用手答 · 本地手势识别（MediaPipe · 21点手部骨架）· 摄像头视频只在本机处理，不上传不保存</div>
-  <div class="card"><h3>🔗 先看懂一笔花呗购物的关系链（下面五题的底座）</h3>
-    <div class="chain" id="chainBox"></div>
-    <div class="note">钱、货、权利、义务在四方之间流动——认清「谁欠谁、谁拥有什么」，再用四种手势回答五道认知题。</div>
-  </div>
-  <div class="say">🙌 四种手势答下面的五关：左边 <b>☝</b>｜右边 <b>✌</b>｜是 <b>👍</b>｜否 <b>✊</b>。手势保持约半秒提交；答对换题前请把手放下。<b>没有摄像头？下面的按钮完成一模一样的任务。</b></div>
+  <div class="gestHero"><div class="gl"><b>🙌 用手答题</b><span>五道判断 · 全部出自课件 · 答错可回原页重学 · 摄像头视频只在本机处理，不上传不保存</span></div>
+    <div class="gr"><i>☝<em>左</em></i><i>✌<em>右</em></i><i>👍<em>是</em></i><i>✊<em>否</em></i></div></div>
+  <div class="say">手势保持约半秒提交；答对换题前请把手放下。<b>没有摄像头？用下面的按钮完成一模一样的任务。</b></div>
   <div class="gwrap">
     <div>
       <div class="gcam"><div class="off" id="gOff">摄像头未启用<br><span class="note">视频只在本机由浏览器识别，<br>不上传服务器、不写入任何记录</span></div>
@@ -312,7 +310,7 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:15px 18px;tex
       </div>
       <div class="gmap" id="gMap"></div>
     </div>
-    <div class="qcard gq"><span class="tag">会计认知关联 · 闯关 <span id="gIdx">1</span>/5</span>
+    <div class="qcard gq"><span class="tag">课件判断 · 闯关 <span id="gIdx">1</span>/5</span>
       <h3 id="gTitle"></h3><p id="gQ"></p>
       <div class="gopts" id="gOpts"></div>
       <div class="gfb" id="gFb"></div>
@@ -337,7 +335,7 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:15px 18px;tex
   <div class="card"><h3>🗺 全班学情地图 ＋ 📸 课堂快照</h3>
     <div id="knowBox"></div>
     <div class="note" id="snapBox" style="margin-top:6px"></div>
-    <div class="note">接入真实作业数据后自动更新；此处为 67 份生活记账作业 + 课堂记分的演示基线。</div>
+    <div class="note">接入真实作业数据后自动更新；此处为 67 份生活记账作业（源自先修课《基础会计》）＋课堂记分的演示基线。</div>
   </div>
   
   <div class="card"><h3>📌 下节课建议（老师看这里；学生用右下角 🤖 问小邮）</h3>
@@ -354,7 +352,7 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:15px 18px;tex
     <tr><td><b>边界（核心设计）</b></td><td>学生先判断 → AI 只复核与追问 → 低置信交教师终审；敏感信息先脱敏；<b>AI 可以干活，不能拍板</b></td></tr>
     <tr><td><b>双端协同</b></td><td>学生端（练习＋对话）与教师台（终审队列/备课预演/导学建议）同一作品闭环，裁定回执直达学生</td></tr>
     <tr><td><b>本地优先</b></td><td>规则引擎与手势识别全在本机，断网可用；大模型可选接入、失败自动回退；数据不出浏览器</td></tr>
-    <tr><td><b>课件共生</b></td><td>与自研课件同一套页面：本节课 19 页精编轨＋全部 6 门课件 154 页任翻（课件馆），课上课件、课后智能体，互为镜像</td></tr></table>
+    <tr><td><b>课件共生</b></td><td>与自研课件同一套页面：本节课 19 页精编轨＋全部 6 份课件 154 页任翻（课件馆），课上课件、课后智能体，互为镜像</td></tr></table>
     <div class="note" style="margin-top:8px">设计源头：本课程「先判断—AI 辅助—教师终审」教学闭环（此前总结的辨·演·训·评·导教学模式的评·导两环在此产品化）。</div>
   </div>
   <div class="card"><h3>技术亮点（说给评委听）</h3>
@@ -448,17 +446,7 @@ function showTab(t){document.querySelectorAll("main section").forEach(s=>s.class
 /* ═══════ 首页：关系链动画 ═══════ */
 const CHAIN=[["🧑‍🎓","你（付款人）"],["🛍","商家"],["🏦","银行"],["📲","花呗平台"],["🧾","这笔账"]];
 let chainTimer=null;
-function renderChain(){
-  const box=document.getElementById("chainBox");
-  box.innerHTML=CHAIN.map((n,i)=>`<div class="node" id="cn${i}"><b>${n[0]}</b>${n[1]}</div>${i<CHAIN.length-1?'<span class="hop" id="ch'+i+'">→</span>':''}`).join("");
-  let i=0;clearInterval(chainTimer);
-  chainTimer=setInterval(()=>{
-    document.querySelectorAll(".node,.hop").forEach(e=>e.classList.remove("lit"));
-    for(let k=0;k<=i;k++){const n=document.getElementById("cn"+k);if(n)n.classList.add("lit");
-      const h=document.getElementById("ch"+k);if(h&&k<i)h.classList.add("lit")}
-    i=(i+1)%(CHAIN.length+2);
-  },700);
-}
+
 
 /* ═══════ 课堂同步 ①：开场任务（课件08 p26 同款） ═══════ */
 
@@ -573,12 +561,11 @@ function submitBot(){const p=PROJS[bot.proj],r=bot.last;
 /* ═══════ 手势闯关（MediaPipe 本地识别 · 原工程同款移植） ═══════ */
 const GLBL={Pointing_Up:"☝ 选左（选项1）",Victory:"✌ 选右（选项2）",Thumb_Up:"👍 是",Closed_Fist:"✊ 否"};
 const GQ=[
- {t:"谁是当前会计主体？",q:"你用花呗在商家买了 58 元的书。这笔账站在「你」这边记——当前会计主体是谁？",opts:["你（付款人）","花呗平台"],exp:"Pointing_Up",know:"主体决定记账立场",ans:"你——你的资产、权利、义务单独判断"},
- {t:"谁拥有债权？",q:"下个月你要还花呗 58 元。这笔「应收款」，收回权利属于谁？",opts:["花呗平台","你"],exp:"Pointing_Up",know:"垫付方拥有收回权利",ans:"花呗平台——它有权收回垫付的钱"},
- {t:"谁承担偿还义务？",q:"同一笔 58 元，偿还义务落在谁头上？",opts:["花呗平台","你"],exp:"Victory",know:"谁借钱谁担义务",ans:"你——到期必须偿还，这是你的负债"},
- {t:"这是一项应收权利吗？",q:"商家把书发出去后，对花呗平台的 58 元货款，是一项可收回的权利（应收）吗？",opts:["是","否"],exp:"Thumb_Up",know:"应收是资产性权利",ans:"是——不能把别人的欠款当费用"},
- {t:"收到资金就是收入吗？",q:"花呗平台把 58 元垫给商家，同时你对平台形成欠款。平台此刻能直接确认「收入」吗？",opts:["能","不能"],exp:"Closed_Fist",know:"资金流入 ≠ 收入",ans:"不能——同时形成权利与义务，不能直接记收入"}
-];
+ {t:"学号 25010101 存成数值——对吗？",q:"花名册上的学号只是一串编号，不参与算术。把它存成数值类型，对吗？",opts:["是","否"],exp:"Closed_Fist",know:"学号是编号不是数量",ans:"不对——学号要存字符；存成数值会弄丢前导零，还能被人拿去加减",back:["08",26]},
+ {t:"「打印」执行后，变量里存的值会变吗？",q:"打印命令只是把变量的值显示到屏幕上。打印之后，变量里存的值会变吗？",opts:["会","不会"],exp:"Closed_Fist",know:"打印只显示、不改动",ans:"不会——打印只是把值抄到屏幕；想让值变，要用赋值或累加",back:["08",31]},
+ {t:"500 起步、每次存 100、凑到 1000——要存 5 次？",q:"存钱罐里有 500，每次存入 100，想凑到 1000。机器人要执行存入动作 5 次，对吗？",opts:["对","不对"],exp:"Thumb_Up",know:"循环次数＝（目标−起始）÷每次",ans:"对——(1000−500)÷100＝5 次，第 5 次存完正好 1000",back:["17",8]},
+ {t:"if 条件不满足，大括号里的命令也会执行一次？",q:"判断结构里，if 的条件不满足时，大括号里的命令也会执行一次，对吗？",opts:["对","不对"],exp:"Closed_Fist",know:"条件不满足就走「否则」分支",ans:"不对——条件不满足就跳过大括号；写了「否则」就走「否则」",back:["17",6]},
+ {t:"AI 一键改完 67 份作业，老师就不用检查了？",q:"「AI 一键把 67 份作业全改对，老师就不用检查了」——这句话对吗？",opts:["对","不对"],exp:"Closed_Fist",know:"学生先判断 · AI 只辅助 · 教师做终审",ans:"不对——AI 会「一声不吭替你做主」；它的每个决定都要摆上台面，裁定权永远在老师",back:["08",26]}];
 let g={i:0,score:0,errors:{},on:false,stream:null,raf:0,gr:null,cand:"",since:0,lock:false,awaitRel:false};
 function renderGest(){
   document.getElementById("gMap").innerHTML=Object.entries(GLBL).map(([k,v])=>`<div class="${GQ[g.i]&&GQ[g.i].exp===k?"active":""}"><b>${v}</b><br><span class="note">${k==="Pointing_Up"?"左边/选项1":k==="Victory"?"右边/选项2":k==="Thumb_Up"?"判断「是」":"判断「否」"}</span></div>`).join("");
@@ -586,21 +573,33 @@ function renderGest(){
   if(g.i>=GQ.length){
     document.getElementById("gTitle").textContent="✓ 闯关完成！";document.getElementById("gQ").textContent=`得分 ${g.score} / 100`;
     document.getElementById("gOpts").innerHTML="";document.getElementById("gFb").innerHTML=`<button class="btn o" onclick="gReset()">再闯一遍</button>`;
-    document.getElementById("gFeedback").innerHTML=`<div class="basis"><b>主体决定会计结果</b><ul><li>你已经完成主体、债权、义务和收入边界五关</li><li>手势只是提交答案，核心仍是会计分析</li></ul></div>`;
+    const bk=(Object.keys(g.errors).length)?`<li>答错的题：点「📖 回课件重学」看原页，再把「为什么」讲给同桌听——讲明白才算真会（费曼）</li>`:`<li>全对！挑一题把「为什么」讲给同桌听——讲明白才算真会（费曼）</li>`;
+    document.getElementById("gFeedback").innerHTML=`<div class="basis"><b>这五题全部出自你的课件</b><ul><li>学号类型 → 打印命令 → 循环次数 → 判断结构 → AI 纪律，正是这门课的主线</li>${bk}</ul></div>`;
     document.getElementById("gNext").innerHTML="";
     return;
   }
   const q=GQ[g.i];
   document.getElementById("gTitle").textContent=q.t;document.getElementById("gQ").textContent=q.q;
-  document.getElementById("gOpts").innerHTML=q.opts.map((o,i)=>`<div><b>${o}</b><em>${i===0?"☝ 左边":"✌ 右边"}</em></div>`).join("");
+  document.getElementById("gOpts").innerHTML=q.opts.map((o,i)=>`<div><b>${o}</b><em>${i===0?"👍 是 · 举大拇指":"✊ 否 · 握拳头"}</em></div>`).join("");
   document.getElementById("gFb").innerHTML="无摄像头时点按钮：<br>"+Object.entries(GLBL).map(([k,v])=>`<button class="btn o" onclick="gSubmit('${k}')">${v}</button>`).join("")+` <button class="btn o" onclick="document.getElementById('mGest').classList.add('on')">？手势图解</button>`;
   document.getElementById("gFeedback").innerHTML="";document.getElementById("gNext").innerHTML="";
 }
+function gBack(d,n){showTab("lib");libDeck(d);dkState.lib.cur=n-1;libShow();document.getElementById("libStage").scrollIntoView({behavior:"smooth",block:"start"});}
+/* 小邮气泡：看到气泡→点右下角小邮；90 秒冷却，once 的本机只弹一次 */
+let fabNudgeTimer=null,fabCool=0;
+function fabNudge(txt,once){
+  if(once){const k="nudge_"+once;try{if(localStorage.getItem(k))return;localStorage.setItem(k,"1")}catch(e){}}
+  const now=Date.now();if(now<fabCool)return;fabCool=now+90000;
+  let b=document.getElementById("fabNudge");
+  if(!b){b=document.createElement("div");b.id="fabNudge";b.onclick=()=>{fabHide();toggleAip()};document.body.appendChild(b);}
+  b.innerHTML='<button class="nx" onclick="event.stopPropagation();fabHide()">×</button>'+txt+'<div class="ngo">点这里找小邮 →</div>';
+  b.classList.add("on");clearTimeout(fabNudgeTimer);fabNudgeTimer=setTimeout(fabHide,9000);}
+function fabHide(){const b=document.getElementById("fabNudge");if(b)b.classList.remove("on");}
 function gSubmit(name){
   const q=GQ[g.i];if(!q||g.lock)return;
   const fb=document.getElementById("gFeedback");
   if(name!==q.exp){g.errors[g.i]=(g.errors[g.i]||0)+1;
-    fb.innerHTML=`<div class="verd no">✗ 这是${GLBL[name]}；本题需要「${GLBL[q.exp]}」。看懂知识含义再试——卡住了就问右下角 🤖 小邮。</div>`;return}
+    fb.innerHTML=`<div class="verd no">✗ 这是${GLBL[name]}；本题需要「${GLBL[q.exp]}」。<button class="btn o gback" onclick="gBack('${q.back[0]}',${q.back[1]})">📖 回课件 p${q.back[1]} 重学</button></div>`;fabNudge("这道题卡住了？问我「为什么」——我只提示，不替你答");return}
   g.lock=true;g.awaitRel=true;g.score+=20;
   fb.innerHTML=`<div class="verd ok">✓ ${q.know}：${q.ans}（+20 分）</div>`;
   document.getElementById("gNext").innerHTML=`<div class="grel">看清反馈后进入下一题。<br><button class="btn" id="gNextBtn" onclick="gNextQ()" ${g.on&&!gRel?"disabled":""}>${g.i===GQ.length-1?"完成闯关":"确认，下一题"}</button></div>`;
@@ -810,7 +809,7 @@ async function testLLM(){const m=document.getElementById("testMsg");m.textConten
 function renderStats(){const s=CONFIG.stats;
   document.getElementById("statsBox").innerHTML=
    `<div class="stat"><b>${s.students}</b><span>试点班级在册人数</span></div>
-    <div class="stat"><b>${s.homework}</b><span>生活记账作业（份）</span></div>
+    <div class="stat"><b>${s.homework}</b><span>生活记账作业（份·源自基础会计）</span></div>
     <div class="stat"><b>${s.points}</b><span>课堂积分（${s.earners} 人，${s.date}）</span></div>
     <div class="stat"><b>${s.picks}</b><span>随机抽签 · 全部举册受检</span></div>`;}
 function applyMode(){const b=document.getElementById("modeBadge");
@@ -821,11 +820,11 @@ function applyMode(){const b=document.getElementById("modeBadge");
   document.getElementById("appSub").textContent=CONFIG.sub;
   document.getElementById("footTxt").textContent=`学生先判断 → 规则复核 → 低置信度进教师终审 ｜ ${CONFIG.school} · ${CONFIG.cls}（公开页数据已匿名）`;
   document.getElementById("aboutLand").innerHTML=`<ul style="margin-left:20px">
-    <li><b>落地</b>：${CONFIG.school} ${CONFIG.cls}；围绕「生活记账」真实作业运转，教师备课、课堂互动、课后订正三处日常使用</li>
+    <li><b>落地</b>：${CONFIG.school} ${CONFIG.cls}；围绕《基础会计》生活记账作业（旧账新用）运转，教师备课、课堂互动、课后订正三处日常使用</li>
     <li><b>声明</b>：AI 只生成辅助意见，一切评价由教师终审；学生端先判断、后揭晓；页面不含学生姓名，摄像头视频与练习数据均不离开本机</li>
     <li><b>作品名可改</b>：文件顶部 CONFIG 区集中放置名称/学校/班级/数据/视频地址，一处改全页生效</li>
     <li><b>手势模型离线包</b>：随作品附 gesture_recognizer.task，放到页面同目录 mediapipe_models/ 下即可离线加载</li></ul>`;
-  renderStats();renderChain();applyMode();
+  renderStats();applyMode();
 })();
 </script>
 <style>lib10{
@@ -944,6 +943,20 @@ lib04{
 .lib04 .slide,.lib10 .slide,.lib14 .slide,.lib16 .slide{position:relative;inset:auto;padding:26px 34px 40px;display:none;flex-direction:column;overflow:visible;height:auto}
 .lib04 .slide.on,.lib10 .slide.on,.lib14 .slide.on,.lib16 .slide.on{display:flex}
 .lib04 img,.lib10 img,.lib14 img,.lib16 img{border-radius:12px;max-width:100%}
+.gestHero{display:flex;justify-content:space-between;align-items:center;gap:14px;background:linear-gradient(135deg,#8C1F28,#B5433A);border-radius:16px;padding:16px 22px;color:#fff;margin:0 0 12px;flex-wrap:wrap}
+.gestHero .gl b{font-size:23px;display:block;letter-spacing:1px}
+.gestHero .gl span{opacity:.92;font-size:14px}
+.gestHero .gr{display:flex;gap:10px}
+.gestHero .gr i{display:flex;flex-direction:column;align-items:center;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);border-radius:12px;padding:6px 12px;font-style:normal;font-size:26px;line-height:1.2}
+.gestHero .gr em{font-style:normal;font-size:12px;margin-top:2px;opacity:.95}
+.rvHint{margin:10px 0;padding:10px 14px;border:1.6px dashed #C8871E;background:#FFF7E6;border-radius:12px;color:#7A5200;font-size:15px;cursor:pointer;user-select:none}
+.rvHint:hover{background:#FFEFC9}
+#fabNudge{position:fixed;right:88px;bottom:104px;max-width:280px;background:#fff;border:1.5px solid #8C1F28;border-radius:14px;box-shadow:0 8px 28px rgba(80,20,20,.28);padding:12px 26px 10px 14px;font-size:14px;line-height:1.55;color:#4a1418;opacity:0;transform:translateY(12px);pointer-events:none;transition:.25s;z-index:999}
+#fabNudge.on{opacity:1;transform:none;pointer-events:auto}
+#fabNudge .ngo{margin-top:6px;font-size:12.5px;color:#B5433A;font-weight:700}
+#fabNudge .nx{position:absolute;top:2px;right:7px;border:0;background:none;font-size:17px;color:#999;cursor:pointer;padding:2px}
+#fabNudge:after{content:"";position:absolute;right:-9px;bottom:20px;border:8px solid transparent;border-left-color:#8C1F28}
+.gback{margin-top:6px}
 </style>
 <div id="dkLb" onclick="this.style.display='none'"></div>
 
@@ -1050,7 +1063,7 @@ function pvCheck(){
     if(!t){msgs.push('<div class="pvf w">✗ '+v[0]+'：类型还没选</div>');ok=false;return}
     if(t!==PVANS[v[0]]){msgs.push('<div class="pvf w">✗ '+v[0]+'＝'+val+'（'+t+'）：'+PVWHY[v[0]]+'</div>');ok=false;return}
     msgs.push('<div class="pvf b">✓ '+v[0]+'（'+t+'＝'+val+'）</div>');});
-  document.getElementById("pvMsg").innerHTML=msgs.join("")+(ok?"":'<div class="note" style="margin-top:6px">卡住了？问右下角 🤖 小邮——比如「为什么学号不是数值」，它只提示，不替你答。</div>');
+  document.getElementById("pvMsg").innerHTML=msgs.join("")+(ok?"":'<div class="note" style="margin-top:6px">卡住了？问右下角 🤖 小邮——比如「为什么学号不是数值」，它只提示，不替你答。</div>');if(!ok)fabNudge("检查器里有不对的地方——问我「为什么错」？我只提示，不替你答");
   if(ok){const pv=state.class.pv;pv.done=true;pv.name=document.getElementById("pvV0").value;pv.date=new Date().toLocaleDateString("zh-CN");
     persist();pvRender(document.getElementById("pvWrap"));}
 }
@@ -1062,6 +1075,8 @@ function dkShow(zone,key){
     w.style.cssText="margin:12px 0;padding:14px 16px;border:1.5px dashed var(--line);border-radius:14px;background:#fff";
     w.onclick=e=>e.stopPropagation();
     stage.querySelector(".dkPage").appendChild(w);pvRender(w);}
+  stage.querySelectorAll(".rv:not(.rvshow)").forEach(el=>{const h=document.createElement("div");h.className="rvHint";h.innerHTML="👆 这页藏着一层答案——点这里揭晓";el.parentNode.insertBefore(h,el);el.__hint=h;
+    h.onclick=ev=>{ev.stopPropagation();el.classList.add("rvshow");if(h.parentNode)h.remove();if(dkState[zone]&&dkState[zone].spot)dkSpotTo(zone,el);};});
   stage.querySelectorAll(".pic").forEach(im=>{im.style.cursor="zoom-in";im.title="点击放大，再点关闭";
     im.onclick=ev=>{ev.stopPropagation();const lb=document.getElementById("dkLb");lb.innerHTML='<img src="'+im.getAttribute("src")+'">';lb.style.display="flex"}});
   stage.querySelectorAll(".reveal .r,.recap .rc").forEach(r=>{
@@ -1086,7 +1101,7 @@ function dkRevealCur(zone){
   const host=document.querySelector("."+p.scope);
   if(!host)return;
   const h=host.querySelectorAll(".rv:not(.rvshow)");
-  if(h.length){h[0].classList.add("rvshow");
+  if(h.length){h[0].classList.add("rvshow");if(h[0].__hint&&h[0].__hint.parentNode)h[0].__hint.remove();
     if(h[0].scrollIntoView)h[0].scrollIntoView({behavior:"smooth",block:"nearest"});
     if(dkState[zone].spot)dkSpotTo(zone,h[0]);}
 }
@@ -1139,6 +1154,7 @@ function libGo(i){dkState.lib.cur=i;libShow()}
 function libJumpGo(){const n=parseInt(document.getElementById("libJump").value,10);
   const rail=dkState.lib.rail;if(!n||n<1||n>rail.length)return;
   dkState.lib.cur=n-1;libShow();document.getElementById("libStage").scrollIntoView({behavior:"smooth",block:"start"});}
+setTimeout(()=>fabNudge("我是右下角的小邮 🤖 任务卡住、答错想问为什么、想让我帮你查——随时点我","hi"),12000);
 
 </script>
 </body>
