@@ -73,8 +73,14 @@ try{
   ok("手势大按钮×2",d.querySelectorAll("#tab-gest .gans").length===2);
   ok("gMap静态图例不剧透",d.getElementById("gMap").textContent.includes("选项一")&&!d.getElementById("gMap").innerHTML.includes("on"));
   ok("真人示范4连视频",d.querySelectorAll("#tab-gest .gv video").length===4);
+  ok("气泡CSS完整(无伪选择器)",!fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("#fabNudgeX"));
+  ok("小邮SVG动画图标",!!d.querySelector(".fab svg.xybot"));
+  ok("面板瘦长320宽",fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("width:min(320px"));
+  ok("地图条浅色版",fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes(".mapBar{background:#FFFBF4"));
+  ok("语音演示快捷问",w.eval('AQUICK[0]==="小邮，开口说一句"&&aBrain("小邮，开口说一句").includes("这就是我的声音")'));
   ok("回复自动配音引擎",typeof w.voiceForReply==="function"&&w.eval('voiceForReply("「手势闯关」四种手势：☝＝选项一")')==="faqgest"&&w.eval('voiceForReply("八竿子打不着的话")')===null);
   ok("分析邀请新分支",w.eval('aBrain("能帮我找茬吗").includes("分析：")'));
+  const page=fs.readFileSync(process.argv[1]||"","utf8")||"";
   ok("手势得分牌",!!d.getElementById("gScore"));
   ok("车间互动指引",d.body.textContent.includes("和小邮怎么互动"));
   d.getElementById("guessVal").value="10";w.runBot();
