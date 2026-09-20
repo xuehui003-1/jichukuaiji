@@ -25,6 +25,7 @@ try{
   // 首页五卡+评环卡
   ok("首页课件馆卡",d.body.textContent.includes("任你翻 · 课件馆"));
   ok("6份课件口径",d.body.textContent.includes("全部 6 份课件 154 页"));
+  ok("版本标记v5.2",d.getElementById("footTxt").textContent.includes("v5.2 任务地图版"));
   ok("评环卡改名",d.body.textContent.includes("30 秒体验：你判断，AI 复核，老师拍板"));
   ok("首页无关系链卡",!d.querySelector("#tab-home .chain"));
   // 课件馆
@@ -89,6 +90,10 @@ try{
   ok("知识图谱视图(深色+11节点+曲线边)",d.querySelectorAll("#kgBox .gn").length===11&&d.querySelectorAll("#kgBox .ge").length===14);
   ok("审账/铁律着色(评环完成即绿)",d.querySelectorAll("#kgBox .gn.on").length>=2);
   ok("缩放平移函数",typeof w.kgZoom==="function"&&typeof w.kgReset==="function");
+  ok("分类图例4枚(收缩/展开)",d.querySelectorAll("#kgBox .kchip").length===4&&typeof w.kgToggleC==="function");
+  w.kgToggleC(0);ok("收缩生效",d.querySelectorAll("#kgBox .gn")[0].style.opacity!=="");
+  w.kgToggleC(0);
+  ok("3D视差倾斜已挂",fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("perspective(950px)"));
   w.eval('kgZoom(1.25)');ok("缩放生效",w.eval('document.getElementById("kgT").getAttribute("transform")').includes("1.25"));
   w.setKgView("map");
   w.showTab("about");

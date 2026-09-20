@@ -613,7 +613,7 @@ const GN=[
  {id:"audit",t:"审账复核",c:3,x:18,y:95},{id:"rule",t:"铁律",c:3,x:46,y:95}];
 const GE=[["var","type"],["var","cmd"],["type","flow"],["cmd","flow"],["flow","if"],["flow","loop"],["if","tank"],["loop","tank"],["if","waimai"],["flow","banfei"],["tank","audit"],["tank","rule"],["waimai","audit"],["banfei","rule"]];
 const GCOLOR=["#FFB74D","#4FC3F7","#81C784","#FFD54F"];
-let kgView="map",kgV={x:0,y:0,s:1};
+let kgView="map",kgV={x:0,y:0,s:1};let kgHide={0:false,1:false,2:false,3:false};
 function stopDone(st){
  if(st.page)return !!(state.visited&&state.visited[st.page[0]+"-"+st.page[1]]);
  if(st.bot)return !!(typeof bot!=="undefined"&&bot.last&&bot.proj===st.bot);
@@ -662,12 +662,12 @@ function renderGraph(){const box=document.getElementById("kgBox");if(!box)return
  GN.forEach((n,i)=>{nodes+='<g class="gn'+(got[n.id]?" on":"")+'" data-id="'+n.id+'" style="animation-delay:'+(i*55)+'ms" transform="translate('+n.x+','+n.y+')">'
   +'<circle class="gnc c'+n.c+'" r="6.2"/><text class="gnt" y="-8.6">'+n.t+'</text><text class="gnd" y="12.2">'+(n.c===3?"素养":(n.c===2?"任务":(n.c===1?"结构":"基础")))+'</text>'
   +(got[n.id]?'<text class="gk" x="4.6" y="-5.4">✓</text>':"")+'</g>';});
- box.innerHTML='<div class="gwrap"><div class="gctl"><button class="tbtn" onclick="kgZoom(1.25)">＋</button><button class="tbtn" onclick="kgZoom(.8)">－</button><button class="tbtn" onclick="kgReset()">重置</button><span class="gnote">滚轮缩放 · 拖拽平移 · 悬停看邻居</span></div>'
+ box.innerHTML='<div class="gwrap"><div class="gctl"><button class="tbtn" onclick="kgZoom(1.25)">＋</button><button class="tbtn" onclick="kgZoom(.8)">－</button><button class="tbtn" onclick="kgReset()">重置</button><span class="kchip kc0" data-c="0" onclick="kgToggleC(0)">基础</span><span class="kchip kc1" data-c="1" onclick="kgToggleC(1)">结构</span><span class="kchip kc2" data-c="2" onclick="kgToggleC(2)">任务</span><span class="kchip kc3" data-c="3" onclick="kgToggleC(3)">素养</span><span class="gnote">滚轮缩放 · 拖拽平移 · 悬停看邻居</span></div>'
   +'<svg id="kgSvg" viewBox="0 0 64 103"><g id="kgT" transform="translate(0,0) scale(1)">'+edges+nodes+'</g></svg></div>';
  const svg=document.getElementById("kgSvg");
  svg.addEventListener("wheel",ev=>{ev.preventDefault();const f=ev.deltaY<0?1.12:.89;kgZoomAt(f,ev);},{passive:false});
  let drag=null;
- svg.addEventListener("pointerdown",ev=>{drag={x:ev.clientX,y:ev.clientY,ox:kgV.x,oy:kgV.y};svg.setPointerCapture(ev.pointerId)});
+ svg.addEventListener("pointerdown",ev=>{svg.style.transform="";drag={x:ev.clientX,y:ev.clientY,ox:kgV.x,oy:kgV.y};svg.setPointerCapture(ev.pointerId)});
  svg.addEventListener("pointermove",ev=>{if(!drag)return;const r=svg.getBoundingClientRect();
   kgV.x=drag.ox+(ev.clientX-drag.x)*64/r.width;kgV.y=drag.oy+(ev.clientY-drag.y)*103/r.height;applyT()});
  svg.addEventListener("pointerup",()=>drag=null);
@@ -680,6 +680,12 @@ function renderGraph(){const box=document.getElementById("kgBox");if(!box)return
   g.addEventListener("click",()=>{const n=N(g.dataset.id);
    const st=STOPS.find(s=>(n.id==="var"||n.id==="type")?s.id==="kai":s.id===(n.id==="cmd"?"kan":n.id==="flow"?"liu":n.id==="if"?"pan":n.id==="loop"?"xun":n.id==="tank"?"cun":n.id==="waimai"||n.id==="banfei"?"wai":n.id==="audit"?"shen":"shou"));
    if(st)stopGo(st);});});
+ svg.querySelectorAll(".gn").forEach(x=>{const n=N(x.dataset.id);if(kgHide[n.c]){x.style.opacity=.14;const c=x.querySelector(".gnc");if(c)c.style.transform="scale(.55)"}});
+ svg.querySelectorAll(".ge").forEach(p=>{const a=N(p.dataset.a),b=N(p.dataset.b);if(kgHide[a.c]||kgHide[b.c])p.style.opacity=.05;});
+ svg.addEventListener("mousemove",ev=>{if(drag)return;const r=svg.getBoundingClientRect();
+   const px=(ev.clientX-r.left)/r.width-.5,py=(ev.clientY-r.top)/r.height-.5;
+   svg.style.transform="perspective(950px) rotateX("+(-py*9).toFixed(1)+"deg) rotateY("+(px*11).toFixed(1)+"deg)";});
+ svg.addEventListener("mouseleave",()=>svg.style.transform="");
  applyT();}
 function applyT(){const g=document.getElementById("kgT");if(g)g.setAttribute("transform","translate("+kgV.x+","+kgV.y+") scale("+kgV.s+")")}
 function kgZoom(f){kgV.s=Math.min(4,Math.max(.6,kgV.s*f));applyT()}
@@ -687,6 +693,7 @@ function kgZoomAt(f,ev){const svg=document.getElementById("kgSvg");const r=svg.g
  const vx=(ev.clientX-r.left)/r.width*64,vy=(ev.clientY-r.top)/r.height*103;
  const ns=Math.min(4,Math.max(.6,kgV.s*f));kgV.x=vx-(vx-kgV.x)*(ns/kgV.s);kgV.y=vy-(vy-kgV.y)*(ns/kgV.s);kgV.s=ns;applyT()}
 function kgReset(){kgV={x:0,y:0,s:1};applyT()}
+function kgToggleC(c){kgHide[c]=!kgHide[c];document.querySelectorAll(".kchip").forEach(ch=>ch.classList.toggle("off",kgHide[+ch.dataset.c]));renderGraph()}
 function clsAsk(){const a=document.getElementById("aip");if(!a.classList.contains("on"))toggleAip();
   const rail=dkRail("cls"),cur=rail[dkState.cls.cur];
   amsg("ai","这页是「"+cur[1]+"」。先自己读一遍——然后把你卡住的那一句打给我，我帮你拆。我<b>不直接给答案</b>，先让你判断。");}
@@ -1014,7 +1021,7 @@ function applyMode(){const b=document.getElementById("modeBadge");
 (function init(){
   document.getElementById("appName").textContent=CONFIG.name;
   document.getElementById("appSub").textContent=CONFIG.sub;
-  document.getElementById("footTxt").textContent=`学生先自己判断，AI 只做复核参考，拿不准的由老师终审 ｜ ${CONFIG.school} · ${CONFIG.cls}（公开页数据已匿名）`;
+  document.getElementById("footTxt").textContent=`学生先自己判断，AI 只做复核参考，拿不准的由老师终审 ｜ ${CONFIG.school} · ${CONFIG.cls}（公开页数据已匿名） ｜ v5.2 任务地图版`;
   document.getElementById("aboutLand").innerHTML=`<ul style="margin-left:20px">
     <li><b>落地</b>：${CONFIG.school} ${CONFIG.cls}；围绕《基础会计》生活记账作业（旧账新用）运转，教师备课、课堂互动、课后订正三处日常使用</li>
     <li><b>声明</b>：AI 只生成辅助意见，一切评价由教师终审；学生端先判断、后揭晓；页面不含学生姓名，摄像头视频与练习数据均不离开本机</li>
@@ -1193,6 +1200,10 @@ lib04{
 .gctl{display:flex;gap:6px;align-items:center;margin-bottom:6px}
 .gctl .tbtn{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.25)}
 .gnote{font-size:12.5px;color:rgba(255,255,255,.55);margin-left:auto}
+.kchip{cursor:pointer;font-size:12.5px;font-weight:800;border-radius:999px;padding:3px 11px;color:#102040;border:1px solid rgba(255,255,255,.3);transition:.15s}
+.kchip.kc0{background:#FFB74D}.kchip.kc1{background:#4FC3F7}.kchip.kc2{background:#81C784}.kchip.kc3{background:#FFD54F}
+.kchip.off{opacity:.32;text-decoration:line-through}
+.gwrap svg{transition:transform .18s ease}
 .gwrap svg{width:100%;display:block;touch-action:none;cursor:grab}
 .gwrap svg:active{cursor:grabbing}
 .ge{fill:none;stroke:url(#none);stroke:#3D5A8A;stroke-width:.5;opacity:.45;transition:.25s}
