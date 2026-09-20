@@ -21,7 +21,7 @@ try{
   ok("标题=小邮伴学",d.getElementById("appName").textContent==="小邮伴学");
   ok("首页评环自动渲染(不用点标签)",d.querySelectorAll("#shfBox .opt").length===3);
   ok("副题含课程全称+铁律",(d.getElementById("appSub").textContent||"").includes("财务机器人应用与开发")&&d.getElementById("appSub").textContent.includes("教师做终审"));
-  ok("导航七项",["home","class","lib","bot","gest","teach","about"].every(t=>d.getElementById("tb-"+t)));
+  ok("导航八项",["home","class","lib","graph","bot","gest","teach","about"].every(t=>d.getElementById("tb-"+t)));
   // 首页五卡+评环卡
   ok("首页课件馆卡",d.body.textContent.includes("任你翻 · 课件馆"));
   ok("6份课件口径",d.body.textContent.includes("全部 6 份课件 154 页"));
@@ -75,8 +75,19 @@ try{
   ok("真人示范4连视频",d.querySelectorAll("#tab-gest .gv video").length===4);
   ok("气泡CSS完整(无伪选择器)",!fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("#fabNudgeX"));
   ok("小邮SVG动画图标",!!d.querySelector(".fab svg.xybot"));
-  ok("面板瘦长320宽",fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("width:min(320px"));
+  ok("面板说话头像",!!d.getElementById("xyFace")&&typeof w.sayVoice==="function");
+  ok("图标恢复圆形",fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("width:64px;height:64px;border-radius:50%"));
+  ok("面板瘦长300宽",fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("width:min(300px"));
   ok("地图条浅色版",fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes(".mapBar{background:#FFFBF4"));
+  w.showTab("graph");
+  ok("知识图谱渲染",d.querySelectorAll("#kgBox .kg").length===11&&d.querySelectorAll("#kgBox .kg.got").length===0);
+  w.eval('state.class.pv.done=true');w.renderKG();
+  ok("图谱掌握着色",d.querySelectorAll("#kgBox .kg.got").length===2);
+  ok("图谱点击直达函数",typeof w.kgClick==="function");
+  w.showTab("about");
+  const ab=d.getElementById("tab-about").textContent;
+  ok("AI知识库亮牌",ab.includes("AI 知识库（本地优先）"));
+  ok("智慧课程对照",ab.includes("与智慧课程建设的关系")&&ab.includes("智能体底座"));
   ok("语音演示快捷问",w.eval('AQUICK[0]==="小邮，开口说一句"&&aBrain("小邮，开口说一句").includes("这就是我的声音")'));
   ok("回复自动配音引擎",typeof w.voiceForReply==="function"&&w.eval('voiceForReply("「手势闯关」四种手势：☝＝选项一")')==="faqgest"&&w.eval('voiceForReply("八竿子打不着的话")')===null);
   ok("分析邀请新分支",w.eval('aBrain("能帮我找茬吗").includes("分析：")'));
