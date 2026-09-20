@@ -181,12 +181,10 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:15px 18px;tex
       <div class="heroBtns"><button class="hbtn" onclick="showTab('class')">🏫 进课堂同步（课件真页）</button><button class="hbtn o" onclick="showTab('bot')">🤖 机器人车间</button><button class="hbtn o" onclick="sayVoice('hello');const c=document.getElementById('heroCap');if(c)c.style.display='block'">🔊 让小邮讲解</button></div><div class="say" id="heroCap" style="display:none;margin-top:8px">🔊 小邮：大家好，我是小邮——课件在我这儿原页重玩，机器人真能跑，卡住了随时问我！</div>
     </div>
   </div>
-  <div class="mapBar">
-    <div class="mt">⏱ 30 秒看懂怎么用（点哪个格子直接去哪）</div>
-    <div class="mrow"><span class="mrole s1">学生 · 课上</span><button class="mg" onclick="showTab('class')">🏫 课堂同步<br><em>跟着课件学</em></button><i>→</i><button class="mg" onclick="showTab('gest')">🙌 手势闯关<br><em>全班用手答</em></button></div>
-    <div class="mrow"><span class="mrole s2">学生 · 课后</span><button class="mg" onclick="showTab('lib')">📚 课件馆<br><em>忘了随时翻</em></button><i>→</i><button class="mg" onclick="showTab('bot')">🤖 机器人车间<br><em>纸上任务真跑</em></button><i>→</i><span class="mchip">💬 卡住问右下角小邮</span></div>
-    <div class="mrow"><span class="mrole t1">老师</span><button class="mg" onclick="showTab('teach')">📋 教师台<br><em>备课预演 · 终审队列 · 下节课建议</em></button></div>
-  </div>
+  <div class="card homeMap"><div class="hmHead"><h3 style="margin:0">🗺 学习任务地图 <span class="hmSub">学到哪，走到哪——完成一站点亮一站</span></h3>
+    <select id="homeScopeSel" class="sel" onchange="homeScope=this.value;renderMap('homeMapBox',homeScope)"><option value="all">全课程 · 9 站</option><option value="cls">变量·命令·流程（本节课）</option><option value="p3">判断与循环（项目三）</option></select></div>
+    <div id="homeMapBox"></div>
+    <div class="note" style="margin-top:4px">点任何站点直达任务；老师备课用右上角「🧑‍🏫 教师台」。</div></div>
   <div class="rings">
     <div class="ring" onclick="showTab('class')"><u class="rb">课上</u><b>📖</b><div class="t">陪你练 · 课堂同步</div><div class="d">本节课 19 页课件真页原样入住，逐层揭晓和课堂一模一样</div></div>
     <div class="ring" onclick="showTab('lib')"><u class="rb">课后</u><b>📚</b><div class="t">任你翻 · 课件馆</div><div class="d">全部 6 份课件 154 页整馆入住：想翻哪页翻哪页</div></div>
@@ -266,18 +264,18 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:15px 18px;tex
 
 <!-- ═══════ 机器人车间 ═══════ -->
 <section id="tab-hall">
-  <div class="eyebrow">🏢 虚拟展厅 · 拖一拖，环视整个作品（每面墙都能点进去）</div>
-  <div class="hallStage"><div class="room" id="hallRoom">
-    <div class="wall w1"><div class="wT">📖 课件馆 · 6 份课件 154 页</div><div class="wD">全部课件真页整馆入住，评委翻的就是我课堂用的</div><button class="btn" onclick="showTab('lib')">进课件馆</button></div>
-    <div class="wall w2"><div class="wT">🙋 核心机制 · 你判断 AI 复核老师拍板</div><div class="wD">30 秒亲手走一遍全站铁律；检查器选错翻脸、全对消名</div><button class="btn" onclick="showTab('home')">去体验</button></div>
-    <div class="wall w3"><div class="wT">🙌 用手答 · 机器人真跑</div><div class="wD">本地手势识别＋真人示范；车间改参数先猜再跑</div><button class="btn" onclick="showTab('gest')">手势闯关</button></div>
-    <div class="wall w4"><div class="wT">🗺 地图 · 语音 · 教师台</div><div class="wD">任务地图点亮进度；小邮 12 句语音；AI 备课预演</div><button class="btn" onclick="setKgScope('all');showTab('graph')">看任务地图</button></div>
+  <div class="eyebrow">🏢 虚拟展厅 · 按住拖动环视，点击展墙进入</div>
+  <div class="hallStage"><div class="floor"></div><div class="room" id="hallRoom">
+    <div class="wall w1" data-go="lib"><div class="frame"><div class="fIc">📚</div><div class="wT">课件馆</div><div class="wD">6 份课件 · 154 页真页</div><div class="go">点击进入 →</div></div></div>
+    <div class="wall w2" data-go="home"><div class="frame"><div class="fIc">🙋</div><div class="wT">核心机制</div><div class="wD">你判断 · AI 复核 · 老师拍板</div><div class="go">点击进入 →</div></div></div>
+    <div class="wall w3" data-go="gest"><div class="frame"><div class="fIc">🙌</div><div class="wT">用手答 · 机器人真跑</div><div class="wD">本地手势识别 · 车间先猜再跑</div><div class="go">点击进入 →</div></div></div>
+    <div class="wall w4" data-go="graph"><div class="frame"><div class="fIc">🗺</div><div class="wT">地图 · 语音 · 智能服务</div><div class="wD">任务地图 · 12 句语音 · 备课预演</div><div class="go">点击进入 →</div></div></div>
   </div></div>
-  <div class="hallCtl"><button class="tbtn" onclick="hallSpin(-38)">‹ 左转</button><button class="tbtn" onclick="hallSpin(38)">右转 ›</button><span class="note">按住拖动也可以转</span></div>
-"</section>
+  <div class="hallCtl"><button class="tbtn" onclick="hallSpin(-38)">‹ 左转</button><button class="tbtn" onclick="hallSpin(38)">右转 ›</button><span class="note">拖动环视 · 点击展墙直达</span></div>
+
 <section id="tab-graph">
   <div class="eyebrow">🗺 任务地图 · 学到哪，走到哪（右上角可切知识图谱）</div>
-  <div class="kgTabs"><button id="kgTabMap" class="chip on" onclick="setKgView('map')">🎒 任务地图</button><button id="kgTabGraph" class="chip" onclick="setKgView('graph')">🕸 知识图谱</button><button id="kgScCls" class="chip" onclick="setKgScope('cls')">本次课</button><button id="kgScAll" class="chip on" onclick="setKgScope('all')">全课程</button><span class="kprog" id="kgProg"></span></div>
+  <div class="kgTabs"><button id="kgTabMap" class="chip on" onclick="setKgView('map')">🎒 任务地图</button><button id="kgTabGraph" class="chip" onclick="setKgView('graph')">🕸 知识图谱</button><span id="kgScopeWrap"><select id="kgScopeSel" class="sel" onchange="setKgScope(this.value)"><option value="all">全课程 · 9 站</option><option value="cls">变量·命令·流程（本节课）</option><option value="p3">判断与循环（项目三）</option></select></span><span class="kprog" id="kgProg"></span></div>
   <div class="card" style="padding:0;overflow:hidden"><div id="kgBox"></div></div>
   <div class="note" style="margin-top:8px">站点全部出自课件与课堂任务：<b>完成检查器/跑过车间/提交审账/手势满分，对应站点自动点亮 ✓</b>；没点的站显示「下一站」脉冲引导。</div>
 </section>
@@ -464,10 +462,10 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:15px 18px;tex
   <circle cx="25" cy="18" r="4.2" fill="#81D4FA"/><circle cx="39" cy="18" r="4.2" fill="#81D4FA"/>
   <circle cx="26.4" cy="16.6" r="1.3" fill="#fff"/><circle cx="40.4" cy="16.6" r="1.3" fill="#fff"/>
   <rect class="xm" x="28" y="23.5" width="8" height="3.4" rx="1.7" fill="#FFE082"/>
-</svg> <b>小邮伴学 · 有问题问我</b><span class="aiKb">AI 知识库·本地优先</span><span onclick="toggleAip()">×</span></header2>
+</svg> <b>小邮伴学 · 有问题问我</b><span onclick="toggleAip()">×</span></header2>
   <div class="amsgs" id="aMsgs"></div>
   <div class="aquick" id="aQuick"></div>
-  <div class="ain"><input id="aInput" placeholder="问我，或输入「分析：」+一件事让我找茬" onkeydown="if(event.key==='Enter')aSend()"><button onclick="aSend()">发</button></div>
+  <div class="ain"><input id="aInput" placeholder="问我，或输入「分析：」+一件事让我找茬" onkeydown="if(event.key==='Enter')aSend()"><button onclick="aSend()">发</button></div><div class="afoot">💡 回答来自小邮本地 AI 知识库 · 可在设置接入大模型</div>
 </div>
 
 <footer id="footTxt"></footer>
@@ -496,7 +494,7 @@ function showTab(t){document.querySelectorAll("main section").forEach(s=>s.class
  document.getElementById("tab-"+t).classList.add("on");
  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("on"));
  document.getElementById("tb-"+t).classList.add("on");
- if(t==="lib"){if(!dkState.lib.rail)libDeck("08");}if(t==="class")renderClass();if(t==="bot"){renderBot();dkMount("bot",DKRAIL[bot.proj])}if(t==="teach")renderTeach();if(t==="home"){renderStats();renderSHF()}
+ if(t==="lib"){if(!dkState.lib.rail)libDeck("08");}if(t==="class")renderClass();if(t==="bot"){renderBot();dkMount("bot",DKRAIL[bot.proj])}if(t==="teach")renderTeach();if(t==="home"){renderStats();renderSHF();renderMap("homeMapBox",homeScope)}
  if(TABNUDGE[t])fabNudge(TABNUDGE[t],"tab-"+t);
  if(t==="graph")renderKG();if(t==="hall")hallInit();if(t==="gest")sayVoiceOnce("gintro","vg");if(t==="teach")sayVoiceOnce("tintro","vt");
  if(t==="gest")renderGest();
@@ -626,8 +624,8 @@ const GN=[
  {id:"tank",t:"存钱罐",c:2,x:32,y:80},{id:"waimai",t:"外卖满减",c:2,x:10,y:80},{id:"banfei",t:"班费记账",c:2,x:54,y:80},
  {id:"audit",t:"审账复核",c:3,x:18,y:95},{id:"rule",t:"铁律",c:3,x:46,y:95}];
 const GE=[["var","type"],["var","cmd"],["type","flow"],["cmd","flow"],["flow","if"],["flow","loop"],["if","tank"],["loop","tank"],["if","waimai"],["flow","banfei"],["tank","audit"],["tank","rule"],["waimai","audit"],["banfei","rule"]];
-const GCOLOR=["#FFB74D","#4FC3F7","#81C784","#FFD54F"];
-const GRAD='<defs><radialGradient id="gr0" cx="35%" cy="30%"><stop offset="0" stop-color="#FFE0B2"/><stop offset="1" stop-color="#FF9800"/></radialGradient><radialGradient id="gr1" cx="35%" cy="30%"><stop offset="0" stop-color="#B3E5FC"/><stop offset="1" stop-color="#039BE5"/></radialGradient><radialGradient id="gr2" cx="35%" cy="30%"><stop offset="0" stop-color="#C8E6C9"/><stop offset="1" stop-color="#43A047"/></radialGradient><radialGradient id="gr3" cx="35%" cy="30%"><stop offset="0" stop-color="#FFF3C0"/><stop offset="1" stop-color="#FFB300"/></radialGradient></defs>';
+const GCOLOR=["#FFB74D","#4FC3F7","#81C784","#CE93D8"];
+const GRAD='<defs><filter id="gglow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="1.1" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><radialGradient id="gr0" cx="35%" cy="30%"><stop offset="0" stop-color="#FFE0B2"/><stop offset="1" stop-color="#FF9800"/></radialGradient><radialGradient id="gr1" cx="35%" cy="30%"><stop offset="0" stop-color="#B3E5FC"/><stop offset="1" stop-color="#039BE5"/></radialGradient><radialGradient id="gr2" cx="35%" cy="30%"><stop offset="0" stop-color="#C8E6C9"/><stop offset="1" stop-color="#43A047"/></radialGradient><radialGradient id="gr3" cx="35%" cy="30%"><stop offset="0" stop-color="#F3D9FF"/><stop offset="1" stop-color="#8E44AD"/></radialGradient></defs>';
 const STOPS_CLS=[
  {id:"c1",t:"开场任务",d:"建5个变量",icon:"🖊",page:["08",26]},
  {id:"c2",t:"命令三要素",d:"输入·赋值·打印",icon:"⌨",page:["08",28]},
@@ -635,8 +633,14 @@ const STOPS_CLS=[
  {id:"c4",t:"打印店案例",d:"打印的用场",icon:"🖨",page:["08",34]},
  {id:"c5",t:"下课挑战",d:"可选·不占分",icon:"🏁",page:["08",44]}];
 const STXY_CLS=[[10,14],[33,8],[56,14],[78,8],[52,30]];
-let kgScope="all";
-function setKgScope(v){kgScope=v;document.getElementById("kgScCls").classList.toggle("on",v==="cls");document.getElementById("kgScAll").classList.toggle("on",v==="all");kgView="map";renderKG()}
+const STOPS_P3=[
+ {id:"p1",t:"流程图",d:"把步骤画出来",icon:"📐",page:["17",7]},
+ {id:"p2",t:"判断",d:"条件的岔路口",icon:"🔀",page:["17",6]},
+ {id:"p3",t:"循环",d:"重复交给机器人",icon:"🔁",page:["17",8]},
+ {id:"p4",t:"存钱罐",d:"车间·判断+循环",icon:"🐷",bot:"tank"}];
+const STXY_P3=[[12,12],[40,8],[68,14],[44,32]];
+let kgScope="all",homeScope="all";
+function setKgScope(v){kgScope=v;renderKG()}
 let kgView="map",kgV={x:0,y:0,s:1};let kgHide={0:false,1:false,2:false,3:false};
 function stopDone(st){
  if(st.page)return !!(state.visited&&state.visited[st.page[0]+"-"+st.page[1]]);
@@ -654,15 +658,17 @@ function kgRefresh(){const t=document.getElementById("tab-graph");if(t&&t.classL
 function setKgView(v){kgView=v;
  document.getElementById("kgTabMap").classList.toggle("on",v==="map");
  document.getElementById("kgTabGraph").classList.toggle("on",v==="graph");
+ const sw=document.getElementById("kgScopeWrap");if(sw)sw.style.display=(v==="map")?"inline-flex":"none";
  kgV={x:0,y:0,s:1};renderKG()}
 function kgProgText(){const n=STOPS.filter(stopDone).length;
  document.getElementById("kgProg").innerHTML="已点亮 <b>"+n+"</b> / "+STOPS.length+" 站"+(n===STOPS.length?" 🎉 全图通关！":"")}
 function renderKG(){if(kgView==="map")renderMap();else renderGraph()}
-function renderMap(){const box=document.getElementById("kgBox");if(!box)return;
- const stops=kgScope==="cls"?STOPS_CLS:STOPS,XY=kgScope==="cls"?STXY_CLS:STXY;
+function renderMap(boxId,scope){boxId=boxId||"kgBox";scope=scope||kgScope;
+ const box=document.getElementById(boxId);if(!box)return;
+ const stops=scope==="cls"?STOPS_CLS:scope==="p3"?STOPS_P3:STOPS,XY=scope==="cls"?STXY_CLS:scope==="p3"?STXY_P3:STXY;
  let cur=-1;stops.forEach((st,i)=>{if(cur<0&&!stopDone(st))cur=i});
  let n=0;stops.forEach(st=>{if(stopDone(st))n++});
- document.getElementById("kgProg").innerHTML="已点亮 <b>"+n+"</b> / "+stops.length+" 站"+(n===stops.length?" 🎉 全图通关！":"");
+ const pe=document.getElementById("kgProg");if(pe)pe.innerHTML="已点亮 <b>"+n+"</b> / "+stops.length+" 站"+(n===stops.length?" 🎉 全图通关！":"");
  let path="";
  for(let k=0;k<stops.length-1;k++){const p1=XY[k],p2=XY[k+1];
   const mx=(p1[0]+p2[0])/2,my=(p1[1]+p2[1])/2+(k%2?4:-4);
@@ -677,8 +683,8 @@ function renderMap(){const box=document.getElementById("kgBox");if(!box)return;
   if(isCur)g+='<rect class="stf" x="'+(x-8.5)+'" y="'+(y+8.2)+'" width="17" height="4.6" rx="2.3"/><text class="stft" x="'+x+'" y="'+(y+11.5)+'">下一站 ▶</text>';
   g+='</g>';stations+=g;
   labels+='<text class="stt'+(done?" d":"")+'" x="'+x+'" y="'+(y-8.8)+'">'+st.t+'</text>';});
- box.innerHTML='<div class="mapwrap"><svg viewBox="0 -9 100 72">'+path+stations+labels+'</svg></div>';
- box.querySelectorAll(".stG").forEach(g=>{g.style.cursor="pointer";g.onclick=()=>stopGo(stops[+g.dataset.i])});
+ box.innerHTML='<div class="mapwrap"><svg viewBox="0 -9 100 72"><text class="decor" x="2" y="-1">🚩</text><text class="decor" x="92" y="56">🏁</text>'+path+stations+labels+'</svg></div>';
+ box.querySelectorAll(".stG").forEach(g=>{g.style.cursor="pointer";g.onclick=()=>{window.__fromMapTab=(boxId==="homeMapBox")?"home":"graph";stopGo(stops[+g.dataset.i])}});
 }
 function renderGraph(){const box=document.getElementById("kgBox");if(!box)return;kgProgText();
  const N=(id)=>GN.find(n=>n.id===id);
@@ -690,14 +696,14 @@ function renderGraph(){const box=document.getElementById("kgBox");if(!box)return
   edges+='<path class="geu" data-a="'+a.id+'" data-b="'+b.id+'" d="'+d+'"/>';
   edges+='<path class="ge'+(got[b.id]?" on":"")+'" data-a="'+a.id+'" data-b="'+b.id+'" d="'+d+'"/>';});
  GN.forEach((n,i)=>{nodes+='<g class="gn'+(got[n.id]?" on":"")+'" data-id="'+n.id+'" style="animation-delay:'+(i*55)+'ms" transform="translate('+n.x+','+n.y+')">'
-  +'<circle class="ghalo" r="9.5"/><circle class="gnc" fill="url(#gr'+n.c+')" stroke="'+GCOLOR[n.c]+'" stroke-width=".55" r="6.2"/><text class="gnt" y="-8.6">'+n.t+'</text><text class="gnd" y="12.2">'+(n.c===3?"素养":(n.c===2?"任务":(n.c===1?"结构":"基础")))+'</text>'
+  +'<circle class="ghalo" r="9.5"/><circle class="gnc" fill="url(#gr'+n.c+')" stroke="'+GCOLOR[n.c]+'" stroke-width=".55" r="6.2"/><rect class="gnp" x="-9" y="-11.7" width="18" height="4.8" rx="2.4"/><text class="gnt" y="-8.3">'+n.t+'</text><text class="gnd" y="12.2">'+(n.c===3?"素养":(n.c===2?"任务":(n.c===1?"结构":"基础")))+'</text>'
   +(got[n.id]?'<text class="gk" x="4.6" y="-5.4">✓</text>':"")+'</g>';});
  box.innerHTML='<div class="gwrap"><div class="gctl"><span class="kchip kc0" data-c="0" onclick="kgToggleC(0)">基础</span><span class="kchip kc1" data-c="1" onclick="kgToggleC(1)">结构</span><span class="kchip kc2" data-c="2" onclick="kgToggleC(2)">任务</span><span class="kchip kc3" data-c="3" onclick="kgToggleC(3)">素养</span><button class="tbtn" onclick="kgZoom(1.25)">＋</button><button class="tbtn" onclick="kgZoom(.8)">－</button><button class="tbtn" onclick="kgReset()">⌂</button></div><div class="ghint">滚轮缩放 · 拖拽平移 · 悬停看邻居 · 点胶囊收起一类</div>'
   +'<svg id="kgSvg" viewBox="0 0 64 103"><g id="kgT" transform="translate(0,0) scale(1)">'+GRAD+edges+nodes+'</g></svg></div>';
  const svg=document.getElementById("kgSvg");
  svg.addEventListener("wheel",ev=>{ev.preventDefault();const f=ev.deltaY<0?1.12:.89;kgZoomAt(f,ev);},{passive:false});
  let drag=null;
- svg.addEventListener("pointerdown",ev=>{svg.style.transform="";drag={x:ev.clientX,y:ev.clientY,ox:kgV.x,oy:kgV.y};svg.setPointerCapture(ev.pointerId)});
+ svg.addEventListener("pointerdown",ev=>{drag={x:ev.clientX,y:ev.clientY,ox:kgV.x,oy:kgV.y};svg.setPointerCapture(ev.pointerId)});
  svg.addEventListener("pointermove",ev=>{if(!drag)return;const r=svg.getBoundingClientRect();
   kgV.x=drag.ox+(ev.clientX-drag.x)*64/r.width;kgV.y=drag.oy+(ev.clientY-drag.y)*103/r.height;applyT()});
  svg.addEventListener("pointerup",()=>drag=null);
@@ -712,10 +718,7 @@ function renderGraph(){const box=document.getElementById("kgBox");if(!box)return
    if(st)stopGo(st);});});
  svg.querySelectorAll(".gn").forEach(x=>{const n=N(x.dataset.id);if(kgHide[n.c]){x.style.opacity=0;x.style.transform="scale(0)";x.style.pointerEvents="none"}});
  svg.querySelectorAll(".ge,.geu").forEach(p=>{const a=N(p.dataset.a||p.dataset.b),b=N(p.dataset.b||p.dataset.a);if(kgHide[a.c]||kgHide[b.c])p.style.display="none";});
- svg.addEventListener("mousemove",ev=>{if(drag)return;const r=svg.getBoundingClientRect();
-   const px=(ev.clientX-r.left)/r.width-.5,py=(ev.clientY-r.top)/r.height-.5;
-   svg.style.transform="perspective(950px) rotateX("+(-py*9).toFixed(1)+"deg) rotateY("+(px*11).toFixed(1)+"deg)";});
- svg.addEventListener("mouseleave",()=>svg.style.transform="");
+ 
  applyT();}
 function applyT(){const g=document.getElementById("kgT");if(g)g.setAttribute("transform","translate("+kgV.x+","+kgV.y+") scale("+kgV.s+")")}
 function kgZoom(f){kgV.s=Math.min(4,Math.max(.6,kgV.s*f));applyT()}
@@ -726,9 +729,11 @@ function kgReset(){kgV={x:0,y:0,s:1};applyT()}
 function kgToggleC(c){kgHide[c]=!kgHide[c];document.querySelectorAll(".kchip").forEach(ch=>ch.classList.toggle("off",kgHide[+ch.dataset.c]));renderGraph()}
 let hallA=0,hallDrag=null;
 function hallInit(){const r=document.getElementById("hallRoom");if(!r||r.dataset.init)return;r.dataset.init="1";
- r.addEventListener("pointerdown",e=>{hallDrag={x:e.clientX,a:hallA};r.setPointerCapture(e.pointerId)});
- r.addEventListener("pointermove",e=>{if(!hallDrag)return;hallA=hallDrag.a+(e.clientX-hallDrag.x)*.25;applyHall()});
- r.addEventListener("pointerup",()=>hallDrag=null);}
+ r.addEventListener("dragstart",e=>e.preventDefault());
+ r.addEventListener("pointerdown",e=>{e.preventDefault();hallDrag={x:e.clientX,a:hallA,m:0};try{r.setPointerCapture(e.pointerId)}catch(_){}});
+ r.addEventListener("pointermove",e=>{if(!hallDrag)return;const dx=e.clientX-hallDrag.x;hallDrag.m=Math.max(hallDrag.m,Math.abs(dx));hallA=hallDrag.a+dx*.25;applyHall()});
+ r.addEventListener("pointerup",e=>{if(hallDrag&&hallDrag.m<6){const w=e.target.closest&&e.target.closest(".wall");if(w&&w.dataset.go)showTab(w.dataset.go)}hallDrag=null});
+ r.addEventListener("pointercancel",()=>hallDrag=null);}
 function applyHall(){const r=document.getElementById("hallRoom");if(r)r.style.transform="translateZ(-30px) rotateY("+hallA+"deg)"}
 function hallSpin(d){hallA+=d;applyHall()}
 function clsAsk(){const a=document.getElementById("aip");if(!a.classList.contains("on"))toggleAip();
@@ -972,6 +977,7 @@ const VOICE2={pvall:"data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU5
 const RVOICE=[["「手势闯关」四种手势","faqgest"],["去「机器人车间」选「存钱罐","faqtank"],["学号是编号不是数量","faqxh"],["把那件事用「分析：」","faqfx"],["这个问题我卡壳了","fallback"],["我是小邮，财务机器人课堂的伴学智能体","hello"],["我在「机器人车间」陪跑了一台","botrun"],["你刚在首页判断了","shf"]];
 function voiceForReply(t){if(!t)return null;t=String(t).replace(/<[^>]*>/g,"");for(const p of RVOICE)if(t.includes(p[0]))return p[1];return null}
 function sayVoice(k){try{new Audio(VOICE[k]).play()}catch(e){}
+  const fb2=document.querySelector(".fab");if(fb2){fb2.classList.add("talking");setTimeout(()=>fb2.classList.remove("talking"),2400)}
   const f=document.getElementById("xyFace");if(f){f.classList.add("talking");setTimeout(()=>f.classList.remove("talking"),2300)}}
 function sayVoiceOnce(k,f){if(f&&globalThis[f])return;globalThis[f]=1;sayVoice(k)}
 const AQUICK=["小邮，开口说一句","怎么用手答题？","生活费是收入吗？","存钱罐怎么改圈数？","学号为什么存字符？","分析：打车去吃饭一共58元记餐饮"];
@@ -1058,7 +1064,7 @@ function applyMode(){const b=document.getElementById("modeBadge");
 (function init(){
   document.getElementById("appName").textContent=CONFIG.name;
   document.getElementById("appSub").textContent=CONFIG.sub;
-  document.getElementById("footTxt").textContent=`学生先自己判断，AI 只做复核参考，拿不准的由老师终审 ｜ ${CONFIG.school} · ${CONFIG.cls}（公开页数据已匿名） ｜ v5.3 展厅版`;
+  document.getElementById("footTxt").textContent=`学生先自己判断，AI 只做复核参考，拿不准的由老师终审 ｜ ${CONFIG.school} · ${CONFIG.cls}（公开页数据已匿名） ｜ v5.4 精修版`;
   document.getElementById("aboutLand").innerHTML=`<ul style="margin-left:20px">
     <li><b>落地</b>：${CONFIG.school} ${CONFIG.cls}；围绕《基础会计》生活记账作业（旧账新用）运转，教师备课、课堂互动、课后订正三处日常使用</li>
     <li><b>声明</b>：AI 只生成辅助意见，一切评价由教师终审；学生端先判断、后揭晓；页面不含学生姓名，摄像头视频与练习数据均不离开本机</li>
@@ -1213,16 +1219,17 @@ lib04{
 .gv figure{margin:0}
 .gv video{width:100%;aspect-ratio:9/14;object-fit:cover;border-radius:10px;background:#000;display:block}
 .gv figcaption{text-align:center;font-size:12.5px;margin-top:3px;color:#6b5d52;font-weight:700}
-nav .nin{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
-nav .corner{margin-left:auto;display:flex;gap:6px}
+nav .nin{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding-right:200px}
+nav{position:relative}
+nav .corner{position:absolute;right:12px;top:50%;transform:translateY(-50%);display:flex;gap:6px}
 nav .corner button{font-size:13px;padding:7px 12px;opacity:.92}
 .geu{fill:none;stroke:#4A6FB5;stroke-width:1.5;opacity:.1}
 .ghalo{fill:none;stroke:rgba(160,200,255,.15);stroke-width:.45;stroke-dasharray:1.8 1.6;transform-box:fill-box;transform-origin:center;animation:gspin 16s linear infinite}
 @keyframes gspin{to{transform:rotate(360deg)}}
-.gstars{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.16) 1px,transparent 1.5px),radial-gradient(rgba(140,180,255,.12) 1px,transparent 1.5px);background-size:46px 46px,29px 29px;background-position:0 0,14px 22px;pointer-events:none}
+.gstars{position:absolute;inset:0;background-image:radial-gradient(600px 320px at 72% 14%,rgba(96,70,200,.32),transparent 70%),radial-gradient(520px 300px at 12% 85%,rgba(20,120,160,.25),transparent 70%),radial-gradient(rgba(255,255,255,.16) 1px,transparent 1.5px),radial-gradient(rgba(140,180,255,.12) 1px,transparent 1.5px);background-size:100% 100%,100% 100%,46px 46px,29px 29px;background-position:0 0,0 0,0 0,14px 22px;pointer-events:none}
 .gwrap{position:relative}
-.gctl{position:absolute;top:12px;right:12px;display:flex;gap:5px;align-items:center;z-index:5;flex-wrap:wrap;max-width:60%;justify-content:flex-end}
-.gctl .tbtn{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.25);padding:4px 10px;font-size:13px}
+.gctl{position:absolute;top:10px;right:10px;display:flex;gap:4px;align-items:center;z-index:5;background:transparent}
+.gctl .tbtn{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.25);padding:2px 8px;font-size:12.5px;line-height:1.4}
 .ghint{position:absolute;left:12px;bottom:8px;font-size:11.5px;color:rgba(255,255,255,.4);z-index:5}
 .deckCard{display:flex;flex-direction:column;gap:2px;align-items:flex-start;border:1.5px solid #E7D8C2;background:#fff;border-radius:12px;padding:8px 12px;cursor:pointer;transition:.15s}
 .deckCard b{font-size:14px;color:#4a2c1e}
@@ -1231,29 +1238,41 @@ nav .corner button{font-size:13px;padding:7px 12px;opacity:.92}
 .deckCard.on b{color:#8C1F28}
 .deckCard:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(140,31,40,.12)}
 #libDeckRail{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;width:100%}
-.mapEntry{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.homeMap .hmHead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+.hmSub{font-size:13.5px;font-weight:400;color:#8a7a6a}
+.homeMap #homeMapBox .mapwrap{border-radius:12px}
 .meBtns{display:flex;gap:8px;flex-wrap:wrap}
 .backmap{position:absolute;top:10px;right:10px;z-index:9;box-shadow:0 4px 14px rgba(80,20,20,.25)}
 .stage{position:relative}
 .hallStage{perspective:1150px;height:66vh;min-height:420px;overflow:hidden;background:radial-gradient(ellipse at center,#1C2438,#0B0F1A);border-radius:18px;border:1px solid #2A3550;position:relative}
-.room{width:min(880px,90vw);height:52vh;min-height:360px;margin:7vh auto 0;position:relative;transform-style:preserve-3d;transition:transform .18s ease-out;cursor:grab}
+.room{width:min(880px,90vw);height:52vh;min-height:360px;margin:7vh auto 0;position:relative;transform-style:preserve-3d;transition:transform .18s ease-out;cursor:grab;user-select:none;-webkit-user-drag:none}
 .room:active{cursor:grabbing}
-.wall{position:absolute;inset:0;border-radius:16px;padding:26px 30px;display:flex;flex-direction:column;gap:8px;justify-content:center;align-items:flex-start;backface-visibility:hidden;box-shadow:inset 0 0 60px rgba(0,0,0,.5)}
-.wall .wT{font-size:22px;font-weight:800;color:#fff}
-.wall .wD{font-size:14px;color:rgba(255,255,255,.75);margin-bottom:10px}
+.wall{position:absolute;inset:8% 6%;border-radius:14px;padding:20px;display:flex;align-items:center;justify-content:center;backface-visibility:hidden;box-shadow:inset 0 0 60px rgba(0,0,0,.5);cursor:pointer;user-select:none;-webkit-user-drag:none}
+.wall:before{content:"";position:absolute;top:-8%;left:18%;right:18%;height:55%;background:radial-gradient(ellipse at top,rgba(255,240,200,.16),transparent 72%);pointer-events:none}
+.frame{background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.4);border-radius:12px;padding:20px 30px;box-shadow:0 12px 34px rgba(0,0,0,.45),inset 0 0 0 7px rgba(255,255,255,.05);display:flex;flex-direction:column;gap:5px;align-items:center;text-align:center;transition:.2s;max-width:78%}
+.wall:hover .frame{border-color:#FFE082;box-shadow:0 16px 44px rgba(0,0,0,.5),0 0 26px rgba(255,224,130,.3);transform:translateY(-3px)}
+.fIc{font-size:46px;line-height:1.1}
+.go{font-size:12.5px;color:#FFE082;font-weight:800;margin-top:2px}
+.floor{position:absolute;left:-25%;right:-25%;bottom:-2%;height:22%;background:linear-gradient(#232E4A,#0B0F1A);transform:perspective(420px) rotateX(58deg);transform-origin:bottom;pointer-events:none}
+.wall .wT{font-size:21px;font-weight:800;color:#fff}
+.wall .wD{font-size:13.5px;color:rgba(255,255,255,.78)}
 .w1{background:linear-gradient(135deg,#5D1A22,#8C2430);transform:rotateY(0deg) translateZ(-300px)}
 .w2{background:linear-gradient(135deg,#153A2C,#1F5A41);transform:rotateY(90deg) translateZ(-300px)}
 .w3{background:linear-gradient(135deg,#1E2C4E,#2E4478);transform:rotateY(180deg) translateZ(-300px)}
 .w4{background:linear-gradient(135deg,#4A3510,#7A5A1E);transform:rotateY(270deg) translateZ(-300px)}
 .hallCtl{display:flex;gap:8px;align-items:center;margin-top:10px}
-.aiKb{margin-left:8px;font-size:10.5px;background:#EAF3EA;color:#2E6B2E;border-radius:999px;padding:2px 8px;font-weight:700;white-space:nowrap}
+.fab.talking svg.xybot{animation:xsay .5s ease-in-out infinite}
+.fab.talking:after{content:"🔈";position:absolute;top:-16px;right:-4px;font-size:17px;animation:xping 1s ease-in-out infinite}
+@keyframes xsay{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-5px) rotate(-6deg)}75%{transform:translateY(-5px) rotate(6deg)}}
+.afoot{font-size:11px;color:#8a7a6a;padding:5px 10px;border-top:1px dashed var(--line);background:#FFFDF8}
 .kgTabs{display:flex;gap:8px;align-items:center;margin:0 0 10px;flex-wrap:wrap}
 .kgTabs .chip.on{background:#8C1F28;color:#fff;border-color:#8C1F28}
 .kprog{margin-left:auto;font-size:14.5px;color:#4a2c1e}
 .kprog b{color:#2E6B2E;font-size:16px}
 .mapwrap{background:linear-gradient(180deg,#FFF9EE,#FDEFD8);padding:8px}
 .mapwrap svg{width:100%;display:block}
-.stp{fill:none;stroke:#D8B888;stroke-width:1.1;stroke-dasharray:2.6 2.2;animation:dashf 1.6s linear infinite}
+.stp{fill:none;stroke:#C99B5F;stroke-width:1.25;stroke-dasharray:2.6 2.2;animation:dashf 1.6s linear infinite;stroke-linecap:round}
+.decor{font-size:4.2px;opacity:.95}
 @keyframes dashf{to{stroke-dashoffset:-4.8}}
 .stc{fill:#fff;stroke:#C9A87E;stroke-width:.6;transition:.2s}
 .stc.done{fill:#DFF0DF;stroke:#2E6B2E;stroke-width:.9}
@@ -1265,20 +1284,20 @@ nav .corner button{font-size:13px;padding:7px 12px;opacity:.92}
 .stbt{font-size:2.6px;fill:#fff;text-anchor:middle;pointer-events:none}
 .stf{fill:#B5433A;opacity:.94}
 .stft{font-size:2.7px;fill:#fff;text-anchor:middle;font-weight:700}
-.stt{font-size:3px;font-weight:800;fill:#4a2c1e;text-anchor:middle}
+.stt{font-size:3px;font-weight:800;fill:#4a2c1e;text-anchor:middle;paint-order:stroke;stroke:#FBF3E2;stroke-width:1.1px;stroke-linejoin:round}
 .stt.d{fill:#2E6B2E}
 .gwrap{background:linear-gradient(160deg,#0E1424,#1A2338);padding:10px;position:relative}
 .gctl{display:flex;gap:6px;align-items:center;margin-bottom:6px}
 .gctl .tbtn{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.25)}
 .gnote{font-size:12.5px;color:rgba(255,255,255,.55);margin-left:auto}
-.kchip{cursor:pointer;font-size:12.5px;font-weight:800;border-radius:999px;padding:3px 11px;color:#102040;border:1px solid rgba(255,255,255,.3);transition:.15s}
-.kchip.kc0{background:#FFB74D}.kchip.kc1{background:#4FC3F7}.kchip.kc2{background:#81C784}.kchip.kc3{background:#FFD54F}
-.kchip.off{opacity:.32;text-decoration:line-through}
-.gwrap svg{transition:transform .18s ease}
+.kchip{cursor:pointer;font-size:12px;font-weight:800;border-radius:999px;padding:2px 9px;color:#102040;border:1px solid rgba(255,255,255,.3);transition:.15s}
+.kchip.kc0{background:#FFB74D}.kchip.kc1{background:#4FC3F7}.kchip.kc2{background:#81C784}.kchip.kc3{background:#CE93D8}
+.kchip.off{opacity:.28;filter:grayscale(1);text-decoration:line-through;text-decoration-thickness:2px}
+.stt{paint-order:stroke;stroke:#FBF3E2;stroke-width:1.2px;stroke-linejoin:round}
 .gwrap svg{width:100%;display:block;touch-action:none;cursor:grab}
 .gwrap svg:active{cursor:grabbing}
 .ge{fill:none;stroke:url(#none);stroke:#3D5A8A;stroke-width:.5;opacity:.45;transition:.25s}
-.ge.on{stroke:#5EC8F2;stroke-width:.62;opacity:.85;stroke-dasharray:2.4 2;animation:gflow 1.3s linear infinite}
+.ge.on{filter:url(#gglow);stroke:#5EC8F2;stroke-width:.62;opacity:.9;stroke-dasharray:2.4 2;animation:gflow 1.3s linear infinite}
 @keyframes gflow{to{stroke-dashoffset:-4.4}}
 .gn{cursor:pointer;transform-box:fill-box;transform-origin:center;animation:gpop .45s backwards}
 @keyframes gpop{from{opacity:0;transform:scale(.3)}}
@@ -1286,7 +1305,8 @@ nav .corner button{font-size:13px;padding:7px 12px;opacity:.92}
 .c0{fill:#FFB74D;stroke:#A56A1C}.c1{fill:#4FC3F7;stroke:#1C74A5}.c2{fill:#81C784;stroke:#3D7A42}.c3{fill:#FFD54F;stroke:#A58A1C}
 .gn.on .gnc{filter:drop-shadow(0 0 1.6px currentColor)}
 .gn.on .c0{stroke:#FFE082}.gn.on .c1{stroke:#B3E5FC}.gn.on .c2{stroke:#C8E6C9}.gn.on .c3{stroke:#FFF3C0}
-.gnt{font-size:3.4px;font-weight:800;fill:#EAF2FF;text-anchor:middle}
+.gnt{font-size:3.2px;font-weight:800;fill:#EAF2FF;text-anchor:middle}
+.gnp{fill:rgba(13,22,44,.78);stroke:rgba(130,170,230,.3);stroke-width:.22}
 .gnd{font-size:2.2px;fill:#8FA3C8;text-anchor:middle}
 .gk{font-size:3.2px;fill:#9CF2B0;font-weight:800}
 svg.dim .gn{opacity:.13}svg.dim .ge{opacity:.07}
@@ -1452,7 +1472,7 @@ function dkShow(zone,key){
     r.style.cursor="pointer";r.title="点击揭晓/收起";
     r.onclick=ev=>{ev.stopPropagation();r.classList.toggle("open");if(st2(zone).spot)dkSpotTo(zone,r)}});
   state.visited=state.visited||{};if(!state.visited[key]){state.visited[key]=1;persist();kgRefresh();}
-  if(window.__fromMap){window.__fromMap=0;const bm=document.createElement("button");bm.className="tbtn backmap";bm.textContent="↩ 回任务地图";bm.onclick=()=>showTab("graph");stage.appendChild(bm);}
+  if(window.__fromMap){window.__fromMap=0;const bm=document.createElement("button");bm.className="tbtn backmap";const bt=window.__fromMapTab||"graph";bm.textContent=bt==="home"?"↩ 回首页地图":"↩ 回任务地图";bm.onclick=()=>showTab(bt);stage.appendChild(bm);}
   stage.onclick=()=>dkRevealCur(zone);
   dkUpdatePageNo(zone);
 }
@@ -1507,8 +1527,8 @@ document.addEventListener("keydown",e=>{
   if(e.key==="ArrowRight"&&!document.getElementById("libJump").__hasFocus)dkNext();if(e.key==="ArrowLeft")dkPrev();
 });
 
-const LIBDECKS={"10":{"name":"10 机器人上岗","scope":"lib10"},"14":{"name":"14 图纸搬家","scope":"lib14"},"16":{"name":"16 循环","scope":"lib16"},"17":{"name":"17 判断＋循环·精修","scope":"dk17"},"04":{"name":"04 开学第一课","scope":"lib04"},"08":{"name":"08 纸上篇·变量命令流程","scope":"dk08"}};
-const LDECKDESC={"10":"机器人第一次跑起来","14":"把纸上的图纸搬进电脑","16":"让机器人重复干活","17":"判断＋循环·参赛精修","04":"开学第一课·认识课程","08":"变量命令流程·本节课主课件"};
+const LIBDECKS={"10":{"name":"机器人上岗（上机首秀）","scope":"lib10"},"14":{"name":"图纸搬家","scope":"lib14"},"16":{"name":"让机器人循环","scope":"lib16"},"17":{"name":"判断＋循环（精修版）","scope":"dk17"},"04":{"name":"开学第一课","scope":"lib04"},"08":{"name":"变量·命令·流程（本节课）","scope":"dk08"}};
+const LDECKDESC={"10":"机器人第一次跑起来","14":"把纸上的图纸搬进电脑","16":"让机器人重复干活","17":"参赛精修版课件","04":"开学第一课·认识课程","08":"变量命令流程·本节课主课件"};
 const LIBRAILS={"10":[["10-1","1 项目二 · 上机"],["10-2","2 今天做两件事"],["10-3","3 开场抽查 · 图纸"],["10-4","4 新同事上岗"],["10-5","5 第一跑 · 跑通现成流程"],["10-6","6 ⏸暂停点⑮ · 打招呼三件事"],["10-7","7 纸上的格子搬进来"],["10-8","8 上机任务 1"],["10-9","9 ⏸暂停点⑯ · 余额格先猜后验"],["10-10","10 同桌互考 · 取件员上机版"],["10-11","11 命令活起来"],["10-12","12 三种串法各来一条"],["10-13","13 跑你的图纸"],["10-14","14 卡住了怎么办"],["10-15","15 之前的悬念 · 当场揭晓"],["10-16","16 ⏸暂停点⑰ · 读报错"],["10-17","17 类型转换 · 一句话说透"],["10-18","18 ⏸暂停点⑱ · 排错三行（第…"],["10-19","19 揭晓第二笔账"],["10-20","20 ⏸暂停点⑲ · 项目二结业"],["10-21","21 项目二，结业！"]],"14":[["14-1","1 项目三 · 图纸搬家"],["14-2","2 今天做两件事"],["14-3","3 大任务验收 · 当场跑"],["14-4","4 ⏸暂停点⑳ · 一句话讲流程"],["14-5","5 从今天起 · 它有名字了"],["14-6","6 搬什么 · 图纸对软件"],["14-7","7 认识工作台 · 组件"],["14-8","8 老师演示 · 你只管看"],["14-9","9 ⏸暂停点㉑ · 搬家三步"],["14-10","10 对答案 · 一致才算通"],["14-11","11 跑错了 · 正常"],["14-12","12 加一步 · 让流程会问"],["14-13","13 ⏸暂停点㉒ · 真报错对照"],["14-14","14 跑通的 · 立刻存档"],["14-15","15 ⏸暂停点㉓ · 三句话收尾"],["14-16","16 今天 · 你完成了三件事"],["14-17","17 下一讲 · 流程变聪明"],["14-18","18 课后任务"]],"16":[["16-1","1 项目三 · 循环"],["16-2","2 今天做两件事"],["16-3","3 ⏸暂停点㉔ · 每人一张图纸"],["16-4","4 回忆 · 上周的流程"],["16-5","5 答案 · 今天的主角"],["16-6","6 老师演示 · 你只管看"],["16-7","7 ⏸暂停点㉕ · 你来拼循环版"],["16-8","8 对答案 · 弹对才算通"],["16-9","9 升级 · 次数听人的"],["16-10","10 ⏸暂停点㉖ · 翻车对照"],["16-11","11 跑通的 · 上架第二件"],["16-12","12 ⏸暂停点㉗ · 三句话收尾"],["16-13","13 今天 · 你完成了三件事"],["16-14","14 下一讲 · 判断＋循环合体"],["16-15","15 课后任务"]],"17":[["17-1","1 判断＋循环——流程自己会"],["17-2","2 今天做两件事"],["17-3","3 ⏸ 暂停点㉘　没做作业？"],["17-4","4 对作业：填 3、5、10"],["17-5","5 连环画：小邮的 500 "],["17-6","6 把判断装进循环肚子"],["17-7","7 图纸四行——跟着箭头走一"],["17-8","8 ⏸ 暂停点㉙　看演示：它"],["17-9","9 ⏸ 暂停点㉚　轮到你：存"],["17-10","10 你的存钱罐是哪种表现？点"],["17-11","11 升级：小邮问你「这个月存"],["17-12","12 ⏸ 暂停点㉛　项目三收官"],["17-13","13 项目三三件作品，全在架上"],["17-14","14 存钱罐上架第三件——下一"],["17-15","15 🏁 项目三大任务　小卖"],["17-16","16 下课。"]],"04":[["04-1","1 财务机器人应用与开发"],["04-2","2 课堂公约 · 先认标签"],["04-3","3 开场三问"],["04-4","4 这门课学什么"],["04-5","5 课程全景"],["04-6","6 同桌互审 · 定档"],["04-7","7 现在 · 当堂做"],["04-8","8 生活入口"],["04-9","9 规矩实验室"],["04-10","10 拆一台洗衣机 · ①"],["04-11","11 拆一台洗衣机 · ②"],["04-12","12 拆一台洗衣机 · ③"],["04-13","13 ⏸暂停点① · 出事猜想"],["04-14","14 🎲 随机抽人"],["04-15","15 ⏸暂停点② · 停电"],["04-16","16 ⏸暂停点③ · 忘放洗衣液"],["04-17","17 ⏸暂停点④ · 一直没人拿"],["04-18","18 换个机器试试"],["04-19","19 🎲 随机抽人"],["04-20","20 拓展 · 设计未来的功能"],["04-21","21 规矩实验室 · 收束"],["04-22","22 转折 · 从机器到 AI"],["04-23","23 实验任务发布"],["04-24","24 引向课程方向"],["04-25","25 收尾 · 三句话"],["04-26","26 开头就交作业"]],"08":[["08-1","1 项目二 · 变量"],["08-2","2 今天做两件事"],["08-3","3 收作业 · 揭榜"],["08-4","4 它干对了，但是——"],["08-5","5 收作业 · 原样执行"],["08-6","6 ⏸暂停点① · 补前课（好命…"],["08-7","7 生活里找变量 · 第 1 站"],["08-8","8 轮到你了 · 议一议"],["08-9","9 老师总结 · 你们刚找到的，…"],["08-10","10 把变量画成你天天见的东西"],["08-11","11 变量的三个动作 · 你的钱包…"],["08-12","12 ⏸暂停点② · 余额格先猜后验"],["08-13","13 给格子起名字"],["08-14","14 任务 2-E2 · ⏸ 暂停…"],["08-15","15 不同货，不同格 · 先分堆，…"],["08-16","16 为什么必须分清"],["08-17","17 ⏸暂停点④ · 五类对号入座"],["08-18","18 全员任务 · 建完举手"],["08-19","19 变量用在哪 · 真实三连"],["08-20","20 全班动手 · 变量接龙"],["08-21","21 ⏸暂停点⑤ · 取件码能不能算"],["08-22","22 收尾 · 三句话"],["08-23","23 接下来：教机器人干活"],["08-24","24 项目二 · 命令"],["08-25","25 今天做两件事"],["08-26","26 开场任务 · 智多星现场建"],["08-27","27 引入 · 先说生活"],["08-28","28 老师命名 · 这就是命令的三…"],["08-29","29 案例① · 背景"],["08-30","30 ⏸暂停点⑥ · 拆叫号命令"],["08-31","31 案例① · 揭晓"],["08-32","32 看图认命令 · 全班抢答 ·…"],["08-33","33 ⏸暂停点⑦ · 挑两条拆三要素"],["08-34","34 案例② · 背景"],["08-35","35 ⏸暂停点⑧ · 补命令＋揪卧底"],["08-36","36 案例② · 揭晓"],["08-37","37 三种串法 · 一张图找串"],["08-38","38 ⏸暂停点⑨ · 三串法配例"],["08-39","39 先猜再跑 · 全班抢答"],["08-40","40 案例③ · 背景"],["08-41","41 ⏸暂停点⑩ · 给行程单挑刺"],["08-42","42 案例③ · 揭晓"],["08-43","43 ⏸暂停点⑪ · 三句话配私例"],["08-44","44 接下来：跑起来，修得好"],["08-45","45 项目二 · 流程与调试"],["08-46","46 今天做两件事"],["08-47","47 开场抽查 · 电器串法"],["08-48","48 回收 · 黑板算过的那道题"],["08-49","49 任务卡 A · 第一步 · …"],["08-50","50 任务卡 B · 第二步 · …"],["08-51","51 ⏸暂停点⑫ · 图纸三行"],["08-52","52 调试三步 · 纸上版"],["08-53","53 ⏸暂停点⑬ · 全班找错"],["08-54","54 ⏸暂停点⑭ · 三数互验"],["08-55","55 纸上篇结业 · 一张图"],["08-56","56 下一站"],["08-57","57 纸上篇，结业！"],["08-58","58 下课挑战 · 可选 · 不占…"]]};
 dkState.lib={cur:0,spot:false,rail:null};
 function libDeck(d){
