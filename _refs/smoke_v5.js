@@ -111,7 +111,7 @@ try{
   ok("小邮讲解按钮",d.body.textContent.includes("让小邮讲解"));
   ok("AI知识库底注",!!d.querySelector(".afoot")&&!fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("aiKb"));
   ok("视差已移除(防放大发糊)",!fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("perspective(950px)"));
-  w.eval('kgZoom(1.25)');ok("缩放生效",w.eval('document.getElementById("kgT").getAttribute("transform")').includes("1.25"));
+  w.setKgView("graph");w.eval('kgZoom(1.25)');ok("缩放生效",w.eval('document.getElementById("kgT")&&document.getElementById("kgT").getAttribute("transform")||""').includes("1.25"));
   w.setKgView("map");
   w.showTab("about");
   const ab=d.getElementById("tab-about").textContent;
