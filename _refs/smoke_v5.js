@@ -15,7 +15,7 @@ const dom=new JSDOM(html,{runScripts:"dangerously",pretendToBeVisual:true,url:"h
     w.addEventListener("error",e=>errors.push("window:"+e.message));
   }});
 const w=dom.window,d=w.document;
-const T=[];const ok=(n,c)=>T.push([c?"✓":"✗",n])||(!c&&errors.push("断言:"+n));
+const T=[];const ok=(n,c)=>{T.push([c?"✓":"✗",n]);if(!c)errors.push("断言:"+n)};
 setTimeout(()=>{
 try{
   ok("标题=小邮伴学",d.getElementById("appName").textContent==="小邮伴学");

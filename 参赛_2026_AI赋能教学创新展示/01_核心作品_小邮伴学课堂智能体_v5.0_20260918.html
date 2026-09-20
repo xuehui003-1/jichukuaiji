@@ -616,7 +616,7 @@ const GCOLOR=["#FFB74D","#4FC3F7","#81C784","#FFD54F"];
 let kgView="map",kgV={x:0,y:0,s:1};
 function stopDone(st){
  if(st.page)return !!(state.visited&&state.visited[st.page[0]+"-"+st.page[1]]);
- if(st.bot)return typeof bot!=="undefined"&&bot.last&&bot.proj===st.bot;
+ if(st.bot)return !!(typeof bot!=="undefined"&&bot.last&&bot.proj===st.bot);
  if(st.botAny)return st.botAny.some(b=>typeof bot!=="undefined"&&bot.last&&bot.proj===b);
  if(st.tab==="home")return state.class.shf.done;
  if(st.tab==="gest")return g.score>=100;return false}
