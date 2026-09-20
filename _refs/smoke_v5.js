@@ -84,7 +84,7 @@ try{
   ok("进度条显示",d.getElementById("kgProg").textContent.includes("已点亮"));
   const cur0=d.querySelectorAll("#kgBox .string").length;ok("下一站脉冲(初始1站)",cur0===1);
   w.eval('state.class.pv.done=true;state.class.shf.done=true;renderKG()');
-  ok("完成自动点亮✓(审账站)",d.querySelectorAll("#kgBox .stb").length===1&&d.querySelectorAll("#kgBox .string").length===1);
+  ok("完成自动点亮✓(开场+审账)",d.querySelectorAll("#kgBox .stb").length===2&&d.querySelectorAll("#kgBox .string").length===1);
   w.setKgView("graph");
   ok("知识图谱视图(深色+11节点+曲线边)",d.querySelectorAll("#kgBox .gn").length===11&&d.querySelectorAll("#kgBox .ge").length===14);
   ok("审账/铁律着色(评环完成即绿)",d.querySelectorAll("#kgBox .gn.on").length>=2);
