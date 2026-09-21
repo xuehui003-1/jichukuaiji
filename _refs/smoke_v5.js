@@ -25,8 +25,8 @@ try{
   // 首页五卡+评环卡
   ok("首页课件馆卡",d.body.textContent.includes("任你翻 · 课件馆"));
   ok("6份课件口径",d.body.textContent.includes("全部 6 份课件 154 页"));
-  ok("版本标记v5.4",d.getElementById("footTxt").textContent.includes("v5.4 精修版"));
-  ok("评环卡改名",d.body.textContent.includes("30 秒体验：你判断，AI 复核，老师拍板"));
+  ok("版本标记v5.5",d.getElementById("footTxt").textContent.includes("v5.5 聚合版"));
+  ok("翻牌审账卡名",d.getElementById("tab-home").textContent.includes("30 秒体验：翻牌审账"));
   ok("首页无关系链卡",!d.querySelector("#tab-home .chain"));
   // 课件馆
   w.showTab("lib");
@@ -110,7 +110,18 @@ try{
   ok("课件馆书架卡",fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("deckCard")&&fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("LDECKDESC"));
   ok("小邮讲解按钮",d.body.textContent.includes("让小邮讲解"));
   ok("AI知识库底注",!!d.querySelector(".afoot")&&!fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("aiKb"));
-  ok("视差已移除(防放大发糊)",!fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("perspective(950px)"));
+ok("视差已移除(防放大发糊)",!fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("perspective(950px)"));
+  ok("嵌套修复:五标签直挂main",["graph","bot","gest","teach","about"].every(t=>d.getElementById("tab-"+t).parentElement.tagName==="MAIN"));
+  ok("首页仅一张任务地图",Array.from(d.querySelectorAll("#tab-home h3")).filter(h=>h.textContent.includes("学习任务地图")).length===1&&!d.querySelector(".mapEntry"));
+  ok("页头教师台/关于并排",d.querySelectorAll("header .gear").length===3);
+  ok("导航无课堂同步+课件馆入口",!d.querySelector("nav .nin #tb-class")&&!!d.querySelector("#tab-lib .syncBan"));
+  ok("录课实例预留位",!!d.querySelector("#tab-class .recSlot"));
+  w.eval('state.class.shf={};persist()');w.renderSHF();ok("翻牌正面三选项",d.querySelectorAll("#shfBox .opt").length===3&&d.querySelectorAll("#shfBox .rc").length===3);
+  w.shfFlip(1);ok("翻牌后复核+角色灯",!!d.querySelector("#shfBox .fcard")&&!!d.querySelector("#shfBox .basis")&&d.querySelector("#shfBox .rc.r2").classList.contains("on"));
+  w.renderStats();ok("统计折叠默认收起",!!d.querySelector(".statFold")&&!d.getElementById("statBody").classList.contains("open")&&d.querySelectorAll("#statBody .dt").length===40);
+  w.toggleStats();ok("统计展开可视化",d.getElementById("statBody").classList.contains("open")&&d.querySelectorAll("#statBody .bar").length===3);
+  ok("平面导览",typeof w.hallFlat==="function"&&!!d.getElementById("hallFlatBtn"));
+  ok("下拉含建站中亮牌",d.querySelectorAll("#kgScopeSel option[disabled]").length===1&&d.querySelectorAll("#homeScopeSel option").length===4);
   w.setKgView("graph");w.eval('kgZoom(1.25)');ok("缩放生效",w.eval('document.getElementById("kgT")&&document.getElementById("kgT").getAttribute("transform")||""').includes("1.25"));
   w.setKgView("map");
   w.showTab("about");
