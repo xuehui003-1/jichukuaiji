@@ -25,7 +25,12 @@ try{
   // 首页五卡+评环卡
   ok("首页课件馆卡",d.body.textContent.includes("任你翻 · 课件馆"));
   ok("6份课件口径",d.body.textContent.includes("全部 6 份课件 154 页"));
-  ok("版本标记v5.8",d.getElementById("footTxt").textContent.includes("v5.8 循序版"));
+  ok("版本标记v5.9",d.getElementById("footTxt").textContent.includes("v5.9 实况版"));
+  ok("首开地图即渲染",d.querySelectorAll("#homeMapBox .stG").length===9);
+  {const _h=d.getElementById("tab-home").innerHTML,_a=_h.indexOf('id="lead4"'),_b=_h.indexOf('id="secData"'),_c=_h.indexOf('id="lead5"');
+  ok("数据卡归位lead4后",_a>0&&_a<_b&&_b<_c);}
+  ok("三段卡通视频内嵌",w.eval("!!VID.xyintro&&!!VID.tmap&&!!VID.libtour")&&!!d.getElementById("mVid"));
+  ok("图谱画布锁比例",fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes(".gwrap{aspect-ratio:120/68"));
   const _hs=d.getElementById("tab-home").innerHTML,_ix=k=>_hs.indexOf('id="lead'+k+'"');
   ok("五步物理顺序1→5",[_ix(1),_ix(2),_ix(3),_ix(4),_ix(5)].every((v,k)=>v>-1&&(k===0||v>_ix(k))));
   ok("返回导览钮×5",d.querySelectorAll("#tab-home .backTour").length===5);
