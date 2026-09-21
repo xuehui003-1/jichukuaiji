@@ -25,8 +25,8 @@ try{
   // 首页五卡+评环卡
   ok("首页课件馆卡",d.body.textContent.includes("任你翻 · 课件馆"));
   ok("6份课件口径",d.body.textContent.includes("全部 6 份课件 154 页"));
-  ok("版本标记v5.5",d.getElementById("footTxt").textContent.includes("v5.5 聚合版"));
-  ok("翻牌审账卡名",d.getElementById("tab-home").textContent.includes("30 秒体验：翻牌审账"));
+  ok("版本标记v5.6",d.getElementById("footTxt").textContent.includes("v5.6 结构版"));
+  ok("翻牌审账卡名",d.getElementById("tab-home").textContent.includes("翻牌审账：这条账，你放行吗？"));
   ok("首页无关系链卡",!d.querySelector("#tab-home .chain"));
   // 课件馆
   w.showTab("lib");
@@ -80,20 +80,20 @@ try{
   ok("图标恢复圆形",fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("width:64px;height:64px;border-radius:50%"));
   ok("面板瘦长300宽",fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("width:min(300px"));
   ok("地图条浅色版",fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes(".mapBar{background:#FFFBF4"));
-  w.showTab("graph");
-  ok("任务地图9站",d.querySelectorAll("#kgBox .stG").length===9);
-  w.setKgScope("cls");
-  ok("本次课地图5站",d.querySelectorAll("#kgBox .stG").length===5);
-  w.setKgScope("all");
+  w.showTab("home");
+  ok("任务地图9站(首页)",d.querySelectorAll("#homeMapBox .stG").length===9);
+  w.eval('homeScope="cls";renderMap("homeMapBox","cls")');
+  ok("任务·变量命令流程5站",d.querySelectorAll("#homeMapBox .stG").length===5);
+  w.eval('homeScope="all";renderMap("homeMapBox","all")');
   ok("进度条显示",d.getElementById("kgProg").textContent.includes("已点亮"));
-  const cur0=d.querySelectorAll("#kgBox .string").length;ok("下一站脉冲(初始1站)",cur0===1);
-  w.eval('state.class.pv.done=true;state.class.shf.done=true;renderKG()');
-  ok("完成自动点亮✓(多站)",d.querySelectorAll("#kgBox .stb").length===4&&d.querySelectorAll("#kgBox .string").length===1);
-  w.setKgView("graph");
+  const cur0=d.querySelectorAll("#homeMapBox .string").length;ok("下一站脉冲(初始1站)",cur0===1);
+  w.eval('state.class.pv.done=true;state.class.shf.done=true;renderMap("homeMapBox","all")');
+  ok("完成自动点亮✓(多站)",d.querySelectorAll("#homeMapBox .stb").length===4&&d.querySelectorAll("#homeMapBox .string").length===1);
+  w.showTab("graph");
   ok("知识图谱视图(深色+11节点+曲线边)",d.querySelectorAll("#kgBox .gn").length===11&&d.querySelectorAll("#kgBox .ge").length===14);
   ok("审账/铁律着色(评环完成即绿)",d.querySelectorAll("#kgBox .gn.on").length>=2);
   ok("缩放平移函数",typeof w.kgZoom==="function"&&typeof w.kgReset==="function");
-  ok("分类图例4枚(收缩/展开)",d.querySelectorAll("#kgBox .kchip").length===4&&typeof w.kgToggleC==="function");
+  ok("分类图例4枚(画布外)",d.querySelectorAll("#kgCtl .kchip").length===4&&typeof w.kgToggleC==="function");
   w.kgToggleC(0);ok("真收缩(节点归零)",d.querySelectorAll("#kgBox .gn")[0].style.opacity==="0"&&d.querySelectorAll("#kgBox .geu")[0].style.display==="none");
   w.kgToggleC(0);
   w.showTab("hall");
@@ -102,10 +102,13 @@ try{
   ok("课件馆名无数字前缀",w.eval('Object.values(LIBDECKS).every(v=>!/^\\d/.test(v.name))'));
   w.showTab("home");
   ok("首页图文任务地图",!!d.querySelector("#tab-home .homeMap")&&d.querySelectorAll("#homeMapBox .stG").length===9);
-  ok("课程下拉(图谱页+首页)",!!d.getElementById("kgScopeSel")&&!!d.getElementById("homeScopeSel"));
-  w.eval('kgScopeSel.value="p3";setKgScope("p3")');
+  ok("任务范围下拉仅首页",!d.getElementById("kgScopeSel")&&!!d.getElementById("homeScopeSel")&&d.getElementById("homeScopeSel").textContent.includes("全部任务 · 9 站"));
+  ok("首页孤儿按钮组已清",!d.querySelector("#tab-home .meBtns")&&d.getElementById("tab-home").textContent.indexOf("本次课")<0);
+  w.eval('homeScope="p3";renderMap("homeMapBox","p3")');
+  ok("项目三地图4站",d.querySelectorAll("#homeMapBox .stG").length===4);
+  w.eval('homeScope="all";renderMap("homeMapBox","all")');
   ok("项目三地图4站",w.eval('kgScope')==="p3"&&false||true); // scope 存储校验
-  w.setKgView("graph");ok("图谱视图隐藏下拉",d.getElementById("kgScopeWrap").style.display==="none");
+  w.setKgView("graph");ok("图谱页纯图谱(控件在画布外)",!d.getElementById("kgScopeWrap")&&d.querySelectorAll("#kgCtl .kchip").length===4&&!d.querySelector("#kgBox .gctl"));
   w.setKgView("map");
   ok("课件馆书架卡",fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("deckCard")&&fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("LDECKDESC"));
   ok("小邮讲解按钮",d.body.textContent.includes("让小邮讲解"));
@@ -121,7 +124,12 @@ ok("视差已移除(防放大发糊)",!fs.readFileSync("/home/user/jichukuaiji/�
   w.renderStats();ok("统计折叠默认收起",!!d.querySelector(".statFold")&&!d.getElementById("statBody").classList.contains("open")&&d.querySelectorAll("#statBody .dt").length===40);
   w.toggleStats();ok("统计展开可视化",d.getElementById("statBody").classList.contains("open")&&d.querySelectorAll("#statBody .bar").length===3);
   ok("平面导览",typeof w.hallFlat==="function"&&!!d.getElementById("hallFlatBtn"));
-  ok("下拉含建站中亮牌",d.querySelectorAll("#kgScopeSel option[disabled]").length===1&&d.querySelectorAll("#homeScopeSel option").length===4);
+  ok("下拉含建站中亮牌",d.querySelectorAll("#homeScopeSel option[disabled]").length===1&&d.querySelectorAll("#homeScopeSel option").length===4);
+  w.libDeck("08");ok("课件子任务条(08六段)",d.querySelectorAll("#libSubBar .subChip").length===6);
+  w.libGo(7);ok("子任务跳页高亮",w.eval("dkState.lib.cur")===7&&d.querySelectorAll("#libSubBar .subChip.on").length===1);
+  w.showTab("class");ok("同步视图子任务五段",d.querySelectorAll("#clsSubBar .subChip").length===5);
+  w.showTab("lib");ok("课件馆封面×6",d.querySelectorAll("#libDeckRail .dcover").length===6);
+  ok("语音库≥20句",w.eval("Object.keys(VOICE).length")>=20);
   w.setKgView("graph");w.eval('kgZoom(1.25)');ok("缩放生效",w.eval('document.getElementById("kgT")&&document.getElementById("kgT").getAttribute("transform")||""').includes("1.25"));
   w.setKgView("map");
   w.showTab("about");
