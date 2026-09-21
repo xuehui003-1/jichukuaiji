@@ -214,7 +214,7 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:15px 18px;tex
       <figure><video controls preload="none" style="width:100%;border-radius:12px;background:#000;aspect-ratio:16/9" src="https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/repo/8C9YvXdeGUCHhXiyjrqw6o.mp4"></video><figcaption><b>片段① 开场任务（课件 26 页）</b>课堂导入＋智多星现场建命令，配合「名字消消乐」开场活动</figcaption></figure>
       <figure><video controls preload="none" style="width:100%;border-radius:12px;background:#000;aspect-ratio:16/9" src="https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/repo/fUiT2T3KThx4xiSBQVGTdB.mp4"></video><figcaption><b>片段② 记录册暂停点⑨（课件 38 页）</b>讲完顺序·条件·循环，学生当堂写记录册，教师随机抽人回答生活实例</figcaption></figure>
     </div>
-    <div class="note" style="margin-top:6px">两段均为真实课堂录像（外链在线播放，演示现场不稳时可换仓库离线文件）。下方为教师形象备选素材：</div>
+    <div class="note" style="margin-top:6px">两段均为真实课堂录像（外链在线播放）；离线备份已随作品仓库提交（26 页段 3′24″ / 38 页段 4′06″），演示现场断网可直接播仓库文件。下方为教师形象备选素材：</div>
     <video controls preload="metadata" style="width:100%;border-radius:12px;background:#000;max-height:300px" src="https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/repo/KWTHRZmRympu2GBMUdNjAg.mp4"></video>
     <div class="note" style="margin-top:6px">视频为外链在线播放；演示现场网络不稳时，可改播仓库内离线视频文件。</div>
   </div>
@@ -246,9 +246,12 @@ footer{border-top:2px solid var(--line);background:#FFFDF8;padding:15px 18px;tex
   </div>
   <div class="note" style="margin:6px 0 0">这里只放正在上的课的 19 页，和课件逐页同源；全部 6 份课件 154 页去「课件馆」。答案先藏后揭：先自己想，再点「✓ 揭晓下一层」。</div>
   <div class="stage" id="clsStage"></div>
-  <div class="card" style="margin-top:12px"><h3>🎬 录课实例（预留位）</h3>
-    <div class="recSlot"><div><b>这里将播放真实课堂录课画面</b><span>薛辉老师的授课实况 · 供课后回看与评审查看 · 素材整理中，上传后在此展示</span></div></div>
-    <div class="note" style="margin-top:6px">与上面同步视图对照看：上面是学生视角的课件真页，这里是教师视角的课堂全貌。</div>
+  <div class="card" style="margin-top:12px"><h3>🎬 录课实例 · 真实课堂两段（在线播放）</h3>
+    <div class="vidRow">
+      <figure><video controls preload="none" style="width:100%;border-radius:12px;background:#000;aspect-ratio:16/9" src="https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/repo/8C9YvXdeGUCHhXiyjrqw6o.mp4"></video><figcaption><b>开场任务（课件 26 页 · 3 分 24 秒）</b>课堂导入＋智多星现场建命令——开场活动用「名字消消乐」页消名字</figcaption></figure>
+      <figure><video controls preload="none" style="width:100%;border-radius:12px;background:#000;aspect-ratio:16/9" src="https://musk-online.fbcontent.cn/pub-musk-ai-studio/user/upload/repo/fUiT2T3KThx4xiSBQVGTdB.mp4"></video><figcaption><b>记录册暂停点⑨（课件 38 页 · 4 分 06 秒）</b>讲完顺序·条件·循环→学生当堂写记录册→随机抽人举册回答</figcaption></figure>
+    </div>
+    <div class="note" style="margin-top:6px">与上面同步视图对照看：上面是学生视角的课件真页，这里是教师视角的课堂全貌；离线备份视频已随作品仓库提交。</div>
   </div>
 </section>
 
@@ -1130,7 +1133,7 @@ function applyMode(){const b=document.getElementById("modeBadge");
 (function init(){
   document.getElementById("appName").textContent=CONFIG.name;
   document.getElementById("appSub").textContent=CONFIG.sub;
-  document.getElementById("footTxt").textContent=`学生先自己判断，AI 只做复核参考，拿不准的由老师终审 ｜ ${CONFIG.school} · ${CONFIG.cls}（公开页数据已匿名） ｜ v6.0 实据版`;
+  document.getElementById("footTxt").textContent=`学生先自己判断，AI 只做复核参考，拿不准的由老师终审 ｜ ${CONFIG.school} · ${CONFIG.cls}（公开页数据已匿名） ｜ v6.1 录档版`;
   document.getElementById("aboutLand").innerHTML=`<ul style="margin-left:20px">
     <li><b>落地</b>：${CONFIG.school} ${CONFIG.cls}；围绕《基础会计》生活记账作业（旧账新用）运转，教师备课、课堂互动、课后订正三处日常使用</li>
     <li><b>声明</b>：AI 只生成辅助意见，一切评价由教师终审；学生端先判断、后揭晓；页面不含学生姓名，摄像头视频与练习数据均不离开本机</li>
