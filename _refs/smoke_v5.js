@@ -25,7 +25,13 @@ try{
   // 首页五卡+评环卡
   ok("首页课件馆卡",d.body.textContent.includes("任你翻 · 课件馆"));
   ok("6份课件口径",d.body.textContent.includes("全部 6 份课件 154 页"));
-  ok("版本标记v5.7",d.getElementById("footTxt").textContent.includes("v5.7 动线版"));
+  ok("版本标记v5.8",d.getElementById("footTxt").textContent.includes("v5.8 循序版"));
+  const _hs=d.getElementById("tab-home").innerHTML,_ix=k=>_hs.indexOf('id="lead'+k+'"');
+  ok("五步物理顺序1→5",[_ix(1),_ix(2),_ix(3),_ix(4),_ix(5)].every((v,k)=>v>-1&&(k===0||v>_ix(k))));
+  ok("返回导览钮×5",d.querySelectorAll("#tab-home .backTour").length===5);
+  ok("导览图文钮×5",d.querySelectorAll("#tourBar .tico").length===5);
+  ok("下探提示白药丸",fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes(".downHint{display:inline-block;background:rgba(255,255,255,.94)"));
+  ok("地图渐显折叠",!!d.querySelector("#mapPeek .mapVeil")&&typeof w.mapPeekOpen==="function");
   ok("导航=虚拟展厅",d.getElementById("tb-hall").textContent.includes("虚拟展厅"));
   ok("翻牌审账卡名",d.getElementById("tab-home").textContent.includes("翻牌审账：这条账，你放行吗？"));
   ok("首页无关系链卡",!d.querySelector("#tab-home .chain"));
@@ -92,6 +98,7 @@ try{
   ok("完成自动点亮✓(多站)",d.querySelectorAll("#homeMapBox .stb").length===4&&d.querySelectorAll("#homeMapBox .string").length===1);
   w.showTab("graph");
   ok("星图轨道环+核心",d.querySelectorAll("#kgBox .gorb").length===4&&!!d.querySelector("#kgBox .gcore"));
+  ok("图谱横版120×68",fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes('viewBox="0 0 120 68"'));
   ok("节点纵深影子×11",d.querySelectorAll("#kgBox .gsh").length===11);
   ok("图谱讲解语音按钮",!!d.querySelector(".gvo"));
   ok("知识图谱视图(深色+11节点+曲线边)",d.querySelectorAll("#kgBox .gn").length===11&&d.querySelectorAll("#kgBox .ge").length===14);
@@ -130,10 +137,10 @@ ok("视差已移除(防放大发糊)",!fs.readFileSync("/home/user/jichukuaiji/�
   w.toggleStats();ok("统计展开可视化",d.getElementById("statBody").classList.contains("open")&&d.querySelectorAll("#statBody .bar").length===3);
   ok("平面导览",typeof w.hallFlat==="function"&&!!d.getElementById("hallFlatBtn"));
   ok("下拉含建站中亮牌",d.querySelectorAll("#homeScopeSel option[disabled]").length===1&&d.querySelectorAll("#homeScopeSel option").length===4);
-  w.libDeck("08");ok("课件子任务条(08六段)",d.querySelectorAll("#libSubBar .subChip").length===6);
+  w.libDeck("08");ok("课件子任务条(08六段·教学六步)",d.querySelectorAll("#libSubBar .subChip").length===6&&d.querySelector("#libSubBar .subChip .sname").textContent==="热身");
   w.libGo(7);ok("子任务跳页高亮",w.eval("dkState.lib.cur")===7&&d.querySelectorAll("#libSubBar .subChip.on").length===1);
   w.showTab("class");ok("同步视图子任务四段",d.querySelectorAll("#clsSubBar .subChip").length===4);
-  ok("子任务快递前缀+色点",d.querySelector("#clsSubBar .subChip").textContent.includes("取件")&&d.querySelectorAll("#clsSubBar .sdot").length===4);
+  ok("子任务教学六步前缀",d.querySelector("#clsSubBar .subChip .sname").textContent==="热身"&&d.querySelectorAll("#clsSubBar .subChip[style*=--sc]").length===4);
   w.showTab("lib");ok("课件馆封面×6",d.querySelectorAll("#libDeckRail .dcover").length===6);
   w.libDeck("04");ok("书架顺序04首发+徽章",d.querySelector("#libDeckRail .deckCard .dbadge").textContent.includes("项目一")&&d.querySelector("#libDeckRail .deckCard b").textContent.includes("开学第一课"));
   ok("语音库≥23句",w.eval("Object.keys(VOICE).length")>=23);
