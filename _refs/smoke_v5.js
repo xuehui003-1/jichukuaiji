@@ -25,7 +25,10 @@ try{
   // 首页五卡+评环卡
   ok("首页课件馆卡",d.body.textContent.includes("任你翻 · 课件馆"));
   ok("6份课件口径",d.body.textContent.includes("全部 6 份课件 154 页"));
-  ok("版本标记v5.9",d.getElementById("footTxt").textContent.includes("v5.9 实况版"));
+  ok("版本标记v6.0",d.getElementById("footTxt").textContent.includes("v6.0 实据版"));
+  w.renderStats();ok("三次课真实数据",d.querySelector(".sfSum").textContent.includes("累计加分 180 分")&&d.querySelectorAll("#statBody .dt").length===41);
+  ok("课堂实录两片段",d.querySelectorAll("#secVid .vidRow video").length===2);
+  ok("图谱透明画布",fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes(".gwrap{background:transparent;max-height:none}"));
   ok("首开地图即渲染",d.querySelectorAll("#homeMapBox .stG").length===9);
   {const _h=d.getElementById("tab-home").innerHTML,_a=_h.indexOf('id="lead4"'),_b=_h.indexOf('id="secData"'),_c=_h.indexOf('id="lead5"');
   ok("数据卡归位lead4后",_a>0&&_a<_b&&_b<_c);}
@@ -138,8 +141,8 @@ ok("视差已移除(防放大发糊)",!fs.readFileSync("/home/user/jichukuaiji/�
   ok("录课实例预留位",!!d.querySelector("#tab-class .recSlot"));
   w.eval('state.class.shf={};persist()');w.renderSHF();ok("翻牌正面三选项",d.querySelectorAll("#shfBox .opt").length===3&&d.querySelectorAll("#shfBox .rc").length===3);
   w.shfFlip(1);ok("翻牌后复核+角色灯",!!d.querySelector("#shfBox .fcard")&&!!d.querySelector("#shfBox .basis")&&d.querySelector("#shfBox .rc.r2").classList.contains("on"));
-  w.renderStats();ok("统计折叠默认收起",!!d.querySelector(".statFold")&&!d.getElementById("statBody").classList.contains("open")&&d.querySelectorAll("#statBody .dt").length===40);
-  w.toggleStats();ok("统计展开可视化",d.getElementById("statBody").classList.contains("open")&&d.querySelectorAll("#statBody .bar").length===3);
+  w.renderStats();ok("统计折叠默认收起",!!d.querySelector(".statFold")&&!d.getElementById("statBody").classList.contains("open")&&d.querySelectorAll("#statBody .dt").length===41&&d.querySelectorAll("#statBody .dt.on").length===39);
+  w.toggleStats();ok("统计展开可视化",d.getElementById("statBody").classList.contains("open")&&d.querySelectorAll("#statBody .b3").length===9&&d.querySelectorAll("#statBody .occ").length===4);
   ok("平面导览",typeof w.hallFlat==="function"&&!!d.getElementById("hallFlatBtn"));
   ok("下拉含建站中亮牌",d.querySelectorAll("#homeScopeSel option[disabled]").length===1&&d.querySelectorAll("#homeScopeSel option").length===4);
   w.libDeck("08");ok("课件子任务条(08六段·教学六步)",d.querySelectorAll("#libSubBar .subChip").length===6&&d.querySelector("#libSubBar .subChip .sname").textContent==="热身");
