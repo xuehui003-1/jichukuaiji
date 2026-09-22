@@ -19,18 +19,20 @@ const T=[];const ok=(n,c)=>{T.push([c?"✓":"✗",n]);if(!c)errors.push("断言:
 setTimeout(()=>{
 try{
   ok("标题=小邮伴学",d.getElementById("appName").textContent==="小邮伴学");
-  ok("首页评环自动渲染(不用点标签)",d.querySelectorAll("#shfBox .opt").length===3);
+  ok("评环自动渲染(翻牌三卡)",d.querySelectorAll("#shfBox .fcW").length===3);
   ok("副题=AI赋能定位语",(d.getElementById("appSub").textContent||"").includes("财务机器人应用与开发")&&d.getElementById("appSub").textContent.includes("AI 教学搭档")&&d.getElementById("appSub").textContent.includes("教师做主"));
   ok("导航九项(展厅入主栏,教师台/关于右上角)",["home","class","lib","graph","hall","bot","gest","teach","about"].every(t=>d.getElementById("tb-"+t)));
   // 首页五卡+评环卡
   ok("首页课件馆卡",d.body.textContent.includes("任你翻 · 课件馆"));
   ok("6份课件口径",d.body.textContent.includes("全部 6 份课件 154 页"));
-  ok("版本标记v6.2",d.getElementById("footTxt").textContent.includes("v6.2 内嵌版"));
+  ok("版本标记v6.3",d.getElementById("footTxt").textContent.includes("v6.3 翻牌版"));
+  ok("真翻牌三卡",(()=>{w.showTab("bot");w.eval("state.class.shf={};persist();renderSHF()");return d.querySelectorAll("#shfBox .fcW").length===3&&!!d.querySelector("#shfBox .fcIn")})());
+  ok("导览副行带标签+tabChip×5",(()=>{const _v=d.getElementById("tab-home").innerHTML;return _v.includes("第二步 · 机器人车间")&&d.querySelectorAll("#tab-home .tabChip").length===5})());
   ok("导航上场模块",!!d.getElementById("tb-roll")&&!!d.getElementById("rollFrame")&&d.getElementById("rollFrame").getAttribute("srcdoc").length>50000);
   {const _q=d.getElementById("tab-home").innerHTML,_p=k=>_q.indexOf('id="'+k+'"');
   ok("五步重排(实况4/验真5)",_p("lead3")<_p("lead4")&&_p("lead4")<_p("secVid")&&_p("secVid")<_p("lead5")&&_p("lead5")<_p("secData"));}
   ok("首页AI怎么被管住三栏",d.querySelectorAll("#secRule .rcol").length===3&&!d.querySelector("#tab-home #shfBox"));
-  ok("训练场特色入口×3",d.querySelectorAll("#secRing .ring").length===8&&d.getElementById("secRing").textContent.includes("名字消消乐"));
+  ok("训练场特色入口×3",d.querySelectorAll("#secRing .ring").length===8&&d.getElementById("secRing").textContent.includes("课堂点名 · 消消乐与抽人"));
   w.showTab("graph");
   ok("图谱kgstage满宽",!!d.querySelector("#kgBox .kgstage svg")&&!d.querySelector("#kgBox .gwrap"));
   ok("验真卡半开渐显",!!d.querySelector(".statVeil")&&typeof w.statOpen==="function");
@@ -59,7 +61,7 @@ try{
   const n1=d.getElementById("fabNudge").textContent;
   w.showTab("bot");
   const n2=d.getElementById("fabNudge").textContent;
-  ok("气泡无冷却·内容随标签更新",n2!==n1&&n2.includes("装配线")===false&&n2.includes("②"));
+  ok("气泡无冷却·内容随标签更新",n2!==n1&&n2.includes("装配线")===false&&n2.includes("翻牌审账"));
   ok("评环审账题",w.eval('SHF.q.includes("机器人记的账")&&SHF.right===1'));
   ok("五题覆盖四手势",w.eval('new Set(GQ.map(q=>q.exp)).size===4'));
   ok("打印题手势一致",w.eval('const q3=GQ[2];(q3.exp==="Thumb_Up")===([q3.opts[0],q3.opts[1]].some(o=>q3.ans.startsWith(o)||o==="对"))'));
@@ -149,8 +151,9 @@ ok("视差已移除(防放大发糊)",!fs.readFileSync("/home/user/jichukuaiji/�
   ok("导航无课堂同步+课件馆入口",!d.querySelector("nav .nin #tb-class")&&!!d.querySelector("#tab-lib .syncBan"));
   ok("录课实例两段就位",d.querySelectorAll("#tab-class .vidRow video").length===2&&d.getElementById("tab-class").textContent.includes("名字消消乐"));
   ok("实录卡无形象片+AI赋能注",d.querySelectorAll("#secVid video").length===2);
-  w.eval('state.class.shf={};persist()');w.renderSHF();ok("翻牌正面三选项",d.querySelectorAll("#shfBox .opt").length===3&&d.querySelectorAll("#shfBox .rc").length===3);
-  w.shfFlip(1);ok("翻牌后复核+角色灯",!!d.querySelector("#shfBox .fcard")&&!!d.querySelector("#shfBox .basis")&&d.querySelector("#shfBox .rc.r2").classList.contains("on"));
+  w.eval('state.class.shf={};persist()');w.renderSHF();ok("翻牌正面三卡",d.querySelectorAll("#shfBox .fcW").length===3&&d.querySelectorAll("#shfBox .rc").length===3);
+  w.shfFlip(1);ok("点击真翻面(rotateY+他牌变暗)",d.getElementById("fc1").classList.contains("flipped")&&d.getElementById("fc0").classList.contains("dim"));
+  w.eval('shfSubmit()');ok("翻牌后复核+角色灯",!!d.querySelector("#shfBox .fcard")&&!!d.querySelector("#shfBox .basis")&&d.querySelector("#shfBox .rc.r2").classList.contains("on"));
   w.renderStats();ok("统计半开默认收起",!!d.querySelector(".statFold")&&!d.getElementById("statPeek").classList.contains("open")&&d.querySelectorAll("#statBody .dt").length===41&&d.querySelectorAll("#statBody .dt.on").length===39);
   w.statOpen();ok("统计展开可视化",d.getElementById("statBody").classList.contains("open")&&d.querySelectorAll("#statBody .b3").length===9&&d.querySelectorAll("#statBody .occ").length===4);
   ok("平面导览",typeof w.hallFlat==="function"&&!!d.getElementById("hallFlatBtn"));
