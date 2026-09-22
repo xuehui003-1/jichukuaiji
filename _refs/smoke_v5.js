@@ -23,16 +23,19 @@ try{
   ok("副题=AI赋能定位语",(d.getElementById("appSub").textContent||"").includes("财务机器人应用与开发")&&d.getElementById("appSub").textContent.includes("AI 教学搭档")&&d.getElementById("appSub").textContent.includes("教师做主"));
   ok("导航九项(展厅入主栏,教师台/关于右上角)",["home","class","lib","graph","hall","bot","gest","teach","about"].every(t=>d.getElementById("tb-"+t)));
   // 首页五卡+评环卡
-  ok("首页课件馆卡",d.body.textContent.includes("任你翻 · 课件馆"));
+  ok("第二步翻课件入口",d.body.textContent.includes("课件馆"));
   ok("6份课件口径",d.body.textContent.includes("全部 6 份课件 154 页"));
-  ok("版本标记v6.3",d.getElementById("footTxt").textContent.includes("v6.3 翻牌版"));
+  ok("版本标记v6.4",d.getElementById("footTxt").textContent.includes("v6.4 梳理版"));
+  w.showTab("graph");ok("图谱四层泳道+箭头边",d.querySelectorAll("#kgBox .gln").length===4&&d.querySelectorAll("#kgBox path[marker-end='url(#arr)']").length===13);
+  ok("翻牌面=选项文字",(()=>{w.showTab("bot");w.eval("state.class.shf={};persist();renderSHF()");return d.querySelector("#fc1 .fcF span").textContent.includes("一件事记一条")})());
+  ok("点名/消消乐两标签",!!d.getElementById("tb-xyl")&&!!d.getElementById("xylFrame")&&d.getElementById("xylFrame").getAttribute("srcdoc").length>50000);
   ok("真翻牌三卡",(()=>{w.showTab("bot");w.eval("state.class.shf={};persist();renderSHF()");return d.querySelectorAll("#shfBox .fcW").length===3&&!!d.querySelector("#shfBox .fcIn")})());
-  ok("导览副行带标签+tabChip×5",(()=>{const _v=d.getElementById("tab-home").innerHTML;return _v.includes("第二步 · 机器人车间")&&d.querySelectorAll("#tab-home .tabChip").length===5})());
+  ok("导览副行带标签+tabChip×6",(()=>{const _v=d.getElementById("tab-home").innerHTML;return _v.includes("第二步 · 机器人车间")&&d.querySelectorAll("#tab-home .tabChip").length===6})());
   ok("导航上场模块",!!d.getElementById("tb-roll")&&!!d.getElementById("rollFrame")&&d.getElementById("rollFrame").getAttribute("srcdoc").length>50000);
   {const _q=d.getElementById("tab-home").innerHTML,_p=k=>_q.indexOf('id="'+k+'"');
   ok("五步重排(实况4/验真5)",_p("lead3")<_p("lead4")&&_p("lead4")<_p("secVid")&&_p("secVid")<_p("lead5")&&_p("lead5")<_p("secData"));}
   ok("首页AI怎么被管住三栏",d.querySelectorAll("#secRule .rcol").length===3&&!d.querySelector("#tab-home #shfBox"));
-  ok("训练场特色入口×3",d.querySelectorAll("#secRing .ring").length===8&&d.getElementById("secRing").textContent.includes("课堂点名 · 消消乐与抽人"));
+  ok("训练卡×4+加映×2",d.querySelectorAll("#secRing .ring").length===4&&d.getElementById("tab-home").textContent.includes("加映 · 两大特色视图"));
   w.showTab("graph");
   ok("图谱kgstage满宽",!!d.querySelector("#kgBox .kgstage svg")&&!d.querySelector("#kgBox .gwrap"));
   ok("验真卡半开渐显",!!d.querySelector(".statVeil")&&typeof w.statOpen==="function");
@@ -47,8 +50,8 @@ try{
   ok("图谱画布锁比例",fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes(".gwrap{aspect-ratio:120/68"));
   const _hs=d.getElementById("tab-home").innerHTML,_ix=k=>_hs.indexOf('id="lead'+k+'"');
   ok("五步物理顺序1→5",[_ix(1),_ix(2),_ix(3),_ix(4),_ix(5)].every((v,k)=>v>-1&&(k===0||v>_ix(k))));
-  ok("返回导览钮×5",d.querySelectorAll("#tab-home .backTour").length===5);
-  ok("导览图文钮×5",d.querySelectorAll("#tourBar .tico").length===5);
+  ok("返回导览钮×6",d.querySelectorAll("#tab-home .backTour").length===6);
+  ok("导览图文钮×6",d.querySelectorAll("#tourBar .tico").length===6);
   ok("下探提示白药丸",fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes(".downHint{display:inline-block;background:rgba(255,255,255,.94)"));
   ok("地图渐显折叠",!!d.querySelector("#mapPeek .mapVeil")&&typeof w.mapPeekOpen==="function");
   ok("导航=虚拟展厅",d.getElementById("tb-hall").textContent.includes("虚拟展厅"));
@@ -70,7 +73,7 @@ try{
   ok("refreshFlow/clsAsk",typeof w.refreshFlow==="function"&&typeof w.clsAsk==="function");
   w.showTab("home");
   ok("首页使用地图(图文版)",!!d.querySelector("#tab-home .homeMap"));
-  ok("训练场角标×8",d.querySelectorAll("#tab-home .rb").length===8);
+  ok("训练+加映角标×6",d.querySelectorAll("#tab-home .rb").length===6);
   w.showTab("bot");
   ok("车间变量说明列",!!d.querySelector("#varTable .vdesc"));
   ok("默认载入08轨58钮",d.getElementById("libRail").querySelectorAll("button").length===58);
@@ -116,11 +119,11 @@ try{
   w.eval('state.class.pv.done=true;state.class.shf.done=true;renderMap("homeMapBox","all")');
   ok("完成自动点亮✓(多站)",d.querySelectorAll("#homeMapBox .stb").length===4&&d.querySelectorAll("#homeMapBox .string").length===1);
   w.showTab("graph");
-  ok("星图轨道环+核心",d.querySelectorAll("#kgBox .gorb").length===4&&!!d.querySelector("#kgBox .gcore"));
-  ok("图谱横版120×68",fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes('viewBox="0 0 120 68"'));
+  ok("四层泳道+箭头边",d.querySelectorAll("#kgBox .gln").length===4&&d.querySelectorAll("#kgBox path[marker-end='url(#arr)']").length===13);
+  ok("图谱横版120×72",fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes('viewBox="0 0 120 72"'));
   ok("节点纵深影子×11",d.querySelectorAll("#kgBox .gsh").length===11);
   ok("图谱讲解语音按钮",!!d.querySelector(".gvo"));
-  ok("知识图谱视图(深色+11节点+曲线边)",d.querySelectorAll("#kgBox .gn").length===11&&d.querySelectorAll("#kgBox .ge").length===14);
+  ok("知识图谱11节点13边",d.querySelectorAll("#kgBox .gn").length===11&&d.querySelectorAll("#kgBox .ge").length===13);
   ok("审账/铁律着色(评环完成即绿)",d.querySelectorAll("#kgBox .gn.on").length>=2);
   ok("缩放平移函数",typeof w.kgZoom==="function"&&typeof w.kgReset==="function");
   ok("分类图例4枚(画布外)",d.querySelectorAll("#kgCtl .kchip").length===4&&typeof w.kgToggleC==="function");
@@ -132,7 +135,7 @@ try{
   ok("课件馆名无数字前缀",w.eval('Object.values(LIBDECKS).every(v=>!/^\\d/.test(v.name))'));
   w.showTab("home");
   ok("首页图文任务地图",!!d.querySelector("#tab-home .homeMap")&&d.querySelectorAll("#homeMapBox .stG").length===9);
-  ok("首页五步导览动线",d.querySelectorAll("#tab-home .tour button").length===5&&d.querySelectorAll("#tab-home .secLead").length===5&&!!d.querySelector("#tab-home .mapCall"));
+  ok("首页导览动线(6钮+6步)",d.querySelectorAll("#tab-home .tour button").length===6&&d.querySelectorAll("#tab-home .secLead").length===6&&!!d.querySelector("#tab-home .mapCall"));
   ok("任务范围下拉仅首页",!d.getElementById("kgScopeSel")&&!!d.getElementById("homeScopeSel")&&d.getElementById("homeScopeSel").textContent.includes("全部任务 · 9 站"));
   ok("首页孤儿按钮组已清",!d.querySelector("#tab-home .meBtns")&&d.getElementById("tab-home").textContent.indexOf("本次课")<0);
   w.eval('homeScope="p3";renderMap("homeMapBox","p3")');
@@ -145,7 +148,7 @@ try{
   ok("小邮语音就绪",w.eval("Object.keys(VOICE).length")>=25);
   ok("AI知识库底注",!!d.querySelector(".afoot")&&!fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("aiKb"));
 ok("视差已移除(防放大发糊)",!fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("perspective(950px)"));
-  ok("嵌套修复:五标签直挂main",["graph","bot","gest","teach","about"].every(t=>d.getElementById("tab-"+t).parentElement.tagName==="MAIN"));
+  ok("嵌套修复:五标签直挂main",["graph","bot","gest","teach","about","roll","xyl"].every(t=>d.getElementById("tab-"+t).parentElement.tagName==="MAIN"));
   ok("首页仅一张任务地图",Array.from(d.querySelectorAll("#tab-home h3")).filter(h=>h.textContent.includes("学习任务地图")).length===1&&!d.querySelector(".mapEntry"));
   ok("页头教师台/关于并排",d.querySelectorAll("header .gear").length===3);
   ok("导航无课堂同步+课件馆入口",!d.querySelector("nav .nin #tb-class")&&!!d.querySelector("#tab-lib .syncBan"));
