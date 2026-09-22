@@ -59,7 +59,7 @@ try{
   ok("lib tab on",d.getElementById("tab-lib").classList.contains("on"));
   ok("标签气泡触发",!!d.getElementById("fabNudge")&&d.getElementById("fabNudge").classList.contains("on"));
   const n1=d.getElementById("fabNudge").textContent;
-  w.showTab("bot");
+  w.eval("fabOnce.clear()");w.showTab("bot");
   const n2=d.getElementById("fabNudge").textContent;
   ok("气泡无冷却·内容随标签更新",n2!==n1&&n2.includes("装配线")===false&&n2.includes("翻牌审账"));
   ok("评环审账题",w.eval('SHF.q.includes("机器人记的账")&&SHF.right===1'));
