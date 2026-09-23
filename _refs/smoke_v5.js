@@ -25,7 +25,8 @@ try{
   // 首页五卡+评环卡
   ok("第二步翻课件入口",d.body.textContent.includes("课件馆"));
   ok("6份课件口径",d.body.textContent.includes("全部 6 份课件 154 页"));
-  ok("版本标记v6.7",d.getElementById("footTxt").textContent.includes("v6.7 灵动版"));
+  ok("版本标记v6.8",d.getElementById("footTxt").textContent.includes("v6.8 亮点版"));
+  ok("fab六帧状态库",["xyA","xyB","xyC","xyD","xyE","xyF"].every(f=>!!d.querySelector(".fab ."+f))&&fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("function xyPose"));
   ok("对标语已委婉化",!fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("对应要求："));
   ok("fab全身双帧",!!d.querySelector(".fab .xyA")&&!!d.querySelector(".fab .xyB"));
   ok("实录REC监视器框×4",d.querySelectorAll(".camBezel").length===4&&d.querySelectorAll(".recDot").length===4);
