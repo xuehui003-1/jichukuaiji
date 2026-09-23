@@ -25,7 +25,9 @@ try{
   // 首页五卡+评环卡
   ok("第二步翻课件入口",d.body.textContent.includes("课件馆"));
   ok("6份课件口径",d.body.textContent.includes("全部 6 份课件 154 页"));
-  ok("版本标记v6.8",d.getElementById("footTxt").textContent.includes("v6.8 亮点版"));
+  ok("版本标记v6.9",d.getElementById("footTxt").textContent.includes("v6.9 声色版"));
+  ok("虚拟名单已注入",d.getElementById("rollFrame").getAttribute("srcdoc").includes("唐乙二"));
+  ok("fab呼吸光环",!!d.querySelector(".fab")&&fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("@property --xya"));
   ok("fab六帧状态库",["xyA","xyB","xyC","xyD","xyE","xyF"].every(f=>!!d.querySelector(".fab ."+f))&&fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("function xyPose"));
   ok("对标语已委婉化",!fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("对应要求："));
   ok("fab全身双帧",!!d.querySelector(".fab .xyA")&&!!d.querySelector(".fab .xyB"));
