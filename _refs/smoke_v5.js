@@ -25,7 +25,10 @@ try{
   // 首页五卡+评环卡
   ok("第二步翻课件入口",d.body.textContent.includes("课件馆"));
   ok("6份课件口径",d.body.textContent.includes("全部 6 份课件 154 页"));
-  ok("版本标记v7.0",d.getElementById("footTxt").textContent.includes("v7.0 同心版"));
+  ok("版本标记v7.1",d.getElementById("footTxt").textContent.includes("v7.1 全员版"));
+  ok("页头3D形象",!!d.querySelector("header img.hxy"));
+  ok("地图路线箭头",fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("marker-end=\"url(#mArr)\""));
+  ok("小邮贴纸×2",!!d.querySelector("#secMap .xySticker")&&!!d.querySelector("#secData .xySticker"));
   ok("名单注入v2(强制默认+导入+气泡)",(()=>{const r=d.getElementById("rollFrame").getAttribute("srcdoc");return r.includes("__pp.value=__N")&&r.includes("导入真实名单")&&r.includes("当前是虚拟示例名单")})());
   ok("fab白圈已根除",fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes(".fab img.xybot{box-shadow:none;border-radius:0}"));
   ok("虚拟名单已注入",d.getElementById("rollFrame").getAttribute("srcdoc").includes("唐乙二"));
