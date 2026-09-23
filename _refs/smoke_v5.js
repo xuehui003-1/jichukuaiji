@@ -25,17 +25,19 @@ try{
   // 首页五卡+评环卡
   ok("第二步翻课件入口",d.body.textContent.includes("课件馆"));
   ok("6份课件口径",d.body.textContent.includes("全部 6 份课件 154 页"));
-  ok("版本标记v6.5",d.getElementById("footTxt").textContent.includes("v6.5 立体版"));
+  ok("版本标记v6.6",d.getElementById("footTxt").textContent.includes("v6.6 对标版"));
+  ok("fab=3D定妆照",!!d.querySelector(".fab img.xybot")&&d.querySelector(".fab img.xybot").src.length>30000);
+  ok("实录电视机框×4",d.querySelectorAll(".tvBezel").length===4);
   w.showTab("graph");ok("3D知识大厦",d.querySelectorAll("#kgBox .kgFloor").length===4&&d.querySelectorAll("#kgBox .kgN").length===11);
   ok("翻牌面=选项文字",(()=>{w.showTab("bot");w.eval("state.class.shf={};persist();renderSHF()");return d.querySelector("#fc1 .fcF span").textContent.includes("一件事记一条")})());
   ok("点名/消消乐两标签",!!d.getElementById("tb-xyl")&&!!d.getElementById("xylFrame")&&d.getElementById("xylFrame").getAttribute("srcdoc").length>50000);
   ok("真翻牌三卡",(()=>{w.showTab("bot");w.eval("state.class.shf={};persist();renderSHF()");return d.querySelectorAll("#shfBox .fcW").length===3&&!!d.querySelector("#shfBox .fcIn")})());
-  ok("导览副行带标签+tabChip×5",(()=>{const _v=d.getElementById("tab-home").innerHTML;return _v.includes("第二步 · 看特色")&&d.querySelectorAll("#tab-home .tabChip").length===5})());
+  ok("导览副行带标签+tabChip×5",(()=>{const _v=d.getElementById("tab-home").innerHTML;return _v.includes("第二步 · 创新理念")&&d.querySelectorAll("#tab-home .tabChip").length>=6})());
   ok("导航上场模块",!!d.getElementById("tb-roll")&&!!d.getElementById("rollFrame")&&d.getElementById("rollFrame").getAttribute("srcdoc").length>50000);
   {const _q=d.getElementById("tab-home").innerHTML,_p=k=>_q.indexOf('id="'+k+'"');
   ok("五步重排(实况4/验真5)",_p("lead3")<_p("lead4")&&_p("lead4")<_p("secVid")&&_p("secVid")<_p("lead5")&&_p("lead5")<_p("secData"));}
   ok("车间门口三栏规矩",d.querySelectorAll("#tab-bot .rcol").length===3&&!d.querySelector("#tab-home #shfBox"));
-  ok("训练卡×4+特色升第二步",d.querySelectorAll("#secRing .ring").length===4&&d.getElementById("tab-home").textContent.includes("两大镇店之宝"));
+  ok("训练卡×4+特色升第二步",d.querySelectorAll("#secRing .ring").length===4&&d.getElementById("tab-home").textContent.includes("看得见、转得动"));
   w.showTab("graph");
   ok("图谱kgstage满宽",!!d.querySelector("#kgBox .kgstage svg")&&!d.querySelector("#kgBox .gwrap"));
   ok("验真卡半开渐显",!!d.querySelector(".statVeil")&&typeof w.statOpen==="function");
@@ -104,7 +106,7 @@ try{
   ok("gMap静态图例不剧透",d.getElementById("gMap").textContent.includes("选项一")&&!d.getElementById("gMap").innerHTML.includes("on"));
   ok("真人示范4连视频",d.querySelectorAll("#tab-gest .gv video").length===4);
   ok("气泡CSS完整(无伪选择器)",!fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("#fabNudgeX"));
-  ok("小邮SVG动画图标",!!d.querySelector(".fab svg.xybot"));
+  ok("小邮3D头像浮标",!!d.querySelector(".fab img.xybot"));
   ok("面板说话头像",!!d.getElementById("xyFace")&&typeof w.sayVoice==="function");
   ok("图标恢复圆形",fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("width:64px;height:64px;border-radius:50%"));
   ok("面板瘦长300宽",fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("width:min(300px"));
