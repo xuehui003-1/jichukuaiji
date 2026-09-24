@@ -25,14 +25,15 @@ try{
   // 首页五卡+评环卡
   ok("第二步翻课件入口",d.body.textContent.includes("课件馆"));
   ok("6份课件口径",d.body.textContent.includes("全部 6 份课件 154 页"));
-  ok("版本标记v7.4",d.getElementById("footTxt").textContent.includes("v7.4 贴脸版"));
-  ok("B3注入v5(样式进iframe+三态按钮)",(()=>{const r=d.getElementById("rollFrame").getAttribute("srcdoc");return r.includes('<style id="xyInj">')&&r.includes("恢复虚拟演示")&&r.includes("window.renderCheckout)renderCheckout()")})());
+  ok("版本标记v7.5",d.getElementById("footTxt").textContent.includes("v7.5 头像进圈版"));
+  ok("虚拟头像走工具圆圈系统",(()=>{const r=d.getElementById("rollFrame").getAttribute("srcdoc");return r.includes("__genFace")&&r.includes("putPhoto(nm,f)")&&!r.includes("xyAvatars")})());
+  ok("B3注入v6(虚拟头像进圆圈+三按钮)",(()=>{const r=d.getElementById("rollFrame").getAttribute("srcdoc");return r.includes("__genFace")&&r.includes("恢复虚拟演示")&&r.includes("__redraw")})());
   ok("语音25/25新声",(fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").match(/data:audio\/mpeg/g)||[]).length===25);
   ok("车间hero+点击提示×2",!!d.querySelector(".botHero")&&!!d.querySelector("#tab-lib .xySticker"));
   ok("页头3D形象",!!d.querySelector("header img.hxy"));
   w.showTab("home");ok("地图流动箭头×8",d.querySelectorAll("#homeMapBox .stpa").length===8);
   ok("小邮贴纸×2",!!d.querySelector("#secMap .xySticker")&&!!d.querySelector("#secData .xySticker"));
-  ok("名单注入v4(emoji头像+三按钮)",(()=>{const r=d.getElementById("rollFrame").getAttribute("srcdoc");return r.includes("xyAvatars")&&r.includes("导入头像")&&r.includes("清除演示")})());
+  ok("名单注入(头像进圈+导入xlsx+清除演示)",(()=>{const r=d.getElementById("rollFrame").getAttribute("srcdoc");return r.includes("putPhoto(nm,f)")&&r.includes(".xlsx")&&r.includes("清除演示")})());
   ok("fab白圈已根除",fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes(".fab img.xybot{box-shadow:none;border-radius:0}"));
   ok("虚拟名单已注入",d.getElementById("rollFrame").getAttribute("srcdoc").includes("唐乙二"));
   ok("fab呼吸光环",!!d.querySelector(".fab")&&fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("@property --xya"));
