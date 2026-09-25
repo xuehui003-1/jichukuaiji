@@ -25,7 +25,9 @@ try{
   // 首页五卡+评环卡
   ok("第二步翻课件入口",d.body.textContent.includes("课件馆"));
   ok("6份课件口径",d.body.textContent.includes("全部 6 份课件 154 页"));
-  ok("版本标记v7.6",d.getElementById("footTxt").textContent.includes("v7.6 姓名列版"));
+  ok("版本标记v7.7",d.getElementById("footTxt").textContent.includes("v7.7 点盘即抽版"));
+  ok("转盘中心开始可点击+注释",(()=>{const x=d.getElementById("xylFrame").getAttribute("srcdoc");return x.includes("data-hubgo")&&x.includes("即可抽人")&&x.includes('draw1')})());
+  ok("课件馆贴纸移至页码跳转旁",(()=>{const h=d.getElementById("libJump");if(!h)return false;let p=h.previousElementSibling;return !!(p&&p.className==="xySticker"&&p.textContent.includes("上面输页码"))})());
   ok("虚拟头像走工具圆圈系统",(()=>{const r=d.getElementById("rollFrame").getAttribute("srcdoc");return r.includes("__genFace")&&r.includes("putPhoto(nm,f)")&&!r.includes("xyAvatars")})());
   ok("B3注入v6(虚拟头像进圆圈+三按钮)",(()=>{const r=d.getElementById("rollFrame").getAttribute("srcdoc");return r.includes("__genFace")&&r.includes("恢复虚拟演示")&&r.includes("__redraw")})());
   ok("语音25/25新声",(fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").match(/data:audio\/mpeg/g)||[]).length===25);
