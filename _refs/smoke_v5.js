@@ -26,12 +26,12 @@ try{
   // 首页五卡+评环卡
   ok("第二步翻课件入口",d.body.textContent.includes("课件馆"));
   ok("6份课件口径",d.body.textContent.includes("全部 6 份课件 154 页"));
-  ok("版本标记v7.12",d.getElementById("footTxt").textContent.includes("v7.12 证据前置版"));
-  ok("录课实例前置+成果直达按钮",(()=>{const lib=d.getElementById("tab-lib");const k=[...lib.children].map(e=>e.id||(e.className||e.tagName).split(" ")[0]).join(",");return k.startsWith("xyVidPill,card,syncBan,clsLive")&&!!d.getElementById("tb-data")&&typeof d.defaultView.XYGO_DATA==="function"})());
+  ok("版本标记v7.13",d.getElementById("footTxt").textContent.includes("v7.13 演示优先版"));
+  ok("录课实例前置+成果直达按钮",(()=>{const lib=d.getElementById("tab-lib");const k=[...lib.children].map(e=>e.id||(e.className||e.tagName).split(" ")[0]).join(",");return k.startsWith("card,syncBan,clsLive")&&!!d.getElementById("tb-data")&&typeof d.defaultView.XYGO_DATA==="function"})());
   ok("同步区已删·录课实例在课件馆底(clsLive)",!d.getElementById("tab-class")&&!d.getElementById("syncBlock")&&!d.getElementById("clsStage")&&!!d.getElementById("clsLive")&&!!d.getElementById("clsLive").closest("#tab-lib"));
-  ok("V2卡随迁syncBlock",!!d.querySelector('#clsLive .xyVidPill[data-vid="V2"]'));
+  ok("V2占位代码保留(clsLive挂载点)",!!d.getElementById("clsLive"));
   ok("无残留showTab(class)",!FS.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("showTab('+String.fromCharCode(39)+'class'+String.fromCharCode(39)+')"));
-  ok("五张点播占位卡就位",d.querySelectorAll(".xyVidPill").length===5&&!!d.querySelector('#tab-roll .xyVidPill[data-vid="V1"]')&&!!d.querySelector('#clsLive .xyVidPill[data-vid="V2"]')&&!!d.querySelector('#tab-graph .xyVidPill[data-vid="V3"]')&&!!d.querySelector('#tab-lib .xyVidPill[data-vid="V6"]')&&!!d.querySelector('#secData .xyVidPill[data-vid="V7"]'));
+  ok("页面占位卡已隐藏(开关在,可恢复)",d.querySelectorAll(".xyVidPill").length===0&&/XYPAGE_PILLS_OFF=true/.test(fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8")));
   ok("手势内嵌视频加播放按钮",d.querySelectorAll(".xyGvWrap").length===4&&d.querySelectorAll(".xyGvPlay").length===4&&![...d.querySelectorAll(".gv video")].some(v=>v.hasAttribute("controls")));
   ok("外链配置就绪",d.defaultView.XYVIDEO_URLS&&Object.keys(d.defaultView.XYVIDEO_URLS).length===5);
   ok("点名口令:到你啦+默认回答问题+三组分类",(()=>{const x=d.getElementById("xylFrame").getAttribute("srcdoc");return x.includes("到你们啦")&&x.includes('data-u="answer"')&&x.includes("抽到后做什么")&&x.includes("亮纸笔 · 查落实")&&!x.includes("举册子</button>")})());

@@ -1133,7 +1133,7 @@ function applyMode(){const b=document.getElementById("modeBadge");
 (function init(){
   document.getElementById("appName").textContent=CONFIG.name;
   document.getElementById("appSub").textContent=CONFIG.sub;
-  document.getElementById("footTxt").textContent=`学生先自己判断，AI 只做复核参考，拿不准的由老师终审 ｜ ${CONFIG.school} · ${CONFIG.cls}（公开页数据已匿名） ｜ v7.12 证据前置版`;
+  document.getElementById("footTxt").textContent=`学生先自己判断，AI 只做复核参考，拿不准的由老师终审 ｜ ${CONFIG.school} · ${CONFIG.cls}（公开页数据已匿名） ｜ v7.13 演示优先版`;
   document.getElementById("aboutLand").innerHTML=`<ul style="margin-left:20px">
     <li><b>落地</b>：${CONFIG.school} ${CONFIG.cls}；围绕《基础会计》生活记账作业（旧账新用）运转，教师备课、课堂互动、课后订正三处日常使用</li>
     <li><b>声明</b>：AI 只生成辅助意见，一切评价由教师终审；学生端先判断、后揭晓；页面不含学生姓名，摄像头视频与练习数据均不离开本机</li>
@@ -1943,7 +1943,9 @@ function pill(k){var b=document.createElement("button");b.type="button";b.classN
   v.src=u;v.style.cssText="width:100%;max-width:760px;display:block;margin:2px auto 10px;aspect-ratio:16/9;background:#000;border-radius:12px";
   b.replaceWith(v);var pr=v.play();if(pr&&pr.catch)pr.catch(function(){});};
  return b;}
+window.XYPAGE_PILLS_OFF=true;/* 演示视频优先(v7.13)：页面点播占位卡先隐藏——视频就绪后把本行改为 false 即一键恢复 */
 [["V1","tab-roll",0],["V2","clsLive",1],["V3","tab-graph",0],["V6","tab-lib",0],["V7","secData",1]].forEach(function(it){
+ if(window.XYPAGE_PILLS_OFF)return;
  var k=it[0],host=document.getElementById(it[1]);if(!host||host.querySelector('[data-vid="'+k+'"]'))return;
  var p=pill(k);
  if(it[2]){host.appendChild(p);}else{host.insertBefore(p,host.querySelector(".card"));}
