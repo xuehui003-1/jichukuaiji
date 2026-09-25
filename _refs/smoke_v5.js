@@ -26,7 +26,7 @@ try{
   // 首页五卡+评环卡
   ok("第二步翻课件入口",d.body.textContent.includes("课件馆"));
   ok("6份课件口径",d.body.textContent.includes("全部 6 份课件 154 页"));
-  ok("版本标记v7.13",d.getElementById("footTxt").textContent.includes("v7.13 演示优先版"));
+  ok("版本标记v7.15",d.getElementById("footTxt").textContent.includes("v7.15 模型内嵌版"));
   ok("录课实例前置+成果直达按钮",(()=>{const lib=d.getElementById("tab-lib");const k=[...lib.children].map(e=>e.id||(e.className||e.tagName).split(" ")[0]).join(",");return k.startsWith("card,syncBan,clsLive")&&!!d.getElementById("tb-data")&&typeof d.defaultView.XYGO_DATA==="function"})());
   ok("同步区已删·录课实例在课件馆底(clsLive)",!d.getElementById("tab-class")&&!d.getElementById("syncBlock")&&!d.getElementById("clsStage")&&!!d.getElementById("clsLive")&&!!d.getElementById("clsLive").closest("#tab-lib"));
   ok("V2占位代码保留(clsLive挂载点)",!!d.getElementById("clsLive"));
