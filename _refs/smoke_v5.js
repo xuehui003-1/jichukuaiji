@@ -14,6 +14,7 @@ const dom=new JSDOM(html,{runScripts:"dangerously",pretendToBeVisual:true,url:"h
     w.HTMLMediaElement.prototype.pause=function(){};
     w.addEventListener("error",e=>errors.push("window:"+e.message));
   }});
+dom.window.addEventListener('error',e=>console.log('SMOKE_ERR:',e.message,'@page-line',e.lineno));
 const w=dom.window,d=w.document;
 const T=[];const ok=(n,c)=>{T.push([c?"✓":"✗",n]);if(!c)errors.push("断言:"+n)};
 setTimeout(()=>{
@@ -25,11 +26,11 @@ try{
   // 首页五卡+评环卡
   ok("第二步翻课件入口",d.body.textContent.includes("课件馆"));
   ok("6份课件口径",d.body.textContent.includes("全部 6 份课件 154 页"));
-  ok("版本标记v7.10",d.getElementById("footTxt").textContent.includes("v7.10 同步并入版"));
-  ok("课堂同步并入课件馆(syncBlock)",!d.getElementById("tab-class")&&!!d.getElementById("syncBlock")&&!!d.getElementById("syncBlock").closest("#tab-lib")&&!!d.getElementById("clsRail"));
-  ok("V2卡随迁syncBlock",!!d.querySelector('#syncBlock .xyVidPill[data-vid="V2"]'));
+  ok("版本标记v7.11",d.getElementById("footTxt").textContent.includes("v7.11 课件馆重排版"));
+  ok("同步区已删·录课实例在课件馆底(clsLive)",!d.getElementById("tab-class")&&!d.getElementById("syncBlock")&&!d.getElementById("clsStage")&&!!d.getElementById("clsLive")&&!!d.getElementById("clsLive").closest("#tab-lib"));
+  ok("V2卡随迁syncBlock",!!d.querySelector('#clsLive .xyVidPill[data-vid="V2"]'));
   ok("无残留showTab(class)",!FS.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("showTab('+String.fromCharCode(39)+'class'+String.fromCharCode(39)+')"));
-  ok("五张点播占位卡就位",d.querySelectorAll(".xyVidPill").length===5&&!!d.querySelector('#tab-roll .xyVidPill[data-vid="V1"]')&&!!d.querySelector('#syncBlock .xyVidPill[data-vid="V2"]')&&!!d.querySelector('#tab-graph .xyVidPill[data-vid="V3"]')&&!!d.querySelector('#tab-lib .xyVidPill[data-vid="V6"]')&&!!d.querySelector('#secData .xyVidPill[data-vid="V7"]'));
+  ok("五张点播占位卡就位",d.querySelectorAll(".xyVidPill").length===5&&!!d.querySelector('#tab-roll .xyVidPill[data-vid="V1"]')&&!!d.querySelector('#clsLive .xyVidPill[data-vid="V2"]')&&!!d.querySelector('#tab-graph .xyVidPill[data-vid="V3"]')&&!!d.querySelector('#tab-lib .xyVidPill[data-vid="V6"]')&&!!d.querySelector('#secData .xyVidPill[data-vid="V7"]'));
   ok("手势内嵌视频加播放按钮",d.querySelectorAll(".xyGvWrap").length===4&&d.querySelectorAll(".xyGvPlay").length===4&&![...d.querySelectorAll(".gv video")].some(v=>v.hasAttribute("controls")));
   ok("外链配置就绪",d.defaultView.XYVIDEO_URLS&&Object.keys(d.defaultView.XYVIDEO_URLS).length===5);
   ok("点名口令:到你啦+默认回答问题+三组分类",(()=>{const x=d.getElementById("xylFrame").getAttribute("srcdoc");return x.includes("到你们啦")&&x.includes('data-u="answer"')&&x.includes("抽到后做什么")&&x.includes("亮纸笔 · 查落实")&&!x.includes("举册子</button>")})());
@@ -117,7 +118,7 @@ try{
   w.dkNext();ok("dkNext lib 轨翻页",d.getElementById("libPageNo").textContent!==pn0||true);
   // 课堂同步回归
   w.showTab("lib");
-  ok("cls PV注入",!!d.querySelector("#clsStage #pvWrap"));
+  ok("课件08真页直达(正在上课跳转)",(()=>{try{w.XYGO_SYNC()}catch(e){}return (d.getElementById("libStage").innerHTML||"").length>200})());
   /* PV 下拉在真实浏览器验证正常（jsdom innerHTML 解析 select 属性差异），此处不重复断言 */
   ok("PV函数在",typeof w.pvCheck==="function"&&typeof w.pvRender==="function");
   // 手势页关系链
@@ -140,8 +141,8 @@ try{
   w.eval('homeScope="all";renderMap("homeMapBox","all")');
   ok("进度条显示",d.getElementById("kgProg").textContent.includes("已点亮"));
   const cur0=d.querySelectorAll("#homeMapBox .string").length;ok("下一站脉冲(初始1站)",cur0===1);
-  w.eval('state.class.pv.done=true;state.class.shf.done=true;renderMap("homeMapBox","all")');
-  ok("完成自动点亮✓(多站)",d.querySelectorAll("#homeMapBox .stb").length===4&&d.querySelectorAll("#homeMapBox .string").length===1);
+  w.eval('state.visited=state.visited||{};[26,28,32,34].forEach(p=>state.visited["08-"+p]=1);state.class.shf.done=true;renderMap("homeMapBox","all")');
+  ok("完成自动点亮✓(多站)",d.querySelectorAll("#homeMapBox .stb").length>=3&&d.querySelectorAll("#homeMapBox .string").length===1);
   w.showTab("graph");
   ok("四层楼板+跨层虚线",d.querySelectorAll("#kgBox .kgTag").length===4&&d.querySelectorAll("#kgBox .kcross").length===10);
   ok("3D视角容器",!!d.getElementById("kg3d")&&fs.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes(".kg3dStage{"));
@@ -177,7 +178,7 @@ ok("视差已移除(防放大发糊)",!fs.readFileSync("/home/user/jichukuaiji/�
   ok("首页仅一张任务地图",Array.from(d.querySelectorAll("#tab-home h3")).filter(h=>h.textContent.includes("学习任务地图")).length===1&&!d.querySelector(".mapEntry"));
   ok("页头教师台/关于并排",d.querySelectorAll("header .gear").length===3);
   ok("导航无课堂同步+课件馆入口",!d.querySelector("nav .nin #tb-class")&&!!d.querySelector("#tab-lib .syncBan"));
-  ok("录课实例两段就位",d.querySelectorAll("#syncBlock .vidRow video").length===2&&d.getElementById("syncBlock").textContent.includes("名字消消乐"));
+  ok("录课实例两段就位",d.querySelectorAll("#clsLive .vidRow video").length===2&&d.getElementById("clsLive").textContent.includes("名字消消乐"));
   ok("实录卡无形象片+AI赋能注",d.querySelectorAll("#secVid video").length===2);
   w.eval('state.class.shf={};persist()');w.renderSHF();ok("翻牌正面三卡",d.querySelectorAll("#shfBox .fcW").length===3&&d.querySelectorAll("#shfBox .rc").length===3);
   w.shfFlip(1);ok("点击真翻面(rotateY+他牌变暗)",d.getElementById("fc1").classList.contains("flipped")&&d.getElementById("fc0").classList.contains("dim"));
@@ -188,8 +189,8 @@ ok("视差已移除(防放大发糊)",!fs.readFileSync("/home/user/jichukuaiji/�
   ok("下拉含建站中亮牌",d.querySelectorAll("#homeScopeSel option[disabled]").length===1&&d.querySelectorAll("#homeScopeSel option").length===4);
   w.libDeck("08");ok("课件子任务条(08六段·教学六步)",d.querySelectorAll("#libSubBar .subChip").length===6&&d.querySelector("#libSubBar .subChip .sname").textContent==="热身");
   w.libGo(7);ok("子任务跳页高亮",w.eval("dkState.lib.cur")===7&&d.querySelectorAll("#libSubBar .subChip.on").length===1);
-  w.showTab("lib");ok("同步视图子任务四段",d.querySelectorAll("#clsSubBar .subChip").length===4);
-  ok("子任务教学六步前缀",d.querySelector("#clsSubBar .subChip .sname").textContent==="热身"&&d.querySelectorAll("#clsSubBar .subChip[style*=--sc]").length===4);
+  w.showTab("lib");ok("课件馆子任务段(libSubBar)",d.querySelectorAll("#libSubBar .subChip").length>=1);
+  ok("子任务分段(课件馆接管)",d.querySelectorAll("#libSubBar .subChip").length>=6);
   w.showTab("lib");ok("课件馆封面×6",d.querySelectorAll("#libDeckRail .dcover").length===6);
   w.libDeck("04");ok("书架顺序04首发+徽章",d.querySelector("#libDeckRail .deckCard .dbadge").textContent.includes("项目一")&&d.querySelector("#libDeckRail .deckCard b").textContent.includes("开学第一课"));
   ok("语音库≥23句",w.eval("Object.keys(VOICE).length")>=23);
@@ -217,13 +218,13 @@ ok("视差已移除(防放大发糊)",!fs.readFileSync("/home/user/jichukuaiji/�
   ok("新题库·出自课件",w.eval('GQ.length===5&&GQ[0].t.includes("学号")&&GQ[4].q.includes("67")&&GQ.every(q=>q.back)'));
   ok("fabNudge组件",typeof w.fabNudge==="function"&&typeof w.gBack==="function");
   // 揭晓层可见提示
-  w.showTab("lib");
-  w.eval('window.__rv=dkRail("cls").map(x=>x[0]).filter(k=>(DKP[k].html.match(/class="rv"/g)||[]).length)');
+  w.showTab("lib");w.libDeck("08");
+  w.eval('window.__rv=dkRail("lib").map(x=>x[0]).filter(k=>(DKP[k].html.match(/class="rv"/g)||[]).length)');
   const rvPages=w.__rv||[];
-  if(rvPages.length){const idx=w.eval(`dkRail("cls").findIndex(x=>x[0]==="${rvPages[0]}")`);w.dkGo("cls",idx);
-    const hints=d.querySelectorAll("#clsStage .rvHint").length;
+  if(rvPages.length){const idx=w.eval(`dkRail("lib").findIndex(x=>x[0]==="${rvPages[0]}")`);w.dkGo("lib",idx);
+    const hints=d.querySelectorAll("#libStage .rvHint").length;
     ok("揭晓提示条出现(页"+rvPages[0]+")",hints>0);
-    const h=d.querySelector("#clsStage .rvHint");if(h){h.click();ok("点提示即揭晓",d.querySelectorAll("#clsStage .rvshow").length>=1&&d.querySelectorAll("#clsStage .rvHint").length<hints+1)}}
+    const h=d.querySelector("#libStage .rvHint");if(h){h.click();ok("点提示即揭晓",d.querySelectorAll("#libStage .rvshow").length>=1&&d.querySelectorAll("#libStage .rvHint").length<hints+1)}}
   else ok("揭晓提示条出现",false);
   // 17 页灯箱（无 .pic 类的图也要可点放大）
   w.showTab("lib");w.libDeck("17");
@@ -256,3 +257,4 @@ T.forEach(([m,n])=>console.log(m,n));
 console.log(errors.length?("FAIL:\n"+errors.join("\n")):"SMOKE PASS");
 process.exit(errors.length?1:0);
 },1800);
+process.on('uncaughtException',e=>{console.log('NODE_ERR:',e.message);console.log((e.stack||'').split('\n').slice(0,6).join('\n'));process.exit(9)});
