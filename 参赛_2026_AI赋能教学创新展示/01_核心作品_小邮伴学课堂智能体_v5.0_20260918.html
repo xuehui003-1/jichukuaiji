@@ -1143,7 +1143,7 @@ function applyMode(){const b=document.getElementById("modeBadge");
 (function init(){
   document.getElementById("appName").textContent=CONFIG.name;
   document.getElementById("appSub").textContent=CONFIG.sub;
-  document.getElementById("footTxt").textContent=`学生先自己判断，AI 只做复核参考，拿不准的由老师终审 ｜ ${CONFIG.school} · ${CONFIG.cls}（公开页数据已匿名） ｜ v7.8 到你啦版`;
+  document.getElementById("footTxt").textContent=`学生先自己判断，AI 只做复核参考，拿不准的由老师终审 ｜ ${CONFIG.school} · ${CONFIG.cls}（公开页数据已匿名） ｜ v7.9 占位点播版`;
   document.getElementById("aboutLand").innerHTML=`<ul style="margin-left:20px">
     <li><b>落地</b>：${CONFIG.school} ${CONFIG.cls}；围绕《基础会计》生活记账作业（旧账新用）运转，教师备课、课堂互动、课后订正三处日常使用</li>
     <li><b>声明</b>：AI 只生成辅助意见，一切评价由教师终审；学生端先判断、后揭晓；页面不含学生姓名，摄像头视频与练习数据均不离开本机</li>
@@ -1928,5 +1928,48 @@ function libJumpGo(){const n=parseInt(document.getElementById("libJump").value,1
 setTimeout(()=>{if(fabOnce.size===0)fabNudge("我是小邮 🤖 任务卡住、答错想知道为什么、想让我帮你查——点右下角的我，随时说","hi")},12000);
 
 </script>
-</body>
+<script id="xyV79">
+(function(){
+var CSS=document.createElement("style");
+CSS.textContent=".xyVidPill{display:flex;align-items:center;gap:8px;width:calc(100% - 16px);max-width:760px;margin:2px auto 10px;padding:9px 14px;background:linear-gradient(90deg,#101b36,#1a2744);color:#ffe9a8;border:1px solid rgba(224,177,58,.5);border-radius:999px;cursor:pointer;font-size:13px;box-shadow:0 4px 14px rgba(0,0,0,.35);text-align:left}"
++".xyVidPill b{font-weight:800}"
++".xyVidPill i{margin-left:auto;font-style:normal;font-size:12px;background:#e0b13a;color:#221a08;font-weight:800;padding:3px 10px;border-radius:999px;white-space:nowrap}"
++".xyVidPill.wait i{background:#5a6b8f;color:#fff}"
++".xyGvWrap{position:relative;display:block}"
++".xyGvPlay{position:absolute;left:0;top:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(10,16,34,.28);border-radius:10px}"
++".xyGvPlay span{width:52px;height:52px;border-radius:50%;background:rgba(224,177,58,.95);color:#221a08;font-size:24px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.45)}";
+document.head.appendChild(CSS);
+window.XYVIDEO_URLS={V1:"",V2:"",V3:"",V6:"",V7:""};
+var TITLES={V1:"真实课堂实证 · 消名与点名",V2:"真实课堂实证 · 任务与记录册",V3:"真实课堂实证 · 图谱与数据",V6:"真实课堂实证 · 实录重新组装",V7:"真实成果 · 从原始表到课堂"};
+function pill(k){var b=document.createElement("button");b.type="button";b.className="xyVidPill";b.setAttribute("data-vid",k);
+ b.innerHTML="📺 <b>"+TITLES[k]+"</b><i>点击观看</i>";
+ b.onclick=function(){var u=(window.XYVIDEO_URLS||{})[k];
+  if(!u){b.classList.add("wait");b.querySelector("i").textContent="视频制作中 · 外链就绪后一键替换";
+   setTimeout(function(){b.classList.remove("wait");b.querySelector("i").textContent="点击观看";},2400);return;}
+  var v=document.createElement("video");v.controls=true;v.setAttribute("playsinline","");v.preload="metadata";
+  v.src=u;v.style.cssText="width:100%;max-width:760px;display:block;margin:2px auto 10px;aspect-ratio:16/9;background:#000;border-radius:12px";
+  b.replaceWith(v);var pr=v.play();if(pr&&pr.catch)pr.catch(function(){});};
+ return b;}
+[["V1","tab-roll",0],["V2","tab-class",0],["V3","tab-graph",0],["V6","tab-lib",0],["V7","secData",1]].forEach(function(it){
+ var k=it[0],host=document.getElementById(it[1]);if(!host||host.querySelector('[data-vid="'+k+'"]'))return;
+ var p=pill(k);
+ if(it[2]){host.appendChild(p);}else{host.insertBefore(p,host.querySelector(".card"));}
+});
+document.querySelectorAll(".gv video").forEach(function(v){
+ if(v.parentNode&&v.parentNode.className==="xyGvWrap")return;
+ v.removeAttribute("controls");
+ v.setAttribute("playsinline","");v.setAttribute("preload","metadata");
+ var w=document.createElement("span");w.className="xyGvWrap";
+ v.parentNode.insertBefore(w,v);w.appendChild(v);
+ var o=document.createElement("div");o.className="xyGvPlay";o.innerHTML="<span>\u25B6</span>";
+ w.appendChild(o);
+ var show=function(){o.style.display="flex";};
+ v.addEventListener("play",function(){o.style.display="none";});
+ v.addEventListener("pause",show);v.addEventListener("ended",show);
+ function go(e){e.preventDefault();e.stopPropagation();
+  if(v.paused){var pr=v.play();if(pr&&pr.catch)pr.catch(function(){});}else{v.pause();}}
+ o.addEventListener("click",go);v.addEventListener("click",go);
+});
+})();
+</script></body>
 </html>

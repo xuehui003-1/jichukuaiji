@@ -25,7 +25,10 @@ try{
   // 首页五卡+评环卡
   ok("第二步翻课件入口",d.body.textContent.includes("课件馆"));
   ok("6份课件口径",d.body.textContent.includes("全部 6 份课件 154 页"));
-  ok("版本标记v7.8",d.getElementById("footTxt").textContent.includes("v7.8 到你啦版"));
+  ok("版本标记v7.9",d.getElementById("footTxt").textContent.includes("v7.9 占位点播版"));
+  ok("五张点播占位卡就位",d.querySelectorAll(".xyVidPill").length===5&&!!d.querySelector('#tab-roll .xyVidPill[data-vid="V1"]')&&!!d.querySelector('#tab-class .xyVidPill[data-vid="V2"]')&&!!d.querySelector('#tab-graph .xyVidPill[data-vid="V3"]')&&!!d.querySelector('#tab-lib .xyVidPill[data-vid="V6"]')&&!!d.querySelector('#secData .xyVidPill[data-vid="V7"]'));
+  ok("手势内嵌视频加播放按钮",d.querySelectorAll(".xyGvWrap").length===4&&d.querySelectorAll(".xyGvPlay").length===4&&![...d.querySelectorAll(".gv video")].some(v=>v.hasAttribute("controls")));
+  ok("外链配置就绪",d.defaultView.XYVIDEO_URLS&&Object.keys(d.defaultView.XYVIDEO_URLS).length===5);
   ok("点名口令:到你啦+默认回答问题+三组分类",(()=>{const x=d.getElementById("xylFrame").getAttribute("srcdoc");return x.includes("到你们啦")&&x.includes('data-u="answer"')&&x.includes("抽到后做什么")&&x.includes("亮纸笔 · 查落实")&&!x.includes("举册子</button>")})());
   ok("转盘中心开始可点击+注释",(()=>{const x=d.getElementById("xylFrame").getAttribute("srcdoc");return x.includes("data-hubgo")&&x.includes("即可抽人")&&x.includes('draw1')})());
   ok("课件馆贴纸移至页码跳转旁",(()=>{const h=d.getElementById("libJump");if(!h)return false;let p=h.previousElementSibling;return !!(p&&p.className==="xySticker"&&p.textContent.includes("上面输页码"))})());
