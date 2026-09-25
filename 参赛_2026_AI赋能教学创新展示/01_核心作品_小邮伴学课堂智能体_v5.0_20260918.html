@@ -851,9 +851,10 @@ function gSubmit(name){
     sfx("no");
     fb.innerHTML=`<div class="verd no">✗ 这是${GLBL[name]}；本题需要「${GLBL[q.exp]}」。<button class="btn o gback" onclick="gBack('${q.back[0]}',${q.back[1]})">📖 回课件 p${q.back[1]} 重学</button></div>`;fabNudge("这道题卡住了？问我「为什么」——我只提示，不替你答");return}
   g.lock=true;g.awaitRel=true;g.score+=20;sfx("ok");
+  gRel=false;updateGRelease();
   fb.innerHTML=`<div class="verd ok">✓ ${q.know}：${q.ans}（+20 分）</div>`;
   document.getElementById("gNext").innerHTML=`<div class="grel">看清反馈后进入下一题。<br><button class="btn" id="gNextBtn" onclick="gNextQ()" ${g.on&&!gRel?"disabled":""}>${g.i===GQ.length-1?"完成闯关":"确认，下一题"}</button></div>`;
-  updateGRelease();
+  setTimeout(function(){var b=document.getElementById("gNextBtn");if(b&&b.disabled){b.disabled=false;b.textContent=g.i===GQ.length-1?"完成闯关":"确认，下一题"}},2500);
 }
 let gRel=true;function updateGRelease(){const b=document.getElementById("gNextBtn");if(b){b.disabled=g.on&&!gRel;b.textContent=g.on&&!gRel?"等待手势释放…":(g.i===GQ.length-1?"完成闯关":"确认，下一题")}}
 function gNextQ(){g.lock=false;g.i++;renderGest()}
