@@ -1,6 +1,6 @@
 /* v5.0 冒烟：jsdom 全流程 */
 const fs=require("fs");
-const {JSDOM}=require("/tmp/node_modules/jsdom");
+const FS=require("fs");const {JSDOM}=require("/tmp/node_modules/jsdom");
 const F="/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html";
 const html=fs.readFileSync(F,"utf8");
 const errors=[];
@@ -25,8 +25,11 @@ try{
   // 首页五卡+评环卡
   ok("第二步翻课件入口",d.body.textContent.includes("课件馆"));
   ok("6份课件口径",d.body.textContent.includes("全部 6 份课件 154 页"));
-  ok("版本标记v7.9",d.getElementById("footTxt").textContent.includes("v7.9 占位点播版"));
-  ok("五张点播占位卡就位",d.querySelectorAll(".xyVidPill").length===5&&!!d.querySelector('#tab-roll .xyVidPill[data-vid="V1"]')&&!!d.querySelector('#tab-class .xyVidPill[data-vid="V2"]')&&!!d.querySelector('#tab-graph .xyVidPill[data-vid="V3"]')&&!!d.querySelector('#tab-lib .xyVidPill[data-vid="V6"]')&&!!d.querySelector('#secData .xyVidPill[data-vid="V7"]'));
+  ok("版本标记v7.10",d.getElementById("footTxt").textContent.includes("v7.10 同步并入版"));
+  ok("课堂同步并入课件馆(syncBlock)",!d.getElementById("tab-class")&&!!d.getElementById("syncBlock")&&!!d.getElementById("syncBlock").closest("#tab-lib")&&!!d.getElementById("clsRail"));
+  ok("V2卡随迁syncBlock",!!d.querySelector('#syncBlock .xyVidPill[data-vid="V2"]'));
+  ok("无残留showTab(class)",!FS.readFileSync("/home/user/jichukuaiji/参赛_2026_AI赋能教学创新展示/01_核心作品_小邮伴学课堂智能体_v5.0_20260918.html","utf8").includes("showTab('+String.fromCharCode(39)+'class'+String.fromCharCode(39)+')"));
+  ok("五张点播占位卡就位",d.querySelectorAll(".xyVidPill").length===5&&!!d.querySelector('#tab-roll .xyVidPill[data-vid="V1"]')&&!!d.querySelector('#syncBlock .xyVidPill[data-vid="V2"]')&&!!d.querySelector('#tab-graph .xyVidPill[data-vid="V3"]')&&!!d.querySelector('#tab-lib .xyVidPill[data-vid="V6"]')&&!!d.querySelector('#secData .xyVidPill[data-vid="V7"]'));
   ok("手势内嵌视频加播放按钮",d.querySelectorAll(".xyGvWrap").length===4&&d.querySelectorAll(".xyGvPlay").length===4&&![...d.querySelectorAll(".gv video")].some(v=>v.hasAttribute("controls")));
   ok("外链配置就绪",d.defaultView.XYVIDEO_URLS&&Object.keys(d.defaultView.XYVIDEO_URLS).length===5);
   ok("点名口令:到你啦+默认回答问题+三组分类",(()=>{const x=d.getElementById("xylFrame").getAttribute("srcdoc");return x.includes("到你们啦")&&x.includes('data-u="answer"')&&x.includes("抽到后做什么")&&x.includes("亮纸笔 · 查落实")&&!x.includes("举册子</button>")})());
@@ -113,7 +116,7 @@ try{
   const pn0=d.getElementById("libPageNo").textContent;
   w.dkNext();ok("dkNext lib 轨翻页",d.getElementById("libPageNo").textContent!==pn0||true);
   // 课堂同步回归
-  w.showTab("class");
+  w.showTab("lib");
   ok("cls PV注入",!!d.querySelector("#clsStage #pvWrap"));
   /* PV 下拉在真实浏览器验证正常（jsdom innerHTML 解析 select 属性差异），此处不重复断言 */
   ok("PV函数在",typeof w.pvCheck==="function"&&typeof w.pvRender==="function");
@@ -174,7 +177,7 @@ ok("视差已移除(防放大发糊)",!fs.readFileSync("/home/user/jichukuaiji/�
   ok("首页仅一张任务地图",Array.from(d.querySelectorAll("#tab-home h3")).filter(h=>h.textContent.includes("学习任务地图")).length===1&&!d.querySelector(".mapEntry"));
   ok("页头教师台/关于并排",d.querySelectorAll("header .gear").length===3);
   ok("导航无课堂同步+课件馆入口",!d.querySelector("nav .nin #tb-class")&&!!d.querySelector("#tab-lib .syncBan"));
-  ok("录课实例两段就位",d.querySelectorAll("#tab-class .vidRow video").length===2&&d.getElementById("tab-class").textContent.includes("名字消消乐"));
+  ok("录课实例两段就位",d.querySelectorAll("#syncBlock .vidRow video").length===2&&d.getElementById("syncBlock").textContent.includes("名字消消乐"));
   ok("实录卡无形象片+AI赋能注",d.querySelectorAll("#secVid video").length===2);
   w.eval('state.class.shf={};persist()');w.renderSHF();ok("翻牌正面三卡",d.querySelectorAll("#shfBox .fcW").length===3&&d.querySelectorAll("#shfBox .rc").length===3);
   w.shfFlip(1);ok("点击真翻面(rotateY+他牌变暗)",d.getElementById("fc1").classList.contains("flipped")&&d.getElementById("fc0").classList.contains("dim"));
@@ -185,7 +188,7 @@ ok("视差已移除(防放大发糊)",!fs.readFileSync("/home/user/jichukuaiji/�
   ok("下拉含建站中亮牌",d.querySelectorAll("#homeScopeSel option[disabled]").length===1&&d.querySelectorAll("#homeScopeSel option").length===4);
   w.libDeck("08");ok("课件子任务条(08六段·教学六步)",d.querySelectorAll("#libSubBar .subChip").length===6&&d.querySelector("#libSubBar .subChip .sname").textContent==="热身");
   w.libGo(7);ok("子任务跳页高亮",w.eval("dkState.lib.cur")===7&&d.querySelectorAll("#libSubBar .subChip.on").length===1);
-  w.showTab("class");ok("同步视图子任务四段",d.querySelectorAll("#clsSubBar .subChip").length===4);
+  w.showTab("lib");ok("同步视图子任务四段",d.querySelectorAll("#clsSubBar .subChip").length===4);
   ok("子任务教学六步前缀",d.querySelector("#clsSubBar .subChip .sname").textContent==="热身"&&d.querySelectorAll("#clsSubBar .subChip[style*=--sc]").length===4);
   w.showTab("lib");ok("课件馆封面×6",d.querySelectorAll("#libDeckRail .dcover").length===6);
   w.libDeck("04");ok("书架顺序04首发+徽章",d.querySelector("#libDeckRail .deckCard .dbadge").textContent.includes("项目一")&&d.querySelector("#libDeckRail .deckCard b").textContent.includes("开学第一课"));
@@ -214,7 +217,7 @@ ok("视差已移除(防放大发糊)",!fs.readFileSync("/home/user/jichukuaiji/�
   ok("新题库·出自课件",w.eval('GQ.length===5&&GQ[0].t.includes("学号")&&GQ[4].q.includes("67")&&GQ.every(q=>q.back)'));
   ok("fabNudge组件",typeof w.fabNudge==="function"&&typeof w.gBack==="function");
   // 揭晓层可见提示
-  w.showTab("class");
+  w.showTab("lib");
   w.eval('window.__rv=dkRail("cls").map(x=>x[0]).filter(k=>(DKP[k].html.match(/class="rv"/g)||[]).length)');
   const rvPages=w.__rv||[];
   if(rvPages.length){const idx=w.eval(`dkRail("cls").findIndex(x=>x[0]==="${rvPages[0]}")`);w.dkGo("cls",idx);
@@ -239,7 +242,7 @@ ok("视差已移除(防放大发糊)",!fs.readFileSync("/home/user/jichukuaiji/�
   ok("全页名单0泄漏",!names.some(n=>d.body.textContent.includes(n)));
   // PV 检查器流程：全对→消名
   try{
-    w.showTab("class");
+    w.showTab("lib");
     const wrap=d.querySelector("#pvWrap");
     const sels=[...wrap.querySelectorAll("select")];
     if(sels.length>=5){
