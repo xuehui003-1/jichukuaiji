@@ -25,7 +25,8 @@ try{
   // 首页五卡+评环卡
   ok("第二步翻课件入口",d.body.textContent.includes("课件馆"));
   ok("6份课件口径",d.body.textContent.includes("全部 6 份课件 154 页"));
-  ok("版本标记v7.7",d.getElementById("footTxt").textContent.includes("v7.7 点盘即抽版"));
+  ok("版本标记v7.8",d.getElementById("footTxt").textContent.includes("v7.8 到你啦版"));
+  ok("点名口令:到你啦+默认回答问题+三组分类",(()=>{const x=d.getElementById("xylFrame").getAttribute("srcdoc");return x.includes("到你们啦")&&x.includes('data-u="answer"')&&x.includes("抽到后做什么")&&x.includes("亮纸笔 · 查落实")&&!x.includes("举册子</button>")})());
   ok("转盘中心开始可点击+注释",(()=>{const x=d.getElementById("xylFrame").getAttribute("srcdoc");return x.includes("data-hubgo")&&x.includes("即可抽人")&&x.includes('draw1')})());
   ok("课件馆贴纸移至页码跳转旁",(()=>{const h=d.getElementById("libJump");if(!h)return false;let p=h.previousElementSibling;return !!(p&&p.className==="xySticker"&&p.textContent.includes("上面输页码"))})());
   ok("虚拟头像走工具圆圈系统",(()=>{const r=d.getElementById("rollFrame").getAttribute("srcdoc");return r.includes("__genFace")&&r.includes("putPhoto(nm,f)")&&!r.includes("xyAvatars")})());
