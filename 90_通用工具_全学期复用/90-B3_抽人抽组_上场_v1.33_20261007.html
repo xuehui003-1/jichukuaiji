@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>上场　v1.32</title>
+<title>上场　v1.33</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:#05070d;color:#eef4ff;
@@ -56,6 +56,8 @@ body.rail-shut .rail-tab{display:block}
 .rail .uses{flex-direction:row;flex-wrap:wrap}
 .rail .uses button{flex:1 1 30%;padding:7px 4px;font-size:12px;background:#1a2744;color:#c9d6f0;border-radius:10px}
 .rail .uses button.on{background:#ff1744;color:#fff}
+.rail .uses .ug{flex:1 1 100%;font-size:11px;color:#8098c0;letter-spacing:1px;margin:6px 0 0;padding:0}
+.rail .uses .ug:first-child{margin-top:0}
 .map{font-size:12px;line-height:1.55;color:#c9d6f0;background:#0b1220;border:1px dashed #3d4d72;border-radius:10px;padding:8px 10px}
 .map b{color:#ffd36a}
 .use-tip{font-size:13px;line-height:1.55;color:#ffe9a8;background:#1a2744;border-radius:10px;padding:8px 10px}
@@ -224,12 +226,17 @@ input[type=file].pick{display:block;width:100%;margin-top:6px;font-size:12px;col
 
   <h3>上场做什么（点一个）</h3>
   <div class="uses" id="uses">
-    <button type="button" data-u="book" class="on">举册子</button>
+    <div class="ug">常规 · 每节课都用</div>
+    <button type="button" data-u="ask" class="on">答问</button>
+    <button type="button" data-u="book">举册子</button>
+    <button type="button" data-u="board">上台写</button>
+    <div class="ug">小工具 · 配套项目</div>
     <button type="button" data-u="tianping">天平</button>
-    <button type="button" data-u="lianxian">连线</button>
     <button type="button" data-u="shuiguang">水管</button>
     <button type="button" data-u="shisuan">试算表</button>
+    <button type="button" data-u="lianxian">连线</button>
     <button type="button" data-u="mole">打地鼠</button>
+    <div class="ug">特定环节 · 用到才点</div>
     <button type="button" data-u="dub">配音</button>
     <button type="button" data-u="nitpick">找茬</button>
     <button type="button" data-u="voucher">看凭证</button>
@@ -265,14 +272,14 @@ input[type=file].pick{display:block;width:100%;margin-top:6px;font-size:12px;col
     <button type="button" id="scoreFindClr">清空</button>
   </div>
   <div class="score-list" id="scoreList"></div>
-  <button class="gold wide" type="button" id="btnCheckout" style="margin-bottom:6px">下课消名字（检查册子）</button>
+  <button class="gold wide" type="button" id="btnCheckout" style="margin-bottom:6px">名字消消乐（查过就点掉）</button>
   <button class="ghost wide" type="button" id="clearScore">清空今日分</button>
 </aside>
 
 <div class="ui">
   <div class="top">
     <div class="brand">上场</div>
-    <span class="ver">v1.32</span>
+    <span class="ver">v1.33</span>
   </div>
   <div class="stage">
     <div class="ring-wrap">
@@ -286,7 +293,7 @@ input[type=file].pick{display:block;width:100%;margin-top:6px;font-size:12px;col
 
 <div class="checkout" id="checkout">
   <div class="co-top">
-    <h2>下课前　检查册子</h2>
+    <h2>名字消消乐</h2>
     <label class="co-sw"><input type="checkbox" id="coScore" checked> 消名字时记 <b>1</b> 分</label>
     <button type="button" id="coBack">← 全部退回</button>
     <button type="button" id="coFull">全屏显示</button>
@@ -294,7 +301,7 @@ input[type=file].pick{display:block;width:100%;margin-top:6px;font-size:12px;col
     <span class="rest">还剩 <b id="coRest">0</b> 人</span>
   </div>
   <div class="co-grid" id="coGrid"></div>
-  <div class="co-bar">检查过谁的册子，点一下他的名字——变灰就可以走了。灰掉的再点一下能退回（分数一起收回）。<br><b>课上主动给你看 / 被提问到 → 在抽人弹窗上点 2 分；拖到下课被动检查 → 这里点一下记 1 分。</b></div>
+  <div class="co-bar">查过谁、点过谁，就点一下他的名字——变灰表示这人过了。灰掉的再点一下能退回（分数一起收回）。<br>下课前查册子、课中点名、收作业、分组报数，都能用这一页。<br><b>课上主动给你看 / 被提问到 → 在抽人弹窗上点 2 分；拖到下课被动检查 → 这里点一下记 1 分。</b></div>
 </div>
 <div class="dim" id="dim"></div>
 <aside class="panel" id="panel">
@@ -331,10 +338,23 @@ const COLS = ["#1a365d","#9b2c2c","#276749","#553c9a","#2b6cb0","#975a16","#234e
 let items=[], rot=0, spinning=false, busy=false, muted=false, groupsMode=false, photos={}, imgObj={};
 let hist=[];
 const USES = {
+  ask: {
+    label: "答问", suggest: "draw1",
+    tip: "最常用。照着自己记录册上写的回答，不用背。答不上来允许念册子原文，也算过。",
+    say: "照你册子上写的，回答这一题", sub: "念自己写的就行。说不出来可以直接念。",
+    s2: "答上来 2", s5: "答得好 5", s0: "答不出 0"
+  },
   book: {
-    label: "举册子", suggest: "draw3", tip: "",
+    label: "举册子", suggest: "draw3", tip: "快速过一遍。走过去扫一眼，有字就给分，空白跳过不说话。",
     say: "这三位，册子举起来", sub: "写了就行。不用站起来，不用开口。",
     s2: "写了 2", s5: "写好 5", s0: "空白 0"
+  },
+  board: {
+    label: "上台写", suggest: "draw1",
+    tip: "写分录、填凭证、画 T 形账户这类要动笔的，抽一个人上黑板写。",
+    say: "上来写在黑板上", sub: "写错不扣分，写了就有分。",
+    s2: "写了 2", s5: "全对 5", s0: "没写 0",
+    goBtn: "上台写"
   },
   tianping: {
     label: "天平", suggest: "draw1",
@@ -391,14 +411,14 @@ const USES = {
     s2: "过了 2", s5: "写得好 5", s0: "要改 0"
   }
 };
-let useId = "book";
+let useId = "ask";
 function useLabel(){ return USES[useId].label; }
 function useSay(){
   const n = (arguments[0]||[]).length;
-  if(useId==="book"){
-    const who = n===1?"这一位": n===2?"这两位": n===3?"这三位":"这几位";
-    return who+"，册子举起来";
-  }
+  const who = n===1?"这一位": n===2?"这两位": n===3?"这三位":"这几位";
+  if(useId==="book") return who+"，册子举起来";
+  if(useId==="ask")  return who+"，照你册子上写的，回答这一题";
+  if(useId==="board")return who+"，上来写在黑板上";
   return USES[useId].say;
 }
 function useSub(){ return USES[useId].sub || ""; }
@@ -407,7 +427,7 @@ function applyUse(){
   const tip = u.tip || "";
   $("useTip").textContent = tip;
   $("useTip").style.display = tip ? "block" : "none";
-  [...$("uses").children].forEach(x=>x.classList.toggle("on", x.dataset.u===useId));
+  [...$("uses").querySelectorAll("button")].forEach(x=>x.classList.toggle("on", x.dataset.u===useId));
   ["draw1","drawG","draw3"].forEach(id => $(id).classList.remove("suggest"));
   if(u.suggest) $(u.suggest).classList.add("suggest");
 }
@@ -561,7 +581,11 @@ function applyScoreFind(){
   if(first) first.scrollIntoView({block:"center"});
 }
 
-// ── 下课消名字 ──
+// ── 名字消消乐（查过的名字点掉） ──
+// 记分明细里的用途名。旧数据写的是「下课检查册子」，读的时候两个都认，写只写新的。
+const CO_USE = "名字消消乐";
+const CO_USE_OLD = "下课检查册子";
+function isCoRec(r){ return r.use===CO_USE || r.use===CO_USE_OLD; }
 function coKey(){ return "draw-checkout-"+todayStr(); }
 function coDone(){
   try{ const a=JSON.parse(localStorage.getItem(coKey())||"[]"); return Array.isArray(a)?a:[]; }
@@ -604,7 +628,7 @@ function renderCheckout(){
   const done=new Set(coDone());
   $("coGrid").innerHTML = names.map(n=>{
     const img = photos[n] ? `<img src="${photos[n]}" alt="">` : `<div class="face"></div>`;
-    const got = scoreLog.some(r=>r.day===todayStr() && r.name===n && r.use==="下课检查册子");
+    const got = scoreLog.some(r=>r.day===todayStr() && r.name===n && isCoRec(r));
     return `<div class="co-cell${done.has(n)?" done":""}" data-n="${esc(n)}">${img}<div class="nm">${esc(n)}</div><span class="pt">${got?"+1 分":""}</span></div>`;
   }).join("") || '<div style="color:#8ea0c3">名单是空的。先在「名单 / 组名」里贴名单。</div>';
   $("coRest").textContent = String(names.filter(n=>!done.has(n)).length);
@@ -1473,7 +1497,7 @@ $("closeP").onclick = $("dim").onclick = ()=> openPanel(false);
 $("uses").onclick = e=>{
   const b=e.target.closest("button"); if(!b) return;
   useId=b.dataset.u;
-  [...$("uses").children].forEach(x=>x.classList.toggle("on", x===b));
+  [...$("uses").querySelectorAll("button")].forEach(x=>x.classList.toggle("on", x===b));
   applyUse();
 };
 
@@ -1897,7 +1921,9 @@ function speakLine(names){
   const one=arr.length===1;
   let text="";
   // 先叫名字，再说做什么——投影上学生只需听清前半句
-  if(useId==="book") text=who+"。举册子。";
+  if(useId==="ask") text=who+"。照你写的，回答这一题。";
+  else if(useId==="book") text=who+"。举册子。";
+  else if(useId==="board") text=who+"。上来写。";
   else if(useId==="tianping") text=who+"。上来玩天平。";
   else if(useId==="lianxian") text=who+"。上来连线。";
   else if(useId==="shuiguang") text=who+"。上来看水管。";
@@ -1975,7 +2001,7 @@ if($("scoreFind")){
   $("scoreFind").onkeydown = e=>{ if(e.key==="Escape"){ $("scoreFind").value=""; applyScoreFind(); } };
 }
 if($("scoreFindClr")) $("scoreFindClr").onclick = ()=>{ $("scoreFind").value=""; applyScoreFind(); $("scoreFind").focus(); };
-// 下课消名字
+// 名字消消乐
 
 // 消名字页：全屏 + 自适应
 if($("coFull")) $("coFull").onclick = async ()=>{
@@ -1998,7 +2024,9 @@ if($("btnCheckout")) $("btnCheckout").onclick = ()=>{
 };
 if($("coClose")) $("coClose").onclick = ()=> $("checkout").classList.remove("on");
 if($("coBack")) $("coBack").onclick = ()=>{
-  if(!confirm("把今天所有灰掉的名字全部退回？")) return;
+  if(!confirm("把今天所有灰掉的名字全部退回？记过的 1 分也一起收回。")) return;
+  // 单个退回会撤掉那 1 分，全部退回也必须撤——否则名字退回了分还留着
+  coDone().forEach(n=>coRemoveScore(n));
   coSave([]); renderCheckout();
 };
 function coRemoveScore(name){
@@ -2006,16 +2034,16 @@ function coRemoveScore(name){
   const day=todayStr();
   for(let i=scoreLog.length-1;i>=0;i--){
     const r=scoreLog[i];
-    if(r.day===day && r.name===name && r.use==="下课检查册子"){ scoreLog.splice(i,1); break; }
+    if(r.day===day && r.name===name && isCoRec(r)){ scoreLog.splice(i,1); break; }
   }
   saveScores(); renderScores(); renderHist();
 }
 function coAddScore(name){
   const day=todayStr();
-  const has=scoreLog.some(r=>r.day===day && r.name===name && r.use==="下课检查册子");
+  const has=scoreLog.some(r=>r.day===day && r.name===name && isCoRec(r));
   if(has) return;
   const tm=new Date().toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
-  scoreLog.push({day, t:tm, name, pts:1, use:"下课检查册子", round:Date.now()});
+  scoreLog.push({day, t:tm, name, pts:1, use:CO_USE, round:Date.now()});
   saveScores(); renderScores(); renderHist();
 }
 if($("coGrid")) $("coGrid").onclick = e=>{
