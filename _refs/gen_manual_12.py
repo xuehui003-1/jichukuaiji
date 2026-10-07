@@ -18,7 +18,7 @@ F10 = "10_项目二_第4讲_机器人上岗_课件_v1.2_20260906.html"
 F14 = "14_项目三_第1讲_图纸搬家_课件_v1.0_20260908.html"
 F16 = "16_项目三_第2讲_循环_课件_v1.0_20260908.html"
 F17 = "17_项目三_第3讲_判断加循环_课件_v1.0_20260908.html"
-OUT = "12_课件教师答案对照手册_v3.0_20261007.docx"
+OUT = "12_课件教师答案对照手册_v3.1_20261007.docx"
 
 def strip(t):
     t = re.sub(r"<br\s*/?>", " ", t)
@@ -91,7 +91,7 @@ M08 = {
  36: ("逐条揭晓；让找到卧底的学生把丙错在哪说全", "固", "—"),
  37: ("读石邮人的一天，口头数藏着几种串法", "", "—"),
  38: ("三串法配例＋出租车 7.5 公里先算再对；⑨写完互判——各念自己的例子、说出是哪一串", "半", "说不出哪一串的帮他归一类；提示『食堂打饭是顺序，红灯停是条件』再让他们想"),
- 39: ("全班抢答：先猜『跑』的结果，答案最后揭晓", "固", "有学生提前翻到答案——翻页前先收，先猜环节不偷看"),
+ 39: ("承上启下抢答页（非暂停点，不动笔记录册）：把⑨的三种串法各用一段小程序在脑内跑一遍——顺序=地铁卡余额、条件=出租车计价、循环=正定打卡；『正定打卡』直接给下一章⑩挑刺场景热身。全班抢答：先猜『跑』的结果，答案最后揭晓", "固", "有学生提前翻到答案——翻页前先收，先猜环节不偷看"),
  40: ("读正定一日游场景：三种串法都用了但参数没带全——对照三要素抢答哪行缺要命参数（先不揭晓）", "", "集合时间最好找；『谁查天气』『循环到哪停』多数看不出——留着下一页动笔再收"),
  41: ("动笔给行程单挑刺（记录册⑩）→ 抽人说缺哪条", "固", "挑成『时间太赶』这类建议——拉回『命令缺参数，机器人就干歪』"),
  42: ("逐条揭晓；补的集合时间让全班齐说", "固", "—"),
@@ -247,9 +247,9 @@ def T(txt, size=8.5, bold=False):
     return p
 
 H("项目二 · 课件教师答案对照手册", 16)
-T("v3.0 ｜ 2026-10-07 ｜ 会计学院 · 大数据与会计 2501 班", 10, True)
+T("v3.1 ｜ 2026-10-07 ｜ 会计学院 · 大数据与会计 2501 班", 10, True)
 T("对应课件：08《纸上篇》v1.4 参赛融合版（%d 页）＋ 10《机器人上岗》v1.2（%d 页）＋ 14《图纸搬家》v1.0（%d 页）＋ 16《循环》v1.0（%d 页）＋ 17《判断加循环》v1.0（%d 页）。页码与参考答案全文均由课件源文件自动提取（_refs/gen_manual_12.py），课件改一页、重跑脚本手册跟着变。" % (len(p8), len(p10), len(p14), len(p16), len(p17)), 9)
-T("用法：上课按『暂停点编号』翻第二部分（一块一点）；备课按页查第三部分起的逐页五看（附录）。", 9, True)
+T("对照规则（双向）：看课件某页 → 查附录三~九同页码行，页码前带 ⏸ 编号的 → 翻第二部分对应详解块；看手册详解块 → 块头标了课件动笔/揭晓页码。注意：课件里的答案默认隐藏（点击『揭晓』后才显示），手册④已把揭晓内容原文抄出并注明出现方式——翻课件看不到答案是设计如此。上课按『暂停点编号』翻第二部分（一块一点）；备课按页查附录。", 9, True)
 T("每页五看：①学生干什么 ②老师怎么讲 ③答案类型——【固定答案】只有一种对法，【开放·言之有理即可】学生说得合理就算对，【有参考答案】有范例但不唯一；④参考答案全文＝课件里点击才揭晓的底色块；⑤常见卡点·应对——学生在这页最容易卡的地方和接法。", 9)
 
 H("一、暂停点总表（全册统一编号 ①–㉛）", 13)
@@ -268,7 +268,7 @@ for code, src, pg, typ, pt_ in PAUSE:
     c[4].text = "%s ｜ %s" % (info["h1"], pt_)
 
 COLW = (0.8, 4.8, 4.6, 4.8, 5.4, 5.2)
-def page_table(sec_title, pages, M, note=""):
+def page_table(sec_title, pages, M, note="", src=""):
     H(sec_title, 12)
     if note: T(note, 8)
     t = doc.add_table(rows=1, cols=6); t.style = "Table Grid"
@@ -280,7 +280,8 @@ def page_table(sec_title, pages, M, note=""):
     for pg in pages:
         teach, typ, pit = M[pg["no"]]
         c = t.add_row().cells
-        c[0].text = str(pg["no"])
+        _mark = pmap.get((src, pg["no"]))
+        c[0].text = (str(pg["no"]) + " ⏸" + _mark) if _mark else str(pg["no"])
         c[1].text = ("〔%s〕" % pg["pill"] if pg["pill"] else "") + pg["h1"]
         stu = "；".join(pg["stu"])
         now = "；".join("现在你：" + x for x in pg["now"])
@@ -297,41 +298,56 @@ P = {"08": p8, "10": p10, "14": p14, "16": p16, "17": p17}
 MM = {"08": M08, "10": M10, "14": M14, "16": M16, "17": M17}
 H("二、暂停点逐条详解（主体 · 按编号 ①→㉛ 排序，上课按编号翻）", 13)
 T("每块五看：①学生写什么（记录册栏目）②老师怎么讲 ③答案类型 ④参考答案全文（＝课件里点击才揭晓的底色块，原文照录）⑤常见卡点·应对。答案在动笔页下一页揭晓的，已并入同一块并标注揭晓页码。", 9)
+EXTRA = {"④": [18], "⑥": [31], "⑧": [36], "⑩": [42], "㉕": [8], "㉚": [10]}
+OWN_OTHER = {"⑨": "同页『7.5 公里车费』抢答的揭晓（点击后显示）——这是抢答活动的答案", "㉑": "同页另附备用场景卡（点击后显示）——给没带作业的学生，非㉑答案（㉑验收＝实际弹 75.8）"}
+OPEN_EX = {"㉓", "㉗", "㉛"}
+pause_set = {(s_, p_) for _, s_, p_ in [(c, s, p) for c, s, p, t_, pt__ in PAUSE]}
+pmap = {(s_, p_): c_ for c_, s_, p_, t_, pt__ in PAUSE}
 for code, src, pg, typ, pt_ in PAUSE:
     pages = P[src]; M = MM[src]
     info = pages[pg - 1]
     nxt = pages[pg] if pg < len(pages) else None
     teach, ttyp, pit = M[pg]
-    parts = []
-    if info["rvs"]:
-        parts.append("本页点击揭晓：" + " ◆ ".join(info["rvs"]))
-    npit = ""
-    if nxt and nxt["rvs"]:
-        npit = M[nxt["no"]][2]
-        parts.append("p%d 揭晓：" % nxt["no"] + " ◆ ".join(nxt["rvs"]))
+    extras = EXTRA.get(code, [])
+    parts = []; other = []
+    if info["rvs"] and code in OWN_OTHER:
+        other.append(OWN_OTHER[code] + "：" + " ◆ ".join(info["rvs"]))
+    elif info["rvs"] and code in OPEN_EX:
+        parts.append("课件内嵌示例（点击后显示）：" + " ◆ ".join(info["rvs"]))
+    elif info["rvs"]:
+        parts.append("本页揭晓（课件点击后显示）：" + " ◆ ".join(info["rvs"]))
+    for ep in extras:
+        e2 = pages[ep - 1]
+        if e2["rvs"]:
+            parts.append("p%d 揭晓（课件点击后显示）：" % ep + " ◆ ".join(e2["rvs"]))
     if parts:
         ans = "；".join(parts)
     elif typ == "开":
         ans = "开放题·言之有理即可（无固定底稿，验收标准＝说得合理）"
     else:
         ans = "本页无独立揭晓块——答案见『① 学生写什么』：" + pt_
+    npit = M[nxt["no"]][2] if (nxt and nxt["rvs"] and nxt["no"] in extras) else ""
     pits = [x for x in (pit, npit) if x and x != "—"]
     doc.add_page_break()
     H("⏸ 暂停点%s · %s" % (code, info["h1"]), 14, before=0)
-    T("课件 %s · p%d（动笔）%s ｜ 记录册：%s" % (src, pg, ("→ p%d（揭晓）" % nxt["no"]) if (nxt and nxt["rvs"]) else "", info["where"] or "见记录册对应页"), 10.5, True)
+    T("课件 %s · p%d（动笔）%s ｜ 记录册：%s" % (src, pg, ("→ p%d（揭晓）" % nxt["no"]) if (nxt and nxt["no"] in extras) else "", info["where"] or "见记录册对应页"), 10.5, True)
     T("① 学生写什么：" + pt_, 10.5)
-    T("② 老师怎么讲：" + teach + ((" ｜ 揭晓页：" + M[nxt["no"]][0]) if (nxt and nxt["rvs"]) else ""), 10.5)
+    T("② 老师怎么讲：" + teach + ((" ｜ 揭晓页：" + M[nxt["no"]][0]) if (nxt and nxt["no"] in extras) else ""), 10.5)
     T("③ 答案类型：" + TYPE[typ], 10.5)
     T("④ 参考答案全文：" + ans, 10.5)
+    if other:
+        T("※ " + "；".join(other) + "——不属本暂停点的作业答案。", 10.5)
+    if nxt and nxt["rvs"] and nxt["no"] not in extras and (src, nxt["no"]) not in pause_set:
+        T("※ 紧随页 p%d 的揭晓（%s…）不属本暂停点——见附录该课件页行。" % (nxt["no"], nxt["rvs"][0][:40]), 10.5)
     T("⑤ 常见卡点·应对：" + ("；".join(pits) if pits else "—"), 10.5)
 
-page_table("三、08《纸上篇》第 1 章 变量——储物格（第 1–22 页）", p8[:22], M08)
-page_table("四、08《纸上篇》第 2 章 命令（第 23–39 页）", p8[22:39], M08)
-page_table("五、08《纸上篇》第 3 章 流程与调试（第 40–57 页）", p8[39:], M08)
-page_table("六、10《机器人上岗》（全 21 页）", p10, M10, "暂停点接续编号 ⑮–⑲。")
-page_table("七、14《图纸搬家》（全 18 页）", p14, M14, "暂停点接续编号 ⑳–㉓。机房首跑课：先验收大任务，再照图纸拼流程。")
-page_table("八、16《循环》（全 15 页）", p16, M16, "暂停点接续编号 ㉔–㉗。循环课：没带作业走备用卡通道（p3 四套参数）。")
-page_table("九、17《判断加循环》（全 16 页）", p17, M17, "暂停点接续编号 ㉘–㉛。项目三收官：判断装进循环肚子自己会停；大任务 p15 四步全动作。")
+page_table("三、08《纸上篇》第 1 章 变量——储物格（第 1–22 页）", p8[:22], M08, src="08")
+page_table("四、08《纸上篇》第 2 章 命令（第 23–39 页）", p8[22:39], M08, src="08")
+page_table("五、08《纸上篇》第 3 章 流程与调试（第 40–58 页）", p8[39:], M08, src="08")
+page_table("六、10《机器人上岗》（全 21 页）", p10, M10, "暂停点接续编号 ⑮–⑲。", src="10")
+page_table("七、14《图纸搬家》（全 18 页）", p14, M14, "暂停点接续编号 ⑳–㉓。机房首跑课：先验收大任务，再照图纸拼流程。", src="14")
+page_table("八、16《循环》（全 15 页）", p16, M16, "暂停点接续编号 ㉔–㉗。循环课：没带作业走备用卡通道（p3 四套参数）。", src="16")
+page_table("九、17《判断加循环》（全 16 页）", p17, M17, "暂停点接续编号 ㉘–㉛。项目三收官：判断装进循环肚子自己会停；大任务 p15 四步全动作。", src="17")
 T("—— 全册完 ——", 9).alignment = WD_ALIGN_PARAGRAPH.CENTER
 
 doc.save(os.path.join(RPA, OUT))
