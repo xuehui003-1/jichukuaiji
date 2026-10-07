@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>上场　v1.33</title>
+<title>上场　v1.34</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:#05070d;color:#eef4ff;
@@ -34,6 +34,10 @@ body.rail-shut{--rail:0px}
   background:radial-gradient(circle at 32% 28%,#ff8a9a,#ff1744 40%,#8b0000);
   border:6px solid #fff;box-shadow:0 0 0 5px #ff1744, inset 0 8px 10px rgba(255,255,255,.25)}
 .hub b{font-size:clamp(16px,2.3vw,24px);color:#fff;letter-spacing:.12em;line-height:1.2;text-shadow:0 2px 0 #7a0000}
+.hub.live{cursor:pointer;transition:transform .12s, box-shadow .12s}
+.hub.live:hover{transform:translate(-50%,-50%) scale(1.06);box-shadow:0 0 0 5px #ff1744, 0 0 26px 8px rgba(255,23,68,.55), inset 0 8px 10px rgba(255,255,255,.25)}
+.hub.live:active{transform:translate(-50%,-50%) scale(.97)}
+.hub.spinning{cursor:default;opacity:.85}
 .hint{text-align:center;color:#8ea0c3;font-size:13px;padding:10px 16px 0}
 
 .rail-tab{position:fixed;left:0;top:42%;z-index:8;writing-mode:vertical-rl;letter-spacing:.18em;
@@ -279,15 +283,15 @@ input[type=file].pick{display:block;width:100%;margin-top:6px;font-size:12px;col
 <div class="ui">
   <div class="top">
     <div class="brand">上场</div>
-    <span class="ver">v1.33</span>
+    <span class="ver">v1.34</span>
   </div>
   <div class="stage">
     <div class="ring-wrap">
       <canvas id="wheel" width="800" height="800"></canvas>
       <div class="needle"></div>
-      <div class="hub"><b id="hubTxt">开始</b></div>
+      <div class="hub live" id="hub" role="button" tabindex="0" title="点一下就开抽"><b id="hubTxt">开始</b></div>
     </div>
-    <div class="hint" id="hintLine">抽三个人会转三次。指针停在谁就是谁。</div>
+    <div class="hint" id="hintLine">点中间红球就开抽（按左边选的用途决定抽几个）。抽三个人会转三次。</div>
   </div>
 </div>
 
@@ -337,6 +341,99 @@ const $ = id => document.getElementById(id);
 const COLS = ["#1a365d","#9b2c2c","#276749","#553c9a","#2b6cb0","#975a16","#234e52","#97266d"];
 let items=[], rot=0, spinning=false, busy=false, muted=false, groupsMode=false, photos={}, imgObj={};
 let hist=[];
+// ── 报幕台词池 ──────────────────────────────────────────
+// 原则：第一要让听课的老师一听就懂这孩子要干什么，第二才是有意思。
+// 所以不用网络梗（听课老师未必懂，而且过一年就馊了），
+// 走「综艺报幕 + 会计行话双关」——人人听得懂，同行会心一笑。
+// 每种用途好几条，随机轮播，不会一节课听二十遍同一句。
+const SAY = {
+  ask: [
+    "{n}，话筒交给你",
+    "{n}，这道题归你了",
+    "{n}，说说你的答案",
+    "有请 {n}，请讲",
+    "{n}，把你写的念出来",
+    "恭喜 {n}，拿到本题发言权"
+  ],
+  // 这一条用得最多（全库 106 个暂停点），台词给足，省得一节课听重样
+  book: [
+    "{n}，账本亮出来",
+    "{n}，记录册举高，我来验收",
+    "{n}，亮本子，三秒就好",
+    "{n}，让我看看写了些啥",
+    "{n}，举起来给我扫一眼",
+    "{n}，验收时间到，本子举高",
+    "{n}，亮一下，我扫一眼就走"
+  ],
+  board: [
+    "{n}，上台主笔",
+    "有请 {n}，黑板交给你",
+    "{n}，上来写一笔",
+    "{n}，粉笔归你了"
+  ],
+  tianping: [
+    "{n}，上来称一称",
+    "有请 {n} 操作天平",
+    "{n}，去把天平摆平"
+  ],
+  shuiguang: [
+    "{n}，上来开闸放水",
+    "有请 {n}，六个水池交给你",
+    "{n}，去看看水往哪儿流"
+  ],
+  shisuan: [
+    "{n}，上来抓漏账",
+    "有请 {n} 出任审计",
+    "{n}，去找那笔不见的钱"
+  ],
+  lianxian: [
+    "{n}，上来牵线",
+    "有请 {n} 连连看",
+    "{n}，去把它们配对"
+  ],
+  mole: [
+    "{n}，上来打地鼠",
+    "有请 {n}，地鼠交给你了",
+    "{n}，手速时间到"
+  ],
+  dub: [
+    "{n}，上来配音",
+    "有请配音演员 {n}",
+    "{n}，这段台词归你"
+  ],
+  nitpick: [
+    "{n}，凭证亮出来，互审开始",
+    "{n}，上岗当审核",
+    "{n}，看看同桌写错没有"
+  ],
+  voucher: [
+    "{n} 这组，凭证亮出来",
+    "有请 {n} 组验货",
+    "{n} 组，把凭证举起来"
+  ]
+};
+// 上一次用的那条记下来，连着两次不重样
+const _lastSay = {};
+// 一次抽取只挑一条模板，屏幕和语音都用它渲染，不会对不上。
+// 屏幕用「、」连名字；语音用全角空格拉开停顿，三个人才念得清。
+let _curTpl = "", _curNames = [];
+function newSay(names){
+  const uid = useId, arr = SAY[uid] || [];
+  _curNames = (names||[]).slice();
+  if(!arr.length){ _curTpl = "{n}，上场"; }
+  else{
+    let i = Math.floor(Math.random()*arr.length);
+    if(arr.length>1 && i===_lastSay[uid]) i = (i+1)%arr.length;
+    _lastSay[uid] = i;
+    _curTpl = arr[i];
+  }
+  return renderSay("、");
+}
+function renderSay(sep){
+  const who = _curNames.join(sep) || "这位";
+  return _curTpl.replace("{n}", who);
+}
+
 const USES = {
   ask: {
     label: "答问", suggest: "draw1",
@@ -413,14 +510,7 @@ const USES = {
 };
 let useId = "ask";
 function useLabel(){ return USES[useId].label; }
-function useSay(){
-  const n = (arguments[0]||[]).length;
-  const who = n===1?"这一位": n===2?"这两位": n===3?"这三位":"这几位";
-  if(useId==="book") return who+"，册子举起来";
-  if(useId==="ask")  return who+"，照你册子上写的，回答这一题";
-  if(useId==="board")return who+"，上来写在黑板上";
-  return USES[useId].say;
-}
+function useSay(names){ return newSay(names); }
 function useSub(){ return USES[useId].sub || ""; }
 function applyUse(){
   const u = USES[useId];
@@ -1836,6 +1926,7 @@ function pointerIndex(list, angle){
   return Math.floor(a/arc)%n;
 }
 function paintIdle(){
+  if($("hub")){ $("hub").classList.add("live"); $("hub").classList.remove("spinning"); }
   const list=lines($("people"));
   items=list.length?list:["先贴名单"];
   rot=0;
@@ -1848,6 +1939,7 @@ function spinOnce(list){
   return new Promise(resolve=>{
     if(!list.length){ resolve(""); return; }
     spinning=true;
+    if($("hub")){ $("hub").classList.remove("live"); $("hub").classList.add("spinning"); }
     $("result").classList.remove("on");
     $("hubTxt").textContent="开始";
     items=list.slice();
@@ -1899,12 +1991,13 @@ async function spin(list, k){
       if(name) got.push(name);
       if(i<k-1) await wait(700);
     }
-    $("hintLine").textContent="抽三个人会转三次。指针停在谁就是谁。";
+    $("hintLine").textContent="点中间红球就开抽（按左边选的用途决定抽几个）。抽三个人会转三次。";
     if(got.length) addHist(got, k);
     reveal(got, got.length);
     paintIdle();
   }finally{
     busy=false; spinning=false;
+    if($("hub")){ $("hub").classList.add("live"); $("hub").classList.remove("spinning"); }
     document.body.classList.remove("focus");
     setRail(true);
   }
@@ -1921,18 +2014,8 @@ function speakLine(names){
   const one=arr.length===1;
   let text="";
   // 先叫名字，再说做什么——投影上学生只需听清前半句
-  if(useId==="ask") text=who+"。照你写的，回答这一题。";
-  else if(useId==="book") text=who+"。举册子。";
-  else if(useId==="board") text=who+"。上来写。";
-  else if(useId==="tianping") text=who+"。上来玩天平。";
-  else if(useId==="lianxian") text=who+"。上来连线。";
-  else if(useId==="shuiguang") text=who+"。上来看水管。";
-  else if(useId==="shisuan") text=who+"。上来找漏账。";
-  else if(useId==="mole") text=who+"。上来打地鼠。";
-  else if(useId==="dub") text=who+"。上来配音。";
-  else if(useId==="nitpick") text=who+"。举凭证。";
-  else if(useId==="voucher") text=who+"。举记账凭证。";
-  else text=who+"。"+((USES[useId]&&USES[useId].goBtn)||"上场")+"。";
+  // 念屏幕上那一句，字幕和声音一致；名字之间留停顿
+  text = (_curTpl ? renderSay("，　") : (who+"，上场")) + "。";
   const ut=new SpeechSynthesisUtterance(text);
   ut.lang="zh-CN";
   ut.rate=one?0.95:0.88;   // 抽三个人时放慢，听得清
@@ -1992,6 +2075,18 @@ $("card").onclick = e=>{
 };
 $("result").onclick = e=>{ if(e.target.id==="result") $("result").classList.remove("on"); };
 $("draw1").onclick = ()=>{ groupsMode=false; spin(lines($("people")),1); };
+// 中间那个红球就是「开始」——点它直接开抽，按当前用途该抽几个就抽几个
+function hubDraw(){
+  if(busy||spinning) return;
+  const sug = (USES[useId]&&USES[useId].suggest) || "draw1";
+  if(sug==="drawG"){ groupsMode=true;  spin(lines($("groups")),1); }
+  else if(sug==="draw3"){ groupsMode=false; spin(lines($("people")),3); }
+  else { groupsMode=false; spin(lines($("people")),1); }
+}
+if($("hub")){
+  $("hub").onclick = hubDraw;
+  $("hub").onkeydown = e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); hubDraw(); } };
+}
 $("drawG").onclick = ()=>{ groupsMode=true; spin(lines($("groups")),1); };
 $("draw3").onclick = ()=>{ groupsMode=false; spin(lines($("people")),3); };
 
