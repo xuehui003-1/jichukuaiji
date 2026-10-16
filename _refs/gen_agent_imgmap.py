@@ -4,7 +4,7 @@ from PIL import Image
 import base64,io,json,os,re
 RPA=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),"RPA")
 DECKS=["04_项目一_第1讲_开学第一课_课件_v2.1_20260906.html",
-"08_项目二_第1-3讲_变量命令流程_纸上篇_课件_v2.5_20261014.html",
+"08_项目二_第1-3讲_变量命令流程_纸上篇_课件_v2.6_20261014.html",
 "10_项目二_第4讲_机器人上岗_课件_v1.3_20261014.html",
 "14_项目三_第1讲_图纸搬家_课件_v1.1_20261014.html",
 "16_项目三_第2讲_循环_课件_v1.1_20261014.html",
