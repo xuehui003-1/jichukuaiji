@@ -111,28 +111,84 @@ def gen_recordbook():
     para(doc, "✅ 下课前自查：□⑨我说清了知识库为什么管用　□⑩我记下了 5 题的对错　"
               "□⑪我体验了一个花活　□班级共享库我扫码加入了", 11)
 
+    para(doc, "本册为上卷：项目一、项目二（暂停点①–⑪）。项目三起，用下卷（暂停点⑫–⑲）。", 10.5, color=(0x5D, 0x40, 0x37))
+
+    doc.save(os.path.join(OUT_DIR, f"03_我的AI实验记录_上卷_项目一二_v2.0_20261022.docx"))
+    print("saved 03上卷")
+
+def gen_recordbook_lower():
+    doc = new_doc()
+    p = doc.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run(p, "我 的 A I 实 验 记 录 · 下 卷", 20, True)
+    p = doc.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run(p, "《AI工具实战应用》项目三～项目六（暂停点⑫–⑲）　班级：＿＿＿＿＿＿　学号：＿＿＿＿＿＿＿＿　姓名：＿＿＿＿＿＿", 12)
+    para(doc, "这不是作业本，是实验记录。看到课件「⏸ 暂停点N」才动笔：先写你的想法，再听老师讲；"
+              "猜错不扣分——猜错的地方，正是你今天要学的地方。", 10.5, color=(0x5D, 0x40, 0x37))
+
+    def pause_block(no, title, page, question, deck="02"):
+        tail = f" · p{page}" if page else ""
+        para(doc, f"⏸ 暂停点{no} · {title}　——课件 {deck}{tail}", 12.5, True, (0xBF, 0x36, 0x0C), space_after=2)
+        para(doc, question, 11, space_after=4)
+        t = doc.add_table(rows=3, cols=2); t.style = "Table Grid"
+        for i, lab in enumerate(["我的想法", "思考过程", "老师的讲解"]):
+            c0, c1 = t.rows[i].cells
+            c0.width = Cm(3.0); c1.width = Cm(14.0)
+            c0.text = ""
+            r = c0.paragraphs[0].add_run(lab); r.font.size = Pt(10.5); r.bold = True
+            shade(c0, "FFF3E0")
+            set_row_height(t.rows[i], 1.5)
+        para(doc, "", 6, space_after=8)
+
     para(doc, "项目三 · 第5讲：教AI看说明书（技能）｜课件 09", 14, True, (0xBF, 0x36, 0x0C))
     pause_block("⑫", "我调用技能的那句命令", 9,
                 "你调用技能的那句命令，原样抄下来；技能名也写上。",
                 deck="09")
-    pause_block("⑬", "没技能和有技能，差在哪", 11,
-                "没技能的 AI 和有技能的 AI，差在哪？一句话写下来。",
-                deck="09")
-    para(doc, "✅ 下课前自查：□⑫我抄下了调用命令　□⑬我说清了差在哪　"
+    para(doc, "✅ 下课前自查：□⑫我抄下了调用命令　□我说清了没技能和有技能差在哪（口头）　"
               "□技能干完活的文件截图发群了", 11)
 
     para(doc, "项目三 · 第6讲：召唤专家团，让智能体按时上班｜课件 10", 14, True, (0xBF, 0x36, 0x0C))
-    pause_block("⑭", "哪一样，单个AI最难干好", 6,
+    pause_block("⑬", "哪一样，单个AI最难干好", 6,
                 "专家团的三样结果里，哪一样最难让一个 AI 单独干好？为什么？一句话。",
                 deck="10")
-    pause_block("⑮", "三个定时任务", 11,
-                "三个定时任务各是几点响、干什么？哪一个你最想收到？抄下来。",
-                deck="10")
-    para(doc, "✅ 下课前自查：□⑭我写出了哪样最难　□⑮我抄下了三个定时任务　"
+    para(doc, "✅ 下课前自查：□⑬我写出了哪样最难　□三个定时任务我抄下了（几点响/干什么）　"
               "□晚上的定时推送，我截图发群了（+1）", 11)
 
-    doc.save(os.path.join(OUT_DIR, f"03_我的AI实验记录_全程_v1.11_20260909.docx"))
-    print("saved 03")
+    para(doc, "项目四 · 第7讲：乱信息变清单＋AI起草｜课件 11（课前发）", 14, True, (0xBF, 0x36, 0x0C))
+    pause_block("⑭", "AI 自己做了几回主", None,
+                "整理乱信息、起草文书时，AI 自己拿主意做了几件事？对照核对清单，你抓到它哪个错？写一个。",
+                deck="11 · 页码上课当天见")
+
+    para(doc, "项目四 · 第8讲：WPS AI 办公课｜课件 12（课前发）", 14, True, (0xBF, 0x36, 0x0C))
+    pause_block("⑮", "Office 里 AI 帮我干了什么", None,
+                "AI 写文档、写公式、生 PPT 大纲——哪一样帮上你了？它错在哪？一句话。",
+                deck="12 · 页码上课当天见")
+    para(doc, "✅ 下课前自查：□⑭我数了AI做主的次数　□⑮我抓到一个Office里的错　"
+              "□我整理的清单/文档发群了", 11)
+
+    para(doc, "项目五 · 第9讲：WorkBuddy＋装机＋AI动你的电脑｜课件 13（课前发）", 14, True, (0xBF, 0x36, 0x0C))
+    pause_block("⑯", "AI 在我电脑上干了什么", None,
+                "AI 在你电脑上干了什么？哪一步被你喊停了？写下来。",
+                deck="13 · 页码上课当天见")
+
+    para(doc, "项目五 · 第10讲：技能综合任务｜课件 14（课前发）", 14, True, (0xBF, 0x36, 0x0C))
+    pause_block("⑰", "我的AI干活成果", None,
+                "综合任务最后交出了什么？中间用了哪几个技能？写下来。",
+                deck="14 · 页码上课当天见")
+    para(doc, "✅ 下课前自查：□⑯我写了AI干的活和喊停的地方　□⑰我列出了成果和技能　"
+              "□「我的AI干活成果」截图发群了", 11)
+
+    para(doc, "项目六 · 第11讲：安全伦理与结课｜课件 15（课前发）", 14, True, (0xBF, 0x36, 0x0C))
+    pause_block("⑱", "辨假的一招", None,
+                "真假辨别赛你答对几个？你辨假用的是哪一招？写下来。",
+                deck="15 · 页码上课当天见")
+    pause_block("⑲", "结课展示三栏", None,
+                "结课展示三栏（提示词小抄/AI干活成果/AI帮我干成的一件事），哪一栏你最有底？一句话。",
+                deck="15 · 页码上课当天见")
+    para(doc, "✅ 结课自查：□⑱我有自己的辨假招　□⑲三栏我都讲完了　"
+              "□「用了要说、结果要核」我知道是什么意思", 11)
+
+    doc.save(os.path.join(OUT_DIR, f"03_我的AI实验记录_下卷_项目三至六_v2.0_20261022.docx"))
+    print("saved 03下卷")
 
 # ================= ② 核对卡 =================
 def gen_checkcard():
@@ -249,13 +305,14 @@ def gen_install_checklist():
     para(doc, "四、备用方案（装机翻车时）", 13, True, (0xBF, 0x36, 0x0C))
     for item in [
         "① 只有少数机器装不上：学生并机两人一组，任务不变",
-        "② 大面积装不上（权限/杀毒问题）：改教师机投屏演示＋学生用网页版完成任务卡，暂停点㉒改在网页版上完成",
+        "② 大面积装不上（权限/杀毒问题）：改教师机投屏演示＋学生用网页版完成任务卡，暂停点⑯改在网页版上完成",
         "③ 机房断网：教师机演示为主，网页版环节顺延到第10次课",
     ]:
         para(doc, item, 11)
-    doc.save(os.path.join(OUT_DIR, f"05_项目五_第9讲_装机课准备单_教师版_v1.0_{D}.docx"))
+    doc.save(os.path.join(OUT_DIR, f"05_项目五_第9讲_装机课准备单_教师版_v1.1_20261022.docx"))
     print("saved 05")
 
 gen_recordbook()
+gen_recordbook_lower()
 gen_checkcard()
 gen_install_checklist()
