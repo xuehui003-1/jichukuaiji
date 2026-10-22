@@ -8,7 +8,7 @@ from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
 
 RPA = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "RPA")
-OUT = "智多星平台任务图册_电子版_v1.0_20261023.docx"
+OUT = "智多星平台任务图册_电子版_v1.1_20261023.docx"
 PROJECT = "智多星RPA基础命令"
 
 doc = Document()
@@ -49,7 +49,7 @@ def head(txt):
 doc.add_page_break()
 T("智多星 RPA 基础命令 · 20 任务图册", 20, True, "1A5276", True, 6, 4)
 T("电子版 · 对照平台逐个过：任务状态变「已完成」＝过；每过一张，把任务页截图贴进本行方框", 11, False, "555555", True, 0, 6)
-T("四大板块对应纸质册《机器人实验记录册》四个暂停点：变量操作→⑬｜流程设计操作→⑭｜数据操作→⑮｜Office操作→⑯", 10.5, True, "C0390B", True, 0, 10)
+T("七板块对应纸质册暂停点：变量操作→⑬｜流程设计操作→⑭｜数据操作→⑮｜Office操作→⑯｜浏览器→㉓｜邮件→㉔｜OCR→㉕（㉓–㉕为进阶三关：项目三毕业后开闯）", 10.5, True, "C0390B", True, 0, 10)
 pic = os.path.join(RPA, "img", "zhiduoxing_20task_overview.png")
 if os.path.exists(pic):
     doc.add_picture(pic, width=Cm(16.6))
@@ -84,15 +84,39 @@ SECTS = [
   ("任务1·Excel命令介绍", "文档", "新建/写入/读格——就是大案例记账表用的那几条"),
   ("任务2·Excel命令知识测验", "作业", "过了就去开工大案例：5 笔消费、机器人填金额、弹合计"),
  ]),
+ ("进阶①浏览器自动化操作 · 4 任务 → 纸质册暂停点㉓（项目三毕业后开闯）", [
+  ("任务1·浏览器操作自动化", "文档", "让机器人打开网页、点击、填表——第一台「网页机器人」"),
+  ("任务2·XPath介绍", "文档", "XPath＝网页元素的「格子地址」——B3 之于 Excel"),
+  ("任务3·Frame介绍", "文档", "网页套网页：机器人进不去里层时先做的一步"),
+  ("任务4·浏览器自动化实践操作", "实践·RPA设计器", "真机实操——截图要露出「实验系统: RPA设计器」"),
+ ]),
+ ("进阶②邮件自动化操作 · 2 任务 → 纸质册暂停点㉔（进阶）", [
+  ("任务1·邮件自动化操作", "文档", "收件→下载附件→回执：对账单邮件的三件套"),
+  ("任务2·邮件自动化实践操作", "实践·RPA设计器", "真机实操"),
+ ]),
+ ("进阶③OCR在RPA中的应用 · 3 任务 → 纸质册暂停点㉕（进阶）", [
+  ("任务1·OCR在RPA中的应用", "文档", "机器人的「眼睛」——扫描件里的文字抠出来"),
+  ("任务2·OCR在RPA中的应用实践操作", "实践·RPA设计器", "真机实操——拿发票截图试识别"),
+  ("任务3·OCR图像识别流程", "文档", "一条完整 OCR 流程长什么样"),
+ ]),
 ]
 n = 0
+ADV_DIVIDER = True
 for title, tasks in SECTS:
+    if ADV_DIVIDER and title.startswith("浏览器"):
+        doc.add_page_break()
+        adv = os.path.join(RPA, "img", "zhiduoxing_advanced_overview.png")
+        if os.path.exists(adv):
+            doc.add_picture(adv, width=Cm(16.6))
+            T("▲ 进阶三关总览（真实截图 2026-10-22）：浏览器自动化 4＋邮件自动化 2＋OCR 3——实践任务在 RPA 设计器里做", 9.5, False, "777777", True, 2, 8)
+        T("⏳ 开闯时机：项目三毕业（暂停点㉒ 过关）之后、期末发布会之前——那时你的机器人已会判断、会循环、能真跑。", 10.5, True, "C0390B", True, 0, 8)
+        ADV_DIVIDER = False
     doc.add_page_break()
     head(title); T("", 6)
     for name, typ, note in tasks:
         n += 1
         T("%s（%s）——%s" % (name, typ, note), 10.5, False, "333333", False, 4, 2)
         box("📷 截图贴这里：本任务页整屏（状态「已完成」＋实战次数可见）")
-T("—— 全 20 任务完成后：四板块状态全绿，纸质册⑬–⑯问答写全，凭大案例放行条进机房 ——", 10.5, True, "1A5276", True, 10, 0)
+T("—— 全 29 任务（基础 20＋进阶 9）：基础四板块⑬–⑯问答写全、凭大案例放行条进机房；进阶三关㉓–㉕期末发布会前清——你的机器人就能上网查价、收邮件、认发票 ——", 10.5, True, "1A5276", True, 10, 0)
 doc.save(os.path.join(RPA, OUT))
 print("生成", OUT, "| 20 任务", len(SECTS), "节")
