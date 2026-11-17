@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>上场　v1.34</title>
+<title>上场　v1.35</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:#05070d;color:#eef4ff;
@@ -283,7 +283,7 @@ input[type=file].pick{display:block;width:100%;margin-top:6px;font-size:12px;col
 <div class="ui">
   <div class="top">
     <div class="brand">上场</div>
-    <span class="ver">v1.34</span>
+    <span class="ver">v1.35</span>
   </div>
   <div class="stage">
     <div class="ring-wrap">
@@ -763,8 +763,22 @@ function setTodayScore(name, pts){
   pts=Number(pts);
   if(!name || !Number.isFinite(pts)) return;
   const day=todayStr();
-  scoreLog=scoreLog.filter(x=>!(x.name===name && x.day===day));
-  scoreLog.push({day, t:new Date().toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit",second:"2-digit"}), name, pts, use:"改分"});
+  const tm=new Date().toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  // 消消乐的 1 分单独留着：改分只动非消消乐的部分。
+  // 原来是把今天所有记录一起删掉重写，消消乐那条会被冲掉，
+  // 格子还灰着、却没了「+1 分」，退回时也撤不掉。
+  const coPts = scoreLog.filter(x=>x.name===name && x.day===day && isCoRec(x))
+    .reduce((s,x)=>s+Number(x.pts||0),0);
+  scoreLog = scoreLog.filter(x=>!(x.name===name && x.day===day && !isCoRec(x)));
+  if(pts > coPts){
+    scoreLog.push({day, t:tm, name, pts:pts-coPts, use:"改分"});
+  } else if(pts < coPts){
+    // 目标比消消乐的 1 分还低：消消乐那条也撤掉，格子一起退回
+    scoreLog = scoreLog.filter(x=>!(x.name===name && x.day===day && isCoRec(x)));
+    coSave(coDone().filter(n=>n!==name));
+    if(pts>0) scoreLog.push({day, t:tm, name, pts, use:"改分"});
+  }
+  // pts === coPts 时只留消消乐那条，不用再加
   saveScores(); renderScores();
   sayImport(name+" 的今天改成 "+pts+" 分。再点「导出表格」就是新数。", true);
 }
@@ -1140,9 +1154,14 @@ function rebuildFromSum(sum){
   return log;
 }
 function sumEqualsLog(sum, log){
+  // 只比累计：累计与日期无关，隔天导入也对得上。
+  // 若连「今天」一起比，隔天导入时表里的「今天」是导出那天的数、
+  // 从明细算出来却是新的一天（多半是 0），必然对不上，
+  // 于是整份带日期和场合的明细被丢掉、改从汇总重建，
+  // 消消乐的 1 分会被改成「表格·今天」、灰格状态也丢。
   const t=totalsFromLog(log);
   if(!sum.length) return true;
-  return sum.every(r=> (t.today[r.name]||0)===r.today && (t.total[r.name]||0)===r.total);
+  return sum.every(r=> (t.total[r.name]||0)===r.total);
 }
 function isGrid(rows){ return Array.isArray(rows) && rows.length>0 && Array.isArray(rows[0]); }
 function asRow(row){ return Array.isArray(row)?row.map(x=>String(x??"")):(row==null?[]:[String(row)]); }
@@ -1194,6 +1213,11 @@ function applySheets(sheets){
   if(!peopleChanged && !scoreChanged){
     sayImport("没读到记分，也没读到姓名。文件是："+(window._importName||"")+"。");
     return;
+  }
+  // 消名字灰格状态也一起恢复（走表格重建时原来不恢复，灰掉的名字会变回来）
+  if(sheets && sheets._bak && sheets._bak.checkout && typeof sheets._bak.checkout==="object"){
+    try{ Object.keys(sheets._bak.checkout).forEach(k=>{
+      if(k.indexOf("draw-checkout-")===0) localStorage.setItem(k, sheets._bak.checkout[k]); }); }catch(e){}
   }
   localStorage.setItem("draw-people", $("people").value);
   count(); renderList(); renderHist(); renderScores(); paintIdle();
